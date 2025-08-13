@@ -1,31 +1,52 @@
-<!-- Last Updated: 2025-08-13 21:19 UTC -->
+<!-- Last Updated: 2025-08-13 22:15 UTC -->
 
 <div class="news-post" data-category="Storage">
   <h3>1. <a href="https://cleantechnica.com/2010/04/29/pumped-water-energy-storage/" target="_blank" class="news-link">Interview: Pumped Water Key to Energy Storage</a></h3>
-  <p class="summary" data-summary-en="The article discusses the significance of pumped water as a crucial method for energy storage, highlighting its potential to balance energy supply and demand effectively." data-summary-zh="抽水蓄能是能源储存的关键技术。该技术通过水的上下循环实现能量储存和释放。">The article discusses the significance of pumped water as a crucial method for energy storage, highlighting its potential to balance energy supply and demand effectively.</p>
+  <p class="summary" data-summary-en="The interview discusses the importance of pumped water as a crucial method for energy storage, highlighting its potential to enhance the efficiency and reliability of renewable energy systems." data-summary-zh="抽水蓄能是关键的能源储存方式。该技术通过水泵储存能量，成为可再生能源发展的重要支持。">The interview discusses the importance of pumped water as a crucial method for energy storage, highlighting its potential to enhance the efficiency and reliability of renewable energy systems.</p>
   <div class="category-label">Storage</div>
 </div>
 
 <div class="news-post" data-category="Storage">
   <h3>2. <a href="https://cleantechnica.com/2010/04/28/megawatt-energy-storage-hawaii/" target="_blank" class="news-link">Megawatt Energy Storage Projects Debut in Hawaii</a></h3>
-  <p class="summary" data-summary-en="Hawaii has launched new megawatt-scale energy storage projects, marking a significant development in the state's renewable energy infrastructure. These projects aim to enhance energy reliability and support Hawaii's transition to sustainable energy sources." data-summary-zh="夏威夷推出兆瓦级能源储存项目，旨在增强可再生能源的使用和电网稳定性。">Hawaii has launched new megawatt-scale energy storage projects, marking a significant development in the state's renewable energy infrastructure. These projects aim to enhance energy reliability and support Hawaii's transition to sustainable energy sources.</p>
+  <p class="summary" data-summary-en="Hawaii has launched new megawatt-scale energy storage projects, marking a significant step towards enhancing its renewable energy infrastructure. These projects aim to improve the reliability and efficiency of energy supply in the region." data-summary-zh="夏威夷推出兆瓦级能源储存项目，旨在增强可再生能源的储存和利用效率。">Hawaii has launched new megawatt-scale energy storage projects, marking a significant step towards enhancing its renewable energy infrastructure. These projects aim to improve the reliability and efficiency of energy supply in the region.</p>
   <div class="category-label">Storage</div>
 </div>
 
 <div class="news-post" data-category="Storage">
   <h3>3. <a href="https://cleantechnica.com/2010/04/27/energy-storage-breakthrough-years-away/" target="_blank" class="news-link">Energy Storage Breakthrough Only a 'Couple Years Away'</a></h3>
-  <p class="summary" data-summary-en="A significant advancement in energy storage technology is anticipated to occur within the next few years, potentially transforming the industry." data-summary-zh="能源储存技术即将迎来突破，预计在未来几年内实现。">A significant advancement in energy storage technology is anticipated to occur within the next few years, potentially transforming the industry.</p>
+  <p class="summary" data-summary-en="A significant advancement in energy storage technology is anticipated to be just a few years away, potentially revolutionizing the sector." data-summary-zh="能源存储技术突破预计将在几年内实现。">A significant advancement in energy storage technology is anticipated to be just a few years away, potentially revolutionizing the sector.</p>
   <div class="category-label">Storage</div>
 </div>
 
 <div class="news-post" data-category="Storage">
   <h3>4. <a href="https://cleantechnica.com/2010/01/07/panasonic-energy-storage-solution-zero-emission-homes/" target="_blank" class="news-link">Panasonic Working on Energy Storage Solution towards Zero-Emission Homes</a></h3>
-  <p class="summary" data-summary-en="Panasonic is developing an energy storage solution aimed at achieving zero-emission homes. This initiative is part of the company's efforts to promote sustainable living and reduce carbon footprints." data-summary-zh="松下正在研发一种能源储存解决方案，旨在实现零排放家庭。">Panasonic is developing an energy storage solution aimed at achieving zero-emission homes. This initiative is part of the company's efforts to promote sustainable living and reduce carbon footprints.</p>
+  <p class="summary" data-summary-en="Panasonic is developing an energy storage solution aimed at achieving zero-emission homes. This initiative is part of their broader effort to promote sustainable living and reduce carbon footprints." data-summary-zh="松下正在开发能源储存解决方案，旨在实现零排放住宅。">Panasonic is developing an energy storage solution aimed at achieving zero-emission homes. This initiative is part of their broader effort to promote sustainable living and reduce carbon footprints.</p>
   <div class="category-label">Storage</div>
 </div>
 
 <div class="news-post" data-category="Storage">
   <h3>5. <a href="https://cleantechnica.com/2009/08/04/energy-tax-credits-storage-technology-renewables-industry/" target="_blank" class="news-link">Energy Tax Credits for Storage Technology Benefit Renewables Industry</a></h3>
-  <p class="summary" data-summary-en="The article discusses how energy tax credits for storage technology are providing significant benefits to the renewables industry, likely enhancing the adoption and integration of renewable energy sources." data-summary-zh="能源税收抵免政策支持储能技术发展，有利于可再生能源行业的增长。">The article discusses how energy tax credits for storage technology are providing significant benefits to the renewables industry, likely enhancing the adoption and integration of renewable energy sources.</p>
+  <p class="summary" data-summary-en="The article discusses how energy tax credits for storage technology are positively impacting the renewables industry by enhancing the integration and efficiency of renewable energy sources." data-summary-zh="能源税收抵免政策促进了储能技术的发展，有利于可再生能源行业的增长。">The article discusses how energy tax credits for storage technology are positively impacting the renewables industry by enhancing the integration and efficiency of renewable energy sources.</p>
   <div class="category-label">Storage</div>
 </div>
+
+<!-- Lang toggle support -->
+<script>
+window.addEventListener("message", (event) => {
+  if (!event.data) return;
+
+  const summaries = document.querySelectorAll(".summary");
+
+  if (event.data === "switch-lang-zh") {
+    summaries.forEach(el => {
+      el.textContent = el.dataset.summaryZh || el.dataset.summaryEn;
+    });
+  }
+
+  if (event.data === "switch-lang-en") {
+    summaries.forEach(el => {
+      el.textContent = el.dataset.summaryEn || "";
+    });
+  }
+});
+</script>
