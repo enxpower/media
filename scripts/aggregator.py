@@ -50,7 +50,7 @@ def main():
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
     ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    print(f"⏳ Colors processing {len(articles)} articles...")
+    print(f"⏳ Processing {len(articles)} articles...")
 
     processed = []
     for idx, (t, l) in enumerate(articles, start=1):
@@ -62,12 +62,37 @@ def main():
             print(f"⚠️ Skipped {t}: {ex}")
 
     pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
-    for pg in range(1, pages+1):
-        start = (pg-1)*ITEMS_PER_PAGE
-        chunk = processed[start:start+ITEMS_PER_PAGE]
+    for pg in range(1, pages + 1):
+        start = (pg - 1) * ITEMS_PER_PAGE
+        chunk = processed[start:start + ITEMS_PER_PAGE]
         html = f"<!-- Last Updated: {ts} -->\n"
         for item in chunk:
             html += build_html_snippet(*item)
+
+        # ✅ 追加语言切换 JS（注入 HTML 页面底部）
+        html += """
+<!-- Lang toggle support -->
+<script>
+window.addEventListener("message", (event) => {
+  if (!event.data) return;
+
+  const summaries = document.querySelectorAll(".summary");
+
+  if (event.data === "switch-lang-zh") {
+    summaries.forEach(el => {
+      el.textContent = el.dataset.summaryZh || el.dataset.summaryEn;
+    });
+  }
+
+  if (event.data === "switch-lang-en") {
+    summaries.forEach(el => {
+      el.textContent = el.dataset.summaryEn || "";
+    });
+  }
+});
+</script>
+"""
+
         Path(f"{POSTS_DIR}/page{pg}.html").write_text(html, encoding="utf-8")
         print(f"✅ Wrote page{pg}.html with {len(chunk)} posts.")
 
