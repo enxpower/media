@@ -8,7 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const toZh = btn.innerText.trim() === "中文";
 
     items.forEach((el) => {
-      el.textContent = toZh ? el.dataset.summaryZh : el.dataset.summaryEn;
+      const zh = el.getAttribute("data-summary-zh");
+      const en = el.getAttribute("data-summary-en");
+      el.textContent = toZh && zh ? zh : en;
     });
 
     btn.innerText = toZh ? "English" : "中文";
