@@ -1,4 +1,4 @@
-import json, math
+import json, math, html
 import feedparser
 from datetime import datetime
 from pathlib import Path
@@ -36,6 +36,12 @@ def fetch_articles(feeds):
     return results
 
 def build_html_snippet(idx, title, link, summary_en, summary_zh, category):
+    # 防止HTML属性注入、格式错乱
+    title = html.escape(title)
+    link = html.escape(link)
+    summary_en = html.escape(summary_en)
+    summary_zh = html.escape(summary_zh)
+
     return f'''
 <div class="news-post" data-category="{category}">
   <h3>{idx}. <a href="{link}" target="_blank" class="news-link">{title}</a></h3>
@@ -69,21 +75,18 @@ def main():
         for item in chunk:
             html += build_html_snippet(*item)
 
-        # ✅ 追加语言切换 JS（注入 HTML 页面底部）
+        # 添加语言切换 JS 支持
         html += """
 <!-- Lang toggle support -->
 <script>
 window.addEventListener("message", (event) => {
   if (!event.data) return;
-
   const summaries = document.querySelectorAll(".summary");
-
   if (event.data === "switch-lang-zh") {
     summaries.forEach(el => {
       el.textContent = el.dataset.summaryZh || el.dataset.summaryEn;
     });
   }
-
   if (event.data === "switch-lang-en") {
     summaries.forEach(el => {
       el.textContent = el.dataset.summaryEn || "";
