@@ -2,22 +2,31 @@ name: Auto Update Feeds
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Every hour
+    - cron: '0 * * * *'  # 每小时运行一次
   workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
+
       - name: Install dependencies
         run: pip install openai feedparser
+
       - name: Run aggregator
         run: OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} python scripts/aggregator.py
+
       - name: Commit changes
         run: |
           git config --global user.name 'github-actions'
@@ -25,3 +34,14 @@ jobs:
           git add .
           git commit -m 'Auto update feed content' || echo "No changes to commit"
           git push
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: .  # 当前目录作为网站内容
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v2
