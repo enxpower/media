@@ -3,16 +3,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("langToggle");
   if (!btn) return;
 
+  let isZh = false;
+
   btn.addEventListener("click", () => {
-    const items = document.querySelectorAll(".summary");
-    const toZh = btn.innerText.trim() === "中文";
+    isZh = !isZh;
+    const message = isZh ? "switch-lang-zh" : "switch-lang-en";
+    const iframe = document.getElementById("newsFrame");
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage(message, "*");
+    }
 
-    items.forEach((el) => {
-      const zh = el.getAttribute("data-summary-zh");
-      const en = el.getAttribute("data-summary-en");
-      el.textContent = toZh && zh ? zh : en;
-    });
-
-    btn.innerText = toZh ? "English" : "中文";
+    btn.innerText = isZh ? "English" : "中文";
   });
 });
