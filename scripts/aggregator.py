@@ -1,15 +1,13 @@
-from pathlib import Path
-
-# Define the updated aggregator.py again after code execution reset
-aggregator_code = """
 import json, os, math
 import feedparser
 from datetime import datetime
 from openai_summary import summarize
+from pathlib import Path
 
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
 
+# 分类关键词
 CATEGORIES = {
     "Storage": ["storage", "battery", "bess", "energy storage"],
     "PV": ["solar", "photovoltaic", "pv"],
@@ -18,6 +16,7 @@ CATEGORIES = {
     "PowerElectronics": ["inverter", "converter", "power electronics"]
 }
 
+# 分类识别函数
 def detect_category(title, summary):
     combined = (title + " " + summary).lower()
     for category, keywords in CATEGORIES.items():
@@ -26,10 +25,12 @@ def detect_category(title, summary):
                 return category
     return "General"
 
+# 加载 RSS 列表
 def load_feeds(file="feeds.json"):
     with open(file, "r", encoding="utf-8") as f:
         return json.load(f)
 
+# 抓取文章（标题+链接）
 def fetch_articles(feed_urls):
     articles = []
     for feed in feed_urls:
@@ -38,6 +39,7 @@ def fetch_articles(feed_urls):
             articles.append((entry.title, entry.link))
     return articles
 
+# 生成 HTML 内容块
 def build_post_html(index, title, link, summary_en, summary_zh, category):
     return f'''
 <div class="news-post" data-title="{title}" data-summary="{summary_en}" data-category="{category}">
@@ -47,10 +49,11 @@ def build_post_html(index, title, link, summary_en, summary_zh, category):
 </div>
 '''
 
+# 主函数
 def main():
     feed_urls = load_feeds()
     raw_articles = fetch_articles(feed_urls)
-    articles = raw_articles[:500]  # Safety cap
+    articles = raw_articles[:500]  # 限制最多抓 500 条
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
@@ -68,7 +71,7 @@ def main():
     pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
     for page in range(pages):
         chunk = processed[page*ITEMS_PER_PAGE:(page+1)*ITEMS_PER_PAGE]
-        page_html = f"<!-- Last Updated: {timestamp} -->\\n"
+        page_html = f"<!-- Last Updated: {timestamp} -->\n"
         for idx, (title, link, summary_en, summary_zh, category) in enumerate(chunk):
             page_html += build_post_html(idx + page*ITEMS_PER_PAGE, title, link, summary_en, summary_zh, category)
         with open(f"{POSTS_DIR}/page{page+1}.html", "w", encoding="utf-8") as f:
@@ -77,11 +80,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-"""
-
-# Write the updated aggregator.py to disk
-aggregator_path = Path("/mnt/data/scripts/aggregator.py")
-aggregator_path.parent.mkdir(parents=True, exist_ok=True)
-aggregator_path.write_text(aggregator_code.strip())
-
-aggregator_path.name  # Return just the filename for confirmation
