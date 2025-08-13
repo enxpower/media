@@ -1,76 +1,75 @@
-import json, os, math
+import json, math
 import feedparser
 from datetime import datetime
-from openai_summary import summarize
 from pathlib import Path
+from openai_summary import summarize
 
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
 
 CATEGORIES = {
-    "Storage": ["storage", "battery", "bess", "energy storage"],
+    "Storage": ["storage", "battery", "energy storage", "bess"],
     "PV": ["solar", "photovoltaic", "pv"],
     "Wind": ["wind"],
-    "Charger": ["charger", "charging", "ev charging"],
+    "Charger": ["charger", "charging", "ev"],
     "PowerElectronics": ["inverter", "converter", "power electronics"]
 }
 
-def detect_category(title, summary):
-    combined = (title + " " + summary).lower()
-    for category, keywords in CATEGORIES.items():
-        for kw in keywords:
-            if kw in combined:
-                return category
+def detect_category(text):
+    t = text.lower()
+    for cat, kw_list in CATEGORIES.items():
+        for kw in kw_list:
+            if kw in t:
+                return cat
     return "General"
 
-def load_feeds(file="feeds.json"):
-    with open(file, "r", encoding="utf-8") as f:
+def load_feeds(json_file="feeds.json"):
+    with open(json_file, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def fetch_articles(feed_urls):
-    articles = []
-    for feed in feed_urls:
-        d = feedparser.parse(feed["url"])
-        for entry in d.entries:
-            articles.append((entry.title, entry.link))
-    return articles
+def fetch_articles(feeds):
+    results = []
+    for f in feeds:
+        d = feedparser.parse(f["url"])
+        for e in d.entries:
+            results.append((e.title, e.link))
+    return results
 
-def build_post_html(index, title, link, summary_en, summary_zh, category):
+def build_html_snippet(idx, title, link, summary_en, summary_zh, category):
     return f'''
-<div class="news-post" data-title="{title}" data-summary="{summary_en}" data-category="{category}">
-  <h3><a href="{link}" target="_blank" class="news-link">{index+1}. {title}</a></h3>
+<div class="news-post" data-category="{category}">
+  <h3>{idx}. <a href="{link}" target="_blank" class="news-link">{title}</a></h3>
   <p class="summary" data-summary-en="{summary_en}" data-summary-zh="{summary_zh}">{summary_en}</p>
   <div class="category-label">{category}</div>
 </div>
 '''
 
 def main():
-    feed_urls = load_feeds()
-    raw_articles = fetch_articles(feed_urls)
-    articles = raw_articles[:500]  # Safety cap
+    feeds = load_feeds()
+    articles = fetch_articles(feeds)[:500]
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
-    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    print(f"⏳ Processing {len(articles)} articles...")
+    ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    print(f"⏳ Colors processing {len(articles)} articles...")
 
     processed = []
-    for i, (title, link) in enumerate(articles):
+    for idx, (t, l) in enumerate(articles, start=1):
         try:
-            summary_en, summary_zh = summarize(title, link)
-            category = detect_category(title, summary_en)
-            processed.append((title, link, summary_en, summary_zh, category))
-        except Exception as e:
-            print(f"⚠️ Skipped '{title}': {e}")
+            en, zh = summarize(t, l)
+            cat = detect_category(t + " " + en)
+            processed.append((idx, t, l, en, zh, cat))
+        except Exception as ex:
+            print(f"⚠️ Skipped {t}: {ex}")
 
     pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
-    for page in range(pages):
-        chunk = processed[page*ITEMS_PER_PAGE:(page+1)*ITEMS_PER_PAGE]
-        page_html = f"<!-- Last Updated: {timestamp} -->\\n"
-        for idx, (title, link, summary_en, summary_zh, category) in enumerate(chunk):
-            page_html += build_post_html(idx + page*ITEMS_PER_PAGE, title, link, summary_en, summary_zh, category)
-        with open(f"{POSTS_DIR}/page{page+1}.html", "w", encoding="utf-8") as f:
-            f.write(page_html)
-        print(f"✅ Wrote page {page+1} with {len(chunk)} posts.")
+    for pg in range(1, pages+1):
+        start = (pg-1)*ITEMS_PER_PAGE
+        chunk = processed[start:start+ITEMS_PER_PAGE]
+        html = f"<!-- Last Updated: {ts} -->\n"
+        for item in chunk:
+            html += build_html_snippet(*item)
+        Path(f"{POSTS_DIR}/page{pg}.html").write_text(html, encoding="utf-8")
+        print(f"✅ Wrote page{pg}.html with {len(chunk)} posts.")
 
 if __name__ == "__main__":
     main()
