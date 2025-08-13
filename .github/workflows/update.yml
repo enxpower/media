@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: pip install openai feedparser
       - name: Run aggregator
-        run: OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} python aggregator.py
+        run: OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} python scripts/aggregator.py
       - name: Commit changes
         run: |
           git config --global user.name 'github-actions'
