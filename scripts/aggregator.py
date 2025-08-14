@@ -1,4 +1,3 @@
-# scripts/aggregator.py
 import json, math, html
 import feedparser
 from datetime import datetime
@@ -46,7 +45,7 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags):
     summary_en = html.escape(summary_en)
     summary_zh = html.escape(summary_zh)
     tag_html = " ".join(f"#{tag}" for tag in tags)
-    category = tags[0]  # 用于 data-category
+    category = tags[0]
 
     return f'''
 <div class="news-post" data-category="{category}" data-title="{title.lower()}" data-summary="{summary_en.lower()}">
