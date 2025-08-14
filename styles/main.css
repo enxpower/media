@@ -99,6 +99,11 @@ header h1 {
   color: #5025b0;
 }
 
+/* 已访问链接变灰色 */
+.news-post a:visited {
+  color: #6c757d;
+}
+
 .news-post a:hover {
   text-decoration: underline;
 }
