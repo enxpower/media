@@ -1,10 +1,15 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const langBtn = document.getElementById("langToggle");
-  let currentLang = "en";
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleBtn = document.getElementById("langToggle");
+  let isChinese = false;
 
-  langBtn.onclick = () => {
-    currentLang = currentLang === "en" ? "zh" : "en";
-    window.postMessage(`switch-lang-${currentLang}`);
-    langBtn.textContent = currentLang === "en" ? "中文" : "English";
-  };
+  toggleBtn.addEventListener("click", () => {
+    const summaries = document.querySelectorAll(".summary");
+
+    summaries.forEach(el => {
+      el.textContent = isChinese ? (el.dataset.summaryEn || "") : (el.dataset.summaryZh || el.dataset.summaryEn || "");
+    });
+
+    isChinese = !isChinese;
+    toggleBtn.textContent = isChinese ? "English" : "中文";
+  });
 });
