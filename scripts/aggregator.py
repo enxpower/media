@@ -59,15 +59,12 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT):
             articles.append((title, link, preview, source, published))
         feed_articles.append(articles)
 
-    # 跨源交错排列（如 A1 B1 C1 A2 B2 C2 ...）
+    # 跨源交错排列（如 A1 B1 C1 A2 B2 C2）
     interleaved = []
     for items in itertools.zip_longest(*feed_articles):
         for item in items:
             if item:
                 interleaved.append(item)
-
-    # 打乱顺序，避免每页还是集中来源
-    random.shuffle(interleaved)
 
     return interleaved
 
@@ -94,7 +91,12 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, 
 
 def main():
     feeds = load_feeds()
-    articles = fetch_articles(feeds)[:300]  # 最多抓取300条用于分页
+    articles = fetch_articles(feeds)
+
+    # ✅ 彻底混排，解决所有页面单一来源的问题
+    random.shuffle(articles)
+
+    articles = articles[:300]  # 最多保留 300 条内容
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
