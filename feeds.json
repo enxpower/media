@@ -1,68 +1,82 @@
-import json
-from datetime import datetime
-
-# 构建RSS/Atom兼容的feeds数据结构（示意形式）
-feeds = [
-    {
-        "title": "CleanTechnica – Clean Energy News",
-        "url": "https://cleantechnica.com/feed/",
-        "category": "Renewables"
-    },
-    {
-        "title": "Canary Media – Decarbonization Insights",
-        "url": "https://www.canarymedia.com/feed",
-        "category": "Decarbonization"
-    },
-    {
-        "title": "Utility Dive – Energy and Utilities",
-        "url": "https://www.utilitydive.com/rss/",
-        "category": "PowerGrid"
-    },
-    {
-        "title": "Renewable Energy World",
-        "url": "https://www.renewableenergyworld.com/feed/",
-        "category": "Renewables"
-    },
-    {
-        "title": "Microgrid Knowledge",
-        "url": "https://microgridknowledge.com/feed/",
-        "category": "Microgrid"
-    },
-    {
-        "title": "Bodo's Power Systems",
-        "url": "https://www.bodospower.com/rss/feed.rss",
-        "category": "PowerElectronics"
-    },
-    {
-        "title": "EVSE China – 光储充产业动态",
-        "url": "https://www.evsechina.com/rss.xml",
-        "category": "Storage"
-    },
-    {
-        "title": "南方电网官方动态",
-        "url": "https://www.csg.cn/rss/csgnews.xml",
-        "category": "PowerGrid"
-    },
-    {
-        "title": "Roche Energy 储能论坛",
-        "url": "https://www.rochenergy.cn/feed/",
-        "category": "Storage"
-    },
-    {
-        "title": "Energy Digital",
-        "url": "https://energydigital.com/rss",
-        "category": "Energy"
-    },
-    {
-        "title": "Recharge News – Wind & Solar",
-        "url": "https://www.rechargenews.com/rss",
-        "category": "Wind"
-    }
+[
+  {
+    "name": "Solar Daily",
+    "url": "https://www.solardaily.com/rss/solardaily.xml"
+  },
+  {
+    "name": "Wind Daily",
+    "url": "https://www.winddaily.com/rss/winddaily.xml"
+  },
+  {
+    "name": "Energy Central",
+    "url": "https://www.energycentral.com/rss.xml"
+  },
+  {
+    "name": "Electrek",
+    "url": "https://electrek.co/feed/"
+  },
+  {
+    "name": "CleanTechnica",
+    "url": "https://cleantechnica.com/feed/"
+  },
+  {
+    "name": "IEEE Spectrum – Energy",
+    "url": "https://spectrum.ieee.org/rss/energy"
+  },
+  {
+    "name": "Microgrid Knowledge",
+    "url": "https://microgridknowledge.com/feed/"
+  },
+  {
+    "name": "PV Tech",
+    "url": "https://www.pv-tech.org/feed/"
+  },
+  {
+    "name": "Renewable Energy World",
+    "url": "https://www.renewableenergyworld.com/feed/"
+  },
+  {
+    "name": "The Energy Mix",
+    "url": "https://theenergymix.com/feed/"
+  },
+  {
+    "name": "Energy Storage News",
+    "url": "https://www.energy-storage.news/feed/"
+  },
+  {
+    "name": "InsideEVs",
+    "url": "https://insideevs.com/rss/news/"
+  },
+  {
+    "name": "Greentech Media (Archive)",
+    "url": "https://www.greentechmedia.com/rss"
+  },
+  {
+    "name": "新华网能源频道",
+    "url": "http://www.news.cn/energy/rss.xml"
+  },
+  {
+    "name": "澎湃新闻·能源",
+    "url": "https://www.thepaper.cn/rss_channel_26950"
+  },
+  {
+    "name": "财新网·能源环境",
+    "url": "https://www.caixin.com/rss/energy.rdf"
+  },
+  {
+    "name": "界面新闻·能源",
+    "url": "https://www.jiemian.com/rss/1031084.xml"
+  },
+  {
+    "name": "央视网·能源",
+    "url": "http://rss.cntv.cn/rollnews/energy/index.xml"
+  },
+  {
+    "name": "中国能源网",
+    "url": "http://www.china5e.com/rss/rss.xml"
+  },
+  {
+    "name": "能见App",
+    "url": "https://www.nengapp.com/rss.xml"
+  }
 ]
-
-# 保存为 JSON 文件
-output_path = "/mnt/data/feeds.json"
-with open(output_path, "w", encoding="utf-8") as f:
-    json.dump(feeds, f, indent=2, ensure_ascii=False)
-
-output_path
