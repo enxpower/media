@@ -1,4 +1,4 @@
-/* Reset default spacing and box model */
+/* Reset spacing and box model */
 body, h1, h3, p, div {
   margin: 0;
   padding: 0;
@@ -56,6 +56,15 @@ header h1 {
   padding: 1rem 0;
 }
 
+#pagination .page-info {
+  font-weight: normal;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  color: #212529;
+  margin: 0 1rem;
+}
+
+
 #pagination button {
   margin: 0 0.25rem;
   padding: 0.5rem 0.8rem;
@@ -73,10 +82,9 @@ header h1 {
 #pagination button.active {
   background-color: #0d6efd;
   color: white;
-  font-weight: bold;
 }
 
-/* News post layout */
+/* News post */
 .news-post {
   background-color: white;
   border: 1px solid #dee2e6;
@@ -87,11 +95,11 @@ header h1 {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Title */
 .news-post h3 {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   color: #5025b0;
   margin-bottom: 0.5rem;
+  font-weight: normal;
 }
 
 .news-post a {
@@ -107,9 +115,17 @@ header h1 {
   text-decoration: underline;
 }
 
-/* Preview from original article */
+/* Metadata: source + date */
+.meta {
+  font-size: 0.75rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+/* Preview */
 .news-post p.preview {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #666;
   font-style: italic;
   margin: 0.3rem 0 0.6rem 0;
@@ -118,22 +134,19 @@ header h1 {
   background-color: #f5f5f5;
 }
 
-/* AI summary */
+/* Summary */
 .news-post p.summary {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #212529;
-  font-weight: bold;
   margin: 0.4rem 0 0.6rem 0;
-  position: relative;
 }
 
 .news-post p.summary::before {
   content: "💡 AI Summary: ";
   color: #198754;
-  font-weight: bold;
 }
 
-/* Category Label */
+/* Tags */
 .category-label {
   display: inline-block;
   background-color: #6c757d;
@@ -144,15 +157,13 @@ header h1 {
   margin-top: 0.2rem;
 }
 
-/* Tag List */
 .news-post .tags {
   font-size: 0.75rem;
   margin-top: 0.4rem;
   color: #0d6efd;
-  font-weight: 500;
 }
 
-/* Per-category color overrides */
+/* Category color overrides */
 [data-category="Storage"] .category-label,
 [data-category="Storage"] .tags { background-color: #198754; color: white; }
 
@@ -174,20 +185,30 @@ header h1 {
 /* Footer */
 footer {
   text-align: center;
-  padding: 2rem;
-  font-size: 0.9rem;
+  padding: 2rem 1rem;
+  font-size: 0.85rem;
   color: #6c757d;
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  margin-top: 2rem;
 }
 
-/* Source and date metadata */
-.meta {
-  font-size: 0.75rem;
-  color: #888;
-  margin-bottom: 0.5rem;
+footer .disclaimer {
+  margin-bottom: 1rem;
   font-style: italic;
+  color: #888;
 }
 
-/* Responsive layout (basic) */
+footer .social-icons a {
+  margin: 0 0.5rem;
+  color: #333;
+}
+
+footer .social-icons a:hover {
+  color: #0d6efd;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   header {
     flex-direction: column;

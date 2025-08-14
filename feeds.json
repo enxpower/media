@@ -1,5 +1,82 @@
 [
-  {"url": "https://www.utilitydive.com/rss/energy/"},
-  {"url": "https://cleantechnica.com/tag/energy-storage/feed/"},
-
+  {
+    "name": "Solar Daily",
+    "url": "https://www.solardaily.com/rss/solardaily.xml"
+  },
+  {
+    "name": "Wind Daily",
+    "url": "https://www.winddaily.com/rss/winddaily.xml"
+  },
+  {
+    "name": "Energy Central",
+    "url": "https://www.energycentral.com/rss.xml"
+  },
+  {
+    "name": "Electrek",
+    "url": "https://electrek.co/feed/"
+  },
+  {
+    "name": "CleanTechnica",
+    "url": "https://cleantechnica.com/feed/"
+  },
+  {
+    "name": "IEEE Spectrum – Energy",
+    "url": "https://spectrum.ieee.org/rss/energy"
+  },
+  {
+    "name": "Microgrid Knowledge",
+    "url": "https://microgridknowledge.com/feed/"
+  },
+  {
+    "name": "PV Tech",
+    "url": "https://www.pv-tech.org/feed/"
+  },
+  {
+    "name": "Renewable Energy World",
+    "url": "https://www.renewableenergyworld.com/feed/"
+  },
+  {
+    "name": "The Energy Mix",
+    "url": "https://theenergymix.com/feed/"
+  },
+  {
+    "name": "Energy Storage News",
+    "url": "https://www.energy-storage.news/feed/"
+  },
+  {
+    "name": "InsideEVs",
+    "url": "https://insideevs.com/rss/news/"
+  },
+  {
+    "name": "Greentech Media (Archive)",
+    "url": "https://www.greentechmedia.com/rss"
+  },
+  {
+    "name": "新华网能源频道",
+    "url": "http://www.news.cn/energy/rss.xml"
+  },
+  {
+    "name": "澎湃新闻·能源",
+    "url": "https://www.thepaper.cn/rss_channel_26950"
+  },
+  {
+    "name": "财新网·能源环境",
+    "url": "https://www.caixin.com/rss/energy.rdf"
+  },
+  {
+    "name": "界面新闻·能源",
+    "url": "https://www.jiemian.com/rss/1031084.xml"
+  },
+  {
+    "name": "央视网·能源",
+    "url": "http://rss.cntv.cn/rollnews/energy/index.xml"
+  },
+  {
+    "name": "中国能源网",
+    "url": "http://www.china5e.com/rss/rss.xml"
+  },
+  {
+    "name": "能见App",
+    "url": "https://www.nengapp.com/rss.xml"
+  }
 ]
