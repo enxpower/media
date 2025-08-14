@@ -78,5 +78,21 @@
   {
     "name": "能见App",
     "url": "https://www.nengapp.com/rss.xml"
+  },
+  {
+    "name": "Canada Tenders",
+    "url": "https://www.canadatenders.ca/feed/"
+  },
+  {
+    "name": "USA Gov Bids - Energy",
+    "url": "https://www.usa.gov/energy/feed"
+  },
+  {
+    "name": "UK Government Contracts Finder",
+    "url": "https://www.contractsfinder.service.gov.uk/RSSFeed"
+  },
+  {
+    "name": "Australian Tenders",
+    "url": "https://www.australiantenders.com.au/rss/"
   }
 ]
