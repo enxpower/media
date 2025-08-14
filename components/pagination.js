@@ -41,9 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const pageLabel = document.createElement("span");
-    pageLabel.textContent = ` Page ${currentPage} of ${totalPages} `;
-    pageLabel.style.fontWeight = "bold";
-    pageLabel.style.margin = "0 1rem";
+    pageLabel.className = "page-info";
+    pageLabel.textContent = `Page ${currentPage} of ${totalPages}`;
+
 
     const nextBtn = document.createElement("button");
     nextBtn.textContent = "Next →";
