@@ -16,12 +16,13 @@ CATEGORIES = {
     "PowerElectronics": ["inverter", "converter", "power electronics"]
 }
 
-def detect_category(text):
+def detect_tags(text):
+    tags = []
     t = text.lower()
     for cat, keywords in CATEGORIES.items():
         if any(kw in t for kw in keywords):
-            return cat
-    return "General"
+            tags.append(cat)
+    return tags or ["General"]
 
 def load_feeds(json_file="feeds.json"):
     with open(json_file, "r", encoding="utf-8") as f:
@@ -34,20 +35,26 @@ def fetch_articles(feeds):
         for e in d.entries:
             title = e.title
             link = e.link
-            results.append((title, link))
+            preview = e.get("summary", "")[:300]  # 截取 RSS 中的预览文字
+            results.append((title, link, preview))
     return results
 
-def build_html_snippet(idx, title, link, summary_en, summary_zh, category):
-    title_html = html.escape(title)
-    link_html = html.escape(link)
-    summary_en_html = html.escape(summary_en)
-    summary_zh_html = html.escape(summary_zh)
+def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags):
+    title = html.escape(title)
+    link = html.escape(link)
+    preview = html.escape(preview)
+    summary_en = html.escape(summary_en)
+    summary_zh = html.escape(summary_zh)
+
+    tag_html = " ".join(f"#{tag}" for tag in tags)
+    category = tags[0]
 
     return f'''
-<div class="news-post" data-category="{category}" data-title="{title_html.lower()}" data-summary="{summary_en_html.lower()}">
-  <h3>{idx}. <a href="{link_html}" target="_blank" class="news-link">{title_html}</a></h3>
-  <p class="summary" data-summary-en="{summary_en_html}" data-summary-zh="{summary_zh_html}">{summary_en_html}</p>
-  <div class="category-label">{category}</div>
+<div class="news-post" data-category="{category}" data-title="{title.lower()}" data-summary="{summary_en.lower()}">
+  <h3>{idx}. <a href="{link}" target="_blank" class="news-link">{title}</a></h3>
+  <p class="preview">{preview}</p>
+  <p class="summary" data-summary-en="{summary_en}" data-summary-zh="{summary_zh}">{summary_en}</p>
+  <div class="tags">{tag_html}</div>
 </div>
 '''
 
@@ -56,29 +63,28 @@ def main():
     articles = fetch_articles(feeds)[:500]
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
-    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     print(f"📰 Processing {len(articles)} articles...")
 
     processed = []
-    for idx, (title, link) in enumerate(articles, start=1):
+    for idx, (title, link, preview) in enumerate(articles, start=1):
         try:
             summary_en, summary_zh = summarize(title, link)
-            category = detect_category(title + " " + summary_en)
-            processed.append((idx, title, link, summary_en, summary_zh, category))
+            tags = detect_tags(f"{title} {summary_en}")
+            processed.append((idx, title, link, preview, summary_en, summary_zh, tags))
         except Exception as e:
             print(f"⚠️ Skipped {title}: {e}")
 
     total_pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
 
-    for page_num in range(1, total_pages + 1):
-        start = (page_num - 1) * ITEMS_PER_PAGE
+    for pg in range(1, total_pages + 1):
+        start = (pg - 1) * ITEMS_PER_PAGE
         chunk = processed[start:start + ITEMS_PER_PAGE]
-        html_content = f"<!-- Last Updated: {timestamp} -->\n"
+        html = f"<!-- Last Updated: {ts} -->\n"
         for item in chunk:
-            html_content += build_html_snippet(*item)
+            html += build_html_snippet(*item)
 
-        # Inject language switching script
-        html_content += """
+        html += """
 <script>
 window.addEventListener("message", (event) => {
   if (!event.data) return;
@@ -92,8 +98,8 @@ window.addEventListener("message", (event) => {
 });
 </script>
 """
-        Path(f"{POSTS_DIR}/page{page_num}.html").write_text(html_content, encoding="utf-8")
-        print(f"✅ Wrote page{page_num}.html with {len(chunk)} items")
+        Path(f"{POSTS_DIR}/page{pg}.html").write_text(html, encoding="utf-8")
+        print(f"✅ Wrote page{pg}.html with {len(chunk)} items.")
 
 if __name__ == "__main__":
     main()
