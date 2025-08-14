@@ -1,3 +1,4 @@
+# scripts/aggregator.py
 import json, math, html
 import feedparser
 from datetime import datetime
@@ -17,10 +18,9 @@ CATEGORIES = {
 
 def detect_category(text):
     t = text.lower()
-    for cat, kw_list in CATEGORIES.items():
-        for kw in kw_list:
-            if kw in t:
-                return cat
+    for cat, keywords in CATEGORIES.items():
+        if any(kw in t for kw in keywords):
+            return cat
     return "General"
 
 def load_feeds(json_file="feeds.json"):
@@ -32,20 +32,21 @@ def fetch_articles(feeds):
     for f in feeds:
         d = feedparser.parse(f["url"])
         for e in d.entries:
-            results.append((e.title, e.link))
+            title = e.title
+            link = e.link
+            results.append((title, link))
     return results
 
 def build_html_snippet(idx, title, link, summary_en, summary_zh, category):
-    # 防止HTML属性注入、格式错乱
-    title = html.escape(title)
-    link = html.escape(link)
-    summary_en = html.escape(summary_en)
-    summary_zh = html.escape(summary_zh)
+    title_html = html.escape(title)
+    link_html = html.escape(link)
+    summary_en_html = html.escape(summary_en)
+    summary_zh_html = html.escape(summary_zh)
 
     return f'''
-<div class="news-post" data-category="{category}">
-  <h3>{idx}. <a href="{link}" target="_blank" class="news-link">{title}</a></h3>
-  <p class="summary" data-summary-en="{summary_en}" data-summary-zh="{summary_zh}">{summary_en}</p>
+<div class="news-post" data-category="{category}" data-title="{title_html.lower()}" data-summary="{summary_en_html.lower()}">
+  <h3>{idx}. <a href="{link_html}" target="_blank" class="news-link">{title_html}</a></h3>
+  <p class="summary" data-summary-en="{summary_en_html}" data-summary-zh="{summary_zh_html}">{summary_en_html}</p>
   <div class="category-label">{category}</div>
 </div>
 '''
@@ -55,49 +56,44 @@ def main():
     articles = fetch_articles(feeds)[:500]
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
-    ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    print(f"⏳ Processing {len(articles)} articles...")
+    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    print(f"📰 Processing {len(articles)} articles...")
 
     processed = []
-    for idx, (t, l) in enumerate(articles, start=1):
+    for idx, (title, link) in enumerate(articles, start=1):
         try:
-            en, zh = summarize(t, l)
-            cat = detect_category(t + " " + en)
-            processed.append((idx, t, l, en, zh, cat))
-        except Exception as ex:
-            print(f"⚠️ Skipped {t}: {ex}")
+            summary_en, summary_zh = summarize(title, link)
+            category = detect_category(title + " " + summary_en)
+            processed.append((idx, title, link, summary_en, summary_zh, category))
+        except Exception as e:
+            print(f"⚠️ Skipped {title}: {e}")
 
-    pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
-    for pg in range(1, pages + 1):
-        start = (pg - 1) * ITEMS_PER_PAGE
+    total_pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
+
+    for page_num in range(1, total_pages + 1):
+        start = (page_num - 1) * ITEMS_PER_PAGE
         chunk = processed[start:start + ITEMS_PER_PAGE]
-        html = f"<!-- Last Updated: {ts} -->\n"
+        html_content = f"<!-- Last Updated: {timestamp} -->\n"
         for item in chunk:
-            html += build_html_snippet(*item)
+            html_content += build_html_snippet(*item)
 
-        # 添加语言切换 JS 支持
-        html += """
-<!-- Lang toggle support -->
+        # Inject language switching script
+        html_content += """
 <script>
 window.addEventListener("message", (event) => {
   if (!event.data) return;
   const summaries = document.querySelectorAll(".summary");
   if (event.data === "switch-lang-zh") {
-    summaries.forEach(el => {
-      el.textContent = el.dataset.summaryZh || el.dataset.summaryEn;
-    });
+    summaries.forEach(el => el.textContent = el.dataset.summaryZh || el.dataset.summaryEn);
   }
   if (event.data === "switch-lang-en") {
-    summaries.forEach(el => {
-      el.textContent = el.dataset.summaryEn || "";
-    });
+    summaries.forEach(el => el.textContent = el.dataset.summaryEn || "");
   }
 });
 </script>
 """
-
-        Path(f"{POSTS_DIR}/page{pg}.html").write_text(html, encoding="utf-8")
-        print(f"✅ Wrote page{pg}.html with {len(chunk)} posts.")
+        Path(f"{POSTS_DIR}/page{page_num}.html").write_text(html_content, encoding="utf-8")
+        print(f"✅ Wrote page{page_num}.html with {len(chunk)} items")
 
 if __name__ == "__main__":
     main()
