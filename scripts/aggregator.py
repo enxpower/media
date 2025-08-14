@@ -1,4 +1,4 @@
-import json, math, html
+import json, math, html, itertools
 import feedparser
 from datetime import datetime, timezone
 from pathlib import Path
@@ -7,6 +7,7 @@ from newspaper import Article
 
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
+PER_FEED_LIMIT = 5  # ← 每个来源最多抓几条文章，可自行调整
 
 CATEGORIES = {
     "Storage": ["storage", "battery", "energy storage", "bess"],
@@ -42,18 +43,29 @@ def load_feeds(json_file="feeds.json"):
     with open(json_file, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def fetch_articles(feeds):
-    results = []
+def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT):
+    feed_articles = []
+
     for f in feeds:
+        articles = []
         d = feedparser.parse(f["url"])
-        for e in d.entries:
+        for e in d.entries[:per_feed_limit]:
             title = e.title
             link = e.link
             fallback_summary = html.unescape(e.get("summary", "")[:400])
             preview = extract_preview(link, fallback_summary)
             source = d.feed.get("title", "Unknown Source")
             published = e.get("published", "Unknown Date")
-            results.append((title, link, preview, source, published))
+            articles.append((title, link, preview, source, published))
+        feed_articles.append(articles)
+
+    # 跨源交错排列（如 A1 B1 C1 A2 B2 C2）
+    results = []
+    for items in itertools.zip_longest(*feed_articles):
+        for item in items:
+            if item:
+                results.append(item)
+
     return results
 
 def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, source, published):
@@ -79,7 +91,7 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, 
 
 def main():
     feeds = load_feeds()
-    articles = fetch_articles(feeds)[:300]
+    articles = fetch_articles(feeds)[:300]  # 最多抓取300条用于分页
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
