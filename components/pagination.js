@@ -8,13 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const match = window.location.pathname.match(/page(\d+)\.html/);
   const currentPage = match ? parseInt(match[1]) : 1;
 
-  // 加载总页数
-  fetch("../page-count.json")
+  // ✅ 正确路径修复：page-count.json 与 pageX.html 同级
+  fetch("page-count.json")
     .then(res => res.json())
     .then(data => {
       const totalPages = data.total_pages || 1;
 
-      // 构建“上一页”按钮
+      // ◀️ 上一页按钮
       const prevBtn = document.createElement("button");
       prevBtn.textContent = "◀️ Prev";
       prevBtn.disabled = currentPage === 1;
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       };
       paginationDiv.appendChild(prevBtn);
 
-      // 构建每个页码按钮
+      // 页码按钮
       for (let i = 1; i <= totalPages; i++) {
         const btn = document.createElement("button");
         btn.textContent = `Page ${i}`;
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
         paginationDiv.appendChild(btn);
       }
 
-      // 构建“下一页”按钮
+      // ▶️ 下一页按钮
       const nextBtn = document.createElement("button");
       nextBtn.textContent = "Next ▶️";
       nextBtn.disabled = currentPage === totalPages;
