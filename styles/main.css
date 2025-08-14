@@ -1,20 +1,19 @@
-/* Reset some default spacing */
+/* Reset default spacing and box model */
 body, h1, h3, p, div {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Global settings */
+/* Base settings */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background-color: #f8f9fa;
   color: #212529;
   line-height: 1.6;
-  padding: 0;
 }
 
-/* Header section */
+/* Header */
 header {
   background-color: #0d6efd;
   color: white;
@@ -35,7 +34,6 @@ header h1 {
   gap: 0.5rem;
 }
 
-/* Search box & language toggle */
 #searchBox {
   padding: 0.5rem;
   border: none;
@@ -52,7 +50,7 @@ header h1 {
   cursor: pointer;
 }
 
-/* Pagination buttons */
+/* Pagination */
 #pagination {
   text-align: center;
   padding: 1rem 0;
@@ -78,7 +76,7 @@ header h1 {
   font-weight: bold;
 }
 
-/* News post card */
+/* News post layout */
 .news-post {
   background-color: white;
   border: 1px solid #dee2e6;
@@ -89,81 +87,96 @@ header h1 {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
+/* Title */
 .news-post h3 {
-  font-size: 1.1rem;
-  color: #0d6efd;
-  margin-bottom: 0.3rem;
+  font-size: 1.15rem;
+  color: #5025b0;
+  margin-bottom: 0.5rem;
 }
 
 .news-post a {
   text-decoration: none;
-  color: #0d6efd;
+  color: #5025b0;
 }
 
 .news-post a:hover {
   text-decoration: underline;
 }
 
-/* 原文预览 */
+/* Preview from original article */
 .news-post p.preview {
-  font-size: 0.9rem;
-  color: #6c757d;
+  font-size: 0.95rem;
+  color: #555;
   font-style: italic;
-  margin: 0.5rem 0;
-  line-height: 1.5;
+  margin: 0.3rem 0 0.6rem 0;
 }
 
-/* AI解读 */
+/* AI summary */
 .news-post p.summary {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #212529;
-  margin: 0.3rem 0 0.5rem 0;
-  line-height: 1.6;
+  margin: 0.2rem 0 0.6rem 0;
 }
 
-/* 标签 */
+/* Category Label */
+.category-label {
+  display: inline-block;
+  background-color: #6c757d;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  margin-top: 0.2rem;
+}
+
+/* Tag List */
 .news-post .tags {
   font-size: 0.75rem;
   margin-top: 0.4rem;
   color: #0d6efd;
   font-weight: 500;
-  display: block;
 }
 
-/* 分类标签彩色背景 */
-.category-label {
-  display: inline-block;
-  padding: 0.2rem 0.5rem;
-  border-radius: 5px;
-  font-size: 0.75rem;
-  color: white;
-  margin-top: 0.3rem;
-}
+/* Per-category color overrides */
+[data-category="Storage"] .category-label,
+[data-category="Storage"] .tags { background-color: #198754; color: white; }
 
-/* 各分类背景色 */
-[data-category="Storage"] .category-label {
-  background-color: #198754;
-}
-[data-category="PV"] .category-label {
-  background-color: #f39c12;
-}
-[data-category="Wind"] .category-label {
-  background-color: #0dcaf0;
-}
-[data-category="Charger"] .category-label {
-  background-color: #6f42c1;
-}
-[data-category="PowerElectronics"] .category-label {
-  background-color: #d63384;
-}
-[data-category="General"] .category-label {
-  background-color: #6c757d;
-}
+[data-category="PV"] .category-label,
+[data-category="PV"] .tags { background-color: #f39c12; color: white; }
 
-/* Footer (if needed) */
+[data-category="Wind"] .category-label,
+[data-category="Wind"] .tags { background-color: #0dcaf0; color: white; }
+
+[data-category="Charger"] .category-label,
+[data-category="Charger"] .tags { background-color: #6f42c1; color: white; }
+
+[data-category="PowerElectronics"] .category-label,
+[data-category="PowerElectronics"] .tags { background-color: #d63384; color: white; }
+
+[data-category="General"] .category-label,
+[data-category="General"] .tags { background-color: #6c757d; color: white; }
+
+/* Footer */
 footer {
   text-align: center;
   padding: 2rem;
   font-size: 0.9rem;
   color: #6c757d;
+}
+
+/* Responsive layout (basic) */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #toolbar {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  iframe {
+    min-height: 2000px;
+  }
 }
