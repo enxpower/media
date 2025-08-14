@@ -3,13 +3,7 @@ import feedparser
 from datetime import datetime
 from pathlib import Path
 from openai_summary import summarize
-
-try:
-    from newspaper import Article
-    NEWSPAPER_AVAILABLE = True
-except ImportError:
-    print("⚠️ Warning: newspaper3k not available. Preview will fallback to RSS summary.")
-    NEWSPAPER_AVAILABLE = False
+from newspaper import Article
 
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
@@ -31,18 +25,17 @@ def detect_tags(text):
     return tags or ["General"]
 
 def extract_preview(link, fallback_summary=""):
-    if not NEWSPAPER_AVAILABLE:
-        return fallback_summary[:400]
-
     try:
         article = Article(link)
         article.download()
         article.parse()
         paragraphs = [p.strip() for p in article.text.split("\n") if p.strip()]
         preview = " ".join(paragraphs[:2])
-        return preview[:380] + "..." if len(preview) > 400 else preview
+        if len(preview) > 400:
+            preview = preview[:380] + "..."
+        return preview
     except Exception as e:
-        print(f"⚠️ Preview fetch failed: {e}")
+        print(f"⚠️ Failed to fetch preview from {link}: {e}")
         return fallback_summary[:400]
 
 def load_feeds(json_file="feeds.json"):
@@ -51,12 +44,12 @@ def load_feeds(json_file="feeds.json"):
 
 def fetch_articles(feeds):
     results = []
-    for feed in feeds:
-        d = feedparser.parse(feed["url"])
-        for entry in d.entries:
-            title = entry.title
-            link = entry.link
-            fallback_summary = html.unescape(entry.get("summary", "")[:400])
+    for f in feeds:
+        d = feedparser.parse(f["url"])
+        for e in d.entries:
+            title = e.title
+            link = e.link
+            fallback_summary = html.unescape(e.get("summary", "")[:400])
             preview = extract_preview(link, fallback_summary)
             results.append((title, link, preview))
     return results
@@ -75,7 +68,6 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags):
   <h3>{idx}. <a href="{link}" target="_blank" class="news-link">{title}</a></h3>
   <p class="preview">{preview}</p>
   <p class="summary" data-summary-en="{summary_en}" data-summary-zh="{summary_zh}">{summary_en}</p>
-  <div class="category-label">{category}</div>
   <div class="tags">{tag_html}</div>
 </div>
 '''
@@ -85,8 +77,8 @@ def main():
     articles = fetch_articles(feeds)[:500]
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
-    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    print(f"📥 Fetching {len(articles)} articles...")
+    ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    print(f"📥 Processing {len(articles)} articles...")
 
     processed = []
     for idx, (title, link, preview) in enumerate(articles, start=1):
@@ -97,15 +89,15 @@ def main():
         except Exception as e:
             print(f"❌ Skipped {title}: {e}")
 
-    pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
-    for pg in range(1, pages + 1):
+    total_pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
+    for pg in range(1, total_pages + 1):
         start = (pg - 1) * ITEMS_PER_PAGE
         chunk = processed[start:start + ITEMS_PER_PAGE]
-        html = f"<!-- Last Updated: {timestamp} -->\n"
+        html_content = f"<!-- Last Updated: {ts} -->\n"
         for item in chunk:
-            html += build_html_snippet(*item)
+            html_content += build_html_snippet(*item)
 
-        html += """
+        html_content += """
 <!-- Lang toggle support -->
 <script>
 window.addEventListener("message", (event) => {
@@ -120,8 +112,8 @@ window.addEventListener("message", (event) => {
 });
 </script>
 """
-        Path(f"{POSTS_DIR}/page{pg}.html").write_text(html, encoding="utf-8")
-        print(f"✅ page{pg}.html created with {len(chunk)} posts.")
+        Path(f"{POSTS_DIR}/page{pg}.html").write_text(html_content, encoding="utf-8")
+        print(f"✅ Wrote page{pg}.html with {len(chunk)} posts.")
 
 if __name__ == "__main__":
     main()
