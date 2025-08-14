@@ -1,21 +1,56 @@
+// components/pagination.js
+
 document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("pagination");
-  const frame = document.getElementById("newsFrame");
+  const paginationDiv = document.getElementById("pagination");
+  if (!paginationDiv) return;
 
-  if (!container || !frame) return;
+  // 当前页从 URL 中获取 pageX.html 中的 X
+  const match = window.location.pathname.match(/page(\d+)\.html/);
+  const currentPage = match ? parseInt(match[1]) : 1;
 
-  const totalPages = 10; // update as needed
+  // 加载总页数
+  fetch("../page-count.json")
+    .then(res => res.json())
+    .then(data => {
+      const totalPages = data.total_pages || 1;
 
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = `Page ${i}`;
-    btn.dataset.page = i;
-    btn.onclick = () => {
-      frame.src = `posts/page${i}.html`;
-      document.querySelectorAll("#pagination button").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-    };
-    if (i === 1) btn.classList.add("active");
-    container.appendChild(btn);
-  }
+      // 构建“上一页”按钮
+      const prevBtn = document.createElement("button");
+      prevBtn.textContent = "◀️ Prev";
+      prevBtn.disabled = currentPage === 1;
+      prevBtn.onclick = () => {
+        if (currentPage > 1) {
+          window.location.href = `page${currentPage - 1}.html`;
+        }
+      };
+      paginationDiv.appendChild(prevBtn);
+
+      // 构建每个页码按钮
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = `Page ${i}`;
+        if (i === currentPage) {
+          btn.classList.add("active");
+          btn.disabled = true;
+        }
+        btn.onclick = () => {
+          window.location.href = `page${i}.html`;
+        };
+        paginationDiv.appendChild(btn);
+      }
+
+      // 构建“下一页”按钮
+      const nextBtn = document.createElement("button");
+      nextBtn.textContent = "Next ▶️";
+      nextBtn.disabled = currentPage === totalPages;
+      nextBtn.onclick = () => {
+        if (currentPage < totalPages) {
+          window.location.href = `page${currentPage + 1}.html`;
+        }
+      };
+      paginationDiv.appendChild(nextBtn);
+    })
+    .catch(err => {
+      console.error("Failed to load page-count.json:", err);
+    });
 });
