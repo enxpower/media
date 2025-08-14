@@ -8,7 +8,7 @@ from newspaper import Article
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
 MAX_TOTAL = 300
-PER_FEED_LIMIT = 3  # 每个信源最多抓几条
+PER_FEED_LIMIT = 3  # 每个来源最多抓几条
 
 CATEGORIES = {
     "Storage": ["storage", "battery", "energy storage", "bess"],
@@ -28,7 +28,6 @@ def detect_tags(text):
 
 def extract_preview(link, fallback_summary=""):
     try:
-        from newspaper import Article
         article = Article(link)
         article.download()
         article.parse()
@@ -49,22 +48,27 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
     collected = []
 
     for f in feeds:
-        if len(collected) >= max_total:
-            break
-
         d = feedparser.parse(f["url"])
-        entries = d.entries[:per_feed_limit]
+        entries = d.entries
+        count = 0
 
         for e in entries:
+            if count >= per_feed_limit:
+                break  # 每个来源最多 N 条
             if len(collected) >= max_total:
-                break
-            title = e.title
-            link = e.link
-            fallback_summary = html.unescape(e.get("summary", "")[:400])
-            preview = extract_preview(link, fallback_summary)
-            source = d.feed.get("title", "Unknown Source")
-            published = e.get("published", "Unknown Date")
-            collected.append((title, link, preview, source, published))
+                return collected  # 总抓取上限
+
+            try:
+                title = e.title
+                link = e.link
+                fallback_summary = html.unescape(e.get("summary", "")[:400])
+                preview = extract_preview(link, fallback_summary)
+                source = d.feed.get("title", "Unknown Source")
+                published = e.get("published", "Unknown Date")
+                collected.append((title, link, preview, source, published))
+                count += 1
+            except Exception as err:
+                print(f"[SKIPPED] Bad entry from {f['url']}: {err}")
 
     return collected
 
