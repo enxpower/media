@@ -79,7 +79,7 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, 
 
 def main():
     feeds = load_feeds()
-    articles = fetch_articles(feeds)[:500]
+    articles = fetch_articles(feeds)[:300]
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
