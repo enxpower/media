@@ -35,7 +35,7 @@ def fetch_articles(feeds):
         for e in d.entries:
             title = e.title
             link = e.link
-            preview = e.get("summary", "")[:300]  # 截取 RSS 中的预览文字
+            preview = e.get("summary", "")[:300]
             results.append((title, link, preview))
     return results
 
@@ -45,9 +45,8 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags):
     preview = html.escape(preview)
     summary_en = html.escape(summary_en)
     summary_zh = html.escape(summary_zh)
-
     tag_html = " ".join(f"#{tag}" for tag in tags)
-    category = tags[0]
+    category = tags[0]  # 用于 data-category
 
     return f'''
 <div class="news-post" data-category="{category}" data-title="{title.lower()}" data-summary="{summary_en.lower()}">
