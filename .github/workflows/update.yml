@@ -2,8 +2,8 @@ name: Auto Update Feeds
 
 on:
   schedule:
-    - cron: '0 * * * *'  # 每小时自动跑一次
-  workflow_dispatch:     # 支持你手动点击运行
+    - cron: '0 * * * *'  # 每小时自动运行
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install openai feedparser newspaper3k
+          pip install openai feedparser newspaper3k lxml_html_clean
           python -m nltk.downloader punkt
 
       - name: Run aggregator script
