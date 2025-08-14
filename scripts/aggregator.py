@@ -1,6 +1,6 @@
 import json, math, html
 import feedparser
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from openai_summary import summarize
 from newspaper import Article
@@ -35,7 +35,7 @@ def extract_preview(link, fallback_summary=""):
             preview = preview[:380] + "..."
         return preview
     except Exception as e:
-        print(f"⚠️ Failed to fetch preview from {link}: {e}")
+        print(f"[WARN] Failed to fetch preview from {link}: {e}")
         return fallback_summary[:400]
 
 def load_feeds(json_file="feeds.json"):
@@ -82,8 +82,8 @@ def main():
     articles = fetch_articles(feeds)[:500]
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
-    ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    print(f"📥 Processing {len(articles)} articles...")
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    print(f"[INFO] Processing {len(articles)} articles...")
 
     processed = []
     for idx, (title, link, preview, source, published) in enumerate(articles, start=1):
@@ -92,7 +92,7 @@ def main():
             tags = detect_tags(f"{title} {summary_en}")
             processed.append((idx, title, link, preview, summary_en, summary_zh, tags, source, published))
         except Exception as e:
-            print(f"❌ Skipped {title}: {e}")
+            print(f"[SKIPPED] {title}: {e}")
 
     total_pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
     for pg in range(1, total_pages + 1):
@@ -118,7 +118,7 @@ window.addEventListener("message", (event) => {
 </script>
 """
         Path(f"{POSTS_DIR}/page{pg}.html").write_text(html_content, encoding="utf-8")
-        print(f"✅ Wrote page{pg}.html with {len(chunk)} posts.")
+        print(f"[INFO] Wrote page{pg}.html with {len(chunk)} posts.")
 
 if __name__ == "__main__":
     main()
