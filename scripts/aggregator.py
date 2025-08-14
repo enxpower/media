@@ -22,7 +22,7 @@ def detect_tags(text):
     for cat, keywords in CATEGORIES.items():
         if any(kw in t for kw in keywords):
             tags.append(cat)
-    return list(set(tags)) or ["General"]  # 去重
+    return tags or ["General"]
 
 def extract_preview(link, fallback_summary=""):
     try:
@@ -114,10 +114,6 @@ window.addEventListener("message", (event) => {
 """
         Path(f"{POSTS_DIR}/page{pg}.html").write_text(html_content, encoding="utf-8")
         print(f"✅ Wrote page{pg}.html with {len(chunk)} posts.")
-
-    # ✅ 自动写入总页数，供前端分页脚本使用
-    with open("page-count.json", "w", encoding="utf-8") as f:
-        json.dump({"total_pages": total_pages}, f)
 
 if __name__ == "__main__":
     main()
