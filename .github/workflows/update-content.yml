@@ -36,4 +36,4 @@ jobs:
         git config user.email "github-actions@github.com"
         git add posts/
         git commit -m "🤖 Auto-update content from aggregator.py" || echo "Nothing to commit"
-        git push origin dev-ui
+        git push origin HEAD
