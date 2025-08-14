@@ -153,3 +153,25 @@ footer {
 [data-category="General"] .category-label {
   background-color: #6c757d;
 }
+/* Preview under title */
+.news-post p.preview {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin: 0.4rem 0;
+}
+
+/* Tags section */
+.news-post .tags {
+  font-size: 0.75rem;
+  margin-top: 0.4rem;
+  color: #0d6efd;
+  font-weight: 500;
+}
+
+/* Tags auto color by category (optional) */
+[data-category="Storage"] .tags { color: #198754; }
+[data-category="PV"] .tags { color: #f39c12; }
+[data-category="Wind"] .tags { color: #0dcaf0; }
+[data-category="Charger"] .tags { color: #6f42c1; }
+[data-category="PowerElectronics"] .tags { color: #d63384; }
+[data-category="General"] .tags { color: #6c757d; }
