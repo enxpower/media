@@ -1,5 +1,14 @@
 [
   {"url": "https://www.utilitydive.com/rss/energy/"},
   {"url": "https://cleantechnica.com/tag/energy-storage/feed/"},
-  {"url": "https://www.renewableenergyworld.com/storage/feed/"}
+  {"url": "https://www.renewableenergyworld.com/storage/feed/"},
+  {"url": "https://www.greentechmedia.com/rss"},
+  {"url": "https://www.energycentral.com/rss"},
+  {"url": "https://pv-magazine-usa.com/feed/"},
+  {"url": "https://www.windpowermonthly.com/rss"},
+  {"url": "https://www.electrive.com/feed/"},
+  {"url": "https://chargedevs.com/feed/"},
+  {"url": "https://www.powerelectronicsnews.com/feed/"},
+  {"url": "https://www.energy-storage.news/feed/"},
+  {"url": "https://www.renewableenergymagazine.com/rss/site/rss.xml"}
 ]
