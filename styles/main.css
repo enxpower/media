@@ -76,11 +76,6 @@ header h1 {
   font-weight: bold;
 }
 
-#pagination button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 /* News post layout */
 .news-post {
   background-color: white;
@@ -136,52 +131,30 @@ header h1 {
 
 /* Tag List */
 .news-post .tags {
-  display: inline-block;
-  background-color: #e9ecef;
-  color: #333;
   font-size: 0.75rem;
   margin-top: 0.4rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  color: #0d6efd;
   font-weight: 500;
 }
 
 /* Per-category color overrides */
 [data-category="Storage"] .category-label,
-[data-category="Storage"] .tags {
-  background-color: #198754;
-  color: white;
-}
+[data-category="Storage"] .tags { background-color: #198754; color: white; }
 
 [data-category="PV"] .category-label,
-[data-category="PV"] .tags {
-  background-color: #f39c12;
-  color: white;
-}
+[data-category="PV"] .tags { background-color: #f39c12; color: white; }
 
 [data-category="Wind"] .category-label,
-[data-category="Wind"] .tags {
-  background-color: #0dcaf0;
-  color: white;
-}
+[data-category="Wind"] .tags { background-color: #0dcaf0; color: white; }
 
 [data-category="Charger"] .category-label,
-[data-category="Charger"] .tags {
-  background-color: #6f42c1;
-  color: white;
-}
+[data-category="Charger"] .tags { background-color: #6f42c1; color: white; }
 
 [data-category="PowerElectronics"] .category-label,
-[data-category="PowerElectronics"] .tags {
-  background-color: #d63384;
-  color: white;
-}
+[data-category="PowerElectronics"] .tags { background-color: #d63384; color: white; }
 
 [data-category="General"] .category-label,
-[data-category="General"] .tags {
-  background-color: #6c757d;
-  color: white;
-}
+[data-category="General"] .tags { background-color: #6c757d; color: white; }
 
 /* Footer */
 footer {
