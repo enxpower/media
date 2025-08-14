@@ -1,19 +1,21 @@
-// components/pagination.js
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("pagination");
   const frame = document.getElementById("newsFrame");
 
   if (!container || !frame) return;
 
-  const totalPages = 10; // 🛠️ 修改为你实际分页总数
+  const totalPages = 10; // update as needed
 
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement("button");
     btn.textContent = `Page ${i}`;
-    btn.style.margin = "4px";
+    btn.dataset.page = i;
     btn.onclick = () => {
       frame.src = `posts/page${i}.html`;
+      document.querySelectorAll("#pagination button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
     };
+    if (i === 1) btn.classList.add("active");
     container.appendChild(btn);
   }
 });
