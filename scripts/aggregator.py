@@ -51,10 +51,12 @@ def fetch_articles(feeds):
             link = e.link
             fallback_summary = html.unescape(e.get("summary", "")[:400])
             preview = extract_preview(link, fallback_summary)
-            results.append((title, link, preview))
+            source = d.feed.get("title", "Unknown Source")
+            published = e.get("published", "Unknown Date")
+            results.append((title, link, preview, source, published))
     return results
 
-def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags):
+def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, source, published):
     title = html.escape(title)
     link = html.escape(link)
     preview = html.escape(preview)
@@ -62,10 +64,13 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags):
     summary_zh = html.escape(summary_zh)
     tag_html = " ".join(f"#{tag}" for tag in tags)
     category = tags[0]
+    source = html.escape(source)
+    published = html.escape(published)
 
     return f'''
 <div class="news-post" data-category="{category}" data-title="{title.lower()}" data-summary="{summary_en.lower()}">
   <h3>{idx}. <a href="{link}" target="_blank" class="news-link">{title}</a></h3>
+  <div class="meta"><span class="source">{source}</span> | <span class="date">{published}</span></div>
   <p class="preview">{preview}</p>
   <p class="summary" data-summary-en="{summary_en}" data-summary-zh="{summary_zh}">{summary_en}</p>
   <div class="tags">{tag_html}</div>
@@ -81,11 +86,11 @@ def main():
     print(f"📥 Processing {len(articles)} articles...")
 
     processed = []
-    for idx, (title, link, preview) in enumerate(articles, start=1):
+    for idx, (title, link, preview, source, published) in enumerate(articles, start=1):
         try:
             summary_en, summary_zh = summarize(title, link)
             tags = detect_tags(f"{title} {summary_en}")
-            processed.append((idx, title, link, preview, summary_en, summary_zh, tags))
+            processed.append((idx, title, link, preview, summary_en, summary_zh, tags, source, published))
         except Exception as e:
             print(f"❌ Skipped {title}: {e}")
 
