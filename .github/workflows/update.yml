@@ -2,7 +2,7 @@ name: Auto Update Feeds
 
 on:
   schedule:
-    - cron: '0 * * * *'  # 每小时自动运行
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
