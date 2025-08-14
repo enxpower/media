@@ -9,6 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  # ✅ 显式注入 Key
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
