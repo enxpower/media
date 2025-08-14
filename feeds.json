@@ -1,5 +1,8 @@
 [
-  {"url": "https://www.utilitydive.com/rss/energy/"},
-  {"url": "https://cleantechnica.com/tag/energy-storage/feed/"},
-
+  {
+    "url": "https://cleantechnica.com/feed/"
+  },
+  {
+    "url": "https://www.windpowermonthly.com/rss"
+  }
 ]
