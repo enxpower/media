@@ -11,6 +11,10 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  # ✅ 显式设置为环境变量
+
     steps:
       - uses: actions/checkout@v3
 
@@ -25,7 +29,7 @@ jobs:
 
       - name: Run aggregator script
         run: |
-          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} python scripts/aggregator.py
+          python scripts/aggregator.py
 
       - name: Commit and push changes
         run: |
