@@ -1,4 +1,4 @@
-import json, math, html, itertools, random
+import json, math, html
 import feedparser
 from datetime import datetime, timezone
 from pathlib import Path
@@ -7,7 +7,8 @@ from newspaper import Article
 
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
-PER_FEED_LIMIT = 5  # 每个来源最多抓几条文章
+MAX_TOTAL = 300
+PER_FEED_LIMIT = 3  # 每个信源最多抓几条
 
 CATEGORIES = {
     "Storage": ["storage", "battery", "energy storage", "bess"],
@@ -27,6 +28,7 @@ def detect_tags(text):
 
 def extract_preview(link, fallback_summary=""):
     try:
+        from newspaper import Article
         article = Article(link)
         article.download()
         article.parse()
@@ -43,30 +45,28 @@ def load_feeds(json_file="feeds.json"):
     with open(json_file, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT):
-    feed_articles = []
+def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
+    collected = []
 
     for f in feeds:
-        articles = []
+        if len(collected) >= max_total:
+            break
+
         d = feedparser.parse(f["url"])
-        for e in d.entries[:per_feed_limit]:
+        entries = d.entries[:per_feed_limit]
+
+        for e in entries:
+            if len(collected) >= max_total:
+                break
             title = e.title
             link = e.link
             fallback_summary = html.unescape(e.get("summary", "")[:400])
             preview = extract_preview(link, fallback_summary)
             source = d.feed.get("title", "Unknown Source")
             published = e.get("published", "Unknown Date")
-            articles.append((title, link, preview, source, published))
-        feed_articles.append(articles)
+            collected.append((title, link, preview, source, published))
 
-    # 跨源交错排列（如 A1 B1 C1 A2 B2 C2）
-    interleaved = []
-    for items in itertools.zip_longest(*feed_articles):
-        for item in items:
-            if item:
-                interleaved.append(item)
-
-    return interleaved
+    return collected
 
 def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, source, published):
     title = html.escape(title)
@@ -92,11 +92,6 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, 
 def main():
     feeds = load_feeds()
     articles = fetch_articles(feeds)
-
-    # ✅ 彻底混排，解决所有页面单一来源的问题
-    random.shuffle(articles)
-
-    articles = articles[:300]  # 最多保留 300 条内容
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
