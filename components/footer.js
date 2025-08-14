@@ -1,4 +1,5 @@
-<footer>
+const footer = document.createElement("footer");
+footer.innerHTML = `
   <div class="disclaimer">
     <p>This site aggregates news articles related to the energy and power industry.<br>
     All content belongs to their original authors. We do not modify or store any original content.</p>
@@ -15,4 +16,5 @@
       <i class="fab fa-github fa-lg"></i>
     </a>
   </div>
-</footer>
+`;
+document.body.appendChild(footer);
