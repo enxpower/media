@@ -2,8 +2,8 @@ name: Auto Update Feeds
 
 on:
   schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+    - cron: '0 * * * *'  # 每小时自动跑一次
+  workflow_dispatch:     # 支持你手动点击运行
 
 permissions:
   contents: write
@@ -13,12 +13,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - run: pip install openai feedparser
-      - run: OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} python scripts/aggregator.py
-      - run: |
+
+      - name: Install dependencies
+        run: |
+          pip install openai feedparser newspaper3k
+          python -m nltk.downloader punkt
+
+      - name: Run aggregator script
+        run: |
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} python scripts/aggregator.py
+
+      - name: Commit and push changes
+        run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add posts/
