@@ -1,4 +1,4 @@
-import json, math, html, itertools
+import json, math, html, itertools, random
 import feedparser
 from datetime import datetime, timezone
 from pathlib import Path
@@ -7,7 +7,7 @@ from newspaper import Article
 
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
-PER_FEED_LIMIT = 5  # ← 每个来源最多抓几条文章，可自行调整
+PER_FEED_LIMIT = 5  # 每个来源最多抓几条文章
 
 CATEGORIES = {
     "Storage": ["storage", "battery", "energy storage", "bess"],
@@ -59,14 +59,17 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT):
             articles.append((title, link, preview, source, published))
         feed_articles.append(articles)
 
-    # 跨源交错排列（如 A1 B1 C1 A2 B2 C2）
-    results = []
+    # 跨源交错排列（如 A1 B1 C1 A2 B2 C2 ...）
+    interleaved = []
     for items in itertools.zip_longest(*feed_articles):
         for item in items:
             if item:
-                results.append(item)
+                interleaved.append(item)
 
-    return results
+    # 打乱顺序，避免每页还是集中来源
+    random.shuffle(interleaved)
+
+    return interleaved
 
 def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, source, published):
     title = html.escape(title)
