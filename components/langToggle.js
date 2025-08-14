@@ -1,15 +1,10 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const toggleBtn = document.getElementById("langToggle");
-  const iframe = document.getElementById("newsFrame");
-  let isChinese = false;
+document.addEventListener("DOMContentLoaded", () => {
+  const langBtn = document.getElementById("langToggle");
+  let currentLang = "en";
 
-  toggleBtn.addEventListener("click", () => {
-    if (!iframe || !iframe.contentWindow) return;
-
-    const lang = isChinese ? "switch-lang-en" : "switch-lang-zh";
-    iframe.contentWindow.postMessage(lang, "*");
-
-    isChinese = !isChinese;
-    toggleBtn.textContent = isChinese ? "English" : "中文";
-  });
+  langBtn.onclick = () => {
+    currentLang = currentLang === "en" ? "zh" : "en";
+    window.postMessage(`switch-lang-${currentLang}`);
+    langBtn.textContent = currentLang === "en" ? "中文" : "English";
+  };
 });
