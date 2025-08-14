@@ -99,6 +99,10 @@ header h1 {
   color: #5025b0;
 }
 
+.news-post a:visited {
+  color: #6c757d;
+}
+
 .news-post a:hover {
   text-decoration: underline;
 }
@@ -106,16 +110,27 @@ header h1 {
 /* Preview from original article */
 .news-post p.preview {
   font-size: 0.95rem;
-  color: #555;
+  color: #666;
   font-style: italic;
   margin: 0.3rem 0 0.6rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid #ccc;
+  background-color: #f5f5f5;
 }
 
 /* AI summary */
 .news-post p.summary {
   font-size: 0.95rem;
   color: #212529;
-  margin: 0.2rem 0 0.6rem 0;
+  font-weight: bold;
+  margin: 0.4rem 0 0.6rem 0;
+  position: relative;
+}
+
+.news-post p.summary::before {
+  content: "💡 AI Summary: ";
+  color: #198754;
+  font-weight: bold;
 }
 
 /* Category Label */
@@ -162,6 +177,14 @@ footer {
   padding: 2rem;
   font-size: 0.9rem;
   color: #6c757d;
+}
+
+/* Source and date metadata */
+.meta {
+  font-size: 0.75rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+  font-style: italic;
 }
 
 /* Responsive layout (basic) */

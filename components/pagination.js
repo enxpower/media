@@ -1,21 +1,72 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("pagination");
-  const frame = document.getElementById("newsFrame");
+  const paginationContainer = document.getElementById("pagination");
+  const newsContainer = document.getElementById("newsContainer");
+  let currentPage = 1;
+  let totalPages = 1;
 
-  if (!container || !frame) return;
-
-  const totalPages = 10; // update as needed
-
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = `Page ${i}`;
-    btn.dataset.page = i;
-    btn.onclick = () => {
-      frame.src = `posts/page${i}.html`;
-      document.querySelectorAll("#pagination button").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-    };
-    if (i === 1) btn.classList.add("active");
-    container.appendChild(btn);
+  // 自动检测 posts 目录下有多少页
+  async function detectTotalPages() {
+    let i = 1;
+    while (true) {
+      const res = await fetch(`posts/page${i}.html`, { method: "HEAD" });
+      if (!res.ok) break;
+      i++;
+    }
+    totalPages = i - 1;
   }
+
+  // 加载当前页 HTML 内容
+  function loadPage(page) {
+    fetch(`posts/page${page}.html`)
+      .then(res => res.text())
+      .then(html => {
+        newsContainer.innerHTML = html;
+        window.scrollTo(0, 0);
+      });
+  }
+
+  // 渲染分页按钮
+  function renderPagination() {
+    paginationContainer.innerHTML = "";
+
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "← Prev";
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadPage(currentPage);
+        renderPagination();
+      }
+    };
+
+    const pageLabel = document.createElement("span");
+    pageLabel.textContent = ` Page ${currentPage} of ${totalPages} `;
+    pageLabel.style.fontWeight = "bold";
+    pageLabel.style.margin = "0 1rem";
+
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Next →";
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        loadPage(currentPage);
+        renderPagination();
+      }
+    };
+
+    paginationContainer.appendChild(prevBtn);
+    paginationContainer.appendChild(pageLabel);
+    paginationContainer.appendChild(nextBtn);
+  }
+
+  // 初始化加载
+  async function init() {
+    await detectTotalPages();
+    loadPage(currentPage);
+    renderPagination();
+  }
+
+  init();
 });

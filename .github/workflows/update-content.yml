@@ -1,0 +1,36 @@
+name: Hourly Content Aggregation
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # 每小时运行一次（UTC 时间整点）
+  workflow_dispatch:     # 允许你手动触发运行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install newspaper3k feedparser openai lxml_html_clean
+
+    - name: Run aggregator script
+      run: |
+        python scripts/aggregator.py
+
+    - name: Commit generated posts
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add posts/
+        git commit -m "🤖 Auto-update content from aggregator.py" || echo "Nothing to commit"
+        git push origin dev-ui
