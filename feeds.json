@@ -1,8 +1,68 @@
-[
-  {
-    "url": "https://cleantechnica.com/feed/"
-  },
-  {
-    "url": "https://www.windpowermonthly.com/rss"
-  }
+import json
+from datetime import datetime
+
+# 构建RSS/Atom兼容的feeds数据结构（示意形式）
+feeds = [
+    {
+        "title": "CleanTechnica – Clean Energy News",
+        "url": "https://cleantechnica.com/feed/",
+        "category": "Renewables"
+    },
+    {
+        "title": "Canary Media – Decarbonization Insights",
+        "url": "https://www.canarymedia.com/feed",
+        "category": "Decarbonization"
+    },
+    {
+        "title": "Utility Dive – Energy and Utilities",
+        "url": "https://www.utilitydive.com/rss/",
+        "category": "PowerGrid"
+    },
+    {
+        "title": "Renewable Energy World",
+        "url": "https://www.renewableenergyworld.com/feed/",
+        "category": "Renewables"
+    },
+    {
+        "title": "Microgrid Knowledge",
+        "url": "https://microgridknowledge.com/feed/",
+        "category": "Microgrid"
+    },
+    {
+        "title": "Bodo's Power Systems",
+        "url": "https://www.bodospower.com/rss/feed.rss",
+        "category": "PowerElectronics"
+    },
+    {
+        "title": "EVSE China – 光储充产业动态",
+        "url": "https://www.evsechina.com/rss.xml",
+        "category": "Storage"
+    },
+    {
+        "title": "南方电网官方动态",
+        "url": "https://www.csg.cn/rss/csgnews.xml",
+        "category": "PowerGrid"
+    },
+    {
+        "title": "Roche Energy 储能论坛",
+        "url": "https://www.rochenergy.cn/feed/",
+        "category": "Storage"
+    },
+    {
+        "title": "Energy Digital",
+        "url": "https://energydigital.com/rss",
+        "category": "Energy"
+    },
+    {
+        "title": "Recharge News – Wind & Solar",
+        "url": "https://www.rechargenews.com/rss",
+        "category": "Wind"
+    }
 ]
+
+# 保存为 JSON 文件
+output_path = "/mnt/data/feeds.json"
+with open(output_path, "w", encoding="utf-8") as f:
+    json.dump(feeds, f, indent=2, ensure_ascii=False)
+
+output_path
