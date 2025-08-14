@@ -3,6 +3,7 @@ import feedparser
 from datetime import datetime
 from pathlib import Path
 from openai_summary import summarize
+from newspaper import Article
 
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
@@ -23,6 +24,20 @@ def detect_tags(text):
             tags.append(cat)
     return tags or ["General"]
 
+def extract_preview(link, fallback_summary=""):
+    try:
+        article = Article(link)
+        article.download()
+        article.parse()
+        paragraphs = [p.strip() for p in article.text.split("\n") if p.strip()]
+        preview = " ".join(paragraphs[:2])  # 取前两段文字
+        if len(preview) > 400:
+            preview = preview[:380] + "..."
+        return preview
+    except Exception as e:
+        print(f"⚠️ Failed to fetch preview from {link}: {e}")
+        return fallback_summary[:400]
+
 def load_feeds(json_file="feeds.json"):
     with open(json_file, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -34,7 +49,8 @@ def fetch_articles(feeds):
         for e in d.entries:
             title = e.title
             link = e.link
-            preview = e.get("summary", "")[:300]
+            fallback_summary = html.unescape(e.get("summary", "")[:400])
+            preview = extract_preview(link, fallback_summary)
             results.append((title, link, preview))
     return results
 
@@ -62,7 +78,7 @@ def main():
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
     ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    print(f"📰 Processing {len(articles)} articles...")
+    print(f"📥 Processing {len(articles)} articles...")
 
     processed = []
     for idx, (title, link, preview) in enumerate(articles, start=1):
@@ -71,10 +87,9 @@ def main():
             tags = detect_tags(f"{title} {summary_en}")
             processed.append((idx, title, link, preview, summary_en, summary_zh, tags))
         except Exception as e:
-            print(f"⚠️ Skipped {title}: {e}")
+            print(f"❌ Skipped {title}: {e}")
 
     total_pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
-
     for pg in range(1, total_pages + 1):
         start = (pg - 1) * ITEMS_PER_PAGE
         chunk = processed[start:start + ITEMS_PER_PAGE]
@@ -83,6 +98,7 @@ def main():
             html += build_html_snippet(*item)
 
         html += """
+<!-- Lang toggle support -->
 <script>
 window.addEventListener("message", (event) => {
   if (!event.data) return;
@@ -97,7 +113,7 @@ window.addEventListener("message", (event) => {
 </script>
 """
         Path(f"{POSTS_DIR}/page{pg}.html").write_text(html, encoding="utf-8")
-        print(f"✅ Wrote page{pg}.html with {len(chunk)} items.")
+        print(f"✅ Wrote page{pg}.html with {len(chunk)} posts.")
 
 if __name__ == "__main__":
     main()
