@@ -1,9 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
   const paginationContainer = document.getElementById("pagination");
   const newsContainer = document.getElementById("newsContainer");
-  const totalPages = 10; // 更新为实际页数
   let currentPage = 1;
+  let totalPages = 1;
 
+  // 自动检测 posts 目录下有多少页
+  async function detectTotalPages() {
+    let i = 1;
+    while (true) {
+      const res = await fetch(`posts/page${i}.html`, { method: "HEAD" });
+      if (!res.ok) break;
+      i++;
+    }
+    totalPages = i - 1;
+  }
+
+  // 加载当前页 HTML 内容
   function loadPage(page) {
     fetch(`posts/page${page}.html`)
       .then(res => res.text())
@@ -13,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
+  // 渲染分页按钮
   function renderPagination() {
     paginationContainer.innerHTML = "";
 
@@ -28,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const pageLabel = document.createElement("span");
-    pageLabel.textContent = ` Page ${currentPage} `;
+    pageLabel.textContent = ` Page ${currentPage} of ${totalPages} `;
     pageLabel.style.fontWeight = "bold";
     pageLabel.style.margin = "0 1rem";
 
@@ -48,6 +61,12 @@ document.addEventListener("DOMContentLoaded", () => {
     paginationContainer.appendChild(nextBtn);
   }
 
-  loadPage(currentPage);
-  renderPagination();
+  // 初始化加载
+  async function init() {
+    await detectTotalPages();
+    loadPage(currentPage);
+    renderPagination();
+  }
+
+  init();
 });
