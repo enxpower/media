@@ -1,17 +1,5 @@
 [
   {
-    "name": "Solar Daily",
-    "url": "https://www.solardaily.com/rss/solardaily.xml"
-  },
-  {
-    "name": "Wind Daily",
-    "url": "https://www.winddaily.com/rss/winddaily.xml"
-  },
-  {
-    "name": "Energy Central",
-    "url": "https://www.energycentral.com/rss.xml"
-  },
-  {
     "name": "Electrek",
     "url": "https://electrek.co/feed/"
   },
@@ -24,10 +12,6 @@
     "url": "https://spectrum.ieee.org/rss/energy"
   },
   {
-    "name": "Microgrid Knowledge",
-    "url": "https://microgridknowledge.com/feed/"
-  },
-  {
     "name": "PV Tech",
     "url": "https://www.pv-tech.org/feed/"
   },
@@ -36,63 +20,55 @@
     "url": "https://www.renewableenergyworld.com/feed/"
   },
   {
-    "name": "The Energy Mix",
-    "url": "https://theenergymix.com/feed/"
-  },
-  {
     "name": "Energy Storage News",
     "url": "https://www.energy-storage.news/feed/"
   },
   {
-    "name": "InsideEVs",
-    "url": "https://insideevs.com/rss/news/"
+    "name": "pv magazine International",
+    "url": "https://www.pv-magazine.com/feed/"
   },
   {
-    "name": "Greentech Media (Archive)",
-    "url": "https://www.greentechmedia.com/rss"
+    "name": "Canary Media",
+    "url": "https://www.canarymedia.com/rss"
   },
   {
-    "name": "新华网能源频道",
-    "url": "http://www.news.cn/energy/rss.xml"
+    "name": "PV Magazine USA",
+    "url": "https://pv-magazine-usa.com/feed/"
   },
   {
-    "name": "澎湃新闻·能源",
-    "url": "https://www.thepaper.cn/rss_channel_26950"
+    "name": "Energy Monitor",
+    "url": "https://www.energymonitor.ai/feed/"
   },
   {
-    "name": "财新网·能源环境",
-    "url": "https://www.caixin.com/rss/energy.rdf"
+    "name": "T&D World",
+    "url": "https://www.tdworld.com/rss.xml"
   },
   {
-    "name": "界面新闻·能源",
-    "url": "https://www.jiemian.com/rss/1031084.xml"
+    "name": "Power Electronics News",
+    "url": "https://www.powerelectronicsnews.com/feed/"
   },
   {
-    "name": "央视网·能源",
-    "url": "http://rss.cntv.cn/rollnews/energy/index.xml"
+    "name": "Recharge",
+    "url": "https://www.rechargenews.com/rss"
   },
   {
-    "name": "中国能源网",
-    "url": "http://www.china5e.com/rss/rss.xml"
+    "name": "Windpower Monthly (News)",
+    "url": "https://www.windpowermonthly.com/rss"
   },
   {
-    "name": "能见App",
-    "url": "https://www.nengapp.com/rss.xml"
+    "name": "ISO-NE – ISO Newswire",
+    "url": "https://isonewswire.com/feed/"
   },
   {
-    "name": "Canada Tenders",
-    "url": "https://www.canadatenders.ca/feed/"
+    "name": "PJM – Inside Lines",
+    "url": "https://insidelines.pjm.com/feed/"
   },
   {
-    "name": "USA Gov Bids - Energy",
-    "url": "https://www.usa.gov/energy/feed"
+    "name": "ARENA (AU) – Blog",
+    "url": "https://arena.gov.au/blog/feed/"
   },
   {
-    "name": "UK Government Contracts Finder",
-    "url": "https://www.contractsfinder.service.gov.uk/RSSFeed"
-  },
-  {
-    "name": "Australian Tenders",
-    "url": "https://www.australiantenders.com.au/rss/"
+    "name": "Clean Energy Council AU",
+    "url": "https://www.cleanenergycouncil.org.au/news/rss"
   }
 ]
