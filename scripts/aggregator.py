@@ -1,14 +1,16 @@
-import json, math, html
+import json, math, html, os
 import feedparser
 from datetime import datetime, timezone
 from pathlib import Path
 from openai_summary import summarize
 from newspaper import Article
+from collections import deque, defaultdict
 
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
 MAX_TOTAL = 300
-PER_FEED_LIMIT = 3  # 每个来源最多抓几条
+PER_FEED_LIMIT = 3          # 每个来源最多抓几条
+PER_SOURCE_PAGE_CAP = 2     # 每页同一来源最多显示几条
 
 CATEGORIES = {
     "Storage": ["storage", "battery", "energy storage", "bess"],
@@ -46,6 +48,7 @@ def load_feeds(json_file="feeds.json"):
 
 def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
     collected = []
+    seen_links = set()
 
     for f in feeds:
         d = feedparser.parse(f["url"])
@@ -54,13 +57,17 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
 
         for e in entries:
             if count >= per_feed_limit:
-                break  # 每个来源最多 N 条
+                break
             if len(collected) >= max_total:
-                return collected  # 总抓取上限
+                return collected
 
             try:
                 title = e.title
                 link = e.link
+                if link in seen_links:
+                    continue
+                seen_links.add(link)
+
                 fallback_summary = html.unescape(e.get("summary", "")[:400])
                 preview = extract_preview(link, fallback_summary)
                 source = d.feed.get("title", "Unknown Source")
@@ -71,6 +78,61 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
                 print(f"[SKIPPED] Bad entry from {f['url']}: {err}")
 
     return collected
+
+def interleave_round_robin(items, source_index, per_round=1):
+    buckets = {}
+    for it in items:
+        s = it[source_index]
+        buckets.setdefault(s, deque()).append(it)
+
+    q = deque(buckets.items())
+    mixed = []
+
+    while q:
+        s, dq = q.popleft()
+        take = 0
+        while dq and take < per_round:
+            mixed.append(dq.popleft())
+            take += 1
+        if dq:
+            q.append((s, dq))
+    return mixed
+
+def paginate_with_cap(mixed, page_size=ITEMS_PER_PAGE, per_source_cap=PER_SOURCE_PAGE_CAP):
+    pages = []
+    i = 0
+    n = len(mixed)
+    while i < n:
+        page = []
+        cnt = defaultdict(int)
+        in_page_set = set()
+
+        # 第一轮：严格限制每源条数
+        j = i
+        while j < n and len(page) < page_size:
+            item = mixed[j]
+            src = item[6]
+            link = item[1]
+            if cnt[src] < per_source_cap and link not in in_page_set:
+                page.append(item)
+                cnt[src] += 1
+                in_page_set.add(link)
+            j += 1
+
+        # 第二轮：回填
+        if len(page) < page_size:
+            j = i
+            while j < n and len(page) < page_size:
+                item = mixed[j]
+                link = item[1]
+                if link not in in_page_set:
+                    page.append(item)
+                    in_page_set.add(link)
+                j += 1
+
+        pages.append(page)
+        i += len(page)
+    return pages
 
 def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, source, published):
     title = html.escape(title)
@@ -93,30 +155,49 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, 
 </div>
 '''
 
+def clear_old_pages():
+    """删除 posts 目录下所有 pageX.html，防止旧页面残留"""
+    path = Path(POSTS_DIR)
+    if not path.exists():
+        return
+    for file in path.glob("page*.html"):
+        try:
+            file.unlink()
+            print(f"[INFO] Deleted old page: {file.name}")
+        except Exception as e:
+            print(f"[WARN] Could not delete {file}: {e}")
+
 def main():
     feeds = load_feeds()
     articles = fetch_articles(feeds)
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
+    clear_old_pages()  # ☆ 在生成前先清空旧页面
+
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     print(f"[INFO] Processing {len(articles)} articles...")
 
     processed = []
-    for idx, (title, link, preview, source, published) in enumerate(articles, start=1):
+    for (title, link, preview, source, published) in articles:
         try:
             summary_en, summary_zh = summarize(title, link)
             tags = detect_tags(f"{title} {summary_en}")
-            processed.append((idx, title, link, preview, summary_en, summary_zh, tags, source, published))
+            processed.append((title, link, preview, summary_en, summary_zh, tags, source, published))
         except Exception as e:
             print(f"[SKIPPED] {title}: {e}")
 
-    total_pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
-    for pg in range(1, total_pages + 1):
-        start = (pg - 1) * ITEMS_PER_PAGE
-        chunk = processed[start:start + ITEMS_PER_PAGE]
+    mixed = interleave_round_robin(processed, source_index=6, per_round=1)
+    pages = paginate_with_cap(mixed, page_size=ITEMS_PER_PAGE, per_source_cap=PER_SOURCE_PAGE_CAP)
+
+    total_pages = len(pages)
+    for pg, chunk in enumerate(pages, start=1):
         html_content = f"<!-- Last Updated: {ts} -->\n"
-        for item in chunk:
-            html_content += build_html_snippet(*item)
+        start_index = (pg - 1) * ITEMS_PER_PAGE + 1
+        for offset, item in enumerate(chunk):
+            title, link, preview, summary_en, summary_zh, tags, source, published = item
+            html_content += build_html_snippet(
+                start_index + offset, title, link, preview, summary_en, summary_zh, tags, source, published
+            )
 
         html_content += """
 <!-- Lang toggle support -->
