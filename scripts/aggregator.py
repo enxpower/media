@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from openai_summary import summarize
 from newspaper import Article
+from collections import deque
 
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
@@ -72,6 +73,31 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
 
     return collected
 
+def interleave_round_robin(items, source_index, per_round=1):
+    """
+    轮询混排：保持每个来源内部原有顺序，但在全局交错输出
+    items: list[tuple]
+    source_index: tuple 中 source 的索引位置
+    per_round: 每轮每个来源最多取几条（通常 1）
+    """
+    buckets = {}
+    for it in items:
+        s = it[source_index]
+        buckets.setdefault(s, deque()).append(it)
+
+    q = deque(buckets.items())
+    mixed = []
+
+    while q:
+        s, dq = q.popleft()
+        take = 0
+        while dq and take < per_round:
+            mixed.append(dq.popleft())
+            take += 1
+        if dq:  # 该来源还有剩余，排到队尾
+            q.append((s, dq))
+    return mixed
+
 def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, source, published):
     title = html.escape(title)
     link = html.escape(link)
@@ -101,22 +127,33 @@ def main():
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     print(f"[INFO] Processing {len(articles)} articles...")
 
+    # 先汇总并摘要（不带 idx），等混排后再编号
     processed = []
-    for idx, (title, link, preview, source, published) in enumerate(articles, start=1):
+    for (title, link, preview, source, published) in articles:
         try:
             summary_en, summary_zh = summarize(title, link)
             tags = detect_tags(f"{title} {summary_en}")
-            processed.append((idx, title, link, preview, summary_en, summary_zh, tags, source, published))
+            processed.append((title, link, preview, summary_en, summary_zh, tags, source, published))
         except Exception as e:
             print(f"[SKIPPED] {title}: {e}")
 
-    total_pages = math.ceil(len(processed) / ITEMS_PER_PAGE)
+    # ★ 关键：在分页前先做轮询混排
+    # 当前结构: (title, link, preview, summary_en, summary_zh, tags, source, published)
+    mixed = interleave_round_robin(processed, source_index=6, per_round=1)
+
+    total_pages = math.ceil(len(mixed) / ITEMS_PER_PAGE)
     for pg in range(1, total_pages + 1):
         start = (pg - 1) * ITEMS_PER_PAGE
-        chunk = processed[start:start + ITEMS_PER_PAGE]
+        end = start + ITEMS_PER_PAGE
+        chunk = mixed[start:end]
+
         html_content = f"<!-- Last Updated: {ts} -->\n"
-        for item in chunk:
-            html_content += build_html_snippet(*item)
+        # 用全局序号渲染（避免每页都从 1 开始）
+        for global_idx, item in enumerate(chunk, start=start + 1):
+            title, link, preview, summary_en, summary_zh, tags, source, published = item
+            html_content += build_html_snippet(
+                global_idx, title, link, preview, summary_en, summary_zh, tags, source, published
+            )
 
         html_content += """
 <!-- Lang toggle support -->
