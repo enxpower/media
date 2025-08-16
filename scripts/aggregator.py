@@ -165,19 +165,7 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, 
     title_q = urllib.parse.quote_plus(title)
     link_q = urllib.parse.quote_plus(link)
 
-    share_html = f'''
-    <div class="share-buttons">
-      <a href="https://twitter.com/intent/tweet?text={title_q}&url={link_q}" target="_blank" aria-label="Share on Twitter" class="share-link" data-platform="Twitter">
-        <i class="fab fa-twitter"></i>
-      </a>
-      <a href="https://www.linkedin.com/shareArticle?mini=true&url={link_q}&title={title_q}" target="_blank" aria-label="Share on LinkedIn" class="share-link" data-platform="LinkedIn">
-        <i class="fab fa-linkedin"></i>
-      </a>
-      <a href="https://www.reddit.com/submit?url={link_q}&title={title_q}" target="_blank" aria-label="Share on Reddit" class="share-link" data-platform="Reddit">
-        <i class="fab fa-reddit"></i>
-      </a>
-    </div>
-    '''
+    
 
     return f'''
 <div class="news-post" data-category="{category}" data-title="{title_esc.lower()}" data-summary="{summary_en.lower()}">
