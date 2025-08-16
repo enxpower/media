@@ -21,7 +21,6 @@
 /* ---------- Base ---------- */
 *{box-sizing:border-box}
 html,body{height:100%}
-img,svg{max-width:100%;height:auto}
 body{
   margin:0;
   font-family:var(--font-sans);
@@ -31,34 +30,30 @@ body{
   -moz-osx-font-smoothing:grayscale;
 }
 
-/* ---------- Header：标题在左、搜索+中文在右（不再被裁剪） ---------- */
+/* ---------- Header：标题在左，搜索/语言在右 ---------- */
 header{
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  display: flex !important;           /* 强制 flex */
-  align-items: center;
-  justify-content: space-between;     /* 左右分散 */
-  padding: 10px 16px;                  /* 统一内边距 */
-  min-height: 56px;                    /* 关键：避免顶端裁剪 */
-  background: linear-gradient(180deg,var(--brand) 0%, #119edc 100%);
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;                 /* 横向排列 */
+  align-items:center;
+  gap:12px;
+  padding:10px 20px;            /* 顶部留白，避免贴边 */
+  background:linear-gradient(180deg,var(--brand) 0%, #119edc 100%);
   color:#fff;
   box-shadow:0 2px 10px rgba(2,132,199,.25);
 }
 header > h1{
   margin:0;
-  padding:0;
-  font-size:16px;
+  font-size:18px;
   font-weight:700;
 }
-
 #toolbar{
-  margin-left: auto;                   /* 推到右边 */
+  margin-left:auto;             /* 关键：推到右侧 */
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
 }
-
 #searchBox{
   flex:0 1 360px;
   height:36px;
@@ -69,6 +64,7 @@ header > h1{
   padding:0 12px;
   outline:none;
   transition:.2s border-color,.2s background;
+  white-space:nowrap;
 }
 #searchBox::placeholder{color:rgba(255,255,255,.85)}
 #searchBox:focus{
@@ -76,31 +72,35 @@ header > h1{
   background:rgba(255,255,255,.22);
 }
 
+/* 语言切换按钮：修复“English”文字溢出/不居中问题 */
 #langToggle{
+  display:inline-flex;          /* 垂直水平都居中 */
+  align-items:center;
+  justify-content:center;
   height:36px;
-  min-width:48px;                      /* 防过窄换行 */
-  white-space:nowrap;                  /* 禁止竖排 */
-  writing-mode:horizontal-tb;
-  padding:0 12px;
+  min-width:90px;               /* “English”也能放下 */
+  padding:0 14px;
   border-radius:10px;
   border:1px solid rgba(255,255,255,.25);
   background:#fff;
   color:var(--brand-ink);
   cursor:pointer;
   font-weight:600;
+  font-size:14px;
+  line-height:1;                /* 避免行高把按钮撑高 */
+  white-space:nowrap;           /* 禁止换行成竖排 */
 }
 #langToggle:hover{filter:brightness(0.97)}
 
-/* ---------- Layout 容器 ---------- */
+/* ---------- Layout ---------- */
 #newsContainer,
-#pagination,
-footer{
+#pagination{
   width:min(980px, calc(100% - 24px));
   margin:0 auto;
 }
 #pagination{padding:14px 0 4px}
 
-/* ---------- Pagination（两按钮+span.page-info） ---------- */
+/* ---------- Pagination ---------- */
 #pagination{
   display:flex;
   align-items:center;
@@ -151,7 +151,7 @@ footer{
   transform:translateY(-1px);
 }
 
-/* 分类色条（根据 data-category） */
+/* 分类色条 */
 .news-post[data-category="PV"]{ border-left-color:var(--c-pv) }
 .news-post[data-category="Wind"]{ border-left-color:var(--c-wind) }
 .news-post[data-category="Storage"]{ border-left-color:var(--c-storage) }
@@ -176,7 +176,7 @@ footer{
   border-color:var(--brand-ink);
 }
 
-/* 元信息（来源 / 时间） —— 改为普通字重 */
+/* 元信息（来源 / 时间）——来源不再加粗 */
 .news-post .meta{
   display:flex;
   gap:10px;
@@ -185,7 +185,6 @@ footer{
   font-size:12px;
   color:var(--muted);
   margin:0 0 10px;
-  font-weight:400;                     /* 普通字重 */
 }
 .news-post .meta .source{
   display:inline-flex;
@@ -194,8 +193,8 @@ footer{
   padding:2px 8px;
   border-radius:999px;
   background:#f1f5f9;
-  color:#0f172a;
-  font-weight:400;                     /* 普通字重 */
+  color:#334155;
+  font-weight:400;               /* 改为普通字重 */
   border:1px solid var(--line);
 }
 
@@ -206,7 +205,9 @@ footer{
   color:#111827;
   font-size:14px;
 }
-.news-post .preview{ color:#334155; }
+.news-post .preview{
+  color:#334155;
+}
 .news-post .summary{
   margin-top:6px;
   padding:10px 12px;
@@ -220,7 +221,7 @@ footer{
 .news-post[data-category="Charger"] .summary{ border-color:color-mix(in srgb,var(--c-charger),#ffffff 65%) }
 .news-post[data-category="PowerElectronics"] .summary{ border-color:color-mix(in srgb,var(--c-pe),#ffffff 65%) }
 
-/* 标签（保持 #PV #Wind 风格，但做成胶囊） */
+/* 标签 */
 .news-post .tags{
   display:inline-block;
   margin-top:6px;
@@ -232,47 +233,31 @@ footer{
   background:#f1f5f9;
 }
 
-/* ---------- Footer：收进内容宽度，留足底边距与安全区 ---------- */
+/* ---------- Footer ---------- */
 footer{
   width:min(980px, calc(100% - 24px));
-  margin:32px auto 96px;               /* 底部多留空间，防止“掉出” */
-  padding:16px 12px max(16px, env(safe-area-inset-bottom));
+  margin:24px auto 60px;        /* 底部更多空间，图标不再贴边 */
+  padding-bottom:40px;
   color:var(--muted);
   font-size:12px;
   text-align:center;
-  border-top:1px solid var(--line);
-  background:transparent;
 }
-footer .disclaimer{ margin-bottom:8px; font-style:italic; color:#8a94a6; }
-footer .social-icons{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-top:8px;
-}
-footer .social-icons a{
-  display:inline-flex;
-  width:28px;height:28px;
-  align-items:center;justify-content:center;
-  border-radius:8px;
-  border:1px solid var(--line);
-  background:#fff;
-  text-decoration:none;
-  transition:transform .15s ease;
-}
-footer .social-icons a:hover{ transform: translateY(-1px); }
 
 /* ---------- Mobile ---------- */
-@media (max-width:760px){
-  header{ flex-wrap: wrap; }
+@media (max-width:768px){
+  header{ flex-wrap:wrap }      /* 小屏恢复换行 */
   #toolbar{
     margin-left:0;
     width:100%;
+    padding-top:8px;
     justify-content:flex-start;
   }
-
+  #searchBox{ flex:1 1 auto; }
+  #langToggle{
+    height:34px;
+    min-width:78px;
+    font-size:13px;
+  }
   #newsContainer, #pagination, footer{ width:calc(100% - 16px) }
   .news-post{ padding:12px 12px 10px; margin:12px auto }
   .news-post h3{ font-size:15px }
