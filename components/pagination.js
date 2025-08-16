@@ -1,52 +1,71 @@
-// components/pagination.js
 document.addEventListener("DOMContentLoaded", () => {
-  const paginationContainer =
-    document.getElementById("pagination");
-  const newsContainer =
-    document.getElementById("newsContainer") || document.getElementById("news");
+  const paginationContainer = document.getElementById("pagination");
+  const newsContainer = document.getElementById("newsContainer");
 
   let currentPage = 1;
   let totalPages = 1;
-  let lastLoadToken = 0;
 
-  const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+  // -------- utils --------
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-  async function headExists(path) {
-    try {
-      const res = await fetch(path, { method: "HEAD", cache: "no-store" });
-      return res.ok;
-    } catch {
-      return false;
+  function getPageFromURL() {
+    // 支持 ?page= 和 #page=
+    const s = new URLSearchParams(window.location.search);
+    if (s.has("page")) {
+      const n = parseInt(s.get("page"), 10);
+      if (!Number.isNaN(n)) return n;
     }
+    const m = window.location.hash.match(/page=(\d+)/i);
+    if (m) {
+      const n = parseInt(m[1], 10);
+      if (!Number.isNaN(n)) return n;
+    }
+    return null;
   }
 
-  // 自动检测 posts 目录下有多少页（最多探测 200 页，避免死循环）
-  async function detectTotalPages(maxProbe = 200) {
+  function setURLPage(page) {
+    // 统一使用 ?page=，同时清掉 hash，避免浏览器保留旧的 #page=3
+    const url = new URL(window.location.href);
+    url.searchParams.set("page", String(page));
+    url.hash = "";
+    window.history.replaceState({}, "", url.toString());
+  }
+
+  // -------- discovery --------
+  async function detectTotalPages() {
     let i = 1;
-    for (; i <= maxProbe; i++) {
-      const ok = await headExists(`posts/page${i}.html`);
-      if (!ok) break;
+    // HEAD 探测 pageN.html 是否存在
+    while (true) {
+      const res = await fetch(`posts/page${i}.html`, { method: "HEAD", cache: "no-store" });
+      if (!res.ok) break;
+      i++;
+      // 防守：最多探测 500 页
+      if (i > 500) break;
     }
-    totalPages = Math.max(1, i - 1);
+    totalPages = i - 1;
+    if (totalPages < 1) totalPages = 1;
   }
 
-  function setUrlParam(page) {
-    try {
-      const u = new URL(location.href);
-      u.searchParams.set("p", String(page));
-      history.replaceState(null, "", u.toString());
-    } catch {}
+  // -------- render/load --------
+  async function loadPage(page) {
+    const url = `posts/page${page}.html?v=${Date.now()}`; // cache-bust
+    const res = await fetch(url);
+    if (!res.ok) {
+      newsContainer.innerHTML = `<p style="text-align:center;color:#888;">Page ${page} not found.</p>`;
+      return;
+    }
+    const html = await res.text();
+    newsContainer.innerHTML = html;
+    window.scrollTo(0, 0);
   }
 
-  function updatePaginationUI() {
-    if (!paginationContainer) return;
-
+  function renderPagination() {
     paginationContainer.innerHTML = "";
 
     const prevBtn = document.createElement("button");
     prevBtn.textContent = "← Prev";
-    prevBtn.disabled = currentPage <= 1;
-    prevBtn.addEventListener("click", () => goToPage(currentPage - 1));
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => goTo(currentPage - 1);
 
     const pageLabel = document.createElement("span");
     pageLabel.className = "page-info";
@@ -54,82 +73,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const nextBtn = document.createElement("button");
     nextBtn.textContent = "Next →";
-    nextBtn.disabled = currentPage >= totalPages;
-    nextBtn.addEventListener("click", () => goToPage(currentPage + 1));
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => goTo(currentPage + 1);
 
-    paginationContainer.append(prevBtn, pageLabel, nextBtn);
+    paginationContainer.appendChild(prevBtn);
+    paginationContainer.appendChild(pageLabel);
+    paginationContainer.appendChild(nextBtn);
   }
 
-  // 重新执行注入 HTML 中的 <script>（保证页内脚本生效）
-  function reExecuteScripts(root) {
-    if (!root) return;
-    const scripts = root.querySelectorAll("script");
-    scripts.forEach((old) => {
-      const s = document.createElement("script");
-      for (const a of old.attributes) s.setAttribute(a.name, a.value);
-      s.textContent = old.textContent || "";
-      old.replaceWith(s);
-    });
-  }
-
-  async function loadPage(page) {
-    const token = ++lastLoadToken;
-    const url = `posts/page${page}.html`;
-    try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const html = await res.text();
-
-      // 忽略过期的并发请求结果
-      if (token !== lastLoadToken) return;
-
-      if (newsContainer) {
-        newsContainer.innerHTML = html;
-        reExecuteScripts(newsContainer);
-      }
-      try {
-        window.scrollTo({ top: 0, behavior: "instant" });
-      } catch {
-        window.scrollTo(0, 0);
-      }
-    } catch (err) {
-      console.error("[pagination] load failed:", url, err);
-      if (newsContainer) {
-        newsContainer.innerHTML =
-          `<div style="padding:12px;border:1px solid #f99;border-radius:8px;background:#fff6f6">
-             Failed to load ${url}. ${err.message}
-           </div>`;
-      }
-    }
-  }
-
-  async function goToPage(page) {
-    page = clamp(page, 1, totalPages);
-    if (page === currentPage) return;
-    currentPage = page;
-    setUrlParam(currentPage);
-    updatePaginationUI();
+  async function goTo(page) {
+    currentPage = clamp(page, 1, totalPages);
+    setURLPage(currentPage);   // 同步地址栏
     await loadPage(currentPage);
+    renderPagination();
   }
 
-  // 初始化：默认跳转到“最新页”（最大 N）；若有 ?p= 则按参数直达
-  async function init() {
-    await detectTotalPages(200);
+  // -------- init --------
+  (async function init() {
+    await detectTotalPages();
 
-    const p = parseInt(new URLSearchParams(location.search).get("p"), 10);
-    currentPage = Number.isFinite(p) && p >= 1 ? clamp(p, 1, totalPages) : totalPages;
+    // 只有当 URL 显式带了 page 参数时才用它，否则**强制**回到第一页
+    const requested = getPageFromURL();
+    currentPage = clamp(requested ?? 1, 1, totalPages);
 
-    updatePaginationUI();
+    // 如果没有 page 参数（或是无效参数），把 ?page=1 写回地址栏
+    if (requested == null) setURLPage(currentPage);
+
     await loadPage(currentPage);
+    renderPagination();
 
-    // 键盘 ← / → 翻页（输入框内不触发）
-    document.addEventListener("keydown", (e) => {
-      const t = e.target;
-      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
-      if (e.key === "ArrowLeft") goToPage(currentPage - 1);
-      if (e.key === "ArrowRight") goToPage(currentPage + 1);
+    // 监听 hash 变化（例如外部手动改 #page=2）
+    window.addEventListener("hashchange", () => {
+      const p = getPageFromURL();
+      if (p != null && p !== currentPage) goTo(p);
     });
-  }
 
-  init();
+    // 监听浏览器前进后退
+    window.addEventListener("popstate", () => {
+      const p = getPageFromURL();
+      goTo(p == null ? 1 : p);
+    });
+  })();
 });
