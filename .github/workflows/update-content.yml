@@ -19,6 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      # ↓↓↓ 可按需在仓库/环境里改
+      SUMMARIZE_CONCURRENCY: 4      # 受控并发（3~5 推荐）
+      MAX_ARTICLES_PER_RUN: 0       # 0=不限；如需限流可设 20/50 等
+      OPENAI_MODEL: gpt-4o-mini     # 默认更省钱的模型
 
     steps:
       - name: Checkout main (full history)
@@ -27,7 +31,7 @@ jobs:
           fetch-depth: 0
           ref: main
 
-      # ✅ 先同步 main（工作区还是干净的，可以 rebase）
+      # ✅ 先同步 main（工作区干净，rebase 顺畅）
       - name: Git config & pre-sync main
         run: |
           git config user.name "github-actions"
@@ -40,11 +44,20 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+          cache: 'pip'                        # ✅ pip 缓存
+          cache-dependency-path: requirements.txt
+
+      - name: Cache NLTK/newspaper data
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/nltk
+            ~/.cache/newspaper
+          key: ${{ runner.os }}-nltk-newspaper-${{ hashFiles('requirements.txt') }}
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install newspaper3k feedparser openai lxml_html_clean
+          pip install -r requirements.txt -q
 
       - name: Run aggregator script
         run: |
@@ -54,7 +67,6 @@ jobs:
         run: |
           python scripts/generate_sitemap.py
 
-      # ✅ 提交并推送；若推送瞬间 main 又前进，再同步一次后重试
       - name: Commit & push (safe with one retry)
         run: |
           set -e
