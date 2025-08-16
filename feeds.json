@@ -1,61 +1,206 @@
 [
-  { "name": "Electrek", "url": "https://electrek.co/feed/" },
-  { "name": "CleanTechnica", "url": "https://cleantechnica.com/feed/" },
-  { "name": "IEEE Spectrum – Energy", "url": "https://spectrum.ieee.org/rss/energy" },
-  { "name": "PV Tech", "url": "https://www.pv-tech.org/feed/" },
-  { "name": "Renewable Energy World", "url": "https://www.renewableenergyworld.com/feed/" },
-  { "name": "Energy Storage News", "url": "https://www.energy-storage.news/feed/" },
-  { "name": "pv magazine International", "url": "https://www.pv-magazine.com/feed/" },
-  { "name": "Canary Media", "url": "https://www.canarymedia.com/rss" },
-  { "name": "PV Magazine USA", "url": "https://pv-magazine-usa.com/feed/" },
-  { "name": "Energy Monitor", "url": "https://www.energymonitor.ai/feed/" },
-  { "name": "T&D World", "url": "https://www.tdworld.com/rss.xml" },
-  { "name": "Power Electronics News", "url": "https://www.powerelectronicsnews.com/feed/" },
-  { "name": "Recharge", "url": "https://www.rechargenews.com/rss" },
-  { "name": "Windpower Monthly (News)", "url": "https://www.windpowermonthly.com/rss" },
-  { "name": "ISO New England – ISO Newswire", "url": "https://isonewswire.com/feed/" },
-  { "name": "PJM – Inside Lines", "url": "https://insidelines.pjm.com/feed/" },
-  { "name": "ARENA (AU) – Blog", "url": "https://arena.gov.au/blog/feed/" },
-  { "name": "Clean Energy Council AU", "url": "https://www.cleanenergycouncil.org.au/news/rss" },
-  { "name": "PV Magazine Australia", "url": "https://www.pv-magazine-australia.com/feed/" },
-  { "name": "PV Magazine India", "url": "https://www.pv-magazine-india.com/feed/" },
-  { "name": "Offshore Wind Biz", "url": "https://www.offshorewind.biz/feed/" },
-  { "name": "Windpower Engineering & Development", "url": "https://www.windpowerengineering.com/feed/" },
-  { "name": "Solar Power World", "url": "https://www.solarpowerworldonline.com/feed/" },
-  { "name": "Smart Energy International", "url": "https://www.smart-energy.com/feed/" },
-  { "name": "Power Engineering", "url": "https://www.power-eng.com/feed/" },
-  { "name": "Power Engineering International", "url": "https://www.powerengineeringint.com/feed/" },
-  { "name": "Clean Energy Wire (CLEW)", "url": "https://www.cleanenergywire.org/rss.xml" },
-  { "name": "Green Car Congress", "url": "https://www.greencarcongress.com/atom.xml" },
-  { "name": "Electrive.com", "url": "https://www.electrive.com/feed/" },
-  { "name": "Teslarati", "url": "https://www.teslarati.com/feed/" },
-  { "name": "Hydrogen Central", "url": "https://hydrogen-central.com/feed/" },
-  { "name": "Hydrogen Fuel News", "url": "https://www.hydrogenfuelnews.com/feed/" },
-  { "name": "FuelCellsWorks", "url": "https://fuelcellsworks.com/feed/" },
-  { "name": "Battery Industry", "url": "https://batteryindustry.tech/feed/" },
-  { "name": "Batteries News", "url": "https://www.batteriesnews.com/feed/" },
-  { "name": "ThinkGeoEnergy (Geothermal)", "url": "https://www.thinkgeoenergy.com/feed/" },
-  { "name": "Hydro Review", "url": "https://www.hydroreview.com/feed/" },
-  { "name": "Biofuels Digest", "url": "https://www.biofuelsdigest.com/bdigest/feed/" },
-  { "name": "Bioenergy Insight", "url": "https://www.bioenergy-news.com/feed/" },
-  { "name": "RMI (Rocky Mountain Institute)", "url": "https://rmi.org/feed/" },
-  { "name": "SEPA – Smart Electric Power Alliance", "url": "https://sepapower.org/feed/" },
-  { "name": "The Energyst (UK)", "url": "https://theenergyst.com/feed/" },
-  { "name": "BusinessGreen (News)", "url": "https://www.businessgreen.com/feeds/rss/type/news" },
-  { "name": "Utility Dive (General)", "url": "https://www.utilitydive.com/feeds/news/" },
-  { "name": "Microgrid Media", "url": "https://microgridmedia.com/feed/" },
-  { "name": "Mercom India", "url": "https://www.mercomindia.com/feed/" },
-  { "name": "RenewEconomy (AU)", "url": "https://reneweconomy.com.au/feed/" },
-  { "name": "One Step Off The Grid (AU)", "url": "https://onestepoffthegrid.com.au/feed/" },
-  { "name": "ESI Africa", "url": "https://www.esi-africa.com/feed/" },
-  { "name": "Electric Autonomy Canada", "url": "https://electricautonomy.ca/feed/" },
-  { "name": "UK DESNZ (Gov.UK)", "url": "https://www.gov.uk/government/organisations/department-for-energy-security-and-net-zero.atom" },
-  { "name": "Hydrogen Europe – News", "url": "https://www.hydrogeneurope.eu/feed/" },
-  { "name": "CleanTechnica Solar", "url": "https://cleantechnica.com/category/solar-energy/feed/" },
-  { "name": "CleanTechnica Grid/Storage", "url": "https://cleantechnica.com/category/grid-storage/feed/" },
-
-  { "name": "Renewables Now – News", "url": "https://renewablesnow.com/feed/" },
-  { "name": "SolarPACES – News", "url": "https://www.solarpaces.org/feed/" },
-  { "name": "Sandia National Labs – Renewable Energy", "url": "https://share.sandia.gov/news/resources/news_releases/feed/" },
-  { "name": "Canada Energy Regulator – News", "url": "https://www.cer-rec.gc.ca/en/rss/rss.xml" }
+  {
+    "name": "Electrek",
+    "url": "https://electrek.co/feed/"
+  },
+  {
+    "name": "CleanTechnica",
+    "url": "https://cleantechnica.com/feed/"
+  },
+  {
+    "name": "IEEE Spectrum – Energy",
+    "url": "https://spectrum.ieee.org/rss/energy"
+  },
+  {
+    "name": "PV Tech",
+    "url": "https://www.pv-tech.org/feed/"
+  },
+  {
+    "name": "Renewable Energy World",
+    "url": "https://www.renewableenergyworld.com/feed/"
+  },
+  {
+    "name": "Energy Storage News",
+    "url": "https://www.energy-storage.news/feed/"
+  },
+  {
+    "name": "pv magazine International",
+    "url": "https://www.pv-magazine.com/feed/"
+  },
+  {
+    "name": "Canary Media",
+    "url": "https://www.canarymedia.com/rss"
+  },
+  {
+    "name": "PV Magazine USA",
+    "url": "https://pv-magazine-usa.com/feed/"
+  },
+  {
+    "name": "Energy Monitor",
+    "url": "https://www.energymonitor.ai/feed/"
+  },
+  {
+    "name": "Power Electronics News",
+    "url": "https://www.powerelectronicsnews.com/feed/"
+  },
+  {
+    "name": "Windpower Monthly (News)",
+    "url": "https://www.windpowermonthly.com/rss"
+  },
+  {
+    "name": "ISO New England – ISO Newswire",
+    "url": "https://isonewswire.com/feed/"
+  },
+  {
+    "name": "PJM – Inside Lines",
+    "url": "https://insidelines.pjm.com/feed/"
+  },
+  {
+    "name": "ARENA (AU) – Blog",
+    "url": "https://arena.gov.au/blog/feed/"
+  },
+  {
+    "name": "PV Magazine Australia",
+    "url": "https://www.pv-magazine-australia.com/feed/"
+  },
+  {
+    "name": "PV Magazine India",
+    "url": "https://www.pv-magazine-india.com/feed/"
+  },
+  {
+    "name": "Offshore Wind Biz",
+    "url": "https://www.offshorewind.biz/feed/"
+  },
+  {
+    "name": "Windpower Engineering & Development",
+    "url": "https://www.windpowerengineering.com/feed/"
+  },
+  {
+    "name": "Solar Power World",
+    "url": "https://www.solarpowerworldonline.com/feed/"
+  },
+  {
+    "name": "Smart Energy International",
+    "url": "https://www.smart-energy.com/feed/"
+  },
+  {
+    "name": "Power Engineering",
+    "url": "https://www.power-eng.com/feed/"
+  },
+  {
+    "name": "Power Engineering International",
+    "url": "https://www.powerengineeringint.com/feed/"
+  },
+  {
+    "name": "Clean Energy Wire (CLEW)",
+    "url": "https://www.cleanenergywire.org/rss.xml"
+  },
+  {
+    "name": "Green Car Congress",
+    "url": "https://www.greencarcongress.com/atom.xml"
+  },
+  {
+    "name": "Electrive.com",
+    "url": "https://www.electrive.com/feed/"
+  },
+  {
+    "name": "Teslarati",
+    "url": "https://www.teslarati.com/feed/"
+  },
+  {
+    "name": "Hydrogen Central",
+    "url": "https://hydrogen-central.com/feed/"
+  },
+  {
+    "name": "Hydrogen Fuel News",
+    "url": "https://www.hydrogenfuelnews.com/feed/"
+  },
+  {
+    "name": "FuelCellsWorks",
+    "url": "https://fuelcellsworks.com/feed/"
+  },
+  {
+    "name": "Battery Industry",
+    "url": "https://batteryindustry.tech/feed/"
+  },
+  {
+    "name": "Batteries News",
+    "url": "https://www.batteriesnews.com/feed/"
+  },
+  {
+    "name": "ThinkGeoEnergy (Geothermal)",
+    "url": "https://www.thinkgeoenergy.com/feed/"
+  },
+  {
+    "name": "Hydro Review",
+    "url": "https://www.hydroreview.com/feed/"
+  },
+  {
+    "name": "Biofuels Digest",
+    "url": "https://www.biofuelsdigest.com/bdigest/feed/"
+  },
+  {
+    "name": "Bioenergy Insight",
+    "url": "https://www.bioenergy-news.com/feed/"
+  },
+  {
+    "name": "RMI (Rocky Mountain Institute)",
+    "url": "https://rmi.org/feed/"
+  },
+  {
+    "name": "SEPA – Smart Electric Power Alliance",
+    "url": "https://sepapower.org/feed/"
+  },
+  {
+    "name": "The Energyst (UK)",
+    "url": "https://theenergyst.com/feed/"
+  },
+  {
+    "name": "BusinessGreen (News)",
+    "url": "https://www.businessgreen.com/feeds/rss/type/news"
+  },
+  {
+    "name": "Utility Dive (General)",
+    "url": "https://www.utilitydive.com/feeds/news/"
+  },
+  {
+    "name": "Microgrid Media",
+    "url": "https://microgridmedia.com/feed/"
+  },
+  {
+    "name": "RenewEconomy (AU)",
+    "url": "https://reneweconomy.com.au/feed/"
+  },
+  {
+    "name": "One Step Off The Grid (AU)",
+    "url": "https://onestepoffthegrid.com.au/feed/"
+  },
+  {
+    "name": "ESI Africa",
+    "url": "https://www.esi-africa.com/feed/"
+  },
+  {
+    "name": "Electric Autonomy Canada",
+    "url": "https://electricautonomy.ca/feed/"
+  },
+  {
+    "name": "UK DESNZ (Gov.UK)",
+    "url": "https://www.gov.uk/government/organisations/department-for-energy-security-and-net-zero.atom"
+  },
+  {
+    "name": "Hydrogen Europe – News",
+    "url": "https://www.hydrogeneurope.eu/feed/"
+  },
+  {
+    "name": "CleanTechnica Solar",
+    "url": "https://cleantechnica.com/category/solar-energy/feed/"
+  },
+  {
+    "name": "CleanTechnica Grid/Storage",
+    "url": "https://cleantechnica.com/category/grid-storage/feed/"
+  },
+  {
+    "name": "SolarPACES – News",
+    "url": "https://www.solarpaces.org/feed/"
+  }
 ]
