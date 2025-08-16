@@ -24,8 +24,17 @@ jobs:
       - name: Checkout main (full history)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0      # 支持 rebase
-          ref: main           # 明确以 main 为工作分支
+          fetch-depth: 0
+          ref: main
+
+      # ✅ 先同步 main（工作区还是干净的，可以 rebase）
+      - name: Git config & pre-sync main
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git switch main || git switch -c main
+          git fetch origin main
+          git pull --rebase origin main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -45,22 +54,12 @@ jobs:
         run: |
           python scripts/generate_sitemap.py
 
-      # 关键：推送前先同步远端 main，避免 non-fast-forward
-      - name: Git config & sync latest main
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          # 防止处于 detached HEAD，确保在 main 分支上
-          git switch main || git switch -c main
-          git fetch origin main
-          git pull --rebase origin main
-
+      # ✅ 提交并推送；若推送瞬间 main 又前进，再同步一次后重试
       - name: Commit & push (safe with one retry)
         run: |
           set -e
           git add posts/ sitemap.xml
           git commit -m "🤖 Auto-update content and sitemap" || { echo "Nothing to commit"; exit 0; }
-          # 第一次推送；若因竞态失败，则同步后重试一次
           git push origin HEAD:main || {
             echo "Push failed; refetch + rebase then retry..."
             git fetch origin main
