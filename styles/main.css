@@ -21,6 +21,7 @@
 /* ---------- Base ---------- */
 *{box-sizing:border-box}
 html,body{height:100%}
+img,svg{max-width:100%;height:auto}
 body{
   margin:0;
   font-family:var(--font-sans);
@@ -30,27 +31,34 @@ body{
   -moz-osx-font-smoothing:grayscale;
 }
 
-/* ---------- Header（不改结构，仅优化样式） ---------- */
+/* ---------- Header：标题在左、搜索+中文在右（不再被裁剪） ---------- */
 header{
-  position:sticky;
-  top:0;
-  z-index:10;
-  background:linear-gradient(180deg,var(--brand) 0%, #119edc 100%);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex !important;           /* 强制 flex */
+  align-items: center;
+  justify-content: space-between;     /* 左右分散 */
+  padding: 10px 16px;                  /* 统一内边距 */
+  min-height: 56px;                    /* 关键：避免顶端裁剪 */
+  background: linear-gradient(180deg,var(--brand) 0%, #119edc 100%);
   color:#fff;
   box-shadow:0 2px 10px rgba(2,132,199,.25);
 }
 header > h1{
   margin:0;
-  padding:16px 20px 6px;
-  font-size:18px;
+  padding:0;
+  font-size:16px;
   font-weight:700;
 }
+
 #toolbar{
+  margin-left: auto;                   /* 推到右边 */
   display:flex;
   align-items:center;
   gap:8px;
-  padding:0 20px 14px;
 }
+
 #searchBox{
   flex:0 1 360px;
   height:36px;
@@ -67,8 +75,12 @@ header > h1{
   border-color:#fff;
   background:rgba(255,255,255,.22);
 }
+
 #langToggle{
   height:36px;
+  min-width:48px;                      /* 防过窄换行 */
+  white-space:nowrap;                  /* 禁止竖排 */
+  writing-mode:horizontal-tb;
   padding:0 12px;
   border-radius:10px;
   border:1px solid rgba(255,255,255,.25);
@@ -79,15 +91,16 @@ header > h1{
 }
 #langToggle:hover{filter:brightness(0.97)}
 
-/* ---------- Layout ---------- */
+/* ---------- Layout 容器 ---------- */
 #newsContainer,
-#pagination{
+#pagination,
+footer{
   width:min(980px, calc(100% - 24px));
   margin:0 auto;
 }
 #pagination{padding:14px 0 4px}
 
-/* ---------- Pagination buttons（两按钮+span.page-info） ---------- */
+/* ---------- Pagination（两按钮+span.page-info） ---------- */
 #pagination{
   display:flex;
   align-items:center;
@@ -163,7 +176,7 @@ header > h1{
   border-color:var(--brand-ink);
 }
 
-/* 元信息（来源 / 时间） */
+/* 元信息（来源 / 时间） —— 改为普通字重 */
 .news-post .meta{
   display:flex;
   gap:10px;
@@ -172,6 +185,7 @@ header > h1{
   font-size:12px;
   color:var(--muted);
   margin:0 0 10px;
+  font-weight:400;                     /* 普通字重 */
 }
 .news-post .meta .source{
   display:inline-flex;
@@ -181,7 +195,7 @@ header > h1{
   border-radius:999px;
   background:#f1f5f9;
   color:#0f172a;
-  font-weight:600;
+  font-weight:400;                     /* 普通字重 */
   border:1px solid var(--line);
 }
 
@@ -192,9 +206,7 @@ header > h1{
   color:#111827;
   font-size:14px;
 }
-.news-post .preview{
-  color:#334155;
-}
+.news-post .preview{ color:#334155; }
 .news-post .summary{
   margin-top:6px;
   padding:10px 12px;
@@ -208,7 +220,7 @@ header > h1{
 .news-post[data-category="Charger"] .summary{ border-color:color-mix(in srgb,var(--c-charger),#ffffff 65%) }
 .news-post[data-category="PowerElectronics"] .summary{ border-color:color-mix(in srgb,var(--c-pe),#ffffff 65%) }
 
-/* 标签（保持原来的纯文本 #PV #Wind，统一做成胶囊条） */
+/* 标签（保持 #PV #Wind 风格，但做成胶囊） */
 .news-post .tags{
   display:inline-block;
   margin-top:6px;
@@ -220,43 +232,49 @@ header > h1{
   background:#f1f5f9;
 }
 
-/* ---------- Footer（若 footer.js 注入） ---------- */
+/* ---------- Footer：收进内容宽度，留足底边距与安全区 ---------- */
 footer{
   width:min(980px, calc(100% - 24px));
-  margin:24px auto 40px;
+  margin:32px auto 96px;               /* 底部多留空间，防止“掉出” */
+  padding:16px 12px max(16px, env(safe-area-inset-bottom));
   color:var(--muted);
   font-size:12px;
   text-align:center;
+  border-top:1px solid var(--line);
+  background:transparent;
 }
+footer .disclaimer{ margin-bottom:8px; font-style:italic; color:#8a94a6; }
+footer .social-icons{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:8px;
+}
+footer .social-icons a{
+  display:inline-flex;
+  width:28px;height:28px;
+  align-items:center;justify-content:center;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:#fff;
+  text-decoration:none;
+  transition:transform .15s ease;
+}
+footer .social-icons a:hover{ transform: translateY(-1px); }
 
 /* ---------- Mobile ---------- */
 @media (max-width:760px){
-  header > h1{ font-size:16px; padding:14px 16px 4px }
-  #toolbar{ padding:0 16px 12px }
-  #searchBox{ flex:1 1 auto; }
+  header{ flex-wrap: wrap; }
+  #toolbar{
+    margin-left:0;
+    width:100%;
+    justify-content:flex-start;
+  }
+
   #newsContainer, #pagination, footer{ width:calc(100% - 16px) }
   .news-post{ padding:12px 12px 10px; margin:12px auto }
   .news-post h3{ font-size:15px }
   .news-post p{ font-size:13.5px }
-}
-
-/* === Header layout: title left, search/lang right === */
-header {
-  display: flex !important;        /* 强制用 flex，避免其它样式覆盖 */
-  align-items: center;
-}
-#toolbar {
-  margin-left: auto;               /* 把工具条推到右侧 */
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-/* 小屏继续堆叠 */
-@media (max-width: 768px) {
-  header { flex-wrap: wrap; }
-  #toolbar {
-    margin-left: 0;
-    width: 100%;
-    justify-content: flex-start;
-  }
 }
