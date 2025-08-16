@@ -2,42 +2,66 @@ name: Hourly Content Aggregation
 
 on:
   schedule:
-    - cron: '0 * * * *'  # 每小时运行一次（UTC 时间整点）
-  workflow_dispatch:     # 允许你手动触发运行
+    - cron: '0 * * * *'   # 每小时整点（UTC）
+  workflow_dispatch:        # 允许手动触发
+
+# 防并发互踩（同一分支仅保留一个在跑的实例）
+concurrency:
+  group: aggregator-${{ github.ref }}
+  cancel-in-progress: true
+
+# 允许写入仓库（提交/推送）
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  # ✅ 显式注入 Key
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout main (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0      # 必须：支持 rebase
+          ref: main           # 明确以 main 为工作分支
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install newspaper3k feedparser openai lxml_html_clean
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install newspaper3k feedparser openai lxml_html_clean
 
-    - name: Run aggregator script
-      run: |
-        python scripts/aggregator.py
+      - name: Run aggregator script
+        run: |
+          python scripts/aggregator.py
 
-    - name: Generate sitemap.xml
-      run: |
-        python scripts/generate_sitemap.py
+      - name: Generate sitemap.xml
+        run: |
+          python scripts/generate_sitemap.py
 
-    - name: Commit generated content
-      run: |
-        git config user.name "github-actions"
-        git config user.email "github-actions@github.com"
-        git add posts/ sitemap.xml
-        git commit -m "🤖 Auto-update content and sitemap" || echo "Nothing to commit"
-        git push origin HEAD
+      # 关键：推送前先同步远端 main，避免 non-fast-forward
+      - name: Git config & sync latest main
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git fetch origin main
+          git pull --rebase origin main
+
+      - name: Commit & push (safe with one retry)
+        run: |
+          set -e
+          git add posts/ sitemap.xml
+          git commit -m "🤖 Auto-update content and sitemap" || { echo "Nothing to commit"; exit 0; }
+          # 第一次推送；若因竞态失败，则同步后重试一次
+          git push origin HEAD:main || {
+            echo "Push failed; refetch + rebase then retry..."
+            git fetch origin main
+            git pull --rebase origin main
+            git push origin HEAD:main
+          }
