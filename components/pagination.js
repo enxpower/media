@@ -1,72 +1,93 @@
+// components/pagination.js
 document.addEventListener("DOMContentLoaded", () => {
   const paginationContainer = document.getElementById("pagination");
   const newsContainer = document.getElementById("newsContainer");
+
   let currentPage = 1;
   let totalPages = 1;
 
-  // 自动检测 posts 目录下有多少页
+  // ---- URL helpers ----
+  function getPageFromURL() {
+    const usp = new URLSearchParams(location.search);
+    const n = parseInt(usp.get("page"), 10);
+    return Number.isFinite(n) && n > 0 ? n : 1;
+  }
+
+  // page === 1 时移除参数，保持根路径干净
+  function writePageToURL(page, { replace = false } = {}) {
+    const url = new URL(location.href);
+    if (page === 1) {
+      url.searchParams.delete("page");
+    } else {
+      url.searchParams.set("page", String(page));
+    }
+    const method = replace ? "replaceState" : "pushState";
+    history[method]({}, "", url);
+  }
+
+  // ---- Detect how many pages exist (HEAD即可) ----
   async function detectTotalPages() {
     let i = 1;
     while (true) {
-      const res = await fetch(`posts/page${i}.html`, { method: "HEAD" });
-      if (!res.ok) break;
-      i++;
+      try {
+        const res = await fetch(`posts/page${i}.html`, { method: "HEAD", cache: "no-store" });
+        if (!res.ok) break;
+        i++;
+      } catch {
+        break;
+      }
     }
-    totalPages = i - 1;
+    totalPages = Math.max(1, i - 1);
   }
 
-  // 加载当前页 HTML 内容
-  function loadPage(page) {
-    fetch(`posts/page${page}.html`)
-      .then(res => res.text())
-      .then(html => {
-        newsContainer.innerHTML = html;
-        window.scrollTo(0, 0);
-      });
+  // ---- Load a page ----
+  async function loadPage(page) {
+    const res = await fetch(`posts/page${page}.html`, { cache: "no-store" });
+    const html = await res.text();
+    newsContainer.innerHTML = html;
+    window.scrollTo(0, 0);
   }
 
-  // 渲染分页按钮
+  // ---- Render pager ----
   function renderPagination() {
     paginationContainer.innerHTML = "";
 
     const prevBtn = document.createElement("button");
     prevBtn.textContent = "← Prev";
     prevBtn.disabled = currentPage === 1;
-    prevBtn.onclick = () => {
-      if (currentPage > 1) {
-        currentPage--;
-        loadPage(currentPage);
-        renderPagination();
-      }
-    };
+    prevBtn.onclick = () => goto(currentPage - 1);
 
-    const pageLabel = document.createElement("span");
-    pageLabel.className = "page-info";
-    pageLabel.textContent = `Page ${currentPage} of ${totalPages}`;
-
+    const info = document.createElement("span");
+    info.className = "page-info";
+    info.textContent = `Page ${currentPage} of ${totalPages}`;
 
     const nextBtn = document.createElement("button");
     nextBtn.textContent = "Next →";
     nextBtn.disabled = currentPage === totalPages;
-    nextBtn.onclick = () => {
-      if (currentPage < totalPages) {
-        currentPage++;
-        loadPage(currentPage);
-        renderPagination();
-      }
-    };
+    nextBtn.onclick = () => goto(currentPage + 1);
 
-    paginationContainer.appendChild(prevBtn);
-    paginationContainer.appendChild(pageLabel);
-    paginationContainer.appendChild(nextBtn);
+    paginationContainer.append(prevBtn, info, nextBtn);
   }
 
-  // 初始化加载
-  async function init() {
-    await detectTotalPages();
-    loadPage(currentPage);
+  // ---- Navigate ----
+  async function goto(page, { updateURL = true, replace = false } = {}) {
+    currentPage = Math.min(Math.max(1, page), totalPages);
+    await loadPage(currentPage);
     renderPagination();
+    if (updateURL) writePageToURL(currentPage, { replace });
   }
 
-  init();
+  // 支持浏览器前进/后退
+  window.addEventListener("popstate", () => {
+    const p = getPageFromURL();
+    goto(p, { updateURL: false });
+  });
+
+  // ---- Init ----
+  (async function init() {
+    await detectTotalPages();
+    currentPage = Math.min(getPageFromURL(), totalPages);
+    // 初始化时：如果本来没有 ?page，就不要新增；如果本来有，就规范化
+    await goto(currentPage, { replace: true });
+  })();
 });
