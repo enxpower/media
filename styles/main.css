@@ -64,6 +64,7 @@ header h1 {
   margin: 0 1rem;
 }
 
+
 #pagination button {
   margin: 0 0.25rem;
   padding: 0.5rem 0.8rem;
@@ -160,13 +161,6 @@ header h1 {
   font-size: 0.75rem;
   margin-top: 0.4rem;
   color: #0d6efd;
-  line-height: 1.4; /* 新增：多标签更易读 */
-}
-
-/* 预留：如果前端把 #Tender 包装为 <span class="tag-tender">...>，则给它更醒目的样式 */
-.news-post .tags .tag-tender {
-  font-weight: 600;
-  padding: 0 2px;
 }
 
 /* Category color overrides */
@@ -187,10 +181,6 @@ header h1 {
 
 [data-category="General"] .category-label,
 [data-category="General"] .tags { background-color: #6c757d; color: white; }
-
-/* 新增：Tender 类（当该贴的主分类是 Tender 时高亮） */
-[data-category="Tender"] .category-label,
-[data-category="Tender"] .tags { background-color: #fd7e14; color: white; }
 
 /* Footer */
 footer {
