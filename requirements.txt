@@ -1,4 +1,4 @@
-feedparser 
-newspaper3k 
-openai 
-lxml_html_clean
+feedparser
+newspaper3k
+openai>=1.0.0
+lxml-html-clean
