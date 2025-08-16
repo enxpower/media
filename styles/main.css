@@ -175,6 +175,13 @@ header > h1{
   color:var(--brand-ink);
   border-color:var(--brand-ink);
 }
+/* ✅ 已读状态（依赖浏览器历史） */
+.news-post .news-link:visited{
+  color:#6b7280;               /* 变灰，表示看过 */
+}
+.news-post .news-link:visited:hover{
+  color:var(--brand-ink);      /* 悬停仍高亮 */
+}
 
 /* 元信息（来源 / 时间）——来源不再加粗 */
 .news-post .meta{
