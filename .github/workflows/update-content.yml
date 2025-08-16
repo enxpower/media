@@ -50,7 +50,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          # 确保当前在 main 分支（避免 detached HEAD 时 pull --rebase 报错）
+          # 防止处于 detached HEAD，确保在 main 分支上
           git switch main || git switch -c main
           git fetch origin main
           git pull --rebase origin main
