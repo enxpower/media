@@ -1,9 +1,10 @@
-import json, math, html, os, re, time, random
+import json, math, html, os, re, time, random, asyncio
 import feedparser
 from datetime import datetime, timezone
 from pathlib import Path
 from newspaper import Article
 from collections import deque, defaultdict
+from asyncio import Semaphore
 
 # ================================
 # 可调参数（也支持用环境变量覆盖）
@@ -23,6 +24,9 @@ OPENAI_TIMEOUT = float(os.getenv("OPENAI_TIMEOUT", "60"))  # 每次请求超时�
 OPENAI_MAX_RETRIES = int(os.getenv("OPENAI_MAX_RETRIES", "5"))
 OPENAI_MIN_BACKOFF = float(os.getenv("OPENAI_MIN_BACKOFF", "2.0"))  # 初始退避秒
 OPENAI_MAX_BACKOFF = float(os.getenv("OPENAI_MAX_BACKOFF", "30.0")) # 最大退避秒
+
+# 受控并发：建议 3~5，根据配额与速率调整
+SUMMARIZE_CONCURRENCY = int(os.getenv("SUMMARIZE_CONCURRENCY", "4"))
 
 CATEGORIES = {
     "Storage": ["storage", "battery", "energy storage", "bess"],
@@ -98,6 +102,35 @@ def summarize(title: str, url: str):
                 time.sleep(sleep_s)
                 continue
             raise
+
+# —— 将同步 summarize 封装为“受控并发”调用 —— #
+async def _summarize_task(sema: Semaphore, title: str, link: str):
+    loop = asyncio.get_event_loop()
+    async with sema:
+        # 不改你现有 summarize 的实现，丢到线程池里并发执行
+        return await loop.run_in_executor(None, summarize, title, link)
+
+def summarize_parallel(articles):
+    """
+    articles: [(title, link, preview, source, published), ...]
+    return:   [(en, zh, err or None), ...] 与 articles 对齐
+    """
+    sema = Semaphore(SUMMARIZE_CONCURRENCY)
+
+    async def runner():
+        tasks = []
+        for (title, link, *_rest) in articles:
+            tasks.append(asyncio.create_task(_summarize_task(sema, title, link)))
+        results = []
+        for i, task in enumerate(tasks):
+            try:
+                en, zh = await task
+                results.append((en, zh, None))
+            except Exception as e:
+                results.append(("", "", e))
+        return results
+
+    return asyncio.run(runner())
 
 # ================================
 # 其余业务逻辑（保持你原来的风格）
@@ -271,16 +304,18 @@ def main():
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     print(f"[INFO] Processing {len(articles)} articles...")
 
+    # —— 并发摘要（速度↑），且受 SUMMARIZE_CONCURRENCY 控制 —— #
+    results = summarize_parallel(articles)
+
     processed = []
-    for (title, link, preview, source, published) in articles:
-        try:
-            summary_en, summary_zh = summarize(title, link)
-            tags = detect_tags(f"{title} {summary_en}")
-            processed.append((title, link, preview, summary_en, summary_zh, tags, source, published))
-            # 轻微错峰，避免瞬时突发
-            time.sleep(0.1)
-        except Exception as e:
-            print(f"[SKIPPED] {title}: {e}")
+    for (article, res) in zip(articles, results):
+        title, link, preview, source, published = article
+        en, zh, err = res
+        if err:
+            print(f"[SKIPPED] {title}: {err}")
+            continue
+        tags = detect_tags(f"{title} {en}")
+        processed.append((title, link, preview, en, zh, tags, source, published))
 
     mixed = interleave_round_robin(processed, source_index=6, per_round=1)
     pages = paginate_with_cap(mixed, page_size=ITEMS_PER_PAGE, per_source_cap=PER_SOURCE_PAGE_CAP)
