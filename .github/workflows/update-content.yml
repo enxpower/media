@@ -24,7 +24,7 @@ jobs:
       - name: Checkout main (full history)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0      # 必须：支持 rebase
+          fetch-depth: 0      # 支持 rebase
           ref: main           # 明确以 main 为工作分支
 
       - name: Set up Python
@@ -50,6 +50,8 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+          # 确保当前在 main 分支（避免 detached HEAD 时 pull --rebase 报错）
+          git switch main || git switch -c main
           git fetch origin main
           git pull --rebase origin main
 
