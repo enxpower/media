@@ -1,16 +1,28 @@
-import json, math, html, os, re
+import json, math, html, os, re, time, random
 import feedparser
 from datetime import datetime, timezone
 from pathlib import Path
 from newspaper import Article
 from collections import deque, defaultdict
-from openai_summary import summarize
 
+# ================================
+# 可调参数（也支持用环境变量覆盖）
+# ================================
 POSTS_DIR = "posts"
 ITEMS_PER_PAGE = 50
 MAX_TOTAL = 300
 PER_FEED_LIMIT = 3
 PER_SOURCE_PAGE_CAP = 2
+
+# 每次运行最多处理多少篇文章（0=不限制）
+MAX_ARTICLES_PER_RUN = int(os.getenv("MAX_ARTICLES_PER_RUN", "0"))
+
+# OpenAI 模型与超时/重试设置
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")  # ✅ 默认 4o-mini（更省钱）
+OPENAI_TIMEOUT = float(os.getenv("OPENAI_TIMEOUT", "60"))  # 每次请求超时秒数
+OPENAI_MAX_RETRIES = int(os.getenv("OPENAI_MAX_RETRIES", "5"))
+OPENAI_MIN_BACKOFF = float(os.getenv("OPENAI_MIN_BACKOFF", "2.0"))  # 初始退避秒
+OPENAI_MAX_BACKOFF = float(os.getenv("OPENAI_MAX_BACKOFF", "30.0")) # 最大退避秒
 
 CATEGORIES = {
     "Storage": ["storage", "battery", "energy storage", "bess"],
@@ -20,6 +32,76 @@ CATEGORIES = {
     "PowerElectronics": ["inverter", "converter", "power electronics"]
 }
 
+# ================================
+# OpenAI 摘要实现（内置 429 重试与退避）
+# ================================
+def summarize(title: str, url: str):
+    """
+    返回 (summary_en, summary_zh)
+    使用 gpt-4o-mini；对 429/暂时性错误做指数退避重试。
+    """
+    try:
+        # 新版 SDK（pip install openai>=1.0）
+        from openai import OpenAI
+        client = OpenAI(timeout=OPENAI_TIMEOUT)
+    except Exception as e:
+        raise RuntimeError(f"OpenAI SDK import/init failed: {e}")
+
+    system_prompt = (
+        "You are a concise news summarizer for energy/cleantech topics. "
+        "Write two short, factual summaries (2–3 sentences each): one in EN, one in Simplified Chinese. "
+        "Do not add opinions. Keep numbers and proper nouns accurate. Output JSON with keys 'en' and 'zh'."
+    )
+    user_prompt = (
+        f"Title: {title}\n"
+        f"URL: {url}\n\n"
+        "Please read the page and produce the summaries."
+    )
+
+    backoff = OPENAI_MIN_BACKOFF
+    for attempt in range(OPENAI_MAX_RETRIES):
+        try:
+            resp = client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.2,
+            )
+            content = resp.choices[0].message.content.strip()
+            # 期望是 JSON；容错解析
+            try:
+                data = json.loads(content)
+                en = str(data.get("en", "")).strip()
+                zh = str(data.get("zh", "")).strip()
+                if not en or not zh:
+                    # 兜底：若不是 JSON，就直接把文本一分为二
+                    raise ValueError("JSON missing fields")
+            except Exception:
+                # 非 JSON 格式时的简单提取：按分隔线或换行切
+                parts = re.split(r"\n[-–—]+\n|\n{2,}", content)
+                en = (parts[0] if parts else content).strip()
+                zh = (parts[1] if len(parts) > 1 else "").strip()
+            return en, zh
+        except Exception as e:
+            msg = str(e).lower()
+            # 针对限流/服务器等临时性错误退避重试
+            transient = any(k in msg for k in [
+                "rate limit", "429", "temporarily", "timeout", "overloaded",
+                "service unavailable", "502", "503", "504"
+            ])
+            if attempt < OPENAI_MAX_RETRIES - 1 and transient:
+                sleep_s = min(OPENAI_MAX_BACKOFF, backoff * (2 ** attempt)) + random.uniform(0, 0.5)
+                print(f"[WARN] OpenAI call failed (attempt {attempt+1}/{OPENAI_MAX_RETRIES}): {e}. "
+                      f"Retrying in {sleep_s:.1f}s...")
+                time.sleep(sleep_s)
+                continue
+            raise
+
+# ================================
+# 其余业务逻辑（保持你原来的风格）
+# ================================
 def detect_tags(text: str):
     tags = []
     t = text.lower()
@@ -178,20 +260,31 @@ def clear_old_pages():
 def main():
     feeds = load_feeds()
     articles = fetch_articles(feeds)
+
+    # 可选：限制每次运行的处理数量（防止打满配额）
+    if MAX_ARTICLES_PER_RUN and MAX_ARTICLES_PER_RUN > 0:
+        articles = articles[:MAX_ARTICLES_PER_RUN]
+
     Path(POSTS_DIR).mkdir(exist_ok=True)
     clear_old_pages()
+
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     print(f"[INFO] Processing {len(articles)} articles...")
+
     processed = []
     for (title, link, preview, source, published) in articles:
         try:
             summary_en, summary_zh = summarize(title, link)
             tags = detect_tags(f"{title} {summary_en}")
             processed.append((title, link, preview, summary_en, summary_zh, tags, source, published))
+            # 轻微错峰，避免瞬时突发
+            time.sleep(0.1)
         except Exception as e:
             print(f"[SKIPPED] {title}: {e}")
+
     mixed = interleave_round_robin(processed, source_index=6, per_round=1)
     pages = paginate_with_cap(mixed, page_size=ITEMS_PER_PAGE, per_source_cap=PER_SOURCE_PAGE_CAP)
+
     for pg, chunk in enumerate(pages, start=1):
         html_content = f"<!-- Last Updated: {ts} -->\n"
         start_index = (pg - 1) * ITEMS_PER_PAGE + 1
