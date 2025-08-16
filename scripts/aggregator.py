@@ -230,6 +230,33 @@ window.addEventListener("message", (event) => {
 """
         Path(f"{POSTS_DIR}/page{pg}.html").write_text(html_content, encoding="utf-8")
         print(f"[INFO] Wrote page{pg}.html with {len(chunk)} posts.")
+    # === 自动生成 sitemap.xml ===
+    print("[INFO] Generating sitemap.xml...")
+
+    domain = "https://media.energizeos.com"
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+
+    with open("sitemap.xml", "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        f.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+
+        # 首页
+        f.write("  <url>\n")
+        f.write(f"    <loc>{domain}/</loc>\n")
+        f.write(f"    <lastmod>{today}</lastmod>\n")
+        f.write("  </url>\n")
+
+        # 每个分页页面
+        for i in range(1, len(pages) + 1):
+            f.write("  <url>\n")
+            f.write(f"    <loc>{domain}/page{i}.html</loc>\n")
+            f.write(f"    <lastmod>{today}</lastmod>\n")
+            f.write("  </url>\n")
+
+        f.write("</urlset>\n")
+
+    print("[INFO] Sitemap generated.")
+
 
 if __name__ == "__main__":
     main()
