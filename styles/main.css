@@ -1,247 +1,259 @@
-/* Reset spacing and box model */
-body, h1, h3, p, div {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ---------- Design tokens ---------- */
+:root{
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  --bg:#f7f8fb;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --brand:#0ea5e9;            /* 顶部栏 & 链接主色（青蓝） */
+  --brand-ink:#0b4d63;
+
+  /* 分类色 */
+  --c-general:#94a3b8;        /* slate */
+  --c-pv:#f59e0b;             /* amber */
+  --c-wind:#38bdf8;           /* sky */
+  --c-storage:#10b981;        /* emerald */
+  --c-charger:#8b5cf6;        /* violet */
+  --c-pe:#06b6d4;             /* cyan */
 }
 
-/* Base settings */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: #f8f9fa;
-  color: #212529;
-  line-height: 1.6;
+/* ---------- Base ---------- */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--font-sans);
+  color:var(--text);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
-/* Header */
+/* ---------- Header（不改结构，仅优化样式） ---------- */
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:linear-gradient(180deg,var(--brand) 0%, #119edc 100%);
+  color:#fff;
+  box-shadow:0 2px 10px rgba(2,132,199,.25);
+}
+header > h1{
+  margin:0;
+  padding:16px 20px 6px;
+  font-size:18px;
+  font-weight:700;
+}
+#toolbar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:0 20px 14px;
+}
+#searchBox{
+  flex:0 1 360px;
+  height:36px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.15);
+  color:#fff;
+  padding:0 12px;
+  outline:none;
+  transition:.2s border-color,.2s background;
+}
+#searchBox::placeholder{color:rgba(255,255,255,.85)}
+#searchBox:focus{
+  border-color:#fff;
+  background:rgba(255,255,255,.22);
+}
+#langToggle{
+  height:36px;
+  padding:0 12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.25);
+  background:#fff;
+  color:var(--brand-ink);
+  cursor:pointer;
+  font-weight:600;
+}
+#langToggle:hover{filter:brightness(0.97)}
+
+/* ---------- Layout ---------- */
+#newsContainer,
+#pagination{
+  width:min(980px, calc(100% - 24px));
+  margin:0 auto;
+}
+#pagination{padding:14px 0 4px}
+
+/* ---------- Pagination buttons（两按钮+span.page-info） ---------- */
+#pagination{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+#pagination button{
+  min-width:76px;
+  height:34px;
+  padding:0 12px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--text);
+  cursor:pointer;
+  box-shadow:0 1px 0 rgba(0,0,0,.02);
+  transition:.2s transform,.2s box-shadow,.2s background;
+}
+#pagination button:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 6px 14px rgba(15,23,42,.08);
+  background:#fafafa;
+}
+#pagination button:disabled{
+  cursor:not-allowed;
+  opacity:.45;
+  background:#fff;
+}
+#pagination .page-info{
+  font-size:13px;
+  color:var(--muted);
+  padding:0 6px;
+}
+
+/* ---------- News cards ---------- */
+.news-post{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:6px solid var(--c-general); /* 默认 General 左色条 */
+  border-radius:14px;
+  padding:14px 16px 12px;
+  margin:16px auto;
+  box-shadow:0 6px 18px rgba(15,23,42,.04);
+  transition:.25s box-shadow,.25s transform,.25s border-color;
+}
+.news-post:hover{
+  box-shadow:0 12px 28px rgba(15,23,42,.09);
+  transform:translateY(-1px);
+}
+
+/* 分类色条（根据 data-category） */
+.news-post[data-category="PV"]{ border-left-color:var(--c-pv) }
+.news-post[data-category="Wind"]{ border-left-color:var(--c-wind) }
+.news-post[data-category="Storage"]{ border-left-color:var(--c-storage) }
+.news-post[data-category="Charger"]{ border-left-color:var(--c-charger) }
+.news-post[data-category="PowerElectronics"]{ border-left-color:var(--c-pe) }
+
+/* 标题与链接 */
+.news-post h3{
+  margin:0 0 8px;
+  font-size:16px;
+  line-height:1.45;
+  font-weight:700;
+}
+.news-post .news-link{
+  color:#0f172a;
+  text-decoration:none;
+  border-bottom:1px dashed transparent;
+  transition:.2s color,.2s border-color;
+}
+.news-post .news-link:hover{
+  color:var(--brand-ink);
+  border-color:var(--brand-ink);
+}
+
+/* 元信息（来源 / 时间） */
+.news-post .meta{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  font-size:12px;
+  color:var(--muted);
+  margin:0 0 10px;
+}
+.news-post .meta .source{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:2px 8px;
+  border-radius:999px;
+  background:#f1f5f9;
+  color:#0f172a;
+  font-weight:600;
+  border:1px solid var(--line);
+}
+
+/* 正文与摘要 */
+.news-post p{
+  margin:0 0 10px;
+  line-height:1.6;
+  color:#111827;
+  font-size:14px;
+}
+.news-post .preview{
+  color:#334155;
+}
+.news-post .summary{
+  margin-top:6px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px dashed #dbe3ea;
+  background:#f8fafc;
+}
+.news-post[data-category="PV"] .summary{ border-color:color-mix(in srgb,var(--c-pv),#ffffff 65%) }
+.news-post[data-category="Wind"] .summary{ border-color:color-mix(in srgb,var(--c-wind),#ffffff 65%) }
+.news-post[data-category="Storage"] .summary{ border-color:color-mix(in srgb,var(--c-storage),#ffffff 65%) }
+.news-post[data-category="Charger"] .summary{ border-color:color-mix(in srgb,var(--c-charger),#ffffff 65%) }
+.news-post[data-category="PowerElectronics"] .summary{ border-color:color-mix(in srgb,var(--c-pe),#ffffff 65%) }
+
+/* 标签（保持原来的纯文本 #PV #Wind，统一做成胶囊条） */
+.news-post .tags{
+  display:inline-block;
+  margin-top:6px;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:12px;
+  color:#0f172a;
+  border:1px solid var(--line);
+  background:#f1f5f9;
+}
+
+/* ---------- Footer（若 footer.js 注入） ---------- */
+footer{
+  width:min(980px, calc(100% - 24px));
+  margin:24px auto 40px;
+  color:var(--muted);
+  font-size:12px;
+  text-align:center;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width:760px){
+  header > h1{ font-size:16px; padding:14px 16px 4px }
+  #toolbar{ padding:0 16px 12px }
+  #searchBox{ flex:1 1 auto; }
+  #newsContainer, #pagination, footer{ width:calc(100% - 16px) }
+  .news-post{ padding:12px 12px 10px; margin:12px auto }
+  .news-post h3{ font-size:15px }
+  .news-post p{ font-size:13.5px }
+}
+
+/* === Header layout: title left, search/lang right === */
 header {
-  background-color: #0d6efd;
-  color: white;
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
+  display: flex !important;        /* 强制用 flex，避免其它样式覆盖 */
   align-items: center;
-  flex-wrap: wrap;
 }
-
-header h1 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
 #toolbar {
+  margin-left: auto;               /* 把工具条推到右侧 */
   display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
-
-#searchBox {
-  padding: 0.5rem;
-  border: none;
-  border-radius: 5px;
-  width: 180px;
-}
-
-#langToggle {
-  padding: 0.5rem 0.8rem;
-  background-color: #198754;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-/* Pagination */
-#pagination {
-  text-align: center;
-  padding: 1rem 0;
-}
-
-#pagination .page-info {
-  font-weight: normal;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
-  color: #212529;
-  margin: 0 1rem;
-}
-
-#pagination button {
-  margin: 0 0.25rem;
-  padding: 0.5rem 0.8rem;
-  border: 1px solid #dee2e6;
-  background-color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-#pagination button:hover {
-  background-color: #e2e6ea;
-}
-
-#pagination button.active {
-  background-color: #0d6efd;
-  color: white;
-}
-
-/* News post */
-.news-post {
-  background-color: white;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 1rem;
-  margin: 1rem auto;
-  max-width: 900px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.news-post h3 {
-  font-size: 1.1rem;
-  color: #5025b0;
-  margin-bottom: 0.5rem;
-  font-weight: normal;
-}
-
-.news-post a {
-  text-decoration: none;
-  color: #5025b0;
-}
-
-.news-post a:visited {
-  color: #6c757d;
-}
-
-.news-post a:hover {
-  text-decoration: underline;
-}
-
-/* Metadata: source + date */
-.meta {
-  font-size: 0.75rem;
-  color: #888;
-  margin-bottom: 0.5rem;
-  font-style: italic;
-}
-
-/* Preview */
-.news-post p.preview {
-  font-size: 0.9rem;
-  color: #666;
-  font-style: italic;
-  margin: 0.3rem 0 0.6rem 0;
-  padding-left: 1rem;
-  border-left: 3px solid #ccc;
-  background-color: #f5f5f5;
-}
-
-/* Summary */
-.news-post p.summary {
-  font-size: 1rem;
-  color: #212529;
-  margin: 0.4rem 0 0.6rem 0;
-}
-
-.news-post p.summary::before {
-  content: "💡 AI Summary: ";
-  color: #198754;
-}
-
-/* Tags */
-.category-label {
-  display: inline-block;
-  background-color: #6c757d;
-  color: white;
-  font-size: 0.75rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 5px;
-  margin-top: 0.2rem;
-}
-
-.news-post .tags {
-  font-size: 0.75rem;
-  margin-top: 0.4rem;
-  color: #0d6efd;
-}
-
-/* Category color overrides */
-[data-category="Storage"] .category-label,
-[data-category="Storage"] .tags { background-color: #198754; color: white; }
-
-[data-category="PV"] .category-label,
-[data-category="PV"] .tags { background-color: #f39c12; color: white; }
-
-[data-category="Wind"] .category-label,
-[data-category="Wind"] .tags { background-color: #0dcaf0; color: white; }
-
-[data-category="Charger"] .category-label,
-[data-category="Charger"] .tags { background-color: #6f42c1; color: white; }
-
-[data-category="PowerElectronics"] .category-label,
-[data-category="PowerElectronics"] .tags { background-color: #d63384; color: white; }
-
-[data-category="General"] .category-label,
-[data-category="General"] .tags { background-color: #6c757d; color: white; }
-
-/* Footer */
-footer {
-  text-align: center;
-  padding: 2rem 1rem;
-  font-size: 0.85rem;
-  color: #6c757d;
-  background-color: #f8f9fa;
-  border-top: 1px solid #dee2e6;
-  margin-top: 2rem;
-}
-
-footer .disclaimer {
-  margin-bottom: 1rem;
-  font-style: italic;
-  color: #888;
-}
-
-footer .social-icons a {
-  margin: 0 0.5rem;
-  color: #333;
-}
-
-footer .social-icons a:hover {
-  color: #0d6efd;
-}
-
-/* Responsive */
+/* 小屏继续堆叠 */
 @media (max-width: 768px) {
-  header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  #toolbar {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  iframe {
-    min-height: 2000px;
-  }
-}
-
-/* =========================================================
-   Override: keep title on the left, search & language on right
-   (minimal change, no改动 HTML/JS)
-   ========================================================= */
-header {
-  justify-content: flex-start;    /* 标题从左开始 */
-  align-items: center;
-}
-
-#toolbar {
-  margin-left: auto;              /* 关键：推到右侧 */
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* 小屏仍按你的原始行为堆叠 */
-@media (max-width: 768px) {
+  header { flex-wrap: wrap; }
   #toolbar {
     margin-left: 0;
     width: 100%;
