@@ -167,16 +167,7 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, 
 
     
 
-    return f'''
-<div class="news-post" data-category="{category}" data-title="{title_esc.lower()}" data-summary="{summary_en.lower()}">
-  <h3>{idx}. <a href="{link_esc}" target="_blank" class="news-link">{title_esc}</a></h3>
-  <div class="meta"><span class="source">{source}</span> | <span class="date">{published}</span></div>
-  <p class="preview">{preview}</p>
-  <p class="summary" data-summary-en="{summary_en}" data-summary-zh="{summary_zh}">{summary_en}</p>
-  <div class="tags">{tag_html}</div>
-  {share_html}
-</div>
-'''
+    
 
 
 def clear_old_pages():
