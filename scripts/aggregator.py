@@ -1,4 +1,4 @@
-import json, math, html, os, re, time, random, asyncio
+import json, math, html, os, re, time, random, asyncio, hashlib
 import feedparser
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,18 +15,57 @@ MAX_TOTAL = 300
 PER_FEED_LIMIT = 3
 PER_SOURCE_PAGE_CAP = 2
 
-# 每次运行最多处理多少篇文章（0=不限制）
+# 每次运行最多处理多少篇文章（0=不限制）——为“质量优先”保持默认0（不限）
 MAX_ARTICLES_PER_RUN = int(os.getenv("MAX_ARTICLES_PER_RUN", "0"))
 
 # OpenAI 模型与超时/重试设置
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")  # ✅ 默认 4o-mini（更省钱）
-OPENAI_TIMEOUT = float(os.getenv("OPENAI_TIMEOUT", "60"))  # 每次请求超时秒数
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")  # ✅ 更省钱且质量好
+OPENAI_TIMEOUT = float(os.getenv("OPENAI_TIMEOUT", "60"))
 OPENAI_MAX_RETRIES = int(os.getenv("OPENAI_MAX_RETRIES", "5"))
-OPENAI_MIN_BACKOFF = float(os.getenv("OPENAI_MIN_BACKOFF", "2.0"))  # 初始退避秒
-OPENAI_MAX_BACKOFF = float(os.getenv("OPENAI_MAX_BACKOFF", "30.0")) # 最大退避秒
+OPENAI_MIN_BACKOFF = float(os.getenv("OPENAI_MIN_BACKOFF", "2.0"))
+OPENAI_MAX_BACKOFF = float(os.getenv("OPENAI_MAX_BACKOFF", "30.0"))
 
-# 受控并发：建议 3~5，根据配额与速率调整
+# 受控并发（摘要阶段）
 SUMMARIZE_CONCURRENCY = int(os.getenv("SUMMARIZE_CONCURRENCY", "4"))
+
+# 缓存目录（正文缓存 + 摘要缓存），避免重复下载与重复调用API
+CACHE_DIR = Path(".cache/aggregator")
+CONTENT_CACHE = CACHE_DIR / "content.jsonl"   # 每行: {"url":..., "sha":..., "text":...}
+SUMMARY_CACHE = CACHE_DIR / "summaries.jsonl" # 每行: {"key":..., "model":..., "title":..., "url":..., "en":..., "zh":...}
+
+
+# =============== 简易 JSONL 缓存 ===============
+
+def _sha1(s: str) -> str:
+    return hashlib.sha1(s.encode("utf-8")).hexdigest()
+
+def _load_jsonl(path: Path) -> dict:
+    d = {}
+    if not path.exists():
+        return d
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+                # 对 content.jsonl：用 url 做 key；对 summaries.jsonl：用 key 做 key
+                if path == CONTENT_CACHE and "url" in obj:
+                    d[obj["url"]] = obj
+                elif path == SUMMARY_CACHE and "key" in obj:
+                    d[obj["key"]] = obj
+            except Exception:
+                continue
+    return d
+
+def _append_jsonl(path: Path, obj: dict):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(obj, ensure_ascii=False) + "\n")
+
+
+# =============== 分类与文本处理 ===============
 
 CATEGORIES = {
     "Storage": ["storage", "battery", "energy storage", "bess"],
@@ -36,105 +75,6 @@ CATEGORIES = {
     "PowerElectronics": ["inverter", "converter", "power electronics"]
 }
 
-# ================================
-# OpenAI 摘要实现（内置 429 重试与退避）
-# ================================
-def summarize(title: str, url: str):
-    """
-    返回 (summary_en, summary_zh)
-    使用 gpt-4o-mini；对 429/暂时性错误做指数退避重试。
-    """
-    try:
-        # 新版 SDK（pip install openai>=1.0）
-        from openai import OpenAI
-        client = OpenAI(timeout=OPENAI_TIMEOUT)
-    except Exception as e:
-        raise RuntimeError(f"OpenAI SDK import/init failed: {e}")
-
-    system_prompt = (
-        "You are a concise news summarizer for energy/cleantech topics. "
-        "Write two short, factual summaries (2–3 sentences each): one in EN, one in Simplified Chinese. "
-        "Do not add opinions. Keep numbers and proper nouns accurate. Output JSON with keys 'en' and 'zh'."
-    )
-    user_prompt = (
-        f"Title: {title}\n"
-        f"URL: {url}\n\n"
-        "Please read the page and produce the summaries."
-    )
-
-    backoff = OPENAI_MIN_BACKOFF
-    for attempt in range(OPENAI_MAX_RETRIES):
-        try:
-            resp = client.chat.completions.create(
-                model=OPENAI_MODEL,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
-                temperature=0.2,
-            )
-            content = resp.choices[0].message.content.strip()
-            # 期望是 JSON；容错解析
-            try:
-                data = json.loads(content)
-                en = str(data.get("en", "")).strip()
-                zh = str(data.get("zh", "")).strip()
-                if not en or not zh:
-                    # 兜底：若不是 JSON，就直接把文本一分为二
-                    raise ValueError("JSON missing fields")
-            except Exception:
-                # 非 JSON 格式时的简单提取：按分隔线或换行切
-                parts = re.split(r"\n[-–—]+\n|\n{2,}", content)
-                en = (parts[0] if parts else content).strip()
-                zh = (parts[1] if len(parts) > 1 else "").strip()
-            return en, zh
-        except Exception as e:
-            msg = str(e).lower()
-            # 针对限流/服务器等临时性错误退避重试
-            transient = any(k in msg for k in [
-                "rate limit", "429", "temporarily", "timeout", "overloaded",
-                "service unavailable", "502", "503", "504"
-            ])
-            if attempt < OPENAI_MAX_RETRIES - 1 and transient:
-                sleep_s = min(OPENAI_MAX_BACKOFF, backoff * (2 ** attempt)) + random.uniform(0, 0.5)
-                print(f"[WARN] OpenAI call failed (attempt {attempt+1}/{OPENAI_MAX_RETRIES}): {e}. "
-                      f"Retrying in {sleep_s:.1f}s...")
-                time.sleep(sleep_s)
-                continue
-            raise
-
-# —— 将同步 summarize 封装为“受控并发”调用 —— #
-async def _summarize_task(sema: Semaphore, title: str, link: str):
-    loop = asyncio.get_event_loop()
-    async with sema:
-        # 不改你现有 summarize 的实现，丢到线程池里并发执行
-        return await loop.run_in_executor(None, summarize, title, link)
-
-def summarize_parallel(articles):
-    """
-    articles: [(title, link, preview, source, published), ...]
-    return:   [(en, zh, err or None), ...] 与 articles 对齐
-    """
-    sema = Semaphore(SUMMARIZE_CONCURRENCY)
-
-    async def runner():
-        tasks = []
-        for (title, link, *_rest) in articles:
-            tasks.append(asyncio.create_task(_summarize_task(sema, title, link)))
-        results = []
-        for i, task in enumerate(tasks):
-            try:
-                en, zh = await task
-                results.append((en, zh, None))
-            except Exception as e:
-                results.append(("", "", e))
-        return results
-
-    return asyncio.run(runner())
-
-# ================================
-# 其余业务逻辑（保持你原来的风格）
-# ================================
 def detect_tags(text: str):
     tags = []
     t = text.lower()
@@ -150,23 +90,200 @@ def strip_tags(s: str) -> str:
     s = html.unescape(s)
     return " ".join(s.split())
 
-def extract_preview(link, fallback_summary=""):
+# 高质量：抓正文（用于LLM上下文），但把结果缓存起来，避免每次都下网页
+def fetch_fulltext_with_cache(link: str, fallback_summary="") -> tuple[str, str]:
+    """
+    返回 (preview, full_text)
+    - preview: 用于页面显示的导语（保持你原逻辑）
+    - full_text: 供 LLM 摘要使用的正文（尽量多，提升质量）
+    缓存键：url
+    """
+    content_db = _load_jsonl(CONTENT_CACHE)
+    if link in content_db and content_db[link].get("text"):
+        full_text = content_db[link]["text"]
+        preview = strip_tags(fallback_summary) if not full_text else " ".join(full_text.split("\n")[:2]).strip() or strip_tags(fallback_summary)
+        preview = (preview[:380] + "...") if len(preview) > 400 else preview
+        return preview, full_text
+
+    # 未命中缓存：抓取
+    full_text = ""
+    preview = ""
     try:
+        import socket
+        socket.setdefaulttimeout(8)  # 给网络库一个总超时，避免长阻塞
         article = Article(link)
         article.download()
         article.parse()
-        paragraphs = [p.strip() for p in article.text.split("\n") if p.strip()]
-        preview = " ".join(paragraphs[:2])
+        full_text = article.text.strip()
+        paragraphs = [p.strip() for p in full_text.split("\n") if p.strip()]
+        preview = " ".join(paragraphs[:2]) if paragraphs else strip_tags(fallback_summary)
     except Exception:
         preview = strip_tags(fallback_summary)
-    return preview[:380] + "..." if len(preview) > 400 else preview
+
+    preview = (preview[:380] + "...") if len(preview) > 400 else preview
+
+    # 写入缓存（即使 full_text 为空也记下，避免下次重复尝试）
+    _append_jsonl(CONTENT_CACHE, {
+        "url": link,
+        "sha": _sha1(link),
+        "text": full_text
+    })
+    return preview, full_text
+
+
+# =============== OpenAI 摘要（含缓存 + 429退避 + 并发） ===============
+
+def summarize_with_cache(title: str, url: str, article_text: str) -> tuple[str, str]:
+    """
+    先查摘要缓存；未命中则调用 LLM。
+    缓存key = sha1(model + '\n' + title + '\n' + url + '\n' + first_2000_chars(article_text))
+    这样一旦页面有实质更新（正文变化），会自动重算摘要，质量不降。
+    """
+    # 为了稳定token，限制送入 LLM 的正文片段长度（字符近似token，保守取 6000 字符）
+    context = article_text.strip()
+    if context:
+        context = re.sub(r"\s+", " ", context)
+    context_cut = context[:6000]
+
+    cache_key_material = f"{OPENAI_MODEL}\n{title}\n{url}\n{context_cut}"
+    key = _sha1(cache_key_material)
+
+    summary_db = _load_jsonl(SUMMARY_CACHE)
+    hit = summary_db.get(key)
+    if hit and hit.get("en") and hit.get("zh"):
+        return hit["en"], hit["zh"]
+
+    # 没有命中 → 调用 LLM（带正文上下文，质量↑）
+    en, zh = _summarize_llm(title, url, context_cut)
+
+    _append_jsonl(SUMMARY_CACHE, {
+        "key": key,
+        "model": OPENAI_MODEL,
+        "title": title,
+        "url": url,
+        "en": en,
+        "zh": zh
+    })
+    return en, zh
+
+
+def _summarize_llm(title: str, url: str, article_text: str) -> tuple[str, str]:
+    """
+    真正的 LLM 调用（保留你原有的退避/重试逻辑），
+    但把“正文精华”一并送进prompt以提升摘要质量。
+    """
+    try:
+        from openai import OpenAI
+        client = OpenAI(timeout=OPENAI_TIMEOUT)
+    except Exception as e:
+        raise RuntimeError(f"OpenAI SDK import/init failed: {e}")
+
+    system_prompt = (
+        "You are a concise news summarizer for energy/cleantech topics. "
+        "Write two short, factual summaries (2–3 sentences each): one in EN, one in Simplified Chinese. "
+        "Use only information supported by the provided article content and title/URL. "
+        "Do not add opinions. Keep numbers and proper nouns accurate. Output JSON with keys 'en' and 'zh'."
+    )
+
+    # 把正文精华也给模型（质量↑），但控制长度避免超token
+    user_prompt = (
+        f"Title: {title}\n"
+        f"URL: {url}\n\n"
+        f"Article content (excerpt, may be truncated):\n"
+        f"{article_text}\n\n"
+        "Please produce the summaries."
+    )
+
+    backoff = OPENAI_MIN_BACKOFF
+    for attempt in range(OPENAI_MAX_RETRIES):
+        try:
+            resp = client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.2,
+            )
+            content = resp.choices[0].message.content.strip()
+            try:
+                data = json.loads(content)
+                en = str(data.get("en", "")).strip()
+                zh = str(data.get("zh", "")).strip()
+                if not en or not zh:
+                    raise ValueError("JSON missing fields")
+            except Exception:
+                parts = re.split(r"\n[-–—]+\n|\n{2,}", content)
+                en = (parts[0] if parts else content).strip()
+                zh = (parts[1] if len(parts) > 1 else "").strip()
+            return en, zh
+        except Exception as e:
+            msg = str(e).lower()
+            transient = any(k in msg for k in [
+                "rate limit", "429", "temporarily", "timeout", "overloaded",
+                "service unavailable", "502", "503", "504"
+            ])
+            if attempt < OPENAI_MAX_RETRIES - 1 and transient:
+                sleep_s = min(OPENAI_MAX_BACKOFF, backoff * (2 ** attempt)) + random.uniform(0, 0.5)
+                print(f"[WARN] OpenAI call failed (attempt {attempt+1}/{OPENAI_MAX_RETRIES}): {e}. "
+                      f"Retrying in {sleep_s:.1f}s...")
+                time.sleep(sleep_s)
+                continue
+            raise
+
+
+# —— 将摘要并行化，速度↑且不降质量 —— #
+async def _summarize_task(sema: Semaphore, title: str, link: str, article_text: str):
+    loop = asyncio.get_event_loop()
+    async with sema:
+        # 使用缓存版本，避免重复请求；把正文送进模型以提升质量
+        return await loop.run_in_executor(None, summarize_with_cache, title, link, article_text)
+
+def summarize_parallel(articles, fulltext_map: dict):
+    """
+    articles: [(title, link, preview, source, published), ...]
+    fulltext_map: {link: full_text}
+    return:   [(en, zh, err or None), ...] 与 articles 对齐
+    """
+    sema = Semaphore(SUMMARIZE_CONCURRENCY)
+
+    async def runner():
+        tasks = []
+        for (title, link, *_rest) in articles:
+            article_text = fulltext_map.get(link, "")
+            tasks.append(asyncio.create_task(_summarize_task(sema, title, link, article_text)))
+        results = []
+        for task in asyncio.as_completed(tasks):
+            # 这里按完成顺序收集，后面我们按顺序回填
+            pass
+        # 为了按原顺序返回，逐个 await
+        ordered = []
+        for (title, link, *_rest) in articles:
+            article_text = fulltext_map.get(link, "")
+            try:
+                en, zh = await _summarize_task(sema, title, link, article_text)
+                ordered.append((en, zh, None))
+            except Exception as e:
+                ordered.append(("", "", e))
+        return ordered
+
+    return asyncio.run(runner())
+
+
+# =============== 抓取与分页（与你原版一致，新增了正文缓存调用） ===============
 
 def load_feeds(json_file="feeds.json"):
     with open(json_file, "r", encoding="utf-8") as f:
         return json.load(f)
 
 def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
+    """
+    返回 (collected, fulltext_map)
+    - collected: [(title, link, preview, source, published), ...]  —— 与你原结构一致
+    - fulltext_map: {link: full_text}                               —— 给 LLM 用的上下文，不影响 UI
+    """
     collected = []
+    fulltext_map = {}
     seen_links = set()
 
     for f in feeds:
@@ -185,14 +302,18 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
                 seen_links.add(link)
                 raw_summary = e.get("summary", "")
                 clean_summary = strip_tags(raw_summary)[:400]
-                preview = extract_preview(link, clean_summary)
+
+                # 高质量：抓一次正文并缓存；preview 用两段正文或RSS摘要兜底
+                preview, full_text = fetch_fulltext_with_cache(link, clean_summary)
+
                 source = d.feed.get("title", "Unknown Source")
                 published = e.get("published", "Unknown Date")
                 collected.append((title, link, preview, source, published))
+                fulltext_map[link] = full_text
                 count += 1
             except Exception as err:
                 print(f"[SKIPPED] Bad entry from {f['url']}: {err}")
-    return collected
+    return collected, fulltext_map
 
 def interleave_round_robin(items, source_index, per_round=1):
     buckets = {}
@@ -292,9 +413,9 @@ def clear_old_pages():
 
 def main():
     feeds = load_feeds()
-    articles = fetch_articles(feeds)
+    articles, fulltext_map = fetch_articles(feeds)
 
-    # 可选：限制每次运行的处理数量（防止打满配额）
+    # 可选：限制每次运行的处理数量（保持质量为先，默认不限）
     if MAX_ARTICLES_PER_RUN and MAX_ARTICLES_PER_RUN > 0:
         articles = articles[:MAX_ARTICLES_PER_RUN]
 
@@ -302,10 +423,10 @@ def main():
     clear_old_pages()
 
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    print(f"[INFO] Processing {len(articles)} articles...")
+    print(f"[INFO] Processing {len(articles)} articles... (concurrency={SUMMARIZE_CONCURRENCY})")
 
-    # —— 并发摘要（速度↑），且受 SUMMARIZE_CONCURRENCY 控制 —— #
-    results = summarize_parallel(articles)
+    # 并发 + 缓存 + 正文上下文 —— 质量↑，速度↑，费用↓
+    results = summarize_parallel(articles, fulltext_map)
 
     processed = []
     for (article, res) in zip(articles, results):
