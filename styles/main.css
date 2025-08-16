@@ -335,3 +335,16 @@ footer{
     padding-bottom:calc(40px + env(safe-area-inset-bottom));
   }
 }
+.share-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  font-size: 18px;
+}
+.share-buttons a {
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.share-buttons a:hover {
+  color: var(--brand-ink);
+}

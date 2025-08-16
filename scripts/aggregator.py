@@ -149,9 +149,11 @@ def paginate_with_cap(mixed, page_size=ITEMS_PER_PAGE, per_source_cap=PER_SOURCE
     return pages
 
 def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, source, published):
-    title = html.escape(title)
-    link = html.escape(link)
-    preview = html.escape(preview)  # 仍做转义，稳妥防 XSS
+    import urllib.parse
+
+    title_esc = html.escape(title)
+    link_esc = html.escape(link)
+    preview = html.escape(preview)
     summary_en = html.escape(summary_en)
     summary_zh = html.escape(summary_zh)
     tag_html = " ".join(f"#{tag}" for tag in tags)
@@ -159,15 +161,35 @@ def build_html_snippet(idx, title, link, preview, summary_en, summary_zh, tags, 
     source = html.escape(source)
     published = html.escape(published)
 
+    # 构建分享链接（注意 URL 编码）
+    title_q = urllib.parse.quote_plus(title)
+    link_q = urllib.parse.quote_plus(link)
+
+    share_html = f'''
+    <div class="share-buttons">
+      <a href="https://twitter.com/intent/tweet?text={title_q}&url={link_q}" target="_blank" aria-label="Share on Twitter" class="share-link" data-platform="Twitter">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://www.linkedin.com/shareArticle?mini=true&url={link_q}&title={title_q}" target="_blank" aria-label="Share on LinkedIn" class="share-link" data-platform="LinkedIn">
+        <i class="fab fa-linkedin"></i>
+      </a>
+      <a href="https://www.reddit.com/submit?url={link_q}&title={title_q}" target="_blank" aria-label="Share on Reddit" class="share-link" data-platform="Reddit">
+        <i class="fab fa-reddit"></i>
+      </a>
+    </div>
+    '''
+
     return f'''
-<div class="news-post" data-category="{category}" data-title="{title.lower()}" data-summary="{summary_en.lower()}">
-  <h3>{idx}. <a href="{link}" target="_blank" class="news-link">{title}</a></h3>
+<div class="news-post" data-category="{category}" data-title="{title_esc.lower()}" data-summary="{summary_en.lower()}">
+  <h3>{idx}. <a href="{link_esc}" target="_blank" class="news-link">{title_esc}</a></h3>
   <div class="meta"><span class="source">{source}</span> | <span class="date">{published}</span></div>
   <p class="preview">{preview}</p>
   <p class="summary" data-summary-en="{summary_en}" data-summary-zh="{summary_zh}">{summary_en}</p>
   <div class="tags">{tag_html}</div>
+  {share_html}
 </div>
 '''
+
 
 def clear_old_pages():
     """删除 posts 目录下所有 pageX.html，防止旧页面残留"""
