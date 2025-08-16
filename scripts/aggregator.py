@@ -33,9 +33,7 @@ CACHE_DIR = Path(".cache/aggregator")
 CONTENT_CACHE = CACHE_DIR / "content.jsonl"   # 每行: {"url":..., "sha":..., "text":...}
 SUMMARY_CACHE = CACHE_DIR / "summaries.jsonl" # 每行: {"key":..., "model":..., "title":..., "url":..., "en":..., "zh":...}
 
-
 # =============== 简易 JSONL 缓存 ===============
-
 def _sha1(s: str) -> str:
     return hashlib.sha1(s.encode("utf-8")).hexdigest()
 
@@ -50,7 +48,6 @@ def _load_jsonl(path: Path) -> dict:
                 continue
             try:
                 obj = json.loads(line)
-                # 对 content.jsonl：用 url 做 key；对 summaries.jsonl：用 key 做 key
                 if path == CONTENT_CACHE and "url" in obj:
                     d[obj["url"]] = obj
                 elif path == SUMMARY_CACHE and "key" in obj:
@@ -64,9 +61,7 @@ def _append_jsonl(path: Path, obj: dict):
     with path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(obj, ensure_ascii=False) + "\n")
 
-
 # =============== 分类与文本处理 ===============
-
 CATEGORIES = {
     "Storage": ["storage", "battery", "energy storage", "bess"],
     "PV": ["solar", "photovoltaic", "pv"],
@@ -105,12 +100,11 @@ def fetch_fulltext_with_cache(link: str, fallback_summary="") -> tuple[str, str]
         preview = (preview[:380] + "...") if len(preview) > 400 else preview
         return preview, full_text
 
-    # 未命中缓存：抓取
     full_text = ""
     preview = ""
     try:
         import socket
-        socket.setdefaulttimeout(8)  # 给网络库一个总超时，避免长阻塞
+        socket.setdefaulttimeout(8)  # 避免长阻塞
         article = Article(link)
         article.download()
         article.parse()
@@ -122,7 +116,6 @@ def fetch_fulltext_with_cache(link: str, fallback_summary="") -> tuple[str, str]
 
     preview = (preview[:380] + "...") if len(preview) > 400 else preview
 
-    # 写入缓存（即使 full_text 为空也记下，避免下次重复尝试）
     _append_jsonl(CONTENT_CACHE, {
         "url": link,
         "sha": _sha1(link),
@@ -130,20 +123,17 @@ def fetch_fulltext_with_cache(link: str, fallback_summary="") -> tuple[str, str]
     })
     return preview, full_text
 
-
 # =============== OpenAI 摘要（含缓存 + 429退避 + 并发） ===============
-
 def summarize_with_cache(title: str, url: str, article_text: str) -> tuple[str, str]:
     """
     先查摘要缓存；未命中则调用 LLM。
-    缓存key = sha1(model + '\n' + title + '\n' + url + '\n' + first_2000_chars(article_text))
-    这样一旦页面有实质更新（正文变化），会自动重算摘要，质量不降。
+    缓存key = sha1(model + '\n' + title + '\n' + url + '\n' + excerpt(article_text))
+    页面内容变化会触发重算，质量不降。
     """
-    # 为了稳定token，限制送入 LLM 的正文片段长度（字符近似token，保守取 6000 字符）
-    context = article_text.strip()
+    context = (article_text or "").strip()
     if context:
         context = re.sub(r"\s+", " ", context)
-    context_cut = context[:6000]
+    context_cut = context[:6000]  # 近似控制token
 
     cache_key_material = f"{OPENAI_MODEL}\n{title}\n{url}\n{context_cut}"
     key = _sha1(cache_key_material)
@@ -153,7 +143,6 @@ def summarize_with_cache(title: str, url: str, article_text: str) -> tuple[str, 
     if hit and hit.get("en") and hit.get("zh"):
         return hit["en"], hit["zh"]
 
-    # 没有命中 → 调用 LLM（带正文上下文，质量↑）
     en, zh = _summarize_llm(title, url, context_cut)
 
     _append_jsonl(SUMMARY_CACHE, {
@@ -166,12 +155,7 @@ def summarize_with_cache(title: str, url: str, article_text: str) -> tuple[str, 
     })
     return en, zh
 
-
 def _summarize_llm(title: str, url: str, article_text: str) -> tuple[str, str]:
-    """
-    真正的 LLM 调用（保留你原有的退避/重试逻辑），
-    但把“正文精华”一并送进prompt以提升摘要质量。
-    """
     try:
         from openai import OpenAI
         client = OpenAI(timeout=OPENAI_TIMEOUT)
@@ -185,7 +169,6 @@ def _summarize_llm(title: str, url: str, article_text: str) -> tuple[str, str]:
         "Do not add opinions. Keep numbers and proper nouns accurate. Output JSON with keys 'en' and 'zh'."
     )
 
-    # 把正文精华也给模型（质量↑），但控制长度避免超token
     user_prompt = (
         f"Title: {title}\n"
         f"URL: {url}\n\n"
@@ -231,47 +214,43 @@ def _summarize_llm(title: str, url: str, article_text: str) -> tuple[str, str]:
                 continue
             raise
 
-
 # —— 将摘要并行化，速度↑且不降质量 —— #
 async def _summarize_task(sema: Semaphore, title: str, link: str, article_text: str):
     loop = asyncio.get_event_loop()
     async with sema:
-        # 使用缓存版本，避免重复请求；把正文送进模型以提升质量
         return await loop.run_in_executor(None, summarize_with_cache, title, link, article_text)
 
 def summarize_parallel(articles, fulltext_map: dict):
     """
     articles: [(title, link, preview, source, published), ...]
     fulltext_map: {link: full_text}
-    return:   [(en, zh, err or None), ...] 与 articles 对齐
+    return:   [(en, zh, err or None), ...] —— 顺序与 articles 一一对应
     """
     sema = Semaphore(SUMMARIZE_CONCURRENCY)
 
     async def runner():
+        # 1) 一次性建任务（保持与 articles 同序）
         tasks = []
         for (title, link, *_rest) in articles:
             article_text = fulltext_map.get(link, "")
             tasks.append(asyncio.create_task(_summarize_task(sema, title, link, article_text)))
-        results = []
-        for task in asyncio.as_completed(tasks):
-            # 这里按完成顺序收集，后面我们按顺序回填
-            pass
-        # 为了按原顺序返回，逐个 await
-        ordered = []
-        for (title, link, *_rest) in articles:
-            article_text = fulltext_map.get(link, "")
-            try:
-                en, zh = await _summarize_task(sema, title, link, article_text)
-                ordered.append((en, zh, None))
-            except Exception as e:
-                ordered.append(("", "", e))
-        return ordered
+
+        # 2) 并发等待；按 tasks 顺序返回结果
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # 3) 规范化输出为 (en, zh, err)
+        out = []
+        for r in results:
+            if isinstance(r, Exception):
+                out.append(("", "", r))
+            else:
+                en, zh = r
+                out.append((en, zh, None))
+        return out
 
     return asyncio.run(runner())
 
-
 # =============== 抓取与分页（与你原版一致，新增了正文缓存调用） ===============
-
 def load_feeds(json_file="feeds.json"):
     with open(json_file, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -279,8 +258,8 @@ def load_feeds(json_file="feeds.json"):
 def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
     """
     返回 (collected, fulltext_map)
-    - collected: [(title, link, preview, source, published), ...]  —— 与你原结构一致
-    - fulltext_map: {link: full_text}                               —— 给 LLM 用的上下文，不影响 UI
+    - collected: [(title, link, preview, source, published), ...]
+    - fulltext_map: {link: full_text}
     """
     collected = []
     fulltext_map = {}
@@ -425,8 +404,10 @@ def main():
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     print(f"[INFO] Processing {len(articles)} articles... (concurrency={SUMMARIZE_CONCURRENCY})")
 
+    t0 = time.time()
     # 并发 + 缓存 + 正文上下文 —— 质量↑，速度↑，费用↓
     results = summarize_parallel(articles, fulltext_map)
+    print(f"[INFO] Summaries done in {time.time()-t0:.1f}s")
 
     processed = []
     for (article, res) in zip(articles, results):
