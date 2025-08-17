@@ -1,24 +1,29 @@
 {
-  "top_banner": {
-    "enabled": false,
-    "title": "并网合规清单（UL 1741 SB / IEEE 1547）",
-    "subtitle": "免费下载 PDF，工程师必备",
-    "href": "/downloads/ul1741sb_checklist.pdf"
-  },
-  "footer_cta": {
-    "enabled": false,
-    "text": "预约 EnergizeOS™ 演示",
-    "href": "mailto:sales@energizeos.com"
-  },
-  "side_sponsors": [
-    { "label": "Sponsor A", "href": "https://example.com" },
-    { "label": "Sponsor B", "href": "https://example.com" }
-  ],
-  "downloads": [
-    { "name": "UL 1741 SB 清单", "href": "/downloads/ul1741sb_checklist.pdf" },
-    { "name": "FAT 测试模板",    "href": "/downloads/fat_template.xlsx" }
-  ],
-  "recommended": [
-    { "title": "合闸互锁 C1–C7 工程实践", "href": "/posts/page1.html#c1c7" }
-  ]
+  "top_banner": { "enabled": false },
+  "footer_cta": { "enabled": false },
+
+  "native_ads": {
+    "enabled": true,
+    "shuffle": true,
+    "positions": [3, 9], 
+    "cards": [
+      {
+        "id": "ul1741sb-kit",
+        "brand": "EnergizeOS™",
+        "title": "UL 1741 SB 并网合规工具包",
+        "href": "/downloads/ul1741sb_checklist.pdf",
+        "img": "/ads/ul1741sb_thumb.jpg",
+        "img_alt": "UL 1741 SB Checklist",
+        "text": "一页 checklist + 模板 + 评估要点，工程部常用清单。"
+      },
+      {
+        "id": "bess-quote",
+        "brand": "EnergizeOS™",
+        "title": "BESS 快速报价器（Excel）",
+        "href": "/downloads/bess_quote.xlsx",
+        "img": "/ads/bess_thumb.png",
+        "text": "10 分钟产出初算，含电芯/PCS/系统假设与损益。"
+      }
+    ]
+  }
 }
