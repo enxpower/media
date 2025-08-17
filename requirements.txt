@@ -1,4 +1,5 @@
-feedparser
-newspaper3k
-openai>=1.0.0
-lxml-html-clean
+openai==1.43.0
+feedparser==6.0.11
+newspaper3k==0.2.8
+lxml_html_clean==0.1.1
+nltk==3.8.1
