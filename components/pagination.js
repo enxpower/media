@@ -1,4 +1,8 @@
 // components/pagination.js
+
+// 底部分页触发时会把此开关置为 true；未设置过则默认 false（避免覆盖别处已设置）
+if (window.__fromBottomPager === undefined) window.__fromBottomPager = false;
+
 document.addEventListener("DOMContentLoaded", () => {
   const paginationContainer = document.getElementById("pagination");
   const newsContainer = document.getElementById("newsContainer");
@@ -45,7 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const res = await fetch(`posts/page${page}.html`, { cache: "no-store" });
     const html = await res.text();
     newsContainer.innerHTML = html;
-    window.scrollTo(0, 0);
+
+    // 仅当不是“底部触发”时才回到顶部；随后无论如何都复位开关
+    if (!window.__fromBottomPager) {
+      window.scrollTo({ top: 0, behavior: "auto" }); // 保持与原来一致：立即到顶
+    }
+    window.__fromBottomPager = false; // 每次翻页后复位，避免影响下一次
   }
 
   // ---- Render pager ----
@@ -82,6 +91,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const p = getPageFromURL();
     goto(p, { updateURL: false });
   });
+
+  // 可选：暴露全局控制（方便以后直接驱动而不依赖点击）
+  window.Pager = {
+    get current() { return currentPage; },
+    get total() { return totalPages; },
+    goto,
+    next: () => goto(currentPage + 1),
+    prev: () => goto(currentPage - 1)
+  };
 
   // ---- Init ----
   (async function init() {
