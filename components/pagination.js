@@ -1,8 +1,4 @@
 // components/pagination.js
-
-// 底部分页触发时会把此开关置为 true；未设置过则默认 false（避免覆盖别处已设置）
-if (window.__fromBottomPager === undefined) window.__fromBottomPager = false;
-
 document.addEventListener("DOMContentLoaded", () => {
   const paginationContainer = document.getElementById("pagination");
   const newsContainer = document.getElementById("newsContainer");
@@ -20,13 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // page === 1 时移除参数，保持根路径干净
   function writePageToURL(page, { replace = false } = {}) {
     const url = new URL(location.href);
-    if (page === 1) {
-      url.searchParams.delete("page");
-    } else {
-      url.searchParams.set("page", String(page));
-    }
-    const method = replace ? "replaceState" : "pushState";
-    history[method]({}, "", url);
+    if (page === 1) url.searchParams.delete("page");
+    else url.searchParams.set("page", String(page));
+    history[replace ? "replaceState" : "pushState"]({}, "", url);
   }
 
   // ---- Detect how many pages exist (HEAD即可) ----
@@ -50,18 +42,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const html = await res.text();
     newsContainer.innerHTML = html;
 
-    // 仅当不是“底部触发”时才回到顶部；随后无论如何都复位开关
-    if (!window.__fromBottomPager) {
-      window.scrollTo({ top: 0, behavior: "auto" }); // 保持与原来一致：立即到顶
-    }
-    window.__fromBottomPager = false; // 每次翻页后复位，避免影响下一次
+    // 关键：内容渲染 -> 下一帧再回到最顶（一次性、无平滑）
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    });
   }
 
-  // ---- Render pager ----
+  // ---- Render pager (顶部) ----
   function renderPagination() {
     paginationContainer.innerHTML = "";
 
     const prevBtn = document.createElement("button");
+    prevBtn.type = "button";
     prevBtn.textContent = "← Prev";
     prevBtn.disabled = currentPage === 1;
     prevBtn.onclick = () => goto(currentPage - 1);
@@ -71,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     info.textContent = `Page ${currentPage} of ${totalPages}`;
 
     const nextBtn = document.createElement("button");
+    nextBtn.type = "button";
     nextBtn.textContent = "Next →";
     nextBtn.disabled = currentPage === totalPages;
     nextBtn.onclick = () => goto(currentPage + 1);
@@ -84,6 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
     await loadPage(currentPage);
     renderPagination();
     if (updateURL) writePageToURL(currentPage, { replace });
+
+    // 派发一次事件，给底部控件同步
+    document.dispatchEvent(new CustomEvent("pager:update", {
+      detail: { current: currentPage, total: totalPages }
+    }));
   }
 
   // 支持浏览器前进/后退
@@ -92,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     goto(p, { updateURL: false });
   });
 
-  // 可选：暴露全局控制（方便以后直接驱动而不依赖点击）
+  // 全局接口（底部直接用它翻页）
   window.Pager = {
     get current() { return currentPage; },
     get total() { return totalPages; },
@@ -105,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
   (async function init() {
     await detectTotalPages();
     currentPage = Math.min(getPageFromURL(), totalPages);
-    // 初始化时：如果本来没有 ?page，就不要新增；如果本来有，就规范化
     await goto(currentPage, { replace: true });
   })();
 });
