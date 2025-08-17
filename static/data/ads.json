@@ -13,6 +13,7 @@
         "title": "1.2 MW / 2.064 MWh All-in-One BESS",
         "href": "https://energizeos.com/?utm_source=media&utm_medium=native&utm_campaign=bess1200",
         "img": "/ads/bess1200_1600x900.webp",
+        "img_fallback": "/ads/bess1200_1600x900.jpg",
         "img_alt": "EnergizeOS 1.2 MW / 2.064 MWh containerized BESS",
         "text": "Containerized AC/DC hybrid system for C&I microgrids and utility-scale blocks. Integrated PCS, battery, EMS and HVAC for rapid deployment and reliable operation."
       },
