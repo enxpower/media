@@ -33,6 +33,15 @@ CACHE_DIR = Path(".cache/aggregator")
 CONTENT_CACHE = CACHE_DIR / "content.jsonl"   # {"url":..., "sha":..., "text":...}
 SUMMARY_CACHE = CACHE_DIR / "summaries.jsonl" # {"key":..., "model":..., "title":..., "url":..., "en":..., "zh":...}
 
+# ========= 新增：全文抓取配额 & 计时开关（默认不改变行为） =========
+ENABLE_FULLTEXT = os.getenv("ENABLE_FULLTEXT", "1") == "1"   # 1=抓全文, 0=只用RSS摘要
+MAX_FULLTEXT_PER_RUN = int(os.getenv("MAX_FULLTEXT_PER_RUN", "0"))  # 0=不限制（与原来一致）
+ENABLE_TIMING_LOGS = os.getenv("ENABLE_TIMING_LOGS", "1") == "1"    # 打印阶段耗时日志
+
+def _tlog(msg: str):
+    if ENABLE_TIMING_LOGS:
+        print(msg)
+
 # =============== 简易 JSONL 缓存 ===============
 def _sha1(s: str) -> str:
     return hashlib.sha1(s.encode("utf-8")).hexdigest()
@@ -102,14 +111,17 @@ def fetch_fulltext_with_cache(link: str, fallback_summary="") -> tuple[str, str]
     try:
         import socket
         socket.setdefaulttimeout(8)  # 避免长阻塞
+        t0 = time.time()
         article = Article(link)
         article.download()
         article.parse()
         full_text = article.text.strip()
         paragraphs = [p.strip() for p in full_text.split("\n") if p.strip()]
         preview = " ".join(paragraphs[:2]) if paragraphs else strip_tags(fallback_summary)
-    except Exception:
+        _tlog(f"[TIMING] fulltext ok {time.time()-t0:.2f}s | {link}")
+    except Exception as e:
         preview = strip_tags(fallback_summary)
+        _tlog(f"[TIMING] fulltext fail | {link} | {e}")
 
     preview = (preview[:380] + "...") if len(preview) > 400 else preview
 
@@ -176,6 +188,7 @@ def _summarize_llm(title: str, url: str, article_text: str) -> tuple[str, str]:
     backoff = OPENAI_MIN_BACKOFF
     for attempt in range(OPENAI_MAX_RETRIES):
         try:
+            t0 = time.time()
             resp = client.chat.completions.create(
                 model=OPENAI_MODEL,
                 messages=[
@@ -184,6 +197,7 @@ def _summarize_llm(title: str, url: str, article_text: str) -> tuple[str, str]:
                 ],
                 temperature=0.2,
             )
+            dt = time.time() - t0
             content = resp.choices[0].message.content.strip()
             try:
                 data = json.loads(content)
@@ -195,6 +209,7 @@ def _summarize_llm(title: str, url: str, article_text: str) -> tuple[str, str]:
                 parts = re.split(r"\n[-–—]+\n|\n{2,}", content)
                 en = (parts[0] if parts else content).strip()
                 zh = (parts[1] if len(parts) > 1 else "").strip()
+            _tlog(f"[TIMING] openai {dt:.2f}s | {title[:64]}...")
             return en, zh
         except Exception as e:
             msg = str(e).lower()
@@ -243,7 +258,7 @@ def summarize_parallel(articles, fulltext_map: dict):
 
     return asyncio.run(runner())
 
-# =============== 抓取与分页（与你原版一致，新增了正文缓存调用） ===============
+# =============== 抓取与分页（与你原版一致，新增了正文缓存调用 + 配额 + 计时） ===============
 def load_feeds(json_file="feeds.json"):
     with open(json_file, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -254,15 +269,27 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
     - collected: [(title, link, preview, source, published), ...]
     - fulltext_map: {link: full_text}
     """
+    t_all0 = time.time()
     collected = []
     fulltext_map = {}
     seen_links = set()
+    fulltext_used = 0  # 本次运行已抓全文的条数（受 MAX_FULLTEXT_PER_RUN 限制）
 
     for f in feeds:
-        d = feedparser.parse(f["url"])
+        if len(collected) >= max_total:
+            break
+        url = f["url"]
+        t0 = time.time()
+        try:
+            d = feedparser.parse(url)
+        except Exception as e:
+            print(f"[WARN] feed parse error: {url} | {e}")
+            continue
+        dt_parse = time.time() - t0
+
         entries = d.entries
         count = 0
-
+        t_fetch0 = time.time()
         for e in entries:
             if count >= per_feed_limit or len(collected) >= max_total:
                 break
@@ -272,10 +299,17 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
                 if link in seen_links:
                     continue
                 seen_links.add(link)
+
                 raw_summary = e.get("summary", "")
                 clean_summary = strip_tags(raw_summary)[:400]
 
-                preview, full_text = fetch_fulltext_with_cache(link, clean_summary)
+                # —— 这里加入“全文配额”，默认 0=不限（与原行为同）
+                if ENABLE_FULLTEXT and (MAX_FULLTEXT_PER_RUN == 0 or fulltext_used < MAX_FULLTEXT_PER_RUN):
+                    preview, full_text = fetch_fulltext_with_cache(link, clean_summary)
+                    if full_text or preview:
+                        fulltext_used += 1
+                else:
+                    preview, full_text = clean_summary, ""
 
                 source = d.feed.get("title", "Unknown Source")
                 published = e.get("published", "Unknown Date")
@@ -283,7 +317,12 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
                 fulltext_map[link] = full_text
                 count += 1
             except Exception as err:
-                print(f"[SKIPPED] Bad entry from {f['url']}: {err}")
+                print(f"[SKIPPED] Bad entry from {url}: {err}")
+
+        dt_fetch = time.time() - t_fetch0
+        _tlog(f"[TIMING] feed parsed {dt_parse:.2f}s, fetched {count} in {dt_fetch:.2f}s | {url}")
+
+    _tlog(f"[TIMING] all feeds done {time.time()-t_all0:.2f}s | total items: {len(collected)} | fulltext_used: {fulltext_used}")
     return collected, fulltext_map
 
 def interleave_round_robin(items, source_index, per_round=1):
@@ -383,22 +422,30 @@ def clear_old_pages():
             print(f"[WARN] Could not delete {file}: {e}")
 
 def main():
+    t_main0 = time.time()
+
     feeds = load_feeds()
+    _tlog(f"[TIMING] loaded feeds: {len(feeds)}")
+
+    t_fetch = time.time()
     articles, fulltext_map = fetch_articles(feeds)
+    _tlog(f"[TIMING] fetch_articles total {time.time()-t_fetch:.2f}s | items {len(articles)}")
 
     # 可选：限制每次运行的处理数量（保持质量为先，默认不限）
     if MAX_ARTICLES_PER_RUN and MAX_ARTICLES_PER_RUN > 0:
         articles = articles[:MAX_ARTICLES_PER_RUN]
 
     Path(POSTS_DIR).mkdir(exist_ok=True)
+    t_clear = time.time()
     clear_old_pages()
+    _tlog(f"[TIMING] clear_old_pages {time.time()-t_clear:.2f}s")
 
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     print(f"[INFO] Processing {len(articles)} articles... (concurrency={SUMMARIZE_CONCURRENCY})")
 
-    t0 = time.time()
+    t_sum = time.time()
     results = summarize_parallel(articles, fulltext_map)
-    print(f"[INFO] Summaries done in {time.time()-t0:.1f}s")
+    print(f"[INFO] Summaries done in {time.time()-t_sum:.1f}s")
 
     processed = []
     for (article, res) in zip(articles, results):
@@ -410,9 +457,15 @@ def main():
         tags = detect_tags(f"{title} {en}")
         processed.append((title, link, preview, en, zh, tags, source, published))
 
+    t_inter = time.time()
     mixed = interleave_round_robin(processed, source_index=6, per_round=1)
-    pages = paginate_with_cap(mixed, page_size=ITEMS_PER_PAGE, per_source_cap=PER_SOURCE_PAGE_CAP)
+    _tlog(f"[TIMING] interleave_round_robin {time.time()-t_inter:.2f}s | mixed {len(mixed)}")
 
+    t_page = time.time()
+    pages = paginate_with_cap(mixed, page_size=ITEMS_PER_PAGE, per_source_cap=PER_SOURCE_PAGE_CAP)
+    _tlog(f"[TIMING] paginate_with_cap {time.time()-t_page:.2f}s | pages {len(pages)}")
+
+    t_write = time.time()
     for pg, chunk in enumerate(pages, start=1):
         html_content = f"<!-- Last Updated: {ts} -->\n"
         start_index = (pg - 1) * ITEMS_PER_PAGE + 1
@@ -436,9 +489,10 @@ window.addEventListener("message", (event) => {
 """
         Path(f"{POSTS_DIR}/page{pg}.html").write_text(html_content, encoding="utf-8")
         print(f"[INFO] Wrote page{pg}.html with {len(chunk)} posts.")
+    _tlog(f"[TIMING] write pages {time.time()-t_write:.2f}s")
 
     # === 自动生成 sitemap.xml ===
-    print("[INFO] Generating sitemap.xml...")
+    _tlog("[TIMING] Generating sitemap.xml...")
     domain = "https://media.energizeos.com"
     today = datetime.utcnow().strftime("%Y-%m-%d")
     with open("sitemap.xml", "w", encoding="utf-8") as f:
@@ -455,6 +509,7 @@ window.addEventListener("message", (event) => {
             f.write("  </url>\n")
         f.write("</urlset>\n")
     print("[INFO] Sitemap generated.")
+    _tlog(f"[TIMING] total pipeline {time.time()-t_main0:.2f}s")
 
 if __name__ == "__main__":
     main()
