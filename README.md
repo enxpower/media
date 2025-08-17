@@ -1,130 +1,76 @@
-# EnergizeOS™ News Aggregator
 
-🌍 A multilingual, auto-updating energy news aggregator — curated from global sources in sectors like solar, wind, storage, EV charging, and power electronics.
+EnergizeOS™ News Aggregator
 
-![screenshot](./assets/screenshot.png)
+A multilingual, auto-updating energy news site covering PV, wind, storage, EV charging, and power electronics.
 
----
+Features
 
-## 🔍 Features
+Hourly RSS fetch + English/Chinese summaries
 
-- ✅ **Automated Fetching & Summarization**  
-  Pulls latest RSS headlines and uses OpenAI to summarize them in English and Chinese.
+One-click language toggle
 
-- 🌐 **Language Toggle**  
-  Seamlessly switch between English and Chinese summaries with one click.
+Tagging (PV / Wind / Storage / Charger / Power Electronics)
 
-- 🧠 **Tag-based Categorization**  
-  Auto-classifies each post into categories like `PV`, `Wind`, `Storage`, `Charger`, etc.
+Lightweight, responsive UI
 
-- 📱 **Responsive & Mobile-Friendly**  
-  Modern UI with clean Apple-style typography, responsive layout, and lightweight design.
+Automated via GitHub Actions; deployed on GitHub Pages
 
-- 🕒 **Hourly GitHub Action Automation**  
-  Automatically updates every hour via scheduled GitHub workflows.
+Tech Stack
 
----
+Frontend: HTML, CSS, JavaScript
 
-## 🧱 Tech Stack
+Tasks: Python 3 (feedparser, newspaper3k, OpenAI API)
 
-| Layer        | Tech Used                          |
-| ------------ | ---------------------------------- |
-| Frontend     | HTML, CSS, JavaScript              |
-| Backend Task | Python 3, `newspaper3k`, `feedparser`, `OpenAI API` |
-| Automation   | GitHub Actions                     |
-| Deployment   | GitHub Pages                       |
-| Styling      | Custom CSS (Apple-style), Icons via FontAwesome |
+CI/CD: GitHub Actions
 
----
-
-## 🚀 Getting Started
-
-### 1. Clone the repository
-
+Hosting: GitHub Pages
+Quick Start
 ```bash
 git clone https://github.com/enxpower/media.git
 cd media
-
-2. Install dependencies
 pip install -r requirements.txt
-
-3. Set your OpenAI API Key
 export OPENAI_API_KEY=your_key_here
+python scripts/aggregator.py   # optional local run
+```
 
-4. Run the aggregator locally (optional)
-python scripts/aggregator.py
+Automation
 
-🔁 Automation: GitHub Actions
+Workflow (e.g., update-content.yml) runs hourly:
 
-update-content.yml workflow automatically:
+Fetch RSS → summarize → categorize → write posts/pageX.html → commit.
 
-Fetches new RSS articles
-
-Summarizes using GPT
-
-Categorizes and saves paginated HTML (posts/pageX.html)
-
-Commits changes to the repository
-
-Manual run
-
-You can manually trigger it on GitHub via the "Actions" tab → Update News Content → Run workflow.
-
-📁 Project Structure
+Manual trigger: GitHub “Actions” → Update workflow → Run.
+Structure (short)
+```bash
 media/
-├── posts/                   # Auto-generated news pages
-├── scripts/
-│   ├── aggregator.py        # Main fetch/summarize script
-│   └── openai_summary.py    # GPT summarization logic
-├── components/              # JS modules for UI (lang toggle, search, pagination, footer)
-├── styles/                  # CSS files
-├── feeds.json               # RSS feed sources
-├── index.html               # Main page
-├── .github/workflows/       # GitHub Actions automation
-└── requirements.txt         # Python dependencies
+├─ posts/                 # generated pages
+├─ scripts/
+│  ├─ aggregator.py       # fetch/summarize entry
+│  └─ openai_summary.py   # GPT summarization
+├─ components/            # UI modules (lang toggle, pagination, etc.)
+├─ styles/
+├─ feeds.json             # RSS sources
+├─ index.html
+├─ .github/workflows/
+└─ requirements.txt
+```
 
-🌐 Deployment
+Deployment
 
-This site is hosted via GitHub Pages:
+GitHub Pages, branch: main, entry: index.html
 
-Branch: main
-
-Path: ./index.html
-
-Automatic builds triggered on content update
-
-To preview locally:
-
+Local preview:
+```bash
 python3 -m http.server
-# Visit http://localhost:8000
+# open http://localhost:8000
+```
+License
 
-📡 Feed Sources
-
-See feeds.json for curated industry sources from:
-
-⚡ Energy Storage
-
-☀️ Solar / PV
-
-🌬️ Wind Power
-
-🔌 EV Charging
-
-🔋 Power Electronics
-
-🇨🇳 Chinese industry media (CNEVPost, 电车资源, etc.)
-
-Want to contribute sources? Submit a pull request!
-
-🛡 License
 Copyright © 2025 Energize Solutions Inc.
+Licensed under CC BY-NC 4.0. See LICENSE.
 
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License.
-See LICENSE for details.
+Contact
 
-✉️ Contact
+Email: info@energizeos.com
 
-For feedback, partnerships, or inquiries:
-
-📫 info@energizeos.com
-🐙 GitHub – enxpower
+GitHub: enxpower
