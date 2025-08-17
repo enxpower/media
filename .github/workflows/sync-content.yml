@@ -8,7 +8,7 @@ on:
         required: false
         default: "main"
   schedule:
-    - cron: "0 * * * *"   # 每小时同步一次，可按需调整
+    - cron: "0 * * * *"   # 每小时，可按需调整
 
 permissions:
   contents: write
@@ -17,27 +17,41 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # 1) 公库
       - name: Checkout PUBLIC repo (this repo)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Checkout PRIVATE content repo
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ secrets.OPS_REPO }}     # 形如 org/private-content
-          token: ${{ secrets.OPS_TOKEN }}         # PAT 或 repo token
-          ref: ${{ github.event.inputs.ops_ref || 'main' }}
-          path: ops
-
-      # ✅ 关键：移除历史残留的子模块指针（gitlink），就不会再触发 Pages 报错
-      - name: Remove stray submodule pointer 'ops' (safe)
+      # 2) 先把历史残留的 submodule gitlink 移除（安全可重复）
+      - name: Remove stray submodule pointer 'ops'
         run: |
           set -eux
           git rm -r --cached ops || true
           rm -rf ops || true
-          test -f .gitmodules && git rm -f .gitmodules || true
+          if [ -f .gitmodules ]; then
+            git config -f .gitmodules --remove-section submodule.ops || true
+            rm -f .gitmodules || true
+          fi
 
+      # 3) 私库改到 ops_src，避免与旧的 ops 冲突
+      - name: Checkout PRIVATE content repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.OPS_REPO }}     # 例如 org/content-ops
+          token: ${{ secrets.OPS_TOKEN }}         # 你的 PAT / App token
+          ref: ${{ github.event.inputs.ops_ref || 'main' }}
+          path: ops_src
+          persist-credentials: false
+          fetch-depth: 1
+
+      # 可见性：确认目录真的存在
+      - name: Show tree (debug)
+        run: |
+          echo "::group::root"; ls -la; echo "::endgroup::"
+          echo "::group::ops_src"; ls -la ops_src; echo "::endgroup::"
+
+      # 4) 只同步白名单；源路径改为 ops_src/（根下就是 ads、downloads、static）
       - name: Sync whitelisted paths (ads, downloads, static/data)
         run: |
           set -eux
@@ -47,8 +61,9 @@ jobs:
             --include='ads/***' \
             --include='downloads/***' \
             --exclude='*' \
-            ops/content-ops/ ./
+            ops_src/ ./
 
+      # 5) 提交并推送（会把去掉 gitlink 的变更一并提交）
       - name: Commit & push if changed
         run: |
           set -eux
@@ -58,6 +73,6 @@ jobs:
           else
             git config user.name "actions-user"
             git config user.email "actions@users.noreply.github.com"
-            git commit -m "chore: sync private content & remove ops gitlink"
+            git commit -m "chore: sync private content & remove old ops submodule"
             git push
           fi
