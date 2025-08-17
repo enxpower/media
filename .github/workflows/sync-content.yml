@@ -4,68 +4,116 @@ on:
   workflow_dispatch:
     inputs:
       ops_ref:
-        description: "Private repo branch/tag to sync"
+        description: "Private repo branch/tag to sync (in content-ops)"
         required: false
         default: "main"
   schedule:
-    - cron: "0 * * * *"   # 每小时，可按需调整
+    - cron: "0 * * * *"   # 每小时
 
 permissions:
   contents: write
+
+# 避免定时与手动同时跑，互相覆盖
+concurrency:
+  group: sync-content
+  cancel-in-progress: true
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) 公库
       - name: Checkout PUBLIC repo (this repo)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2) 安全清理历史遗留的 submodule 指针（有就删、没有就跳过）
-      - name: Remove stray submodule pointer 'ops' (safe)
+      # 保证拉的是最新 main（或你点运行时选择的分支）
+      - name: Update local branch
         run: |
           set -eux
-          git rm -r --cached ops || true
-          rm -rf ops || true
-          if [ -f .gitmodules ]; then
-            git config -f .gitmodules --remove-section submodule.ops || true
-            # 清空后就删掉
-            [ -s .gitmodules ] || rm -f .gitmodules || true
-          fi
+          git fetch origin
+          git rev-parse --abbrev-ref HEAD
+          git pull --rebase --autostash || true
 
-      # 3) 私库检出到 ops/（保持你现有的命名与 secrets）
+      # 守卫：确保 Secrets 与输入存在
+      - name: Guard: ensure secrets & inputs exist
+        run: |
+          set -e
+          [ -n "${{ secrets.OPS_REPO }}" ]  || { echo "Missing OPS_REPO";  exit 1; }
+          [ -n "${{ secrets.OPS_TOKEN }}" ] || { echo "Missing OPS_TOKEN"; exit 1; }
+          echo "Using OPS_REPO=${{ secrets.OPS_REPO }}, ref=${{ github.event.inputs.ops_ref || 'main' }}"
+
+      # 移除历史残留的子模块指针（有就清，无则跳过）
+      - name: Remove stray submodule pointers (safe)
+        run: |
+          set -eux
+          git ls-files -s | awk '$1=="160000"{print $4}' > .gitlinks || true
+          if [ -s .gitlinks ]; then
+            xargs -a .gitlinks -r git rm -f --cached || true
+          fi
+          [ -f .gitmodules ] && git rm -f .gitmodules || rm -f .gitmodules || true
+
+      # 检出私库到 ops/
       - name: Checkout PRIVATE content repo
         uses: actions/checkout@v4
         with:
           repository: ${{ secrets.OPS_REPO }}     # 例如 enxpower/content-ops
-          token: ${{ secrets.OPS_TOKEN }}         # 你已配置好的 PAT
+          token: ${{ secrets.OPS_TOKEN }}
           ref: ${{ github.event.inputs.ops_ref || 'main' }}
           path: ops
-          submodules: false
           persist-credentials: false
           fetch-depth: 1
+          submodules: false
 
-      - name: Show tree (debug)
-        run: |
-          echo "::group::root"; ls -la; echo "::endgroup::"
-          echo "::group::ops"; ls -la ops; echo "::endgroup::"
-
-      # 4) 只同步白名单
-      - name: Sync whitelisted paths (ads, downloads, static/data)
+      # 诊断：必须存在权威文件
+      - name: Diagnose content paths (tree + must-have file)
         run: |
           set -eux
+          echo "::group::ops tree"; ls -la ops || true; echo "::endgroup::"
+          test -f ops/static/data/ads.json || { echo "NOT FOUND: ops/static/data/ads.json"; exit 2; }
+
+      # 同步（按内容校验），并打印前后 SHA
+      - name: Sync whitelisted paths (checksum & log)
+        run: |
+          set -eux
+          sha() { test -f "$1" && (command -v sha256sum >/dev/null && sha256sum "$1" || shasum -a 256 "$1") | awk '{print $1}' || echo "missing"; }
+
+          echo "PRIVATE ads.json SHA=$(sha ops/static/data/ads.json)"
+          echo "PUBLIC  ads.json (before) SHA=$(sha static/data/ads.json)"
+
           mkdir -p ads downloads static/data
-          rsync -av --delete \
+          rsync -av --checksum --delete \
             --include='static/data/ads.json' \
             --include='ads/***' \
             --include='downloads/***' \
             --exclude='*' \
             ops/ ./
 
-      # 5) 如有变更再提交
+          echo "PUBLIC  ads.json (after rsync) SHA=$(sha static/data/ads.json)"
+
+      # 如仍不一致，直接“强制覆盖一次”（防极端时间戳/行尾差异）
+      - name: Force replace ads.json if SHA mismatch
+        run: |
+          set -eux
+          sha() { test -f "$1" && (command -v sha256sum >/dev/null && sha256sum "$1" || shasum -a 256 "$1") | awk '{print $1}' || echo "missing"; }
+          S1=$(sha ops/static/data/ads.json || true)
+          S2=$(sha static/data/ads.json || true)
+          if [ "$S1" != "$S2" ]; then
+            echo "SHA mismatch, force replacing..."
+            install -D -m 0644 ops/static/data/ads.json static/data/ads.json
+            echo "PUBLIC  ads.json (forced) SHA=$(sha static/data/ads.json)"
+          else
+            echo "SHA equals, no force replace needed."
+          fi
+
+      # 清理可能的重复 ads.json（只保留 canonical 路径）
+      - name: Ensure only canonical ads.json exists
+        run: |
+          set -eux
+          find . -type f -name 'ads.json' ! -path './static/data/ads.json' -print -delete || true
+
+      # 提交并推送（先 rebase 防并发覆盖）
       - name: Commit & push if changed
         run: |
           set -eux
@@ -73,8 +121,9 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git config user.name "actions-user"
+            git config user.name  "actions-user"
             git config user.email "actions@users.noreply.github.com"
-            git commit -m "chore: sync private content"
+            git commit -m "chore: sync private content (ads.json, ads/, downloads/)"
+            git pull --rebase --autostash || true
             git push
           fi
