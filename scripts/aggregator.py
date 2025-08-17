@@ -15,11 +15,11 @@ MAX_TOTAL = 300
 PER_FEED_LIMIT = 3
 PER_SOURCE_PAGE_CAP = 2
 
-# 每次运行最多处理多少篇文章（0=不限制）——为“质量优先”保持默认0（不限）
+# 每次运行最多处理多少篇文章（0=不限制）
 MAX_ARTICLES_PER_RUN = int(os.getenv("MAX_ARTICLES_PER_RUN", "0"))
 
 # OpenAI 模型与超时/重试设置
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")  # ✅ 更省钱且质量好
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")  # ✅ 经济&稳定
 OPENAI_TIMEOUT = float(os.getenv("OPENAI_TIMEOUT", "60"))
 OPENAI_MAX_RETRIES = int(os.getenv("OPENAI_MAX_RETRIES", "5"))
 OPENAI_MIN_BACKOFF = float(os.getenv("OPENAI_MIN_BACKOFF", "2.0"))
@@ -28,10 +28,10 @@ OPENAI_MAX_BACKOFF = float(os.getenv("OPENAI_MAX_BACKOFF", "30.0"))
 # 受控并发（摘要阶段）
 SUMMARIZE_CONCURRENCY = int(os.getenv("SUMMARIZE_CONCURRENCY", "4"))
 
-# 缓存目录（正文缓存 + 摘要缓存），避免重复下载与重复调用API
+# 缓存目录（正文缓存 + 摘要缓存）
 CACHE_DIR = Path(".cache/aggregator")
-CONTENT_CACHE = CACHE_DIR / "content.jsonl"   # 每行: {"url":..., "sha":..., "text":...}
-SUMMARY_CACHE = CACHE_DIR / "summaries.jsonl" # 每行: {"key":..., "model":..., "title":..., "url":..., "en":..., "zh":...}
+CONTENT_CACHE = CACHE_DIR / "content.jsonl"   # {"url":..., "sha":..., "text":...}
+SUMMARY_CACHE = CACHE_DIR / "summaries.jsonl" # {"key":..., "model":..., "title":..., "url":..., "en":..., "zh":...}
 
 # =============== 简易 JSONL 缓存 ===============
 def _sha1(s: str) -> str:
@@ -85,13 +85,11 @@ def strip_tags(s: str) -> str:
     s = html.unescape(s)
     return " ".join(s.split())
 
-# 高质量：抓正文（用于LLM上下文），但把结果缓存起来，避免每次都下网页
+# 高质量：抓正文（用于LLM上下文），带缓存
 def fetch_fulltext_with_cache(link: str, fallback_summary="") -> tuple[str, str]:
     """
     返回 (preview, full_text)
-    - preview: 用于页面显示的导语（保持你原逻辑）
-    - full_text: 供 LLM 摘要使用的正文（尽量多，提升质量）
-    缓存键：url
+    preview：页面展示导语；full_text：提供给 LLM 的正文
     """
     content_db = _load_jsonl(CONTENT_CACHE)
     if link in content_db and content_db[link].get("text"):
@@ -100,8 +98,7 @@ def fetch_fulltext_with_cache(link: str, fallback_summary="") -> tuple[str, str]
         preview = (preview[:380] + "...") if len(preview) > 400 else preview
         return preview, full_text
 
-    full_text = ""
-    preview = ""
+    full_text, preview = "", ""
     try:
         import socket
         socket.setdefaulttimeout(8)  # 避免长阻塞
@@ -123,12 +120,11 @@ def fetch_fulltext_with_cache(link: str, fallback_summary="") -> tuple[str, str]
     })
     return preview, full_text
 
-# =============== OpenAI 摘要（含缓存 + 429退避 + 并发） ===============
+# =============== OpenAI 摘要（缓存 + 429退避 + 并发） ===============
 def summarize_with_cache(title: str, url: str, article_text: str) -> tuple[str, str]:
     """
     先查摘要缓存；未命中则调用 LLM。
     缓存key = sha1(model + '\n' + title + '\n' + url + '\n' + excerpt(article_text))
-    页面内容变化会触发重算，质量不降。
     """
     context = (article_text or "").strip()
     if context:
@@ -214,7 +210,7 @@ def _summarize_llm(title: str, url: str, article_text: str) -> tuple[str, str]:
                 continue
             raise
 
-# —— 将摘要并行化，速度↑且不降质量 —— #
+# —— 将摘要并行化（只调一次，真实并发） —— #
 async def _summarize_task(sema: Semaphore, title: str, link: str, article_text: str):
     loop = asyncio.get_event_loop()
     async with sema:
@@ -229,16 +225,13 @@ def summarize_parallel(articles, fulltext_map: dict):
     sema = Semaphore(SUMMARIZE_CONCURRENCY)
 
     async def runner():
-        # 1) 一次性建任务（保持与 articles 同序）
         tasks = []
         for (title, link, *_rest) in articles:
             article_text = fulltext_map.get(link, "")
             tasks.append(asyncio.create_task(_summarize_task(sema, title, link, article_text)))
 
-        # 2) 并发等待；按 tasks 顺序返回结果
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        # 3) 规范化输出为 (en, zh, err)
         out = []
         for r in results:
             if isinstance(r, Exception):
@@ -282,7 +275,6 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
                 raw_summary = e.get("summary", "")
                 clean_summary = strip_tags(raw_summary)[:400]
 
-                # 高质量：抓一次正文并缓存；preview 用两段正文或RSS摘要兜底
                 preview, full_text = fetch_fulltext_with_cache(link, clean_summary)
 
                 source = d.feed.get("title", "Unknown Source")
@@ -405,7 +397,6 @@ def main():
     print(f"[INFO] Processing {len(articles)} articles... (concurrency={SUMMARIZE_CONCURRENCY})")
 
     t0 = time.time()
-    # 并发 + 缓存 + 正文上下文 —— 质量↑，速度↑，费用↓
     results = summarize_parallel(articles, fulltext_map)
     print(f"[INFO] Summaries done in {time.time()-t0:.1f}s")
 
