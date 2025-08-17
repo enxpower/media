@@ -3,8 +3,8 @@ name: Sync private content to public
 on:
   workflow_dispatch:
     inputs:
-      ops_ref:
-        description: "Private repo branch/tag to sync"
+      content_ref:
+        description: "Branch or tag of content-ops to sync"
         required: false
         default: "main"
   schedule:
@@ -23,25 +23,24 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 2) 先把历史残留的 submodule gitlink 移除（安全可重复）
-      - name: Remove stray submodule pointer 'ops'
+      # 2) 清理任何遗留的子模块指针（通用，不依赖命名）
+      - name: Remove stray submodule pointers (safe)
         run: |
           set -eux
-          git rm -r --cached ops || true
-          rm -rf ops || true
-          if [ -f .gitmodules ]; then
-            git config -f .gitmodules --remove-section submodule.ops || true
-            rm -f .gitmodules || true
+          git ls-files -s | awk '$1=="160000"{print $4}' > .gitlinks || true
+          if [ -s .gitlinks ]; then
+            xargs -a .gitlinks -r git rm -f --cached || true
           fi
+          [ -f .gitmodules ] && git rm -f .gitmodules || rm -f .gitmodules || true
 
-      # 3) 私库改到 ops_src，避免与旧的 ops 冲突
-      - name: Checkout PRIVATE content repo
+      # 3) 检出 content-ops（私有内容仓库）
+      - name: Checkout content-ops
         uses: actions/checkout@v4
         with:
-          repository: ${{ secrets.OPS_REPO }}     # 例如 org/content-ops
-          token: ${{ secrets.OPS_TOKEN }}         # 你的 PAT / App token
-          ref: ${{ github.event.inputs.ops_ref || 'main' }}
-          path: ops_src
+          repository: ${{ secrets.CONTENT_REPO }}     # 例如 org/content-ops
+          token: ${{ secrets.CONTENT_TOKEN }}         # 具有读取 content-ops 的 Token
+          ref: ${{ github.event.inputs.content_ref || 'main' }}
+          path: content_src
           persist-credentials: false
           fetch-depth: 1
 
@@ -49,21 +48,29 @@ jobs:
       - name: Show tree (debug)
         run: |
           echo "::group::root"; ls -la; echo "::endgroup::"
-          echo "::group::ops_src"; ls -la ops_src; echo "::endgroup::"
+          echo "::group::content_src"; ls -la content_src || true; echo "::endgroup::"
 
-      # 4) 只同步白名单；源路径改为 ops_src/（根下就是 ads、downloads、static）
-      - name: Sync whitelisted paths (ads, downloads, static/data)
+      # 4) 只同步白名单；用 --checksum 强制按内容对比，并打印 SHA 便于核对
+      - name: Sync whitelisted paths (force checksum & log sha)
         run: |
           set -eux
+          sha() { test -f "$1" && (command -v sha256sum >/dev/null && sha256sum "$1" || shasum -a 256 "$1") | awk '{print $1}' || echo "missing"; }
+
+          echo "CONTENT ads.json SHA=$(sha content_src/static/data/ads.json || true)"
+          echo "PUBLIC  ads.json (before) SHA=$(sha static/data/ads.json || true)"
+
           mkdir -p ads downloads static/data
-          rsync -av --delete \
+          rsync -av --checksum --delete \
             --include='static/data/ads.json' \
             --include='ads/***' \
             --include='downloads/***' \
             --exclude='*' \
-            ops_src/ ./
+            content_src/ ./
 
-      # 5) 提交并推送（会把去掉 gitlink 的变更一并提交）
+          echo "PUBLIC  ads.json (after)  SHA=$(sha static/data/ads.json || true)"
+          git status --porcelain
+
+      # 5) 提交并推送
       - name: Commit & push if changed
         run: |
           set -eux
@@ -71,8 +78,8 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git config user.name "actions-user"
+            git config user.name  "actions-user"
             git config user.email "actions@users.noreply.github.com"
-            git commit -m "chore: sync private content & remove old ops submodule"
+            git commit -m "chore: sync private content from content-ops"
             git push
           fi
