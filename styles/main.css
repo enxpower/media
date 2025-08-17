@@ -94,20 +94,29 @@ header > h1{
 
 /* ---------- Layout ---------- */
 #newsContainer,
-#pagination{
+#pagination,
+#pagination-bottom{
   width:min(980px, calc(100% - 24px));
   margin:0 auto;
 }
-#pagination{padding:14px 0 4px}
+#pagination,
+#pagination-bottom{padding:14px 0 4px}
 
-/* ---------- Pagination ---------- */
-#pagination{
+/* ---------- Pagination （顶部/底部同款） ---------- */
+#pagination,
+#pagination-bottom{
   display:flex;
   align-items:center;
   justify-content:center;
   gap:10px;
 }
-#pagination button{
+#pagination button,
+#pagination-bottom button,
+#pagination a,
+#pagination-bottom a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
   min-width:76px;
   height:34px;
   padding:0 12px;
@@ -116,20 +125,27 @@ header > h1{
   background:#fff;
   color:var(--text);
   cursor:pointer;
+  text-decoration:none;
   box-shadow:0 1px 0 rgba(0,0,0,.02);
   transition:.2s transform,.2s box-shadow,.2s background;
+  line-height:1; /* 对齐按钮文本 */
 }
-#pagination button:hover:not(:disabled){
+#pagination button:hover:not(:disabled),
+#pagination-bottom button:hover:not(:disabled),
+#pagination a:hover,
+#pagination-bottom a:hover{
   transform:translateY(-1px);
   box-shadow:0 6px 14px rgba(15,23,42,.08);
   background:#fafafa;
 }
-#pagination button:disabled{
+#pagination button:disabled,
+#pagination-bottom button:disabled{
   cursor:not-allowed;
   opacity:.45;
   background:#fff;
 }
-#pagination .page-info{
+#pagination .page-info,
+#pagination-bottom .page-info{
   font-size:13px;
   color:var(--muted);
   padding:0 6px;
@@ -265,7 +281,7 @@ footer{
     min-width:78px;
     font-size:13px;
   }
-  #newsContainer, #pagination, footer{ width:calc(100% - 16px) }
+  #newsContainer, #pagination, #pagination-bottom, footer{ width:calc(100% - 16px) }
   .news-post{ padding:12px 12px 10px; margin:12px auto }
   .news-post h3{ font-size:15px }
   .news-post p{ font-size:13.5px }
@@ -299,18 +315,23 @@ footer{
     white-space:nowrap;
   }
 
-  #pagination{
+  #pagination,
+  #pagination-bottom{
     padding:10px 0 2px;
     gap:8px;
   }
-  #pagination button{
+  #pagination button,
+  #pagination-bottom button,
+  #pagination a,
+  #pagination-bottom a{
     min-width:70px;
     height:32px;
     padding:0 10px;
     border-radius:9px;
     font-size:13px;
   }
-  #pagination .page-info{ font-size:12px }
+  #pagination .page-info,
+  #pagination-bottom .page-info{ font-size:12px }
 
   #newsContainer{ width:calc(100% - 16px) }
   .news-post{
@@ -335,6 +356,7 @@ footer{
     padding-bottom:calc(40px + env(safe-area-inset-bottom));
   }
 }
+
 .share-buttons {
   margin-top: 10px;
   display: flex;
