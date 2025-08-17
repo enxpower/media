@@ -1,120 +1,83 @@
-name: Sync private content to public
+name: Sync private content to public (dev-ui)
 
 on:
   workflow_dispatch:
     inputs:
-      ops_ref:
-        description: "Private repo branch/tag to sync (in content-ops)"
+      content_ref:
+        description: "Branch/Tag of PRIVATE repo (default: main)"
         required: false
-        default: "main"
+        default: main
+      dry_run:
+        description: "Dry run (no commit/push)"
+        type: boolean
+        default: false
   schedule:
-    - cron: "0 * * * *"   # 每小时
+    - cron: "0 * * * *"  # hourly
 
 permissions:
   contents: write
 
-# 避免定时与手动同时跑，互相覆盖
 concurrency:
-  group: sync-content
-  cancel-in-progress: true
+  group: sync-content-dev-ui
+  cancel-in-progress: false
+
+env:
+  PUBLIC_BRANCH: dev-ui
+  PRIVATE_REPO: ${{ secrets.PRIVATE_CONTENT_REPO }}   # e.g. owner/content-ops
+  PRIVATE_TOKEN: ${{ secrets.PRIVATE_CONTENT_TOKEN }} # repo read token for private repo
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout PUBLIC repo (this repo)
+      - name: Checkout PUBLIC repo (dev-ui)
         uses: actions/checkout@v4
         with:
+          ref: ${{ env.PUBLIC_BRANCH }}
           fetch-depth: 0
 
-      # 保证拉的是最新 main（或你点运行时选择的分支）
-      - name: Update local branch
+      - name: Show current branch
         run: |
           set -eux
-          git fetch origin
           git rev-parse --abbrev-ref HEAD
-          git pull --rebase --autostash || true
+          git status
 
-      # 守卫：确保 Secrets 与输入存在
-      - name: Guard: ensure secrets & inputs exist
-        run: |
-          set -e
-          [ -n "${{ secrets.OPS_REPO }}" ]  || { echo "Missing OPS_REPO";  exit 1; }
-          [ -n "${{ secrets.OPS_TOKEN }}" ] || { echo "Missing OPS_TOKEN"; exit 1; }
-          echo "Using OPS_REPO=${{ secrets.OPS_REPO }}, ref=${{ github.event.inputs.ops_ref || 'main' }}"
-
-      # 移除历史残留的子模块指针（有就清，无则跳过）
-      - name: Remove stray submodule pointers (safe)
-        run: |
-          set -eux
-          git ls-files -s | awk '$1=="160000"{print $4}' > .gitlinks || true
-          if [ -s .gitlinks ]; then
-            xargs -a .gitlinks -r git rm -f --cached || true
-          fi
-          [ -f .gitmodules ] && git rm -f .gitmodules || rm -f .gitmodules || true
-
-      # 检出私库到 ops/
-      - name: Checkout PRIVATE content repo
+      - name: Checkout PRIVATE repo (content ops)
         uses: actions/checkout@v4
         with:
-          repository: ${{ secrets.OPS_REPO }}     # 例如 enxpower/content-ops
-          token: ${{ secrets.OPS_TOKEN }}
-          ref: ${{ github.event.inputs.ops_ref || 'main' }}
-          path: ops
-          persist-credentials: false
+          repository: ${{ env.PRIVATE_REPO }}
+          ref: ${{ github.event.inputs.content_ref || 'main' }}
+          token: ${{ env.PRIVATE_TOKEN }}
+          path: _ops_src
           fetch-depth: 1
-          submodules: false
 
-      # 诊断：必须存在权威文件
-      - name: Diagnose content paths (tree + must-have file)
+      - name: Prepare target dirs
         run: |
           set -eux
-          echo "::group::ops tree"; ls -la ops || true; echo "::endgroup::"
-          test -f ops/static/data/ads.json || { echo "NOT FOUND: ops/static/data/ads.json"; exit 2; }
+          mkdir -p static/data ads downloads
 
-      # 同步（按内容校验），并打印前后 SHA
-      - name: Sync whitelisted paths (checksum & log)
+      # ✅ 白名单复制：只允许这三类
+      - name: Copy whitelisted content from PRIVATE -> PUBLIC
         run: |
           set -eux
-          sha() { test -f "$1" && (command -v sha256sum >/dev/null && sha256sum "$1" || shasum -a 256 "$1") | awk '{print $1}' || echo "missing"; }
+          rsync -av --delete "_ops_src/static/data/ads.json" "static/data/ads.json"
+          rsync -av --delete "_ops_src/ads/" "ads/"
+          rsync -av --delete "_ops_src/downloads/" "downloads/" || true
 
-          echo "PRIVATE ads.json SHA=$(sha ops/static/data/ads.json)"
-          echo "PUBLIC  ads.json (before) SHA=$(sha static/data/ads.json)"
-
-          mkdir -p ads downloads static/data
-          rsync -av --checksum --delete \
-            --include='static/data/ads.json' \
-            --include='ads/***' \
-            --include='downloads/***' \
-            --exclude='*' \
-            ops/ ./
-
-          echo "PUBLIC  ads.json (after rsync) SHA=$(sha static/data/ads.json)"
-
-      # 如仍不一致，直接“强制覆盖一次”（防极端时间戳/行尾差异）
-      - name: Force replace ads.json if SHA mismatch
+      # ✅ 同步后做硬核校验：ads.json 必须完全一致
+      - name: Verify ads.json is EXACTLY identical (private vs public)
         run: |
           set -eux
-          sha() { test -f "$1" && (command -v sha256sum >/dev/null && sha256sum "$1" || shasum -a 256 "$1") | awk '{print $1}' || echo "missing"; }
-          S1=$(sha ops/static/data/ads.json || true)
-          S2=$(sha static/data/ads.json || true)
-          if [ "$S1" != "$S2" ]; then
-            echo "SHA mismatch, force replacing..."
-            install -D -m 0644 ops/static/data/ads.json static/data/ads.json
-            echo "PUBLIC  ads.json (forced) SHA=$(sha static/data/ads.json)"
-          else
-            echo "SHA equals, no force replace needed."
-          fi
+          cmp -s "_ops_src/static/data/ads.json" "static/data/ads.json" || (echo "ads.json mismatch after copy!" && exit 1)
 
-      # 清理可能的重复 ads.json（只保留 canonical 路径）
-      - name: Ensure only canonical ads.json exists
+      - name: Show diff summary
         run: |
           set -eux
-          find . -type f -name 'ads.json' ! -path './static/data/ads.json' -print -delete || true
+          git status --porcelain || true
+          git diff --stat || true
 
-      # 提交并推送（先 rebase 防并发覆盖）
       - name: Commit & push if changed
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           set -eux
           git add -A
@@ -123,7 +86,6 @@ jobs:
           else
             git config user.name  "actions-user"
             git config user.email "actions@users.noreply.github.com"
-            git commit -m "chore: sync private content (ads.json, ads/, downloads/)"
-            git pull --rebase --autostash || true
-            git push
+            git commit -m "chore: sync content from private repo → dev-ui"
+            git push origin HEAD:${PUBLIC_BRANCH}
           fi
