@@ -435,10 +435,8 @@ def main():
     if MAX_ARTICLES_PER_RUN and MAX_ARTICLES_PER_RUN > 0:
         articles = articles[:MAX_ARTICLES_PER_RUN]
 
+    # 先不要删旧页面！只有当确认本次能产出新页面时，才替换
     Path(POSTS_DIR).mkdir(exist_ok=True)
-    t_clear = time.time()
-    clear_old_pages()
-    _tlog(f"[TIMING] clear_old_pages {time.time()-t_clear:.2f}s")
 
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     print(f"[INFO] Processing {len(articles)} articles... (concurrency={SUMMARIZE_CONCURRENCY})")
@@ -452,8 +450,13 @@ def main():
         title, link, preview, source, published = article
         en, zh, err = res
         if err:
-            print(f"[SKIPPED] {title}: {err}")
-            continue
+            # 如果 LLM 整体挂了，不要阻塞生成：保底用 preview 作为英文摘要，中文留空
+            en = en.strip() if en else (preview or "").strip()
+            zh = zh.strip() if zh else ""
+            if not en and not zh:
+                # 实在拿不到任何内容，这一条就跳过
+                print(f"[SKIPPED] {title}: {err}")
+                continue
         tags = detect_tags(f"{title} {en}")
         processed.append((title, link, preview, en, zh, tags, source, published))
 
@@ -464,6 +467,17 @@ def main():
     t_page = time.time()
     pages = paginate_with_cap(mixed, page_size=ITEMS_PER_PAGE, per_source_cap=PER_SOURCE_PAGE_CAP)
     _tlog(f"[TIMING] paginate_with_cap {time.time()-t_page:.2f}s | pages {len(pages)}")
+
+    # ✅ 关键保护：如果本次生成 0 页，绝不动旧内容，直接退出，前端不会 404
+    if len(pages) == 0:
+        print("[WARN] No pages generated this run. Keeping existing posts/ untouched.")
+        _tlog(f"[TIMING] total pipeline {time.time()-t_main0:.2f}s")
+        return
+
+    # 到这里才真正替换：先清旧，再写新
+    t_clear = time.time()
+    clear_old_pages()
+    _tlog(f"[TIMING] clear_old_pages {time.time()-t_clear:.2f}s")
 
     t_write = time.time()
     for pg, chunk in enumerate(pages, start=1):
