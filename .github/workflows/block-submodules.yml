@@ -1,0 +1,17 @@
+name: Block submodules on pushes/PRs
+on:
+  push: { branches: ["**"] }
+  pull_request: {}
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -eux
+          if git ls-files --stage | grep -q '^160000'; then
+            echo "::error::Submodules detected (mode 160000). Please remove them."
+            git ls-files --stage | grep '^160000' || true
+            exit 1
+          fi
