@@ -1,18 +1,42 @@
 // components/nativeAds.js
 (function () {
-  const ADS_URL = '/static/data/ads.json';
-  const LIST_ID = 'newsContainer';
-  const CARD_CLASS = 'news-post';
-  const SP_ATTR = 'data-sponsor';     // 标记已插入的赞助卡
-  const CFG_KEY = 'native_ads';
+  const ADS_URL   = '/static/data/ads.json';
+  const LIST_ID   = 'newsContainer';
+  const CARD_CLASS= 'news-post';
+  const SP_ATTR   = 'data-sponsor';
+  const CFG_KEY   = 'native_ads';
+  const IS_DEBUG  = new URLSearchParams(location.search).has('debug');
 
   const list = document.getElementById(LIST_ID);
   if (!list) return;
 
+  // ---- GA4 helpers ----
+  function ga(eventName, payload) {
+    try { if (typeof gtag === 'function') gtag('event', eventName, { ...payload, debug_mode: IS_DEBUG }); } catch(_) {}
+  }
+  function sendImpression(d) {
+    ga('view_promotion', {
+      promotion_id:   d.id || '',
+      promotion_name: d.title || '',
+      creative_name:  d.brand || 'sponsor',
+      creative_slot:  String(d.slot || ''),
+      page_number:    window.Pager?.current || 1,
+      language:       document.documentElement.lang || 'en'
+    });
+  }
+  function sendClick(d) {
+    ga('select_promotion', {
+      promotion_id:   d.id || '',
+      promotion_name: d.title || '',
+      creative_name:  d.brand || 'sponsor',
+      creative_slot:  String(d.slot || ''),
+      page_number:    window.Pager?.current || 1,
+      language:       document.documentElement.lang || 'en'
+    });
+  }
+
   let adsCfg = null;
   let adQueue = [];
-
-  function log(...a){ try{console.log('[nativeAds]', ...a);}catch(e){} }
 
   async function loadCfg() {
     try {
@@ -20,34 +44,32 @@
       if (!r.ok) throw new Error('ads.json ' + r.status);
       const json = await r.json();
       adsCfg = json && json[CFG_KEY];
-      if (!adsCfg || adsCfg.enabled === false) {
-        log('disabled or no cfg');
-        return;
-      }
+      if (!adsCfg || adsCfg.enabled === false) return;
       adQueue = Array.isArray(adsCfg.cards) ? adsCfg.cards.slice() : [];
       if (!adQueue.length) return;
       if (adsCfg.shuffle) adQueue.sort(() => Math.random() - 0.5);
-      log('cfg ok; cards:', adQueue.length);
-    } catch (e) {
-      log('load cfg failed:', e);
-    }
+    } catch (_) {}
   }
 
+  function getPositions() {
+    if (adsCfg && Array.isArray(adsCfg.positions) && adsCfg.positions.length) {
+      return adsCfg.positions.map(n => parseInt(n, 10)).filter(n => n > 0);
+    }
+    return [3];
+  }
   function pickCard() {
     if (!adQueue.length) return null;
-    // 轮换使用，确保同一页多位置不重复
-    const ad = adQueue.shift();
-    adQueue.push(ad);
-    return ad;
+    const ad = adQueue.shift(); adQueue.push(ad); return ad;
   }
 
+  // 生成“与新闻一致”的 Sponsor 卡
   function makeCard(ad) {
-    // 结构与 .news-post 对齐
     const el = document.createElement('article');
     el.className = CARD_CLASS + ' sponsor';
     el.setAttribute(SP_ATTR, 'true');
-    el.setAttribute('data-category', 'Sponsor'); // 继承你的分类色条机制（如需）
-    // 标题
+    el.setAttribute('data-category', 'Sponsor');
+
+    // 标题（仍可点击，但样式在 CSS 里做低调化）
     const h = document.createElement('h3');
     const a = document.createElement('a');
     a.className = 'news-link';
@@ -56,77 +78,84 @@
     a.href = ad.href || '#';
     a.textContent = ad.title || '';
     h.appendChild(a);
+    el.appendChild(h);
 
-    // 元信息（左侧 #Sponsor 徽标 + 品牌）
-    const meta = document.createElement('div');
-    meta.className = 'meta';
-    const badge = document.createElement('span');
-    badge.className = 'source sponsor-badge';
-    badge.textContent = '# Sponsor';
-    meta.appendChild(badge);
-    if (ad.brand) {
-      const brand = document.createElement('span');
-      brand.className = 'brand';
-      brand.textContent = ad.brand;
-      meta.appendChild(brand);
-    }
-
-    // 媒体（可选）
-    let media = null;
+    // 图片（支持 WebP→JPG 回退）
     if (ad.img) {
-      media = document.createElement('a');
-      media.href = ad.href || '#';
-      media.target = a.target;
-      media.rel = a.rel;
+      const link = document.createElement('a');
+      link.href = ad.href || '#';
+      link.target = a.target;
+      link.rel = a.rel;
+
       const img = document.createElement('img');
       img.src = ad.img;
       img.alt = ad.img_alt || ad.title || 'sponsor';
       img.loading = 'lazy';
       img.className = 'sponsor-img';
-      media.appendChild(img);
-    }
 
-    // 文本（可选）
-    let desc = null;
-    if (ad.text) {
-      desc = document.createElement('p');
-      desc.className = 'preview';
-      desc.textContent = ad.text;
-    }
-
-    el.append(h, meta);
-    if (media) el.appendChild(media);
-    if (desc) el.appendChild(desc);
-
-    // 可选：点击埋点（GA4）
-    try {
-      el.addEventListener('click', (e) => {
-        const t = e.target.closest('a');
-        if (!t) return;
-        if (typeof gtag === 'function') {
-          gtag('event', 'sponsor_click', {
-            event_category: 'sponsor',
-            event_label: ad.id || ad.title || ad.href,
-            value: 1
-          });
+      img.onerror = () => {
+        if (!img.dataset.fallbackTried) {
+          img.dataset.fallbackTried = '1';
+          const fb = ad.img_fallback || ad.img.replace(/\.webp$/i, '.jpg');
+          img.src = fb;
         }
+      };
+
+      link.appendChild(img);
+      el.appendChild(link);
+    }
+
+    // 描述
+    if (ad.text) {
+      const p = document.createElement('p');
+      p.className = 'preview';
+      p.textContent = ad.text;
+      el.appendChild(p);
+    }
+
+    // ✅ Sponsor 标签与其它分类标签一致：用 .tags 放在卡片底部
+    const tag = document.createElement('span');
+    tag.className = 'tags';
+    tag.textContent = '#Sponsor';
+    el.appendChild(tag);
+
+    // 点击埋点
+    el.addEventListener('click', (e) => {
+      const t = e.target.closest('a');
+      if (!t) return;
+      sendClick({
+        id: el.dataset.spId, title: el.dataset.spTitle,
+        brand: el.dataset.spBrand, slot: el.dataset.spSlot
       });
-    } catch (_) {}
+    });
 
     return el;
   }
 
-  function clearOld() {
-    list.querySelectorAll('['+SP_ATTR+']').forEach(n => n.remove());
+  // 曝光统计：元素进入视口 ≥50% 只记一次
+  let io;
+  function observeImpression(cardEl) {
+    if (!('IntersectionObserver' in window)) return;
+    if (!io) {
+      io = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          const el = en.target;
+          if (en.isIntersecting && en.intersectionRatio >= 0.5 && !el.dataset.spSeen) {
+            el.dataset.spSeen = '1';
+            sendImpression({
+              id: el.dataset.spId, title: el.dataset.spTitle,
+              brand: el.dataset.spBrand, slot: el.dataset.spSlot
+            });
+            io.unobserve(el);
+          }
+        });
+      }, { threshold: [0.5] });
+    }
+    io.observe(cardEl);
   }
 
-  function getPositions() {
-    // 优先 positions；否则每页默认在第 4 个后面插入一个
-    if (adsCfg && Array.isArray(adsCfg.positions) && adsCfg.positions.length) {
-      // 只接受正整数（基于卡片 1-based 序）
-      return adsCfg.positions.map(n => parseInt(n, 10)).filter(n => n > 0);
-    }
-    return [4];
+  function clearOld() {
+    list.querySelectorAll('['+SP_ATTR+']').forEach(n => n.remove());
   }
 
   function insertAdsOnce() {
@@ -139,35 +168,28 @@
     if (!cards.length) return;
 
     const pos = getPositions();
-    let inserted = 0;
-
     pos.forEach(idx => {
       const ad = pickCard();
       if (!ad) return;
-      const cardEl = makeCard(ad);
-      if (!cardEl) return;
 
-      // 目标位置：在第 idx 个“新闻卡”之后插入赞助卡
-      const anchor = cards[idx - 1]; // idx 基于 1
+      const cardEl = makeCard(ad);
+      cardEl.dataset.spSlot  = String(idx);
+      cardEl.dataset.spId    = ad.id || '';
+      cardEl.dataset.spTitle = ad.title || '';
+      cardEl.dataset.spBrand = ad.brand || '';
+
+      const anchor = cards[idx - 1]; // 1-based
       if (anchor && anchor.parentNode) {
         anchor.insertAdjacentElement('afterend', cardEl);
-        inserted++;
       } else {
-        // 不够长则尾部附加
         list.appendChild(cardEl);
-        inserted++;
       }
+      observeImpression(cardEl);
     });
-
-    log('inserted:', inserted);
   }
 
-  // 首次加载配置
   loadCfg();
-
-  // 首屏：等待 pagination 首次渲染完会触发 pager:update
   document.addEventListener('pager:update', insertAdsOnce);
-  // 兜底：如果 pager:update 没来（极小概率），DOMContentLoaded 后也尝试一次
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => setTimeout(insertAdsOnce, 0));
   } else {
