@@ -1,0 +1,24 @@
+{
+  "top_banner": {
+    "enabled": true,
+    "title": "并网合规清单（UL 1741 SB / IEEE 1547）",
+    "subtitle": "免费下载 PDF，工程师必备",
+    "href": "/downloads/ul1741sb_checklist.pdf"
+  },
+  "footer_cta": {
+    "enabled": true,
+    "text": "预约 EnergizeOS™ 演示",
+    "href": "mailto:sales@energizeos.com"
+  },
+  "side_sponsors": [
+    { "label": "Sponsor A", "href": "https://example.com" },
+    { "label": "Sponsor B", "href": "https://example.com" }
+  ],
+  "downloads": [
+    { "name": "UL 1741 SB 清单", "href": "/downloads/ul1741sb_checklist.pdf" },
+    { "name": "FAT 测试模板",    "href": "/downloads/fat_template.xlsx" }
+  ],
+  "recommended": [
+    { "title": "合闸互锁 C1–C7 工程实践", "href": "/posts/page1.html#c1c7" }
+  ]
+}
