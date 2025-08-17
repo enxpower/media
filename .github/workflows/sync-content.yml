@@ -2,10 +2,9 @@ name: Sync private content to public
 
 on:
   schedule:
-    - cron: "17 * * * *"   # 每小时第17分钟执行（避开整点流量）
+    - cron: "17 * * * *"   # 每小时第17分钟
   workflow_dispatch: {}     # 允许手动运行
 
-# 只需要向“当前公库”写内容
 permissions:
   contents: write
 
@@ -20,10 +19,9 @@ jobs:
     steps:
       - name: Checkout public repo
         uses: actions/checkout@v4
-        with:
-          persist-credentials: false  # 不使用默认GITHUB_TOKEN，避免多余权限
+        # 这里保持默认（会为 origin 配好 GITHUB_TOKEN），便于后续 git push
 
-      # 使用 GitHub App 生成只读安装令牌（更安全）
+      # 用 GitHub App 生成只读安装令牌
       - name: Generate installation token (read-only)
         id: app_token
         uses: tibdex/github-app-token@v2
@@ -35,8 +33,8 @@ jobs:
       - name: Checkout private content repo (read-only)
         uses: actions/checkout@v4
         with:
-          repository: enxpower/content-ops   # ← 改成你的私库路径（org/repo）
-          ref: main                          # 或者 content 分支名
+          repository: enxpower/content-ops     # ← 你的私库
+          ref: main
           token: ${{ steps.app_token.outputs.token }}
           path: _content
 
@@ -45,7 +43,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          # 目标目录（不存在则创建）
           mkdir -p static/data ads downloads
 
           # 1) JSON 配置 → /static/data/
@@ -69,7 +66,6 @@ jobs:
           set -euo pipefail
           git config user.name  "github-actions"
           git config user.email "github-actions@github.com"
-
           git add -A
           if git diff --cached --quiet; then
             echo "No changes to commit."
