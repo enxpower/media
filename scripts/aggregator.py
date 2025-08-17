@@ -450,11 +450,10 @@ def main():
         title, link, preview, source, published = article
         en, zh, err = res
         if err:
-            # 如果 LLM 整体挂了，不要阻塞生成：保底用 preview 作为英文摘要，中文留空
+            # ✅ 失败兜底：LLM 掉线时，至少保留 preview（英文），中文留空
             en = en.strip() if en else (preview or "").strip()
             zh = zh.strip() if zh else ""
             if not en and not zh:
-                # 实在拿不到任何内容，这一条就跳过
                 print(f"[SKIPPED] {title}: {err}")
                 continue
         tags = detect_tags(f"{title} {en}")
