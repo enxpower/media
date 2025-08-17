@@ -13,26 +13,66 @@ on:
 permissions:
   contents: write
 
+# 防并发互踩（按分支隔离）
+concurrency:
+  group: sync-content-${{ github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # 0) 统一一些变量（私库名支持使用 secrets.OPS_REPO；否则回退到 enxpower/content-ops）
+      - name: Resolve variables
+        id: vars
+        run: |
+          set -eu
+          PRIV_REPO="${{ secrets.OPS_REPO }}"
+          if [ -z "${PRIV_REPO}" ]; then
+            PRIV_REPO="enxpower/content-ops"
+          fi
+          echo "PRIVATE_REPO=$PRIV_REPO" >> $GITHUB_ENV
+          # 目标分支默认就是当前分支（dev-ui 或 main）
+          echo "PUBLIC_BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+
       # 1) Checkout PUBLIC repo (this repo)
       - name: Checkout PUBLIC repo (this repo)
         uses: actions/checkout@v4
         with:
+          ref: ${{ env.PUBLIC_BRANCH }}
           fetch-depth: 0
+
+      # 1.1) 防再发生：把临时/外部源码目录加入 .gitignore
+      - name: Ensure .gitignore blocks temp and external dirs
+        run: |
+          set -eux
+          touch .gitignore
+          for d in content_src _ops_src ops_src ops _content_src; do
+            grep -qx "/$d/" .gitignore || echo "/$d/" >> .gitignore
+          done
+          git add .gitignore || true
 
       # 2) 清理历史遗留的 submodule 指针（可重复执行，安全）
       - name: Remove legacy submodule pointers
         run: |
           set -eux
+          # 已知目录
           git rm -r --cached ops || true
           git rm -r --cached ops_src || true
-          rm -rf ops ops_src || true
-          if [ -f .gitmodules ]; then
-            git config -f .gitmodules --remove-section submodule.ops || true
-            git config -f .gitmodules --remove-section submodule.ops_src || true
+          git rm -r --cached content_src || true
+          rm -rf ops ops_src content_src || true
+          # 泛化：扫描所有 gitlink (mode 160000)
+          git ls-files -s | awk '$1==160000 {print $4}' > gitlinks.txt || true
+          if [ -s gitlinks.txt ]; then
+            while read -r p; do
+              echo "Removing gitlink: $p"
+              git rm -f --cached -r "$p" || true
+              git config -f .gitmodules --remove-section "submodule.$p" || true
+              rm -rf ".git/modules/$p" || true
+            done < gitlinks.txt
+          fi
+          # 清理 .gitmodules（若已空）
+          if [ -f .gitmodules ] && ! grep -q '\[submodule' .gitmodules; then
             rm -f .gitmodules || true
           fi
 
@@ -40,8 +80,8 @@ jobs:
       - name: Checkout PRIVATE content repo
         uses: actions/checkout@v4
         with:
-          repository: ${{ secrets.OPS_REPO }}     # 例如 enxpower/content-ops
-          token: ${{ secrets.OPS_TOKEN }}         # 你已经配置好的 PAT
+          repository: ${{ env.PRIVATE_REPO }}      # 优先 secrets.OPS_REPO；否则 enxpower/content-ops
+          token: ${{ secrets.OPS_TOKEN }}          # 你已经配置好的 PAT（只读该私库）
           ref: ${{ github.event.inputs.content_ref }}
           path: content_src
           fetch-depth: 1
@@ -66,11 +106,23 @@ jobs:
             --exclude='*' \
             content_src/ ./
 
-      # 6) 有变更才提交
+      # 5.1) 强校验：ads.json 私库与公库必须完全一致
+      - name: Verify ads.json is EXACTLY identical
+        run: |
+          set -eux
+          if [ -f content_src/static/data/ads.json ] && [ -f static/data/ads.json ]; then
+            cmp -s content_src/static/data/ads.json static/data/ads.json || (echo "ads.json mismatch after copy!" && exit 1)
+          else
+            echo "ads.json missing in one side!" && exit 1
+          fi
+
+      # 6) 有变更才提交（⚠️ 白名单 add，避免把 content_src 等临时目录加入索引）
       - name: Commit & push if changed
         run: |
           set -eux
-          git add -A
+          git add static/data/ads.json
+          git add ads || true
+          git add downloads || true
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
