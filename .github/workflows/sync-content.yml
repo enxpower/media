@@ -3,79 +3,69 @@ name: Sync private content to public
 on:
   workflow_dispatch:
     inputs:
-      content_ref:
-        description: "Branch or tag of content-ops to sync (fallback to ops_ref if empty)"
+      ops_ref:
+        description: "Private repo branch/tag to sync"
         required: false
         default: "main"
-      ops_ref:
-        description: "(Legacy) branch/tag of private repo"
-        required: false
-        default: ""
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 * * * *"   # 每小时，可按需调整
 
 permissions:
   contents: write
 
-env:
-  # 新旧 Secrets 兼容
-  CONTENT_REPO_FALLBACK: ${{ secrets.CONTENT_REPO || secrets.OPS_REPO }}
-  CONTENT_TOKEN_FALLBACK: ${{ secrets.CONTENT_TOKEN || secrets.OPS_TOKEN }}
-  # 触发参数兼容（content_ref 优先，其次 ops_ref，最后 main）
-  CONTENT_REF_FALLBACK: ${{ github.event.inputs.content_ref || github.event.inputs.ops_ref || 'main' }}
-
 jobs:
   sync:
     runs-on: ubuntu-latest
+
     steps:
+      # 1) 公库
       - name: Checkout PUBLIC repo (this repo)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 通用清理：移除任何遗留的子模块指针 & .gitmodules（不会影响正常目录）
-      - name: Remove stray submodule pointers (safe)
+      # 2) 安全清理历史遗留的 submodule 指针（有就删、没有就跳过）
+      - name: Remove stray submodule pointer 'ops' (safe)
         run: |
           set -eux
-          git ls-files -s | awk '$1=="160000"{print $4}' > .gitlinks || true
-          if [ -s .gitlinks ]; then
-            xargs -a .gitlinks -r git rm -f --cached || true
+          git rm -r --cached ops || true
+          rm -rf ops || true
+          if [ -f .gitmodules ]; then
+            git config -f .gitmodules --remove-section submodule.ops || true
+            # 清空后就删掉
+            [ -s .gitmodules ] || rm -f .gitmodules || true
           fi
-          [ -f .gitmodules ] && git rm -f .gitmodules || rm -f .gitmodules || true
 
-      - name: Checkout content-ops
+      # 3) 私库检出到 ops/（保持你现有的命名与 secrets）
+      - name: Checkout PRIVATE content repo
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.CONTENT_REPO_FALLBACK }}
-          token: ${{ env.CONTENT_TOKEN_FALLBACK }}
-          ref: ${{ env.CONTENT_REF_FALLBACK }}
-          path: content_src
+          repository: ${{ secrets.OPS_REPO }}     # 例如 enxpower/content-ops
+          token: ${{ secrets.OPS_TOKEN }}         # 你已配置好的 PAT
+          ref: ${{ github.event.inputs.ops_ref || 'main' }}
+          path: ops
+          submodules: false
           persist-credentials: false
           fetch-depth: 1
 
       - name: Show tree (debug)
         run: |
-          echo "::group::content_src"; ls -la content_src || true; echo "::endgroup::"
+          echo "::group::root"; ls -la; echo "::endgroup::"
+          echo "::group::ops"; ls -la ops; echo "::endgroup::"
 
-      - name: Sync whitelisted paths (checksum & log sha)
+      # 4) 只同步白名单
+      - name: Sync whitelisted paths (ads, downloads, static/data)
         run: |
           set -eux
-          sha() { test -f "$1" && (command -v sha256sum >/dev/null && sha256sum "$1" || shasum -a 256 "$1") | awk '{print $1}' || echo "missing"; }
-
-          echo "CONTENT ads.json SHA=$(sha content_src/static/data/ads.json || true)"
-          echo "PUBLIC  ads.json (before) SHA=$(sha static/data/ads.json || true)"
-
           mkdir -p ads downloads static/data
-          rsync -av --checksum --delete \
+          rsync -av --delete \
             --include='static/data/ads.json' \
             --include='ads/***' \
             --include='downloads/***' \
             --exclude='*' \
-            content_src/ ./
+            ops/ ./
 
-          echo "PUBLIC  ads.json (after)  SHA=$(sha static/data/ads.json || true)"
-          git status --porcelain
-
+      # 5) 如有变更再提交
       - name: Commit & push if changed
         run: |
           set -eux
@@ -83,8 +73,8 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git config user.name  "actions-user"
+            git config user.name "actions-user"
             git config user.email "actions@users.noreply.github.com"
-            git commit -m "chore: sync private content from content-ops"
+            git commit -m "chore: sync private content"
             git push
           fi
