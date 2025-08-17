@@ -22,11 +22,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      # 仅需一个密钥：OPS_TOKEN（Fine-grained PAT，授予私库 Contents: Read）
       - name: Checkout PRIVATE content repo
         uses: actions/checkout@v4
         with:
-          repository: ${{ secrets.OPS_REPO }}     # 形如 org/private-content
-          token: ${{ secrets.OPS_TOKEN }}         # PAT 或 repo token
+          repository: enxpower/content-ops      # ← 改成你的私库全名：owner/repo
+          token: ${{ secrets.OPS_TOKEN }}       # ← 只需要这个 Secret
           ref: ${{ github.event.inputs.ops_ref || 'main' }}
           path: ops
 
