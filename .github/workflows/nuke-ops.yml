@@ -1,0 +1,58 @@
+name: Nuke broken 'ops' submodule
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to fix (e.g. dev-ui or main)"
+        required: true
+        default: "dev-ui"
+
+permissions:
+  contents: write
+
+jobs:
+  nuke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Manual clone WITHOUT submodules
+        run: |
+          set -eux
+          REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
+          git clone --no-recurse-submodules "$REPO_URL" repo
+          cd repo
+
+          # 切到要修复的分支
+          git checkout "${{ github.event.inputs.branch }}"
+
+          # 配置提交身份
+          git config user.name  "actions-user"
+          git config user.email "actions@users.noreply.github.com"
+
+          echo "Before:"
+          ls -la .gitmodules || true
+          git ls-files -s | grep " ops$" || true
+
+          # 硬性移除子模块指针和目录
+          git rm -r --cached ops || true
+          rm -rf ops || true
+
+          # 清理 .gitmodules 里的条目或直接删掉
+          if [ -f .gitmodules ]; then
+            git config -f .gitmodules --remove-section submodule.ops || true
+            rm -f .gitmodules || true
+          fi
+
+          echo "After:"
+          ls -la .gitmodules || true
+          git ls-files -s | grep " ops$" || true
+
+          # 仅当有变更时提交并推送
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: remove broken 'ops' submodule pointer"
+            # 用 GITHUB_TOKEN 推送（需要 Settings → Actions → Workflow permissions 为 Read & write）
+            git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
+            git push origin "${{ github.event.inputs.branch }}"
+          else
+            echo "Nothing to remove."
+          fi
