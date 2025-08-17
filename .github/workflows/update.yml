@@ -1,8 +1,6 @@
-name: Auto Update Feeds
+name: Manual Update (on-demand)
 
 on:
-  schedule:
-    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -11,30 +9,18 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
-
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  # ✅ 显式设置为环境变量
-
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          pip install openai feedparser newspaper3k lxml_html_clean
-          python -m nltk.downloader punkt
-
-      - name: Run aggregator script
-        run: |
-          python scripts/aggregator.py
-
-      - name: Commit and push changes
-        run: |
+          python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: 'requirements.txt'
+      - run: pip install -r requirements.txt
+      - run: python scripts/aggregator.py && python scripts/generate_sitemap.py
+      - run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add posts/
-          git commit -m "Update feed content" || echo "No changes"
+          git add posts/ sitemap.xml
+          git commit -m "Manual update" || echo "No changes"
           git push
