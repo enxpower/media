@@ -26,10 +26,17 @@ jobs:
       - name: Checkout PRIVATE content repo
         uses: actions/checkout@v4
         with:
-          repository: enxpower/content-ops      # ← 改成你的私库全名：owner/repo
-          token: ${{ secrets.OPS_TOKEN }}       # ← 只需要这个 Secret
+          repository: enxpower/content-ops      # ← 换成你的私库全名：owner/repo
+          token: ${{ secrets.OPS_TOKEN }}
           ref: ${{ github.event.inputs.ops_ref || 'main' }}
           path: ops
+
+      - name: Inspect private repo (debug)
+        run: |
+          set -eux
+          echo "Private repo root listing:"
+          ls -la ops
+          echo "Expect to see ads/, downloads/, static/data/ under ops/"
 
       - name: Sync whitelisted paths (ads, downloads, static/data)
         run: |
@@ -38,13 +45,13 @@ jobs:
           mkdir -p ads downloads static/data
 
           # 只同步白名单；目标里多余文件用 --delete 清理
-          # 注意：ads.json 必须位于私库 content-ops/static/data/ads.json
+          # 注意：ads.json 位于 私库 ops/static/data/ads.json
           rsync -av --delete \
             --include='static/data/ads.json' \
             --include='ads/***' \
             --include='downloads/***' \
             --exclude='*' \
-            ops/content-ops/ ./
+            ops/ ./                   # ← 关键：源路径改为 ops/（不是 ops/content-ops/）
 
       - name: Commit & push if changed
         run: |
