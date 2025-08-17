@@ -1,0 +1,53 @@
+name: Repair gitlinks (remove ops / ops_src submodules)
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to repair (e.g. main or dev-ui)"
+        required: true
+        default: "main"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+
+      - name: List gitlinks (mode 160000)
+        run: |
+          git ls-files --stage | awk '$1 ~ /^160000$/ {print $4}' > gitlinks.txt || true
+          echo "Gitlinks found:"
+          cat gitlinks.txt || true
+
+      - name: Remove gitlinks if any
+        run: |
+          set -eux
+          if [ -s gitlinks.txt ]; then
+            # 删除所有 gitlink 路径（如 ops/、ops_src/）
+            xargs -a gitlinks.txt git rm -f --cached || true
+          fi
+          # 删除 .gitmodules（若存在）
+          rm -f .gitmodules
+          # 加强忽略，避免误提交
+          echo -e "\n# block submodules\nops/\nops_src/\n.gitmodules\n" >> .gitignore
+          git add .gitignore || true
+
+      - name: Commit & push if changed
+        run: |
+          set -eux
+          if ! git diff --cached --quiet; then
+            git config user.name "actions-user"
+            git config user.email "actions@users.noreply.github.com"
+            git commit -m "fix: remove gitlinks (ops/ops_src) and block future submodules"
+            git push origin HEAD:${{ github.event.inputs.branch }}
+          else
+            echo "No changes."
+          fi
