@@ -1,66 +1,44 @@
 // components/pagination-dup.js
 (function () {
-  const bottomEl = document.getElementById('pagination-bottom');
-  if (!bottomEl) return;
+  const el = document.getElementById('pagination-bottom');
+  if (!el) return;
 
-  let lastCurrent = null;
-  let lastTotal = null;
-
-  function getPagerState() {
+  function state() {
     const P = window.Pager;
-    if (!P) return null;
-    const current = Number(P.current);
-    const total = Number(P.total);
-    if (!Number.isFinite(current) || !Number.isFinite(total)) return null;
-    return { current, total };
+    if (!P) return { current: 1, total: 1 };
+    return { current: Number(P.current) || 1, total: Number(P.total) || 1 };
   }
 
-  function render({ current, total }) {
-    // 只根据 Pager 状态生成底部控件，不再克隆顶部，样式由 CSS 统一
-    bottomEl.innerHTML = '';
+  function render() {
+    const { current, total } = state();
+    el.innerHTML = '';
 
     const prev = document.createElement('button');
+    prev.type = 'button';
     prev.textContent = '← Prev';
     prev.disabled = current <= 1;
-    prev.dataset.action = 'prev';
+    prev.addEventListener('click', (e) => { e.preventDefault(); window.Pager?.prev(); });
 
     const info = document.createElement('span');
     info.className = 'page-info';
     info.textContent = `Page ${current} of ${total}`;
 
     const next = document.createElement('button');
+    next.type = 'button';
     next.textContent = 'Next →';
     next.disabled = current >= total;
-    next.dataset.action = 'next';
+    next.addEventListener('click', (e) => { e.preventDefault(); window.Pager?.next(); });
 
-    bottomEl.append(prev, info, next);
+    el.append(prev, info, next);
   }
 
-  // 只绑定一次，永不重复绑定
-  bottomEl.addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    e.preventDefault();
-    e.stopPropagation();
-
-    const P = window.Pager;
-    if (!P) return;
-
-    const act = btn.dataset.action;
-    if (act === 'prev') P.prev();
-    else if (act === 'next') P.next();
-  });
-
-  // 轮询 Pager 状态变更（翻页后会变化），变化时重渲染底部
-  function tick() {
-    const s = getPagerState();
-    if (s && (s.current !== lastCurrent || s.total !== lastTotal)) {
-      render(s);
-      lastCurrent = s.current;
-      lastTotal = s.total;
-    }
-    setTimeout(tick, 250);
+  // 初次渲染（等 Pager 初始化完）
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(render, 0));
+  } else {
+    setTimeout(render, 0);
   }
 
-  tick(); // 启动
+  // 监听顶部翻页完成后的事件，保持底部同步
+  document.addEventListener('pager:update', render);
 })();
