@@ -39,3 +39,37 @@ Workflow (e.g., update-content.yml) runs hourly:
 Fetch RSS → summarize → categorize → write posts/pageX.html → commit.
 
 Manual trigger: GitHub “Actions” → Update workflow → Run.
+Structure (short)
+```bash
+media/
+├─ posts/                 # generated pages
+├─ scripts/
+│  ├─ aggregator.py       # fetch/summarize entry
+│  └─ openai_summary.py   # GPT summarization
+├─ components/            # UI modules (lang toggle, pagination, etc.)
+├─ styles/
+├─ feeds.json             # RSS sources
+├─ index.html
+├─ .github/workflows/
+└─ requirements.txt
+```
+
+Deployment
+
+GitHub Pages, branch: main, entry: index.html
+
+Local preview:
+```bash
+python3 -m http.server
+# open http://localhost:8000
+```
+License
+
+Copyright © 2025 Energize Solutions Inc.
+Licensed under CC BY-NC 4.0. See LICENSE.
+
+Contact
+
+Email: info@energizeos.com
+
+GitHub: enxpower
