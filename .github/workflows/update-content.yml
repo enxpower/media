@@ -19,14 +19,23 @@ jobs:
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       OPENAI_MODEL: gpt-4o-mini
-      SUMMARIZE_CONCURRENCY: 6          # 观察429可降到4
-      MAX_ARTICLES_PER_RUN: 50          # 分批跑；想全量就设为0
+      SUMMARIZE_CONCURRENCY: 6
+      MAX_ARTICLES_PER_RUN: 50
     steps:
       - name: Checkout main (full history)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: main
+
+      # 🛠️ 先把本地与远端 main 对齐，再开始生成内容
+      - name: Git config & pre-sync main
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git switch main || git switch -c main
+          git fetch --prune origin
+          git pull --rebase origin main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -54,14 +63,7 @@ jobs:
         run: |
           python scripts/generate_sitemap.py
 
-      - name: Git config & re-sync main
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git switch main || git switch -c main
-          git fetch origin main
-          git pull --rebase origin main
-
+      # ✅ 生成完再提交；如竞态失败，抓取最新后重试一次
       - name: Commit & push (safe with one retry)
         run: |
           set -e
