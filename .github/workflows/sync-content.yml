@@ -1,70 +1,98 @@
-name: Sync private content to public (dev-ui)
+name: Sync private content to public (dynamic branch)
 
 on:
   workflow_dispatch:
     inputs:
+      public_branch:
+        description: "Target public branch (optional; default = current branch)"
+        required: false
       content_ref:
         description: "Branch/Tag of PRIVATE repo (default: main)"
         required: false
         default: main
+      private_repo:
+        description: "owner/repo of PRIVATE repo (optional; else DEFAULT_PRIVATE_REPO)"
+        required: false
       dry_run:
         description: "Dry run (no commit/push)"
         type: boolean
         default: false
   schedule:
-    - cron: "0 * * * *"  # hourly
+    - cron: "0 * * * *"  # hourly; runs on the default branch where this file exists
 
 permissions:
   contents: write
 
+# concurrency 分支隔离，避免 dev-ui / main 互相打断
 concurrency:
-  group: sync-content-dev-ui
+  group: sync-content-${{ github.ref_name }}
   cancel-in-progress: false
 
 env:
-  PUBLIC_BRANCH: dev-ui
-  PRIVATE_REPO: ${{ secrets.PRIVATE_CONTENT_REPO }}   # e.g. owner/content-ops
-  PRIVATE_TOKEN: ${{ secrets.PRIVATE_CONTENT_TOKEN }} # repo read token for private repo
+  DEFAULT_PRIVATE_REPO: enxpower/content-ops   # ← 改成你的私库 owner/repo
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PUBLIC repo (dev-ui)
+      - name: Resolve PUBLIC branch (current branch by default)
+        id: br
+        run: |
+          set -eu
+          if [ -n "${{ github.event.inputs.public_branch }}" ]; then
+            echo "val=${{ github.event.inputs.public_branch }}" >> $GITHUB_OUTPUT
+          else
+            echo "val=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          fi
+          echo "Target public branch: $(cat $GITHUB_OUTPUT | cut -d= -f2)"
+
+      - name: Checkout PUBLIC repo (target branch)
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.PUBLIC_BRANCH }}
+          ref: ${{ steps.br.outputs.val }}
           fetch-depth: 0
 
-      - name: Show current branch
+      - name: Show current repo state
         run: |
           set -eux
+          echo "CURRENT BRANCH: ${{ steps.br.outputs.val }}"
           git rev-parse --abbrev-ref HEAD
           git status
+
+      - name: Resolve PRIVATE repo name
+        id: prn
+        run: |
+          set -eu
+          if [ -n "${{ github.event.inputs.private_repo }}" ]; then
+            echo "val=${{ github.event.inputs.private_repo }}" >> $GITHUB_OUTPUT
+          else
+            echo "val=${DEFAULT_PRIVATE_REPO}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Checkout PRIVATE repo (content ops)
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.PRIVATE_REPO }}
+          repository: ${{ steps.prn.outputs.val }}
           ref: ${{ github.event.inputs.content_ref || 'main' }}
-          token: ${{ env.PRIVATE_TOKEN }}
+          token: ${{ secrets.OPS_TOKEN }}     # 你已配置的读取私库 Token（只读权限即可）
           path: _ops_src
           fetch-depth: 1
 
-      - name: Prepare target dirs
+      - name: Guards - required files must exist
         run: |
           set -eux
+          test -f "_ops_src/static/data/ads.json" || (echo "MISSING _ops_src/static/data/ads.json" && exit 1)
           mkdir -p static/data ads downloads
 
-      # ✅ 白名单复制：只允许这三类
+      # ✅ 白名单复制（只同步这三类；其余绝不外泄）
       - name: Copy whitelisted content from PRIVATE -> PUBLIC
         run: |
           set -eux
           rsync -av --delete "_ops_src/static/data/ads.json" "static/data/ads.json"
-          rsync -av --delete "_ops_src/ads/" "ads/"
+          rsync -av --delete "_ops_src/ads/" "ads/" || true
           rsync -av --delete "_ops_src/downloads/" "downloads/" || true
 
-      # ✅ 同步后做硬核校验：ads.json 必须完全一致
+      # ✅ 硬校验：ads.json 必须完全一致（不同则 FAIL，避免“看似成功但脏数据”）
       - name: Verify ads.json is EXACTLY identical (private vs public)
         run: |
           set -eux
@@ -86,6 +114,6 @@ jobs:
           else
             git config user.name  "actions-user"
             git config user.email "actions@users.noreply.github.com"
-            git commit -m "chore: sync content from private repo → dev-ui"
-            git push origin HEAD:${PUBLIC_BRANCH}
+            git commit -m "chore: sync content from private repo → ${{ steps.br.outputs.val }}"
+            git push origin HEAD:${{ steps.br.outputs.val }}
           fi
