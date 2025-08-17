@@ -60,6 +60,9 @@
     <!-- News content will be loaded here -->
   </main>
 
+  <!-- ✅ 新增：底部分页挂钩（与顶部同款，脚本会复制渲染后的 HTML） -->
+  <div id="pagination-bottom"></div>
+
   <!-- （可选）侧栏赞助挂钩：若将来需要侧栏，可在布局里放入此 UL；没有也不影响 ops.js 正常运行 -->
   <!-- <ul id="side-sponsors" class="sponsor-list" hidden></ul> -->
 
@@ -69,6 +72,8 @@
   <script src="components/search.js"></script>
   <script src="components/langToggle.js"></script>
   <script src="components/pagination.js"></script>
+  <!-- ✅ 新增：复制顶部分页到 #pagination-bottom -->
+  <script src="components/pagination-dup.js"></script>
   <script src="components/footer.js"></script>
   <script src="components/outboundTracker.js"></script>
   <script src="components/shareButtons.js"></script>
