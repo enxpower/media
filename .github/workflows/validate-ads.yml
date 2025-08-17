@@ -1,0 +1,68 @@
+name: Validate ads.json matches private repo
+
+on:
+  workflow_dispatch:
+    inputs:
+      public_branch:
+        description: "Public branch to validate (default = current branch)"
+        required: false
+      content_ref:
+        description: "Private repo ref to validate against (default: main)"
+        required: false
+        default: main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-ads-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  DEFAULT_PRIVATE_REPO: enxpower/content-ops
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve PUBLIC branch
+        id: br
+        run: |
+          set -eu
+          if [ -n "${{ github.event.inputs.public_branch }}" ]; then
+            echo "val=${{ github.event.inputs.public_branch }}" >> $GITHUB_OUTPUT
+          else
+            echo "val=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout PUBLIC branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.br.outputs.val }}
+          fetch-depth: 1
+
+      - name: Checkout PRIVATE repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.DEFAULT_PRIVATE_REPO }}
+          ref: ${{ github.event.inputs.content_ref || 'main' }}
+          token: ${{ secrets.OPS_TOKEN }}
+          path: _ops_src
+          fetch-depth: 1
+
+      - name: Ensure files present
+        run: |
+          set -eux
+          test -f "static/data/ads.json" || (echo "Public ads.json missing" && exit 1)
+          test -f "_ops_src/static/data/ads.json" || (echo "Private ads.json missing" && exit 1)
+
+      - name: Compare ads.json (fail if different)
+        run: |
+          set -eux
+          if cmp -s "_ops_src/static/data/ads.json" "static/data/ads.json"; then
+            echo "ads.json is identical ✅"
+          else
+            echo "ads.json mismatch ❌ — unified diff below:"
+            diff -u "_ops_src/static/data/ads.json" "static/data/ads.json" || true
+            exit 1
+          fi
