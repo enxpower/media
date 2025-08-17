@@ -1,4 +1,4 @@
-name: Nuke broken ops (with PR fallback)
+name: Nuke broken ops
 
 on:
   workflow_dispatch:
@@ -6,58 +6,35 @@ on:
       branch:
         description: "Branch to fix (e.g. dev-ui or main)"
         required: true
-        default: "main"
+        default: "dev-ui"
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   nuke:
     runs-on: ubuntu-latest
     steps:
-      - name: Clone WITHOUT submodules
+      - name: Clone repo WITHOUT submodules
         run: |
           set -eux
           git clone --no-recurse-submodules "https://github.com/${GITHUB_REPOSITORY}.git" repo
           cd repo
           git checkout "${{ github.event.inputs.branch }}"
-
           git config user.name  "actions-user"
           git config user.email "actions@users.noreply.github.com"
 
-          # remove gitlink & files
+          # 硬删残留 submodule 指针与目录
           git rm -r --cached ops || true
           rm -rf ops || true
-          [ -f .gitmodules ] && rm -f .gitmodules || true
+          if [ -f .gitmodules ]; then rm -f .gitmodules || true; fi
 
+          # 提交并推送（如果确有变更）
           git add -A
-          if git diff --cached --quiet ; then
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: remove broken 'ops' submodule pointer"
+            git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
+            git push origin "${{ github.event.inputs.branch }}"
+          else
             echo "Nothing to remove."
-            exit 0
-          fi
-
-          git commit -m "chore: remove broken 'ops' submodule pointer"
-
-          # try direct push first
-          set +e
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push origin "${{ github.event.inputs.branch }}"
-          rc=$?
-          set -e
-
-          if [ $rc -ne 0 ]; then
-            echo "Direct push blocked, falling back to PR..."
-            FIX_BRANCH="nuke-ops-$(date +%s)"
-            git checkout -b "$FIX_BRANCH"
-            git push origin "$FIX_BRANCH"
-
-            API="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls"
-            TITLE="Remove broken 'ops' submodule pointer"
-            BODY="This PR removes the stale submodule gitlink and .gitmodules to fix Pages builds."
-
-            curl -sS -X POST "$API" \
-              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-              -H "Accept: application/vnd.github+json" \
-              -d "{\"title\":\"${TITLE}\",\"body\":\"${BODY}\",\"head\":\"${FIX_BRANCH}\",\"base\":\"${{ github.event.inputs.branch }}\"}"
           fi
