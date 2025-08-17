@@ -23,6 +23,15 @@ jobs:
       PY_VERSION: "3.12"
       # NLTK 数据缓存目录（可被 actions/cache 持久化）
       NLTK_DATA: ${{ runner.temp }}/nltk_data
+      # —— 可选性能开关（对应 aggregator.py 已支持）——
+      # 1=抓全文, 0=只用RSS摘要
+      ENABLE_FULLTEXT: "1"
+      # 每次最多抓多少条全文；0=不限制（与旧行为一致）
+      MAX_FULLTEXT_PER_RUN: "40"
+      # 打印阶段耗时日志：1=开, 0=关
+      ENABLE_TIMING_LOGS: "1"
+      # 并发摘要数量（如需更快/更省配额可调）
+      SUMMARIZE_CONCURRENCY: "4"
 
     steps:
       - name: Checkout
@@ -68,7 +77,9 @@ jobs:
           PY
 
       - name: Run aggregator
+        # 失败不继续生成站点，以免发布空页；但会显示完整日志
         run: |
+          set -e
           python scripts/aggregator.py
 
       - name: Generate sitemap
