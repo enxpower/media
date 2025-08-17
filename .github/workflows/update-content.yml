@@ -21,23 +21,21 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       # 固定 Python 版本，保证 wheel 命中与依赖稳定
       PY_VERSION: "3.12"
-      # NLTK 数据缓存目录（可被 actions/cache 持久化）
-      NLTK_DATA: ${{ runner.temp }}/nltk_data
-      # —— 可选性能开关（对应 aggregator.py 已支持）——
-      # 1=抓全文, 0=只用RSS摘要
-      ENABLE_FULLTEXT: "1"
-      # 每次最多抓多少条全文；0=不限制（与旧行为一致）
-      MAX_FULLTEXT_PER_RUN: "40"
-      # 打印阶段耗时日志：1=开, 0=关
-      ENABLE_TIMING_LOGS: "1"
-      # 并发摘要数量（如需更快/更省配额可调）
-      SUMMARIZE_CONCURRENCY: "4"
+      # ✅ 用 workspace 里的固定目录，避免 runner.temp 解析报错
+      NLTK_DATA: ${{ github.workspace }}/.nltk_data
+      # —— 可选性能开关（aggregator.py 已支持）——
+      ENABLE_FULLTEXT: "1"           # 1=抓全文, 0=只用RSS摘要
+      MAX_FULLTEXT_PER_RUN: "40"     # 每次最多抓多少条全文；0=不限制
+      ENABLE_TIMING_LOGS: "1"        # 打印阶段耗时
+      SUMMARIZE_CONCURRENCY: "4"     # 并发摘要数量
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # 如需始终在 main 上跑，可加：ref: main
+          # ref: main
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -77,7 +75,6 @@ jobs:
           PY
 
       - name: Run aggregator
-        # 失败不继续生成站点，以免发布空页；但会显示完整日志
         run: |
           set -e
           python scripts/aggregator.py
