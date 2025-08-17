@@ -7,3 +7,9 @@ ops/
 ops_src/
 .gitmodules
 
+/_ops_src/
+/ops_src/
+/ops-src/
+/ops/
+/content_src/
+/_content_src/
