@@ -4,25 +4,38 @@
 
   "native_ads": {
     "enabled": true,
-    "shuffle": true,
-    "positions": [3, 9], 
+    "shuffle": false,
+    "positions": [3],
     "cards": [
+      {
+        "id": "bess-1200-2064",
+        "brand": "EnergizeOS™",
+        "title": "1.2 MW / 2.064 MWh All-in-One BESS",
+        "href": "https://energizeos.com/?utm_source=media&utm_medium=native&utm_campaign=bess1200",
+        "img": "/ads/bess1200_1600x304_ultra.webp",
+        "img_fallback": "/ads/bess1200_1600x304_ultra.jpg",
+        "srcset": "/ads/bess1200_800x152_ultra.webp 800w, /ads/bess1200_1200x228_ultra.webp 1200w, /ads/bess1200_1600x304_ultra.webp 1600w",
+        "sizes": "(max-width: 768px) calc(100vw - 16px), 948px",
+        "img_alt": "EnergizeOS 1.2 MW / 2.064 MWh containerized BESS",
+        "text": "Containerized AC/DC hybrid system for C&I microgrids and utility-scale blocks. Integrated PCS, battery, EMS and HVAC for rapid deployment and reliable operation."
+      },
       {
         "id": "ul1741sb-kit",
         "brand": "EnergizeOS™",
-        "title": "UL 1741 SB 并网合规工具包",
+        "title": "UL 1741 SB Interconnection Toolkit",
         "href": "/downloads/ul1741sb_checklist.pdf",
         "img": "/ads/ul1741sb_thumb.jpg",
         "img_alt": "UL 1741 SB Checklist",
-        "text": "一页 checklist + 模板 + 评估要点，工程部常用清单。"
+        "text": "One-page checklist, templates, and evaluation notes for interconnection compliance."
       },
       {
         "id": "bess-quote",
         "brand": "EnergizeOS™",
-        "title": "BESS 快速报价器（Excel）",
+        "title": "BESS Quick Quote (Excel)",
         "href": "/downloads/bess_quote.xlsx",
         "img": "/ads/bess_thumb.png",
-        "text": "10 分钟产出初算，含电芯/PCS/系统假设与损益。"
+        "img_alt": "BESS quote template",
+        "text": "First-pass estimate in 10 minutes with cell/PCS/system assumptions and P&L."
       }
     ]
   }

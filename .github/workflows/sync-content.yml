@@ -8,7 +8,7 @@ on:
         required: false
         default: "main"
   schedule:
-    - cron: "0 * * * *"   # 每小时同步一次，可按需调整
+    - cron: "0 * * * *"   # 每小时，可按需调整
 
 permissions:
   contents: write
@@ -17,42 +17,53 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # 1) 公库
       - name: Checkout PUBLIC repo (this repo)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 仅需一个密钥：OPS_TOKEN（Fine-grained PAT，授予私库 Contents: Read）
+      # 2) 先把历史残留的 submodule gitlink 移除（安全可重复）
+      - name: Remove stray submodule pointer 'ops'
+        run: |
+          set -eux
+          git rm -r --cached ops || true
+          rm -rf ops || true
+          if [ -f .gitmodules ]; then
+            git config -f .gitmodules --remove-section submodule.ops || true
+            rm -f .gitmodules || true
+          fi
+
+      # 3) 私库改到 ops_src，避免与旧的 ops 冲突
       - name: Checkout PRIVATE content repo
         uses: actions/checkout@v4
         with:
-          repository: enxpower/content-ops      # ← 换成你的私库全名：owner/repo
-          token: ${{ secrets.OPS_TOKEN }}
+          repository: ${{ secrets.OPS_REPO }}     # 例如 org/content-ops
+          token: ${{ secrets.OPS_TOKEN }}         # 你的 PAT / App token
           ref: ${{ github.event.inputs.ops_ref || 'main' }}
-          path: ops
+          path: ops_src
+          persist-credentials: false
+          fetch-depth: 1
 
-      - name: Inspect private repo (debug)
+      # 可见性：确认目录真的存在
+      - name: Show tree (debug)
         run: |
-          set -eux
-          echo "Private repo root listing:"
-          ls -la ops
-          echo "Expect to see ads/, downloads/, static/data/ under ops/"
+          echo "::group::root"; ls -la; echo "::endgroup::"
+          echo "::group::ops_src"; ls -la ops_src; echo "::endgroup::"
 
+      # 4) 只同步白名单；源路径改为 ops_src/（根下就是 ads、downloads、static）
       - name: Sync whitelisted paths (ads, downloads, static/data)
         run: |
           set -eux
-          # 确保目标目录存在
           mkdir -p ads downloads static/data
-
-          # 只同步白名单；目标里多余文件用 --delete 清理
-          # 注意：ads.json 位于 私库 ops/static/data/ads.json
           rsync -av --delete \
             --include='static/data/ads.json' \
             --include='ads/***' \
             --include='downloads/***' \
             --exclude='*' \
-            ops/ ./                   # ← 关键：源路径改为 ops/（不是 ops/content-ops/）
+            ops_src/ ./
 
+      # 5) 提交并推送（会把去掉 gitlink 的变更一并提交）
       - name: Commit & push if changed
         run: |
           set -eux
@@ -62,6 +73,6 @@ jobs:
           else
             git config user.name "actions-user"
             git config user.email "actions@users.noreply.github.com"
-            git commit -m "chore: sync private content"
+            git commit -m "chore: sync private content & remove old ops submodule"
             git push
           fi

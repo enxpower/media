@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -51,18 +51,37 @@
     </div>
   </header>
 
+  <!-- 🔌 顶部横幅挂钩（默认隐藏；由 /static/data/ads.json 控制） -->
+  <section id="top-banner" class="banner banner-top" hidden></section>
+
   <div id="pagination"></div>
 
   <main id="newsContainer">
     <!-- News content will be loaded here -->
   </main>
 
+  <!-- ✅ 底部分页挂钩（与顶部同款；由 pagination-bottom.js 渲染为普通链接） -->
+  <div id="pagination-bottom"></div>
+
+  <!-- （可选）侧栏赞助挂钩 -->
+  <!-- <ul id="side-sponsors" class="sponsor-list" hidden></ul> -->
+
+  <!-- 🔌 底部 CTA 挂钩（默认隐藏；由 /static/data/ads.json 控制） -->
+  <section id="footer-cta" class="footer-cta" hidden></section>
+
   <script src="components/search.js"></script>
   <script src="components/langToggle.js"></script>
   <script src="components/pagination.js"></script>
+  <script src="components/pagination-bottom.js"></script>
   <script src="components/footer.js"></script>
-  <script src="components/outboundTracker.js"></script>
+  <script src="components/outboundTracker.js?v=2"></script>
   <script src="components/shareButtons.js"></script>
   <script src="components/shareTracker.js"></script>
+
+  <!-- ✅ 原生内嵌赞助卡（监听 pager:update，从 /static/data/ads.json 注入） -->
+  <script src="components/nativeAds.js"></script>
+
+  <!-- 🔌 运营内容注入脚本（读取 /static/data/ads.json，填充挂钩位） -->
+  <script type="module" src="/components/ops.js"></script>
 </body>
 </html>

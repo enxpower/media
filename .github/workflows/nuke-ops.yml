@@ -1,4 +1,4 @@
-name: Nuke broken ops
+name: Nuke broken 'ops' submodule
 
 on:
   workflow_dispatch:
@@ -15,23 +15,36 @@ jobs:
   nuke:
     runs-on: ubuntu-latest
     steps:
-      - name: Clone repo WITHOUT submodules
+      - name: Manual clone WITHOUT submodules
         run: |
           set -eux
-          git clone --no-recurse-submodules "https://github.com/${GITHUB_REPOSITORY}.git" repo
+          REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
+          # 关键：不用 actions/checkout，手动 clone 并禁用子模块
+          git clone --no-recurse-submodules "$REPO_URL" repo
           cd repo
+
           git checkout "${{ github.event.inputs.branch }}"
           git config user.name  "actions-user"
           git config user.email "actions@users.noreply.github.com"
 
-          # 硬删残留 submodule 指针与目录
+          echo "Before:"
+          ls -la .gitmodules || true
+          git ls-files -s | grep " ops$" || true
+
+          # 硬删除子模块指针与目录
           git rm -r --cached ops || true
           rm -rf ops || true
-          if [ -f .gitmodules ]; then rm -f .gitmodules || true; fi
+          if [ -f .gitmodules ]; then
+            git config -f .gitmodules --remove-section submodule.ops || true
+            rm -f .gitmodules || true
+          fi
 
-          # 提交并推送（如果确有变更）
-          git add -A
-          if ! git diff --cached --quiet; then
+          echo "After:"
+          ls -la .gitmodules || true
+          git ls-files -s | grep " ops$" || true
+
+          # 仅当有变更时提交并推送
+          if ! git diff --staged --quiet; then
             git commit -m "chore: remove broken 'ops' submodule pointer"
             git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
             git push origin "${{ github.event.inputs.branch }}"

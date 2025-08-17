@@ -1,0 +1,46 @@
+name: Fix stray ops submodule
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to fix'
+        required: true
+        default: 'dev-ui'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+
+      - name: Show current gitlink state
+        run: |
+          set -eux
+          git ls-tree -d HEAD | grep ' ops$' || true
+          git status
+
+      - name: Remove ops gitlink from index (safe even if absent)
+        run: |
+          set -eux
+          git rm -r --cached ops || true
+          rm -rf ops || true
+
+      - name: Commit & push if changed
+        run: |
+          set -eux
+          if ! git diff --cached --quiet; then
+            git config user.name "actions-user"
+            git config user.email "actions@users.noreply.github.com"
+            git commit -m "chore: remove stray submodule entry ops"
+            git push origin HEAD:${{ github.event.inputs.branch }}
+          else
+            echo "No changes."
+          fi

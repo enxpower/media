@@ -1,2 +1,4 @@
 _content/
 .gitmodules
+# temp checkout of private repo
+ops/
