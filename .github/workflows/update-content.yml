@@ -2,11 +2,11 @@ name: Hourly Content Aggregation
 
 on:
   schedule:
-    - cron: '0 * * * *'      # 每小时（UTC）
+    - cron: '0 * * * *'   # 每小时（UTC）
   workflow_dispatch:
 
 concurrency:
-  group: aggregator-${{ github.ref }}
+  group: aggregator-${{ github.repository }}
   cancel-in-progress: true
 
 permissions:
@@ -15,58 +15,72 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
+
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      OPENAI_MODEL: gpt-4o-mini
-      SUMMARIZE_CONCURRENCY: 6
-      MAX_ARTICLES_PER_RUN: 50
+      # 固定 Python 版本，保证 wheel 命中与依赖稳定
+      PY_VERSION: "3.12"
+      # NLTK 数据缓存目录（可被 actions/cache 持久化）
+      NLTK_DATA: ${{ runner.temp }}/nltk_data
+
     steps:
-      - name: Checkout main (full history)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: main
 
-      # 🛠️ 先把本地与远端 main 对齐，再开始生成内容
-      - name: Git config & pre-sync main
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git switch main || git switch -c main
-          git fetch --prune origin
-          git pull --rebase origin main
-
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: ${{ env.PY_VERSION }}
           cache: 'pip'
-          cache-dependency-path: requirements.txt
+          cache-dependency-path: 'requirements.txt'
 
-      - name: Cache NLTK/newspaper data
+      # ✅ 缓存：抓全文/摘要的本地数据库 + NLTK 词库
+      - name: Restore aggregator & NLTK cache
         uses: actions/cache@v4
         with:
-          path: ~/.cache
-          key: nltk-newspaper-${{ runner.os }}-v1
+          path: |
+            .cache/aggregator
+            summary_cache.json
+            ${{ env.NLTK_DATA }}
+          key: agg-nlp-${{ runner.os }}-${{ env.PY_VERSION }}-${{ hashFiles('feeds.json') }}
+          restore-keys: |
+            agg-nlp-${{ runner.os }}-${{ env.PY_VERSION }}-
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           pip install -r requirements.txt
-          python -m nltk.downloader punkt || true
 
-      - name: Run aggregator script
+      - name: Ensure NLTK punkt (cached)
+        shell: bash
+        run: |
+          python - << 'PY'
+          import os, nltk
+          nltk.data.path.insert(0, os.environ.get("NLTK_DATA",""))
+          try:
+              nltk.data.find("tokenizers/punkt")
+              print("[nltk] punkt found in cache")
+          except LookupError:
+              print("[nltk] downloading punkt ...")
+              nltk.download("punkt", download_dir=os.environ.get("NLTK_DATA",""))
+          PY
+
+      - name: Run aggregator
         run: |
           python scripts/aggregator.py
 
-      - name: Generate sitemap.xml
+      - name: Generate sitemap
         run: |
           python scripts/generate_sitemap.py
 
-      # ✅ 生成完再提交；如竞态失败，抓取最新后重试一次
-      - name: Commit & push (safe with one retry)
+      # ✅ 只提交产物；缓存由 actions/cache 持久化
+      - name: Commit & push (safe retry)
         run: |
           set -e
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
           git add posts/ sitemap.xml
           git commit -m "🤖 Auto-update content and sitemap" || { echo "Nothing to commit"; exit 0; }
           git push origin HEAD:main || {
