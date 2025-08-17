@@ -1,53 +1,81 @@
-name: Repair gitlinks (remove ops / ops_src submodules)
-
+name: Repair stray gitlinks (remove submodules) 
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: "Branch to repair (e.g. main or dev-ui)"
-        required: true
-        default: "main"
+      target_branch:
+        description: "Branch to repair (default: current)"
+        required: false
 
 permissions:
   contents: write
+
+concurrency:
+  group: repair-gitlinks-${{ github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   repair:
     runs-on: ubuntu-latest
     steps:
+      - name: Resolve branch
+        id: br
+        run: |
+          set -eu
+          if [ -n "${{ github.event.inputs.target_branch }}" ]; then
+            echo "val=${{ github.event.inputs.target_branch }}" >> $GITHUB_OUTPUT
+          else
+            echo "val=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          fi
+          echo "Target: $(cat $GITHUB_OUTPUT | cut -d= -f2)"
+
       - name: Checkout target branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ steps.br.outputs.val }}
           fetch-depth: 0
 
       - name: List gitlinks (mode 160000)
+        id: scan
         run: |
-          git ls-files --stage | awk '$1 ~ /^160000$/ {print $4}' > gitlinks.txt || true
-          echo "Gitlinks found:"
+          set -eux
+          git ls-files -s | awk '$1==160000 {print $4}' > gitlinks.txt || true
           cat gitlinks.txt || true
 
-      - name: Remove gitlinks if any
+      - name: Remove gitlinks from index
+        if: always()
         run: |
           set -eux
           if [ -s gitlinks.txt ]; then
-            # 删除所有 gitlink 路径（如 ops/、ops_src/）
-            xargs -a gitlinks.txt git rm -f --cached || true
+            while read -r p; do
+              echo "Removing gitlink: $p"
+              git rm -f --cached -r "$p" || true
+              # try remove .gitmodules section if any
+              git config -f .gitmodules --remove-section "submodule.$p" || true
+              rm -rf ".git/modules/$p" || true
+            done < gitlinks.txt
+          else
+            echo "No gitlinks detected."
           fi
-          # 删除 .gitmodules（若存在）
-          rm -f .gitmodules
-          # 加强忽略，避免误提交
-          echo -e "\n# block submodules\nops/\nops_src/\n.gitmodules\n" >> .gitignore
-          git add .gitignore || true
 
-      - name: Commit & push if changed
+      - name: Ensure .gitignore blocks temp dirs
         run: |
           set -eux
-          if ! git diff --cached --quiet; then
-            git config user.name "actions-user"
-            git config user.email "actions@users.noreply.github.com"
-            git commit -m "fix: remove gitlinks (ops/ops_src) and block future submodules"
-            git push origin HEAD:${{ github.event.inputs.branch }}
+          touch .gitignore
+          # 防再发生：把常见目录加黑名单（包含这次出现的 content_src）
+          for d in _ops_src ops_src ops-src ops content_src _content_src; do
+            grep -qx "/$d/" .gitignore || echo "/$d/" >> .gitignore
+          done
+          git add .gitignore
+          git add .gitmodules || true
+
+      - name: Commit & push
+        run: |
+          set -eux
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
           else
-            echo "No changes."
+            git config user.name  "actions-user"
+            git config user.email "actions@users.noreply.github.com"
+            git commit -m "chore: remove stray gitlinks (submodules) and block future ones"
+            git push origin HEAD:${{ steps.br.outputs.val }}
           fi
