@@ -1,4 +1,6 @@
 // components/pagination.js
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
 document.addEventListener("DOMContentLoaded", () => {
   const paginationContainer = document.getElementById("pagination");
   const newsContainer = document.getElementById("newsContainer");
