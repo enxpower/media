@@ -2,8 +2,8 @@ name: Sync private content to public
 
 on:
   schedule:
-    - cron: "17 * * * *"   # hourly at :17 (UTC)
-  workflow_dispatch: {}     # allow manual run
+    - cron: "17 * * * *"   # 每小时第 17 分（UTC）
+  workflow_dispatch: {}     # 允许手动运行
 
 permissions:
   contents: write
@@ -15,20 +15,40 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout public repo
         uses: actions/checkout@v4
 
-      # Create short-lived installation token for the private repo (no installation ID needed)
+      # ---- 自修复：确保 .gitignore；清理误加的子模块痕迹 ----
+      - name: Self-heal .gitignore and remove submodule traces
+        shell: bash
+        run: |
+          set -euo pipefail
+          # 1) 确保 .gitignore 存在并包含需要的两行
+          touch .gitignore
+          grep -qxF '_content/' .gitignore || echo '_content/' >> .gitignore
+          grep -qxF '.gitmodules' .gitignore || echo '.gitmodules' >> .gitignore
+
+          # 2) 删除历史中误加入的 .gitmodules（若存在）
+          if [ -f .gitmodules ]; then
+            git rm -f .gitmodules || true
+          fi
+
+          # 3) 从索引中移除 _content（若被跟踪），并删除工作区目录
+          if git ls-files --error-unmatch _content >/dev/null 2>&1; then
+            git rm -r --cached _content || true
+          fi
+          rm -rf _content
+
+      # 用 GitHub App 生成只读安装令牌（无需 Installation ID）
       - name: Create installation token (read-only)
         id: app_token
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          owner: enxpower                  # your org/user
-          repositories: content-ops        # your private content repo
+          owner: enxpower
+          repositories: content-ops
 
       - name: Checkout private content repo (read-only)
         uses: actions/checkout@v4
@@ -47,7 +67,6 @@ jobs:
           if [ -d _content/ads ]; then rsync -av --delete _content/ads/ ads/; fi
           if [ -d _content/downloads ]; then rsync -av --delete _content/downloads/ downloads/; fi
 
-      # Remove the temp checkout so Pages won't see a nested repo
       - name: Cleanup temp checkout
         run: rm -rf _content
 
@@ -57,11 +76,15 @@ jobs:
           set -euo pipefail
           git config user.name  "github-actions"
           git config user.email "github-actions@github.com"
-          # Only stage the three target paths (avoid accidental submodule artifacts)
-          git add -A static/data ads downloads
+
+          # 只提交我们需要的路径 + 可能变化的 .gitignore
+          git add -A static/data ads downloads .gitignore
+
+          # 若前面 self-heal 阶段删除了 .gitmodules/_content，已通过 git rm 进入暂存区，无需额外 add
+
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "chore: sync private content"
+            git commit -m "chore: sync private content (self-heal)"
             git push
           fi
