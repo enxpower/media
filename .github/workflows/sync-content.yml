@@ -1,90 +1,59 @@
 name: Sync private content to public
 
 on:
+  workflow_dispatch:
+    inputs:
+      ops_ref:
+        description: "Private repo branch/tag to sync"
+        required: false
+        default: "main"
   schedule:
-    - cron: "17 * * * *"   # 每小时第 17 分（UTC）
-  workflow_dispatch: {}     # 允许手动运行
+    - cron: "0 * * * *"   # 每小时同步一次，可按需调整
 
 permissions:
   contents: write
-
-concurrency:
-  group: sync-content
-  cancel-in-progress: true
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout public repo
-        uses: actions/checkout@v4
-
-      # ---- 自修复：确保 .gitignore；清理误加的子模块痕迹 ----
-      - name: Self-heal .gitignore and remove submodule traces
-        shell: bash
-        run: |
-          set -euo pipefail
-          # 1) 确保 .gitignore 存在并包含需要的两行
-          touch .gitignore
-          grep -qxF '_content/' .gitignore || echo '_content/' >> .gitignore
-          grep -qxF '.gitmodules' .gitignore || echo '.gitmodules' >> .gitignore
-
-          # 2) 删除历史中误加入的 .gitmodules（若存在）
-          if [ -f .gitmodules ]; then
-            git rm -f .gitmodules || true
-          fi
-
-          # 3) 从索引中移除 _content（若被跟踪），并删除工作区目录
-          if git ls-files --error-unmatch _content >/dev/null 2>&1; then
-            git rm -r --cached _content || true
-          fi
-          rm -rf _content
-
-      # 用 GitHub App 生成只读安装令牌（无需 Installation ID）
-      - name: Create installation token (read-only)
-        id: app_token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          owner: enxpower
-          repositories: content-ops
-
-      - name: Checkout private content repo (read-only)
+      - name: Checkout PUBLIC repo (this repo)
         uses: actions/checkout@v4
         with:
-          repository: enxpower/content-ops
-          ref: main
-          token: ${{ steps.app_token.outputs.token }}
-          path: _content
+          fetch-depth: 0
 
-      - name: Sync selected content into public repo
-        shell: bash
+      - name: Checkout PRIVATE content repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.OPS_REPO }}     # 形如 org/private-content
+          token: ${{ secrets.OPS_TOKEN }}         # PAT 或 repo token
+          ref: ${{ github.event.inputs.ops_ref || 'main' }}
+          path: ops
+
+      - name: Sync whitelisted paths (ads, downloads, static/data)
         run: |
-          set -euo pipefail
-          mkdir -p static/data ads downloads
-          if [ -d _content/json ]; then rsync -av --delete _content/json/ static/data/; fi
-          if [ -d _content/ads ]; then rsync -av --delete _content/ads/ ads/; fi
-          if [ -d _content/downloads ]; then rsync -av --delete _content/downloads/ downloads/; fi
+          set -eux
+          # 确保目标目录存在
+          mkdir -p ads downloads static/data
 
-      - name: Cleanup temp checkout
-        run: rm -rf _content
+          # 只同步白名单；目标里多余文件用 --delete 清理
+          # 注意：ads.json 必须位于私库 content-ops/static/data/ads.json
+          rsync -av --delete \
+            --include='static/data/ads.json' \
+            --include='ads/***' \
+            --include='downloads/***' \
+            --exclude='*' \
+            ops/content-ops/ ./
 
-      - name: Commit & push if changes
-        shell: bash
+      - name: Commit & push if changed
         run: |
-          set -euo pipefail
-          git config user.name  "github-actions"
-          git config user.email "github-actions@github.com"
-
-          # 只提交我们需要的路径 + 可能变化的 .gitignore
-          git add -A static/data ads downloads .gitignore
-
-          # 若前面 self-heal 阶段删除了 .gitmodules/_content，已通过 git rm 进入暂存区，无需额外 add
-
+          set -eux
+          git add -A
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "chore: sync private content (self-heal)"
+            git config user.name "actions-user"
+            git config user.email "actions@users.noreply.github.com"
+            git commit -m "chore: sync private content"
             git push
           fi
