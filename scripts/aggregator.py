@@ -33,16 +33,16 @@ CACHE_DIR = Path(".cache/aggregator")
 CONTENT_CACHE = CACHE_DIR / "content.jsonl"   # {"url":..., "sha":..., "text":...}
 SUMMARY_CACHE = CACHE_DIR / "summaries.jsonl" # {"key":..., "model":..., "title":..., "url":..., "en":..., "zh":...}
 
-# ========= 新增：全文抓取配额 & 计时开关（默认不改变行为） =========
+# ========= 全文抓取配额 & 计时开关 =========
 ENABLE_FULLTEXT = os.getenv("ENABLE_FULLTEXT", "1") == "1"   # 1=抓全文, 0=只用RSS摘要
-MAX_FULLTEXT_PER_RUN = int(os.getenv("MAX_FULLTEXT_PER_RUN", "0"))  # 0=不限制（与原来一致）
+MAX_FULLTEXT_PER_RUN = int(os.getenv("MAX_FULLTEXT_PER_RUN", "0"))  # 0=不限制
 ENABLE_TIMING_LOGS = os.getenv("ENABLE_TIMING_LOGS", "1") == "1"    # 打印阶段耗时日志
 
 def _tlog(msg: str):
     if ENABLE_TIMING_LOGS:
         print(msg)
 
-# =============== 简易 JSONL 缓存 ===============
+# =============== 工具/缓存 ===============
 def _sha1(s: str) -> str:
     return hashlib.sha1(s.encode("utf-8")).hexdigest()
 
@@ -93,6 +93,21 @@ def strip_tags(s: str) -> str:
     s = re.sub(r"<[^>]+>", " ", s)
     s = html.unescape(s)
     return " ".join(s.split())
+
+def _clean_llm_text(s: str) -> str:
+    """去掉代码围栏/多余引号/压缩空白"""
+    if not s:
+        return ""
+    # 去掉```json ... ``` 或 ``` ... ```
+    s = re.sub(r"```(?:json)?\s*(.*?)\s*```", r"\1", s, flags=re.DOTALL | re.IGNORECASE)
+    # 去掉行内反引号
+    s = s.replace("```", "").replace("`", "")
+    # HTML unescape + 压缩空白
+    s = html.unescape(s)
+    s = re.sub(r"\s+", " ", s).strip()
+    # 去掉首尾多余引号
+    s = s.strip(' \t\r\n"\'')
+    return s
 
 # 高质量：抓正文（用于LLM上下文），带缓存
 def fetch_fulltext_with_cache(link: str, fallback_summary="") -> tuple[str, str]:
@@ -152,6 +167,7 @@ def summarize_with_cache(title: str, url: str, article_text: str) -> tuple[str, 
         return hit["en"], hit["zh"]
 
     en, zh = _summarize_llm(title, url, context_cut)
+    en, zh = _clean_llm_text(en), _clean_llm_text(zh)
 
     _append_jsonl(SUMMARY_CACHE, {
         "key": key,
@@ -162,6 +178,36 @@ def summarize_with_cache(title: str, url: str, article_text: str) -> tuple[str, 
         "zh": zh
     })
     return en, zh
+
+def _try_parse_json_like(content: str) -> tuple[str, str] | None:
+    """尽最大努力从内容里提取 {"en": "...", "zh": "..."}"""
+    if not content:
+        return None
+    # 先去掉代码围栏再尝试 JSON
+    cleaned = _clean_llm_text(content)
+    # 直接解析
+    try:
+        data = json.loads(cleaned)
+        if isinstance(data, dict):
+            en = _clean_llm_text(str(data.get("en", "")))
+            zh = _clean_llm_text(str(data.get("zh", "")))
+            if en or zh:
+                return en, zh
+    except Exception:
+        pass
+    # 再用正则在全文里找一个 JSON 对象
+    m = re.search(r"\{.*\}", content, flags=re.DOTALL)
+    if m:
+        try:
+            data = json.loads(_clean_llm_text(m.group(0)))
+            if isinstance(data, dict):
+                en = _clean_llm_text(str(data.get("en", "")))
+                zh = _clean_llm_text(str(data.get("zh", "")))
+                if en or zh:
+                    return en, zh
+        except Exception:
+            pass
+    return None
 
 def _summarize_llm(title: str, url: str, article_text: str) -> tuple[str, str]:
     try:
@@ -174,41 +220,55 @@ def _summarize_llm(title: str, url: str, article_text: str) -> tuple[str, str]:
         "You are a concise news summarizer for energy/cleantech topics. "
         "Write two short, factual summaries (2–3 sentences each): one in EN, one in Simplified Chinese. "
         "Use only information supported by the provided article content and title/URL. "
-        "Do not add opinions. Keep numbers and proper nouns accurate. Output JSON with keys 'en' and 'zh'."
+        "Do not add opinions. Keep numbers and proper nouns accurate. "
+        "Return a JSON object: {\"en\": \"...\", \"zh\": \"...\"} with no code fences."
     )
-
     user_prompt = (
         f"Title: {title}\n"
         f"URL: {url}\n\n"
         f"Article content (excerpt, may be truncated):\n"
         f"{article_text}\n\n"
-        "Please produce the summaries."
+        "Output JSON only, no markdown, no explanations."
     )
 
     backoff = OPENAI_MIN_BACKOFF
     for attempt in range(OPENAI_MAX_RETRIES):
         try:
             t0 = time.time()
-            resp = client.chat.completions.create(
-                model=OPENAI_MODEL,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
-                temperature=0.2,
-            )
-            dt = time.time() - t0
-            content = resp.choices[0].message.content.strip()
+            # 使用 chat.completions；若 SDK>=1.3 支持 JSON response_format 更稳
             try:
-                data = json.loads(content)
-                en = str(data.get("en", "")).strip()
-                zh = str(data.get("zh", "")).strip()
-                if not en or not zh:
-                    raise ValueError("JSON missing fields")
+                resp = client.chat.completions.create(
+                    model=OPENAI_MODEL,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    temperature=0.2,
+                    response_format={"type": "json_object"},
+                )
+                content = resp.choices[0].message.content or ""
             except Exception:
-                parts = re.split(r"\n[-–—]+\n|\n{2,}", content)
-                en = (parts[0] if parts else content).strip()
-                zh = (parts[1] if len(parts) > 1 else "").strip()
+                # 兼容老版本SDK：不传 response_format，再由我们解析
+                resp = client.chat.completions.create(
+                    model=OPENAI_MODEL,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    temperature=0.2,
+                )
+                content = resp.choices[0].message.content or ""
+
+            dt = time.time() - t0
+            parsed = _try_parse_json_like(content)
+            if parsed:
+                en, zh = parsed
+            else:
+                # 解析失败：用启发式分割（第一段=EN，第二段=ZH）
+                text = _clean_llm_text(content)
+                parts = re.split(r"\n[-–—]+\n|\n{2,}", text)
+                en = _clean_llm_text(parts[0] if parts else text)
+                zh = _clean_llm_text(parts[1] if len(parts) > 1 else "")
             _tlog(f"[TIMING] openai {dt:.2f}s | {title[:64]}...")
             return en, zh
         except Exception as e:
@@ -258,7 +318,7 @@ def summarize_parallel(articles, fulltext_map: dict):
 
     return asyncio.run(runner())
 
-# =============== 抓取与分页（与你原版一致，新增了正文缓存调用 + 配额 + 计时） ===============
+# =============== 抓取与分页（新增了正文缓存调用 + 配额 + 计时） ===============
 def load_feeds(json_file="feeds.json"):
     with open(json_file, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -303,7 +363,6 @@ def fetch_articles(feeds, per_feed_limit=PER_FEED_LIMIT, max_total=MAX_TOTAL):
                 raw_summary = e.get("summary", "")
                 clean_summary = strip_tags(raw_summary)[:400]
 
-                # —— 这里加入“全文配额”，默认 0=不限（与原行为同）
                 if ENABLE_FULLTEXT and (MAX_FULLTEXT_PER_RUN == 0 or fulltext_used < MAX_FULLTEXT_PER_RUN):
                     preview, full_text = fetch_fulltext_with_cache(link, clean_summary)
                     if full_text or preview:
@@ -450,12 +509,14 @@ def main():
         title, link, preview, source, published = article
         en, zh, err = res
         if err:
-            # ✅ 失败兜底：LLM 掉线时，至少保留 preview（英文），中文留空
-            en = en.strip() if en else (preview or "").strip()
-            zh = zh.strip() if zh else ""
+            # 失败兜底：至少有英文（用 preview），中文留空
+            en = _clean_llm_text(en) if en else (preview or "")
+            zh = _clean_llm_text(zh) if zh else ""
             if not en and not zh:
                 print(f"[SKIPPED] {title}: {err}")
                 continue
+        else:
+            en, zh = _clean_llm_text(en), _clean_llm_text(zh)
         tags = detect_tags(f"{title} {en}")
         processed.append((title, link, preview, en, zh, tags, source, published))
 
@@ -467,7 +528,7 @@ def main():
     pages = paginate_with_cap(mixed, page_size=ITEMS_PER_PAGE, per_source_cap=PER_SOURCE_PAGE_CAP)
     _tlog(f"[TIMING] paginate_with_cap {time.time()-t_page:.2f}s | pages {len(pages)}")
 
-    # ✅ 关键保护：如果本次生成 0 页，绝不动旧内容，直接退出，前端不会 404
+    # ✅ 关键保护：如果本次生成 0 页，绝不动旧内容
     if len(pages) == 0:
         print("[WARN] No pages generated this run. Keeping existing posts/ untouched.")
         _tlog(f"[TIMING] total pipeline {time.time()-t_main0:.2f}s")
@@ -507,7 +568,7 @@ window.addEventListener("message", (event) => {
     # === 自动生成 sitemap.xml ===
     _tlog("[TIMING] Generating sitemap.xml...")
     domain = "https://media.energizeos.com"
-    today = datetime.utcnow().strftime("%Y-%m-%d")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     with open("sitemap.xml", "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         f.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
