@@ -1,0 +1,46 @@
+name: Nuke any submodules (ops / ops_src / etc)
+
+on:
+  workflow_dispatch: {}   # 手动运行
+
+permissions:
+  contents: write
+
+jobs:
+  nuke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Remove ALL gitlink entries (mode 160000)
+        shell: bash
+        run: |
+          set -eux
+          # 找出索引中所有子模块路径
+          paths=$(git ls-files --stage | awk '$1==160000 {print $4}')
+          if [ -n "${paths}" ]; then
+            echo "Found submodules:"
+            echo "${paths}"
+            # 逐个强制移除（仅移除索引里的 gitlink，不是普通文件删除）
+            for p in ${paths}; do
+              git rm -f "$p" || true
+            done
+          else
+            echo "No submodules (gitlinks) found."
+          fi
+
+          # 删除 .gitmodules（如果存在）
+          rm -f .gitmodules || true
+
+          git add -A
+          if ! git diff --cached --quiet; then
+            git -c user.name="actions-user" -c user.email="actions@users.noreply.github.com" \
+              commit -m "build: remove stray submodule pointers (ops / ops_src)"
+            git push
+          else
+            echo "Nothing to commit."
+          fi
