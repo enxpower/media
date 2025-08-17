@@ -2,8 +2,8 @@ name: Sync private content to public
 
 on:
   schedule:
-    - cron: "17 * * * *"   # 每小时第 17 分（UTC）
-  workflow_dispatch: {}     # 也支持手动触发
+    - cron: "17 * * * *"   # hourly at :17 (UTC)
+  workflow_dispatch: {}     # allow manual run
 
 permissions:
   contents: write
@@ -20,15 +20,15 @@ jobs:
       - name: Checkout public repo
         uses: actions/checkout@v4
 
-      # 用 GitHub App 生成只读安装令牌（无需 Installation ID）
+      # Create short-lived installation token for the private repo (no installation ID needed)
       - name: Create installation token (read-only)
         id: app_token
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          owner: enxpower            # 你的账户/组织名
-          repositories: content-ops  # 你的“私库”名
+          owner: enxpower                  # your org/user
+          repositories: content-ops        # your private content repo
 
       - name: Checkout private content repo (read-only)
         uses: actions/checkout@v4
@@ -43,21 +43,13 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p static/data ads downloads
+          if [ -d _content/json ]; then rsync -av --delete _content/json/ static/data/; fi
+          if [ -d _content/ads ]; then rsync -av --delete _content/ads/ ads/; fi
+          if [ -d _content/downloads ]; then rsync -av --delete _content/downloads/ downloads/; fi
 
-          # 1) JSON 配置 → /static/data/
-          if [ -d _content/json ]; then
-            rsync -av --delete _content/json/ static/data/
-          fi
-
-          # 2) 广告/横幅素材 → /ads/
-          if [ -d _content/ads ]; then
-            rsync -av --delete _content/ads/ ads/
-          fi
-
-          # 3) 下载文件（PDF/ZIP等） → /downloads/
-          if [ -d _content/downloads ]; then
-            rsync -av --delete _content/downloads/ downloads/
-          fi
+      # Remove the temp checkout so Pages won't see a nested repo
+      - name: Cleanup temp checkout
+        run: rm -rf _content
 
       - name: Commit & push if changes
         shell: bash
@@ -65,7 +57,8 @@ jobs:
           set -euo pipefail
           git config user.name  "github-actions"
           git config user.email "github-actions@github.com"
-          git add -A
+          # Only stage the three target paths (avoid accidental submodule artifacts)
+          git add -A static/data ads downloads
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
