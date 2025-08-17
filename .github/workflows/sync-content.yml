@@ -2,8 +2,8 @@ name: Sync private content to public
 
 on:
   schedule:
-    - cron: "17 * * * *"   # 每小时第17分钟
-  workflow_dispatch: {}     # 允许手动运行
+    - cron: "17 * * * *"   # 每小时第 17 分（UTC）
+  workflow_dispatch: {}     # 也支持手动触发
 
 permissions:
   contents: write
@@ -19,21 +19,21 @@ jobs:
     steps:
       - name: Checkout public repo
         uses: actions/checkout@v4
-        # 这里保持默认（会为 origin 配好 GITHUB_TOKEN），便于后续 git push
 
-      # 用 GitHub App 生成只读安装令牌
-      - name: Generate installation token (read-only)
+      # 用 GitHub App 生成只读安装令牌（无需 Installation ID）
+      - name: Create installation token (read-only)
         id: app_token
-        uses: tibdex/github-app-token@v2
+        uses: actions/create-github-app-token@v1
         with:
-          app_id: ${{ secrets.APP_ID }}
-          installation_id: ${{ secrets.APP_INSTALLATION_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: enxpower            # 你的账户/组织名
+          repositories: content-ops  # 你的“私库”名
 
       - name: Checkout private content repo (read-only)
         uses: actions/checkout@v4
         with:
-          repository: enxpower/content-ops     # ← 你的私库
+          repository: enxpower/content-ops
           ref: main
           token: ${{ steps.app_token.outputs.token }}
           path: _content
@@ -42,7 +42,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           mkdir -p static/data ads downloads
 
           # 1) JSON 配置 → /static/data/
