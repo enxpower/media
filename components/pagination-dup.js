@@ -7,82 +7,85 @@
   const bottomEl = document.getElementById(BOTTOM_ID);
   if (!topEl || !bottomEl) return;
 
-  // 找“上一页 / 下一页 / 页码”的通用方法
-  function getText(n){ return (n?.textContent || '').trim(); }
-  function findBtn(container, which) {
-    const isPrev = which === 'prev';
-    const txtRe = isPrev ? /^(prev|previous|上一[页頁])$/i : /^(next|下一[页頁])$/i;
+  const $all = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const txt = (n) => (n?.textContent || '').trim();
+  const has = (s, needles) => needles.some(w => s.includes(w));
 
-    // 先按常见 class
-    let el = container.querySelector(isPrev ? 'a.prev,button.prev' : 'a.next,button.next');
-    if (el) return el;
+  // 归一化文本：去箭头/符号/空格，仅保留字母与中/英文关键字
+  const norm = (s) =>
+    (s || '')
+      .toLowerCase()
+      .replace(/[\u2190\u2192]/g, '')     // ← →
+      .replace(/\s+/g, '')
+      .replace(/[^a-z\u4e00-\u9fa5\d]/g, ''); // 仅字母数字与中文
 
-    // 再找 aria-label
-    el = Array.from(container.querySelectorAll('a[aria-label],button[aria-label]'))
-      .find(n => txtRe.test((n.getAttribute('aria-label')||'').trim()));
-    if (el) return el;
-
-    // 最后按可见文本
-    el = Array.from(container.querySelectorAll('a,button')).find(n => txtRe.test(getText(n)));
-    return el || null;
+  function findTopPrev() {
+    return topEl.querySelector('a.prev,button.prev,[aria-label*="prev" i],[aria-label*="上一"]')
+      || $all('a,button', topEl).find(n => {
+        const s = norm(txt(n));
+        return has(s, ['prev', 'previous', '上一页', '上一頁', '上一步']);
+      }) || null;
+  }
+  function findTopNext() {
+    return topEl.querySelector('a.next,button.next,[aria-label*="next" i],[aria-label*="下一"]')
+      || $all('a,button', topEl).find(n => {
+        const s = norm(txt(n));
+        return has(s, ['next', '下一页', '下一頁', '下一步']);
+      }) || null;
+  }
+  function findTopPage(num) {
+    return $all('a,button', topEl).find(n => txt(n) === String(num)) || null;
   }
 
-  function findPageBtnByNumber(container, num) {
-    return Array.from(container.querySelectorAll('a,button'))
-      .find(n => getText(n) === String(num)) || null;
-  }
-
-  // 同步渲染 bottom
-  function renderBottom() {
-    const html = topEl.innerHTML;
-    if (!html || !html.trim()) return;
-
-    // 复制内容 & 类名，尽量复用顶部样式
-    bottomEl.className = topEl.className ? topEl.className + ' pagination--bottom' : 'pagination--bottom';
-    bottomEl.innerHTML = html;
-
-    // 事件委托：任何点击都映射到顶部对应元素
-    bottomEl.addEventListener('click', function (e) {
+  function bindDelegation() {
+    bottomEl.onclick = (e) => {
       const t = e.target.closest('a,button');
       if (!t) return;
 
-      e.preventDefault();
-      e.stopPropagation();
+      const s = norm(txt(t));
+      let targetTop = null;
 
-      const txt = getText(t).toLowerCase();
-      let targetTop;
-
-      if (/^(prev|previous|上一[页頁])$/.test(txt)) {
-        targetTop = findBtn(topEl, 'prev');
-      } else if (/^(next|下一[页頁])$/.test(txt)) {
-        targetTop = findBtn(topEl, 'next');
+      if (has(s, ['prev', 'previous', '上一页', '上一頁', '上一步'])) {
+        targetTop = findTopPrev();
+      } else if (has(s, ['next', '下一页', '下一頁', '下一步'])) {
+        targetTop = findTopNext();
       } else {
-        // 页码
-        const n = parseInt(txt.replace(/[^\d]/g, ''), 10);
-        if (!isNaN(n)) targetTop = findPageBtnByNumber(topEl, n);
+        const n = parseInt((txt(t) || '').replace(/[^\d]/g, ''), 10);
+        if (!isNaN(n)) targetTop = findTopPage(n);
       }
 
-      if (targetTop) {
-        targetTop.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      if (targetTop && !targetTop.disabled) {
+        e.preventDefault();
+        e.stopPropagation();
+        targetTop.click();          // 直接触发顶部按钮
       }
-    }, { once: true }); // 渲染一次绑定一次（后续变更会重新渲染并重新绑定）
+    };
   }
 
-  // 1) 轮询等待顶部真正渲染完成
+  function renderBottom() {
+    if (!topEl.innerHTML || !topEl.innerHTML.trim()) return;
+    bottomEl.className = topEl.className
+      ? topEl.className + ' pagination--bottom'
+      : 'pagination--bottom';
+    bottomEl.innerHTML = topEl.innerHTML;
+    bindDelegation();
+  }
+
+  // 等待顶部分页渲染
   let tries = 0;
-  const timer = setInterval(() => {
+  const poll = setInterval(() => {
     tries++;
     if (topEl.innerHTML && topEl.innerHTML.trim()) {
-      clearInterval(timer);
+      clearInterval(poll);
       renderBottom();
     }
-    if (tries > 60) clearInterval(timer); // 最多 ~12 秒
+    if (tries > 60) clearInterval(poll); // ~12s 兜底
   }, 200);
 
-  // 2) 监听顶部变化（翻页后会变化），自动同步到底部
-  const obs = new MutationObserver(renderBottom);
-  obs.observe(topEl, { childList: true, subtree: true, characterData: true });
+  // 顶部分页变化时同步到底部
+  new MutationObserver(renderBottom)
+    .observe(topEl, { childList: true, subtree: true, characterData: true });
 
-  // 3) 浏览器往返缓存恢复时同步一次
+  // 浏览器往返缓存恢复时再同步一次
   window.addEventListener('pageshow', renderBottom);
 })();
