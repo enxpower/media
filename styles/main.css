@@ -370,3 +370,19 @@ footer{
 .share-buttons a:hover {
   color: var(--brand-ink);
 }
+/* Sponsor 卡轻量标识，保持与普通卡一致的外观 */
+.news-post.sponsor[data-sponsor="true"] { border-left-color: var(--c-general); }
+.news-post .sponsor-badge {
+  background: #f8fafc;
+  color: #334155;
+  border: 1px solid var(--line);
+}
+.news-post.sponsor .sponsor-img {
+  display:block;
+  width:100%;
+  max-height:180px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid var(--line);
+  margin:8px 0 6px;
+}
