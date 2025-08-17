@@ -1,119 +1,133 @@
-name: Sync private content to public (dynamic branch)
+name: Sync private content to public
 
 on:
   workflow_dispatch:
     inputs:
-      public_branch:
-        description: "Target public branch (optional; default = current branch)"
-        required: false
       content_ref:
-        description: "Branch/Tag of PRIVATE repo (default: main)"
+        description: "Branch or tag in the private repo to sync"
         required: false
         default: main
-      private_repo:
-        description: "owner/repo of PRIVATE repo (optional; else DEFAULT_PRIVATE_REPO)"
-        required: false
-      dry_run:
-        description: "Dry run (no commit/push)"
-        type: boolean
-        default: false
   schedule:
-    - cron: "0 * * * *"  # hourly; runs on the default branch where this file exists
+    - cron: "0 * * * *"  # hourly
 
 permissions:
   contents: write
 
-# concurrency 分支隔离，避免 dev-ui / main 互相打断
+# 防并发互踩（按分支隔离）
 concurrency:
   group: sync-content-${{ github.ref_name }}
   cancel-in-progress: false
-
-env:
-  DEFAULT_PRIVATE_REPO: enxpower/content-ops   # ← 改成你的私库 owner/repo
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Resolve PUBLIC branch (current branch by default)
-        id: br
+      # 0) 统一一些变量（私库名支持使用 secrets.OPS_REPO；否则回退到 enxpower/content-ops）
+      - name: Resolve variables
+        id: vars
         run: |
           set -eu
-          if [ -n "${{ github.event.inputs.public_branch }}" ]; then
-            echo "val=${{ github.event.inputs.public_branch }}" >> $GITHUB_OUTPUT
-          else
-            echo "val=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          PRIV_REPO="${{ secrets.OPS_REPO }}"
+          if [ -z "${PRIV_REPO}" ]; then
+            PRIV_REPO="enxpower/content-ops"
           fi
-          echo "Target public branch: $(cat $GITHUB_OUTPUT | cut -d= -f2)"
+          echo "PRIVATE_REPO=$PRIV_REPO" >> $GITHUB_ENV
+          # 目标分支默认就是当前分支（dev-ui 或 main）
+          echo "PUBLIC_BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
-      - name: Checkout PUBLIC repo (target branch)
+      # 1) Checkout PUBLIC repo (this repo)
+      - name: Checkout PUBLIC repo (this repo)
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.br.outputs.val }}
+          ref: ${{ env.PUBLIC_BRANCH }}
           fetch-depth: 0
 
-      - name: Show current repo state
+      # 1.1) 防再发生：把临时/外部源码目录加入 .gitignore
+      - name: Ensure .gitignore blocks temp and external dirs
         run: |
           set -eux
-          echo "CURRENT BRANCH: ${{ steps.br.outputs.val }}"
-          git rev-parse --abbrev-ref HEAD
-          git status
+          touch .gitignore
+          for d in content_src _ops_src ops_src ops _content_src; do
+            grep -qx "/$d/" .gitignore || echo "/$d/" >> .gitignore
+          done
+          git add .gitignore || true
 
-      - name: Resolve PRIVATE repo name
-        id: prn
+      # 2) 清理历史遗留的 submodule 指针（可重复执行，安全）
+      - name: Remove legacy submodule pointers
         run: |
-          set -eu
-          if [ -n "${{ github.event.inputs.private_repo }}" ]; then
-            echo "val=${{ github.event.inputs.private_repo }}" >> $GITHUB_OUTPUT
-          else
-            echo "val=${DEFAULT_PRIVATE_REPO}" >> $GITHUB_OUTPUT
+          set -eux
+          # 已知目录
+          git rm -r --cached ops || true
+          git rm -r --cached ops_src || true
+          git rm -r --cached content_src || true
+          rm -rf ops ops_src content_src || true
+          # 泛化：扫描所有 gitlink (mode 160000)
+          git ls-files -s | awk '$1==160000 {print $4}' > gitlinks.txt || true
+          if [ -s gitlinks.txt ]; then
+            while read -r p; do
+              echo "Removing gitlink: $p"
+              git rm -f --cached -r "$p" || true
+              git config -f .gitmodules --remove-section "submodule.$p" || true
+              rm -rf ".git/modules/$p" || true
+            done < gitlinks.txt
+          fi
+          # 清理 .gitmodules（若已空）
+          if [ -f .gitmodules ] && ! grep -q '\[submodule' .gitmodules; then
+            rm -f .gitmodules || true
           fi
 
-      - name: Checkout PRIVATE repo (content ops)
+      # 3) 从你的私库（content-ops）取内容
+      - name: Checkout PRIVATE content repo
         uses: actions/checkout@v4
         with:
-          repository: ${{ steps.prn.outputs.val }}
-          ref: ${{ github.event.inputs.content_ref || 'main' }}
-          token: ${{ secrets.OPS_TOKEN }}     # 你已配置的读取私库 Token（只读权限即可）
-          path: _ops_src
+          repository: ${{ env.PRIVATE_REPO }}      # 优先 secrets.OPS_REPO；否则 enxpower/content-ops
+          token: ${{ secrets.OPS_TOKEN }}          # 你已经配置好的 PAT（只读该私库）
+          ref: ${{ github.event.inputs.content_ref }}
+          path: content_src
           fetch-depth: 1
+          persist-credentials: false
 
-      - name: Guards - required files must exist
+      # 4) 可视化检查（方便确认私库里文件路径）
+      - name: Show trees (debug)
+        run: |
+          echo "::group::public root"; ls -la; echo "::endgroup::"
+          echo "::group::private root"; ls -la content_src; echo "::endgroup::"
+          echo "::group::private static/data"; ls -la content_src/static/data || true; echo "::endgroup::"
+
+      # 5) 仅镜像白名单目录/文件（私库 → 公库），会清理公库多余文件
+      - name: Sync whitelisted paths (mirror)
         run: |
           set -eux
-          test -f "_ops_src/static/data/ads.json" || (echo "MISSING _ops_src/static/data/ads.json" && exit 1)
-          mkdir -p static/data ads downloads
+          mkdir -p ads downloads static/data
+          rsync -av --checksum --delete \
+            --include='static/data/ads.json' \
+            --include='ads/***' \
+            --include='downloads/***' \
+            --exclude='*' \
+            content_src/ ./
 
-      # ✅ 白名单复制（只同步这三类；其余绝不外泄）
-      - name: Copy whitelisted content from PRIVATE -> PUBLIC
+      # 5.1) 强校验：ads.json 私库与公库必须完全一致
+      - name: Verify ads.json is EXACTLY identical
         run: |
           set -eux
-          rsync -av --delete "_ops_src/static/data/ads.json" "static/data/ads.json"
-          rsync -av --delete "_ops_src/ads/" "ads/" || true
-          rsync -av --delete "_ops_src/downloads/" "downloads/" || true
+          if [ -f content_src/static/data/ads.json ] && [ -f static/data/ads.json ]; then
+            cmp -s content_src/static/data/ads.json static/data/ads.json || (echo "ads.json mismatch after copy!" && exit 1)
+          else
+            echo "ads.json missing in one side!" && exit 1
+          fi
 
-      # ✅ 硬校验：ads.json 必须完全一致（不同则 FAIL，避免“看似成功但脏数据”）
-      - name: Verify ads.json is EXACTLY identical (private vs public)
-        run: |
-          set -eux
-          cmp -s "_ops_src/static/data/ads.json" "static/data/ads.json" || (echo "ads.json mismatch after copy!" && exit 1)
-
-      - name: Show diff summary
-        run: |
-          set -eux
-          git status --porcelain || true
-          git diff --stat || true
-
+      # 6) 有变更才提交（⚠️ 白名单 add，避免把 content_src 等临时目录加入索引）
       - name: Commit & push if changed
-        if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           set -eux
-          git add -A
+          git add static/data/ads.json
+          git add ads || true
+          git add downloads || true
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git config user.name  "actions-user"
+            git config user.name "actions-user"
             git config user.email "actions@users.noreply.github.com"
-            git commit -m "chore: sync content from private repo → ${{ steps.br.outputs.val }}"
-            git push origin HEAD:${{ steps.br.outputs.val }}
+            git commit -m "chore: sync content from private repo"
+            git push
           fi
