@@ -55,7 +55,7 @@
     if (adsCfg && Array.isArray(adsCfg.positions) && adsCfg.positions.length) {
       return adsCfg.positions.map(n => parseInt(n, 10)).filter(n => n > 0);
     }
-    return [3];
+    return [3]; // 默认第3条后
   }
   function pickCard() {
     if (!adQueue.length) return null;
@@ -69,7 +69,7 @@
     el.setAttribute(SP_ATTR, 'true');
     el.setAttribute('data-category', 'Sponsor');
 
-    // 标题（仍可点击，但样式在 CSS 里做低调化）
+    // 标题（可点击；样式在 CSS 中弱化为普通标题色）
     const h = document.createElement('h3');
     const a = document.createElement('a');
     a.className = 'news-link';
@@ -80,7 +80,7 @@
     h.appendChild(a);
     el.appendChild(h);
 
-    // 图片（支持 WebP→JPG 回退）
+    // 图片（支持 WebP → JPG 回退）
     if (ad.img) {
       const link = document.createElement('a');
       link.href = ad.href || '#';
@@ -105,7 +105,7 @@
       el.appendChild(link);
     }
 
-    // 描述
+    // 描述（可选）
     if (ad.text) {
       const p = document.createElement('p');
       p.className = 'preview';
@@ -173,6 +173,7 @@
       if (!ad) return;
 
       const cardEl = makeCard(ad);
+      // 埋点所需元数据
       cardEl.dataset.spSlot  = String(idx);
       cardEl.dataset.spId    = ad.id || '';
       cardEl.dataset.spTitle = ad.title || '';
