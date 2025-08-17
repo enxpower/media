@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: aggregator-${{ github.repository }}
+  group: aggregator-${{ github.repository }}-${{ github.ref_name }}
   cancel-in-progress: true
 
 permissions:
@@ -83,17 +83,21 @@ jobs:
         run: |
           python scripts/generate_sitemap.py
 
-      # ✅ 只提交产物；缓存由 actions/cache 持久化
-      - name: Commit & push (safe retry)
+      # ✅ 只提交产物；推回触发该 workflow 的同一分支；缓存由 actions/cache 持久化
+      - name: Commit & push (safe retry to current branch)
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
         run: |
           set -e
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add posts/ sitemap.xml
           git commit -m "🤖 Auto-update content and sitemap" || { echo "Nothing to commit"; exit 0; }
-          git push origin HEAD:main || {
-            echo "Push failed; refetch + rebase then retry..."
-            git fetch origin main
-            git pull --rebase origin main
-            git push origin HEAD:main
+
+          # 先推到当前分支；失败则基于该分支 rebase 后重试
+          git push origin HEAD:refs/heads/$BRANCH_NAME || {
+            echo "Push failed; rebase on latest $BRANCH_NAME then retry..."
+            git fetch origin $BRANCH_NAME
+            git rebase origin/$BRANCH_NAME
+            git push origin HEAD:refs/heads/$BRANCH_NAME
           }
