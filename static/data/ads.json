@@ -1,12 +1,12 @@
 {
   "top_banner": {
-    "enabled": true,
+    "enabled": false,
     "title": "并网合规清单（UL 1741 SB / IEEE 1547）",
     "subtitle": "免费下载 PDF，工程师必备",
     "href": "/downloads/ul1741sb_checklist.pdf"
   },
   "footer_cta": {
-    "enabled": true,
+    "enabled": false,
     "text": "预约 EnergizeOS™ 演示",
     "href": "mailto:sales@energizeos.com"
   },
