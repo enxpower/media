@@ -1,0 +1,15 @@
+# .github/workflows/block-submodules.yml
+name: Block submodules
+on: [pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0, submodules: false }
+      - run: |
+          set -eux
+          if git ls-files -s | grep -q ' 160000 '; then
+            echo "::error::Submodules are not allowed in this repo."
+            exit 1
+          fi
