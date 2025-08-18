@@ -29,7 +29,7 @@
         "client": "ca-pub-4635648547987111",
         "slot": "1666613842",
         "insert_after": 9999,
-        "adtest": true,
+        "adtest": false,
 
         "brand": "Sponsored",
         "title": "Sponsored",
