@@ -448,3 +448,28 @@ footer{
   border:1px solid var(--line);
   background:#f1f5f9;
 }
+/* Sponsor card should look exactly like a news card */
+.news-post.sponsor { /* 继承 .news-post 的圆角/阴影/边距即可 */ }
+
+.news-post.sponsor h3 {
+  margin: 0;
+}
+
+.news-post.sponsor h3 .news-link {
+  pointer-events: none;
+  color: inherit;
+  text-decoration: none;
+}
+
+.news-post.sponsor .meta .source-badge {
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+.news-post.sponsor .summary {
+  padding: 0; /* 给广告更多可用空间 */
+}
+
+.news-post.sponsor .summary > ins.adsbygoogle {
+  display: inline-block; /* 兜底，确保与 JS 固定像素配合 */
+}
