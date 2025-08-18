@@ -6,10 +6,8 @@
     "enabled": true,
     "shuffle": false,
 
-    
     "positions": [3],
 
-    
     "cards": [
       {
         "id": "bess-1200-2064",
@@ -28,10 +26,11 @@
         "id": "gpt-card-1",
         "enabled": true,
         "google": true,
-        "client": "ca-pub-XXXXXXXXXXXXXXX",
-        "slot": "YYYYYYYYYY",
+        "client": "ca-pub-4635648547987111",
+        "slot": "1666613842",
         "insert_after": 9999,
-        "adtest": true,
+        "adtest": false,
+
         "brand": "Sponsored",
         "title": "Sponsored",
         "text": "This is a Google ad card controlled by ads.json.",
