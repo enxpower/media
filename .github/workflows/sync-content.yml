@@ -123,26 +123,27 @@ jobs:
 
       # 5.1) 语义校验：解析并排序后比较；不一致则给出统一 diff 并失败
       - name: Verify ads.json is SEMANTICALLY identical
+        shell: bash
         run: |
           set -eux
           python - <<'PY'
-import json, difflib, pathlib, sys
-src = pathlib.Path("content_src/static/data/ads.json").read_text(encoding="utf-8")
-dst = pathlib.Path("static/data/ads.json").read_text(encoding="utf-8")
+          import json, difflib, pathlib, sys
+          src = pathlib.Path("content_src/static/data/ads.json").read_text(encoding="utf-8")
+          dst = pathlib.Path("static/data/ads.json").read_text(encoding="utf-8")
 
-def norm(s: str) -> str:
-  obj = json.loads(s)
-  return json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+          def norm(s: str) -> str:
+              obj = json.loads(s)
+              return json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
 
-ns, nd = norm(src), norm(dst)
-if ns != nd:
-  print("ads.json semantic mismatch. Unified diff below:")
-  for line in difflib.unified_diff(ns.splitlines(), nd.splitlines(),
-                                   fromfile="PRIVATE(semantic)", tofile="PUBLIC(semantic)", lineterm=""):
-    print(line)
-  sys.exit(1)
-print("ads.json semantic match ✅")
-PY
+          ns, nd = norm(src), norm(dst)
+          if ns != nd:
+              print("ads.json semantic mismatch. Unified diff below:")
+              for line in difflib.unified_diff(ns.splitlines(), nd.splitlines(),
+                                               fromfile="PRIVATE(semantic)", tofile="PUBLIC(semantic)", lineterm=""):
+                  print(line)
+              sys.exit(1)
+          print("ads.json semantic match")
+          PY
 
       # 6) 有变更才提交（白名单 add，避免把 content_src 等临时目录加入索引）
       - name: Commit & push if changed
