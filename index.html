@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -6,26 +6,25 @@
 
   <title>EnergizeOS™ News Aggregator</title>
 
-  <!-- ✅ SEO meta tags -->
+  <!-- SEO -->
   <meta name="description" content="Curated clean energy news from over 60 sources: solar, battery, wind, EV, grid and more. Updated hourly by EnergizeOS™." />
   <meta name="keywords" content="solar, battery, BESS, wind, EV, energy storage, cleantech, aggregator, EnergizeOS" />
   <meta name="robots" content="index, follow" />
 
-  <!-- ✅ Open Graph (for social sharing) -->
+  <!-- Open Graph -->
   <meta property="og:title" content="EnergizeOS™ News Aggregator" />
   <meta property="og:description" content="Top curated clean energy news, updated hourly from 60+ global sources." />
   <meta property="og:url" content="https://media.energizeos.com/" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://media.energizeos.com/og-cover.jpg" />
 
-  <!-- ✅ Canonical -->
+  <!-- Canonical -->
   <link rel="canonical" href="https://media.energizeos.com/" />
 
-  <!-- ✅ Styles -->
+  <!-- Styles -->
   <link rel="stylesheet" href="styles/main.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-  <!-- ✅ Inline style (retain your h1 style) -->
   <style>
     h1 {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -33,7 +32,13 @@
     }
   </style>
 
-  <!-- ✅ Google Analytics (GA4) -->
+  <!-- Google Funding Choices (EU/UK/CH consent) -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-4635648547987111?ers=1" crossorigin="anonymous"></script>
+
+  <!-- Google AdSense (site-wide) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4635648547987111" crossorigin="anonymous"></script>
+
+  <!-- Google Analytics (GA4) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6RWKYBH04S"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -51,7 +56,7 @@
     </div>
   </header>
 
-  <!-- 🔌 顶部横幅挂钩（默认隐藏；由 /static/data/ads.json 控制） -->
+  <!-- 顶部横幅挂钩（默认隐藏；由 /static/data/ads.json 控制） -->
   <section id="top-banner" class="banner banner-top" hidden></section>
 
   <div id="pagination"></div>
@@ -60,13 +65,13 @@
     <!-- News content will be loaded here -->
   </main>
 
-  <!-- ✅ 底部分页挂钩（与顶部同款；由 pagination-bottom.js 渲染为普通链接） -->
+  <!-- 底部分页挂钩（由 pagination-bottom.js 渲染） -->
   <div id="pagination-bottom"></div>
 
   <!-- （可选）侧栏赞助挂钩 -->
   <!-- <ul id="side-sponsors" class="sponsor-list" hidden></ul> -->
 
-  <!-- 🔌 底部 CTA 挂钩（默认隐藏；由 /static/data/ads.json 控制） -->
+  <!-- 底部 CTA 挂钩（默认隐藏；由 /static/data/ads.json 控制） -->
   <section id="footer-cta" class="footer-cta" hidden></section>
 
   <script src="components/search.js"></script>
@@ -78,10 +83,13 @@
   <script src="components/shareButtons.js"></script>
   <script src="components/shareTracker.js"></script>
 
-  <!-- ✅ 原生内嵌赞助卡（监听 pager:update，从 /static/data/ads.json 注入） -->
+  <!-- 原生内嵌赞助卡（监听 pager:update，从 /static/data/ads.json 注入） -->
   <script src="components/nativeAds.js"></script>
 
-  <!-- 🔌 运营内容注入脚本（读取 /static/data/ads.json，填充挂钩位） -->
-  <script type="module" src="/components/ops.js"></script>
+  <!-- 运营内容注入脚本（读取 /static/data/ads.json，填充挂钩位） -->
+  <script type="module" src="components/ops.js"></script>
+
+  <!-- Google 卡片注入（与新闻卡同规格） -->
+  <script src="components/adslot-google.js" defer></script>
 </body>
 </html>
