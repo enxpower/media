@@ -5,7 +5,11 @@
   "native_ads": {
     "enabled": true,
     "shuffle": false,
+
+    
     "positions": [3],
+
+    
     "cards": [
       {
         "id": "bess-1200-2064",
@@ -18,10 +22,30 @@
         "sizes": "(max-width: 768px) calc(100vw - 16px), 948px",
         "img_alt": "EnergizeOS 1.2 MW / 2.064 MWh containerized BESS",
         "text": "Containerized AC/DC hybrid system for C&I microgrids and utility-scale blocks. Integrated PCS, battery, EMS and HVAC for rapid deployment and reliable operation."
+      },
+
+      {
+        "id": "gpt-card-1",
+        "enabled": true,
+        "google": true,
+        "client": "ca-pub-XXXXXXXXXXXXXXX",
+        "slot": "YYYYYYYYYY",
+        "insert_after": 9999,
+        "adtest": true,
+        "brand": "Sponsored",
+        "title": "Sponsored",
+        "text": "This is a Google ad card controlled by ads.json.",
+        "img": "",
+        "img_fallback": "",
+        "srcset": "",
+        "sizes": "",
+        "img_alt": "Sponsored"
       }
     ],
 
     "_note": "cards_off 是临时停用区，不会被前端读取；要恢复把条目移回 cards。",
+    "_note_google": "Google 卡片需 google=true、client/slot 有值；insert_after 控制插入位置；adtest=true 为测试模式。",
+
     "cards_off": [
       {
         "id": "ul1741sb-kit",
