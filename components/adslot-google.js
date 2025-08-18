@@ -9,32 +9,35 @@
   const SPONSOR_CLASS = 'sponsor';
   const MIN_CONTENT_HEIGHT = 120;
   const EXTRA_PADDING_EST = 24;
-  const CARD_MARK = 'data-gid'; // 去重用
+  const CARD_MARK = 'data-gid'; // 去重标记
 
-  function log(){ try{ console.log.apply(console, ['[adslot]'].concat([].slice.call(arguments))); }catch(e){} }
+  function log() {
+    try { console.log.apply(console, ['[adslot]'].concat([].slice.call(arguments))); } catch (e) {}
+  }
 
-  async function fetchJSON(u){
-    const r = await fetch(u, { cache:'no-store' });
-    if (!r.ok) throw new Error('HTTP '+r.status);
+  async function fetchJSON(u) {
+    const r = await fetch(u, { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   }
 
-  function medianHeight(nodes){
-    const hs = nodes.map(n => n.getBoundingClientRect().height).filter(h => h>0).sort((a,b)=>a-b);
+  function medianHeight(nodes) {
+    const hs = nodes.map(n => n.getBoundingClientRect().height).filter(h => h > 0).sort((a, b) => a - b);
     if (!hs.length) return 220;
-    const m = Math.floor(hs.length/2);
-    return hs.length%2? hs[m] : Math.round((hs[m-1]+hs[m])/2);
+    const m = Math.floor(hs.length / 2);
+    return hs.length % 2 ? hs[m] : Math.round((hs[m - 1] + hs[m]) / 2);
   }
 
-  // 依据容器宽度选择“标准矩形”，桌面336x280，移动300x250
-  function chooseFixedRect(container){
+  // 依据容器宽度选择“标准矩形”，桌面 336x280，移动 300x250
+  function chooseFixedRect(container) {
     const w = container.getBoundingClientRect().width || 0;
     if (w >= 336) return { w: 336, h: 280 };
     if (w >= 300) return { w: 300, h: 250 };
     return { w: 250, h: 200 }; // 超窄兜底
   }
 
-  function buildAdCard(baseContentHeight, slotConf, container){
+  // 构建卡片骨架
+  function buildAdCard(baseContentHeight, slotConf, container) {
     const card = document.createElement('div');
     card.className = `news-post ${SPONSOR_CLASS}`;
     card.dataset.category = 'General';
@@ -60,7 +63,7 @@
     summary.style.justifyContent = 'center';
     summary.style.alignItems = 'center';
 
-    const headH = Math.round((h3.getBoundingClientRect().height||0) + (meta.getBoundingClientRect().height||0) + EXTRA_PADDING_EST);
+    const headH = Math.round((h3.getBoundingClientRect().height || 0) + (meta.getBoundingClientRect().height || 0) + EXTRA_PADDING_EST);
     const targetContentH = Math.max(MIN_CONTENT_HEIGHT, baseContentHeight - headH);
 
     const box = chooseFixedRect(container);
@@ -83,20 +86,22 @@
     return { card, ins };
   }
 
-  function insertAfterIndex(container, node, index){
+  // 插到第 index 张新闻卡片之后（越界则放末尾）
+  function insertAfterIndex(container, node, index) {
     const cards = container.querySelectorAll(CARD_SELECTOR);
     if (!cards.length) { container.appendChild(node); return; }
     const i = Math.max(0, Math.min(index, cards.length - 1));
     cards[i].after(node);
   }
 
-  function ensureAdSense(client, cb){
+  // 加载 AdSense 核心脚本（幂等）
+  function ensureAdSense(client, cb) {
     if (window.adsbygoogle && window.adsbygoogle.push) return cb();
-    const existed = Array.from(document.scripts).some(s => (s.src||'').includes('pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'));
-    const srcUrl = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+encodeURIComponent(client);
+    const existed = Array.from(document.scripts).some(s => (s.src || '').includes('pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'));
+    const srcUrl = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(client);
     if (existed) {
       if (document.readyState === 'complete') cb();
-      else window.addEventListener('load', cb, { once:true });
+      else window.addEventListener('load', cb, { once: true });
       return;
     }
     const s = document.createElement('script');
@@ -107,12 +112,23 @@
     document.head.appendChild(s);
   }
 
-  function pickGoogleItems(na){
+  // 6 秒内未填充则移除空白卡
+  function watchFillOrHide(ins, card, timeout = 6000) {
+    const t0 = Date.now();
+    const tick = () => {
+      if (ins.querySelector('iframe')) return; // 已填充
+      if (Date.now() - t0 > timeout) { card.remove(); return; } // 无填充 -> 隐藏
+      requestAnimationFrame(tick);
+    };
+    tick();
+  }
+
+  function pickGoogleItems(na) {
     return (Array.isArray(na?.cards) ? na.cards : [])
       .filter(x => x && x.enabled === true && x.google === true && x.client && x.slot);
   }
 
-  async function injectOnce(){
+  async function injectOnce() {
     const cfg = await fetchJSON(JSON_URL);
     const na = cfg && cfg.native_ads;
     if (!na || na.enabled !== true) return;
@@ -124,7 +140,7 @@
     const baseH = medianHeight(Array.from(container.querySelectorAll(`${CARD_SELECTOR}:not(.${SPONSOR_CLASS})`)));
     const client = items[0].client;
 
-    ensureAdSense(client, function(){
+    ensureAdSense(client, function () {
       items.forEach(item => {
         const id = item.id || ('slot-' + item.slot);
         if (document.querySelector(`.news-post.sponsor[${CARD_MARK}="${id}"]`)) return;
@@ -136,24 +152,6 @@
         const { card, ins } = buildAdCard(baseH, item, container);
         card.setAttribute(CARD_MARK, id);
         insertAfterIndex(container, card, after);
-        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { log('push err', e); }
-      });
-    });
-  }
 
-  // 初次加载
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectOnce);
-  else injectOnce();
-  // 页面稳定后再补一遍（避免高度测量偏差）
-  window.addEventListener('load', () => setTimeout(injectOnce, 50), { once:true });
-
-  // 分页或重绘后自动补回
-  document.addEventListener('pager:update', injectOnce);
-  const container = document.getElementById(CONTAINER_ID);
-  if (container) {
-    const mo = new MutationObserver(() => {
-      if (!document.querySelector('.news-post.sponsor')) injectOnce();
-    });
-    mo.observe(container, { childList: true });
-  }
-})();
+        try { (window.adsbygoogle = window.adsbygoogle || []).push(
+::contentReference[oaicite:0]{index=0}
