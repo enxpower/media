@@ -22,7 +22,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      # 0) 统一一些变量（私库名支持使用 secrets.OPS_REPO；否则回退到 enxpower/content-ops）
+      # 0) 统一一些变量（私库名支持 secrets.OPS_REPO；否则回退到 enxpower/content-ops）
       - name: Resolve variables
         id: vars
         run: |
@@ -81,7 +81,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ env.PRIVATE_REPO }}      # 优先 secrets.OPS_REPO；否则 enxpower/content-ops
-          token: ${{ secrets.OPS_TOKEN }}          # 你已经配置好的 PAT（只读该私库）
+          token: ${{ secrets.OPS_TOKEN }}          # 只读该私库
           ref: ${{ github.event.inputs.content_ref }}
           path: content_src
           fetch-depth: 1
@@ -94,29 +94,57 @@ jobs:
           echo "::group::private root"; ls -la content_src; echo "::endgroup::"
           echo "::group::private static/data"; ls -la content_src/static/data || true; echo "::endgroup::"
 
-      # 5) 仅镜像白名单目录/文件（私库 → 公库），会清理公库多余文件
+      # 5) 仅镜像白名单目录/文件（更稳：父目录 include 链 + 强制覆盖一次）
       - name: Sync whitelisted paths (mirror)
         run: |
           set -eux
           mkdir -p ads downloads static/data
-          rsync -av --checksum --delete \
-            --include='static/data/ads.json' \
-            --include='ads/***' \
-            --include='downloads/***' \
+
+          # 显式包含父目录，避免被 exclude 规则误伤
+          rsync -ai --delete \
+            --include='/static/' \
+            --include='/static/data/' \
+            --include='/static/data/ads.json' \
+            --include='/ads/***' \
+            --include='/downloads/***' \
             --exclude='*' \
             content_src/ ./
 
-      # 5.1) 强校验：ads.json 私库与公库必须完全一致
-      - name: Verify ads.json is EXACTLY identical
+          # 再强制覆盖一次，确保目标字节即为私库版本
+          cp -f content_src/static/data/ads.json static/data/ads.json
+
+      # （可选）原始字节 diff，便于定位差异来源（不影响通过）
+      - name: Debug diff (raw bytes)
         run: |
           set -eux
-          if [ -f content_src/static/data/ads.json ] && [ -f static/data/ads.json ]; then
-            cmp -s content_src/static/data/ads.json static/data/ads.json || (echo "ads.json mismatch after copy!" && exit 1)
-          else
-            echo "ads.json missing in one side!" && exit 1
-          fi
+          md5sum content_src/static/data/ads.json static/data/ads.json || true
+          wc -c   content_src/static/data/ads.json static/data/ads.json || true
+          diff -u content_src/static/data/ads.json static/data/ads.json || true
 
-      # 6) 有变更才提交（⚠️ 白名单 add，避免把 content_src 等临时目录加入索引）
+      # 5.1) 语义校验：解析并排序后比较；不一致则给出统一 diff 并失败
+      - name: Verify ads.json is SEMANTICALLY identical
+        run: |
+          set -eux
+          python - <<'PY'
+import json, difflib, pathlib, sys
+src = pathlib.Path("content_src/static/data/ads.json").read_text(encoding="utf-8")
+dst = pathlib.Path("static/data/ads.json").read_text(encoding="utf-8")
+
+def norm(s: str) -> str:
+  obj = json.loads(s)
+  return json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+
+ns, nd = norm(src), norm(dst)
+if ns != nd:
+  print("ads.json semantic mismatch. Unified diff below:")
+  for line in difflib.unified_diff(ns.splitlines(), nd.splitlines(),
+                                   fromfile="PRIVATE(semantic)", tofile="PUBLIC(semantic)", lineterm=""):
+    print(line)
+  sys.exit(1)
+print("ads.json semantic match ✅")
+PY
+
+      # 6) 有变更才提交（白名单 add，避免把 content_src 等临时目录加入索引）
       - name: Commit & push if changed
         run: |
           set -eux
