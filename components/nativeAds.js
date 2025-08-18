@@ -53,6 +53,11 @@
   let adsCfg = null;
   let adQueue = []; // simple round-robin
 
+  function isNativeCard(x) {
+    // 关键：过滤掉 Google 卡，且仅保留启用的原生卡
+    return x && x.google !== true && x.enabled !== false;
+  }
+
   async function loadCfg() {
     try {
       const r = await fetch(ADS_URL, { cache: 'no-store' });
@@ -60,7 +65,9 @@
       const json = await r.json();
       adsCfg = json && json[CFG_KEY];
       if (!adsCfg || adsCfg.enabled === false) return;
-      adQueue = Array.isArray(adsCfg.cards) ? adsCfg.cards.slice() : [];
+
+      // 只取“非 google”的原生卡
+      adQueue = Array.isArray(adsCfg.cards) ? adsCfg.cards.filter(isNativeCard) : [];
       if (!adQueue.length) return;
       if (adsCfg.shuffle) adQueue.sort(() => Math.random() - 0.5);
     } catch (_) {}
@@ -222,8 +229,7 @@
 
     // Re-insert after each page change (your pager dispatches this)
     document.addEventListener('pager:update', () => {
-      // Allow DOM to finish rendering the new posts
-      setTimeout(insertAdsOnce, 0);
+      setTimeout(insertAdsOnce, 0); // allow DOM render
     });
 
     // Fallback initial try if DOM was already ready
