@@ -6,7 +6,7 @@
     "enabled": true,
     "shuffle": false,
 
-    "positions": [3, 7],
+    "positions": [3, 7, 10],
 
     "cards": [
       {
@@ -33,6 +33,20 @@
         "img_alt": "EnergizeOS EMS – PV Self-Consumption Strategy Visualization",
         "text": "Live PV, load, BESS, and PCC control with dual-axis thresholds and strategy switching."
       },
+
+      {
+        "id": "wolong-ess-replus-2025",
+        "brand": "Wolong ESS",
+        "title": "Empowering BESS Solutions for Grid-Scale and Microgrid",
+        "href": "https://ess.wolong.com?utm_source=media&utm_medium=native&utm_campaign=wolong_replus",
+        "img": "/ads/wolong_replus_1600x304.webp",
+        "img_fallback": "/ads/wolong_replus_1600x304.jpg",
+        "srcset": "/ads/wolong_replus_800x152.webp 800w, /ads/wolong_replus_1200x228.webp 1200w, /ads/wolong_replus_1600x304.webp 1600w",
+        "sizes": "(max-width: 768px) calc(100vw - 16px), 948px",
+        "img_alt": "Wolong ESS – Grid-scale BESS solutions",
+        "text": "High-reliability BESS for utility and microgrid applications. Visit Wolong ESS."
+      },
+
       {
         "id": "gpt-card-1",
         "enabled": true,
