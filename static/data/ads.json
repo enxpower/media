@@ -33,19 +33,7 @@
         "img_alt": "EnergizeOS EMS – PV Self-Consumption Strategy Visualization",
         "text": "Live PV, load, BESS, and PCC control with dual-axis thresholds and strategy switching."
       },
-      {
-        "id": "wolong-ess-replus",
-        "brand": "Wolong ESS",
-        "title": "Empowering BESS Solutions for Grid-Scale and Microgrid",
-        "href": "https://ess.wolong.com/?utm_source=media&utm_medium=native&utm_campaign=REplus2025",
-        "img": "/ads/wolong_replus_banner_1600x304.webp",
-        "img_fallback": "/ads/wolong_replus_banner_1600x304.jpg",
-        "srcset": "/ads/wolong_replus_banner_800x152.webp 800w, /ads/wolong_replus_banner_1600x304.webp 1600w",
-        "sizes": "(max-width: 768px) calc(100vw - 16px), 948px",
-        "img_alt": "Wolong ESS – Grid-scale & Microgrid BESS",
-        "text": "High-reliability BESS for utility and microgrid applications. Visit Wolong ESS.",
-        "insert_after": 10
-      },
+      
       {
         "id": "gpt-card-1",
         "enabled": true,
@@ -77,6 +65,19 @@
         "img": "/ads/ul1741sb_thumb.jpg",
         "img_alt": "UL 1741 SB Checklist",
         "text": "One-page checklist, templates, and evaluation notes for interconnection compliance."
+      },
+      {
+        "id": "wolong-ess-replus",
+        "brand": "Wolong ESS",
+        "title": "Empowering BESS Solutions for Grid-Scale and Microgrid",
+        "href": "https://ess.wolong.com/?utm_source=media&utm_medium=native&utm_campaign=REplus2025",
+        "img": "/ads/wolong_replus_banner_1600x304.webp",
+        "img_fallback": "/ads/wolong_replus_banner_1600x304.jpg",
+        "srcset": "/ads/wolong_replus_banner_800x152.webp 800w, /ads/wolong_replus_banner_1600x304.webp 1600w",
+        "sizes": "(max-width: 768px) calc(100vw - 16px), 948px",
+        "img_alt": "Wolong ESS – Grid-scale & Microgrid BESS",
+        "text": "High-reliability BESS for utility and microgrid applications. Visit Wolong ESS.",
+        "insert_after": 10
       },
       {
         "id": "bess-quote",
