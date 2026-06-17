@@ -1,6 +1,7 @@
 import pathlib
 import sys
 import unittest
+from unittest import mock
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -67,13 +68,17 @@ class DysonXNotionReadOnlyAdapterTests(unittest.TestCase):
         self.assertNotIn("socket", module_source)
 
     def test_adapter_does_not_require_real_notion_credentials(self):
-        module_source = pathlib.Path(adapter_module.__file__).read_text(encoding="utf-8")
+        adapter = adapter_module.FakeNotionSourceClient(FIXTURE_PATH)
+        records = adapter.list_source_records()
 
-        self.assertNotIn("NOTION_TOKEN", module_source)
-        self.assertNotIn("NOTION_API_KEY", module_source)
-        self.assertNotIn("os.environ", module_source)
-        self.assertNotIn("notion_client", module_source)
-        self.assertNotIn("api.notion.com", module_source)
+        self.assertGreater(len(records), 0)
+
+    def test_real_adapter_skeleton_fails_closed_without_credentials(self):
+        with mock.patch.dict("os.environ", {}, clear=True):
+            client = adapter_module.NotionReadOnlySourceClient.from_env()
+
+        with self.assertRaises(adapter_module.NotionReadOnlyAdapterNotConfigured):
+            client.list_source_records()
 
 
 if __name__ == "__main__":
