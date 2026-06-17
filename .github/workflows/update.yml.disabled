@@ -1,4 +1,7 @@
-name: Manual Update (on-demand)
+# DISABLED: Legacy news aggregation disabled. DysonX V1 pipeline is the active path.
+# This workflow is retained temporarily for decommission audit context only.
+
+name: Manual Update (on-demand) [DISABLED]
 
 on:
   workflow_dispatch:

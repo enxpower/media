@@ -5,6 +5,7 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = ROOT / "scripts"
+WORKFLOWS_DIR = ROOT / ".github" / "workflows"
 
 
 def imported_modules(path: pathlib.Path) -> set[str]:
@@ -34,6 +35,26 @@ class DysonXLegacyIndependenceTests(unittest.TestCase):
             overlap = imported_modules(path) & legacy_modules
             if overlap:
                 offenders[path.name] = sorted(overlap)
+
+        self.assertEqual({}, offenders)
+
+    def test_active_workflows_do_not_run_legacy_aggregation(self):
+        legacy_tokens = (
+            "scripts/aggregator.py",
+            "scripts/openai_summary.py",
+            "scripts/generate_sitemap.py",
+            "hashFiles('feeds.json')",
+            "git add posts/ sitemap.xml",
+            "OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}",
+            "group: aggregator-${{ github.repository }}-${{ github.ref_name }}",
+        )
+        offenders = {}
+
+        for path in sorted(WORKFLOWS_DIR.glob("*.yml")) + sorted(WORKFLOWS_DIR.glob("*.yaml")):
+            text = path.read_text(encoding="utf-8")
+            matches = [token for token in legacy_tokens if token in text]
+            if matches:
+                offenders[path.name] = matches
 
         self.assertEqual({}, offenders)
 

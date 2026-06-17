@@ -1,4 +1,7 @@
-name: Hourly Content Aggregation
+# DISABLED: Legacy news aggregation disabled. DysonX V1 pipeline is the active path.
+# This workflow is retained temporarily for decommission audit context only.
+
+name: Hourly Content Aggregation [DISABLED]
 
 on:
   schedule:
