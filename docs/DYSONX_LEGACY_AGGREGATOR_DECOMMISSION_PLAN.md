@@ -377,7 +377,7 @@ Legacy sitemap replacement:
 
 1. `chore/dysonx-disable-legacy-aggregation-workflows`
 
-   Remove `.github/workflows/update.yml` and
+   Disable `.github/workflows/update.yml` and
    `.github/workflows/update-content.yml`. Confirm no scheduled legacy content
    job remains.
 
@@ -419,8 +419,8 @@ Next PR:
 
 Scope:
 
-- Delete `.github/workflows/update.yml`.
-- Delete `.github/workflows/update-content.yml`.
+- Disable `.github/workflows/update.yml`.
+- Disable `.github/workflows/update-content.yml`.
 - Add or keep tests proving the DysonX V1 pipeline does not use the legacy
   aggregator.
 - Run the full governance and V1 dry-run validation suite.
@@ -430,6 +430,24 @@ Rationale:
 Stopping scheduled legacy generation first is the safest removal step because it
 prevents deleted legacy files from being recreated and avoids accidental OpenAI
 or RSS execution from the old path.
+
+## Legacy Workflow Disablement
+
+Implemented disablement path:
+
+- `.github/workflows/update.yml` was renamed to
+  `.github/workflows/update.yml.disabled`.
+- `.github/workflows/update-content.yml` was renamed to
+  `.github/workflows/update-content.yml.disabled`.
+- Both disabled files now include the banner:
+  `Legacy news aggregation disabled. DysonX V1 pipeline is the active path.`
+- Active workflow files ending in `.yml` or `.yaml` are checked to ensure they
+  do not run `scripts/aggregator.py`, `scripts/openai_summary.py`,
+  `scripts/generate_sitemap.py`, legacy `feeds.json` cache keys, or legacy
+  `posts/` plus `sitemap.xml` commits.
+
+This cuts off automated RSS/news/article aggregation while preserving the old
+workflow definitions temporarily for audit review and later deletion.
 
 ## Go / No-Go
 
