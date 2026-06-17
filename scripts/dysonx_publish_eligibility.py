@@ -75,6 +75,7 @@ def run_quality_review(ranking_report: dict[str, Any], created_at: str | None = 
         "status_counts": status_counts,
         "reviews": [serialize_review(review) for review in reviews],
         "eligibilities": [serialize_eligibility(eligibility) for eligibility in eligibilities],
+        "ranking_report": ranking_report,
         "publishing_performed": False,
         "social_posting_performed": False,
         "real_llm_api_used": False,
