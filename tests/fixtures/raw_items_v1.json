@@ -1,0 +1,65 @@
+[
+  {
+    "source_id": "source_openai_blog",
+    "source_name": "OpenAI Blog",
+    "title": "OpenAI releases GPT-6 for advanced reasoning",
+    "url": "https://openai.com/blog/gpt-6",
+    "published_at": "2026-06-15T12:00:00Z",
+    "language": "English",
+    "collected_at": "2026-06-17T10:00:00Z",
+    "raw_content": "OpenAI releases GPT-6 with stronger reasoning and tool-use capabilities.",
+    "metadata": {
+      "source_type": "Official Company Blog"
+    }
+  },
+  {
+    "source_id": "source_anthropic_blog",
+    "source_name": "Anthropic Blog",
+    "title": "Anthropic announces Claude agent reliability update",
+    "url": "https://anthropic.com/news/claude-agent-update",
+    "published_at": "2026-06-14T09:00:00Z",
+    "language": "English",
+    "collected_at": "2026-06-17T10:00:00Z",
+    "raw_content": "Anthropic announces improvements to Claude agent reliability for enterprise workflows.",
+    "metadata": {
+      "source_type": "Official Company Blog"
+    }
+  },
+  {
+    "source_id": "source_deepmind",
+    "source_name": "Google DeepMind",
+    "title": "Google DeepMind publishes world model research update",
+    "url": "https://deepmind.google/discover/blog/world-model-update",
+    "published_at": "2026-06-13T08:00:00Z",
+    "language": "English",
+    "collected_at": "2026-06-17T10:00:00Z",
+    "raw_content": "Google DeepMind shares a research update on world models and multimodal planning.",
+    "metadata": {
+      "source_type": "Research Lab"
+    }
+  },
+  {
+    "source_id": "source_eu_policy",
+    "source_name": "EU AI Office",
+    "title": "EU passes AI Act update for foundation model reporting",
+    "url": "https://digital-strategy.ec.europa.eu/ai-act-update",
+    "published_at": "2026-06-12T07:00:00Z",
+    "language": "English",
+    "collected_at": "2026-06-17T10:00:00Z",
+    "raw_content": "EU regulators pass an AI Act update affecting foundation model transparency reporting.",
+    "metadata": {
+      "source_type": "Regulatory"
+    }
+  },
+  {
+    "source_id": "source_invalid",
+    "source_name": "Invalid Fixture",
+    "title": "",
+    "url": "",
+    "published_at": "2026-06-11T07:00:00Z",
+    "language": "English",
+    "collected_at": "2026-06-17T10:00:00Z",
+    "raw_content": "This record is intentionally invalid.",
+    "metadata": {}
+  }
+]

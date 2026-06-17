@@ -1,0 +1,66 @@
+name: DysonX Governance Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+  push:
+    branches:
+      - chore/dysonx-governance-foundation
+      - dev
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    name: Constitution and architecture guards
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Python syntax check
+        run: |
+          python -m py_compile scripts/constitution_guard.py scripts/architecture_guard.py scripts/release_guard.py
+
+      - name: Constitution guard
+        run: python scripts/constitution_guard.py
+
+      - name: Architecture guard
+        run: python scripts/architecture_guard.py
+
+      - name: Release guard
+        run: python scripts/release_guard.py
+
+      - name: Sensitive value scan
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          root = pathlib.Path('.')
+          patterns = [
+              re.compile(r'sk_live_[A-Za-z0-9_\-]{12,}'),
+              re.compile(r'sk_test_[A-Za-z0-9_\-]{12,}'),
+              re.compile(r'ghp_[A-Za-z0-9_]{20,}'),
+              re.compile(r'OPENAI_API_KEY\s*=\s*[^\s]+'),
+          ]
+          allowed_dirs = {'.git'}
+          for path in root.rglob('*'):
+              if not path.is_file() or any(part in allowed_dirs for part in path.parts):
+                  continue
+              if path.suffix.lower() not in {'.md', '.py', '.js', '.ts', '.tsx', '.jsx', '.html', '.json', '.yml', '.yaml', '.env'}:
+                  continue
+              text = path.read_text(encoding='utf-8', errors='ignore')
+              for pattern in patterns:
+                  if pattern.search(text):
+                      print(f'[sensitive-scan] FAIL: possible sensitive value in {path}')
+                      sys.exit(1)
+          print('[sensitive-scan] PASS')
+          PY
