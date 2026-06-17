@@ -319,14 +319,15 @@ Recommended sequence:
 
 4. Replace repository identity.
 
-   Update `README.md` from EnergizeOS News Aggregator to DysonX Intelligence OS
-   with clear notes that real integrations and publishing are not enabled yet.
+   Completed: updated `README.md` from old legacy positioning to DysonX
+   Intelligence OS with clear notes that real integrations and publishing are
+   not enabled yet.
 
 5. Replace or remove public static shell.
 
-   Either replace `index.html` with a minimal DysonX governance-aligned preview
-   page or remove legacy public UI when the future DysonX Signal publishing
-   surface exists.
+   Completed: replaced `index.html` with a minimal DysonX governance-aligned
+   landing shell. Legacy components and styles remain for separate review
+   because they are no longer loaded by the root shell.
 
 6. Remove legacy UI assets.
 
@@ -397,8 +398,8 @@ Legacy sitemap replacement:
 
 4. `docs/dysonx-repository-identity-readme`
 
-   Replace README wording with DysonX Intelligence OS positioning and current
-   dry-run status.
+   Completed: replace README wording with DysonX Intelligence OS positioning
+   and current dry-run status.
 
 5. `chore/dysonx-release-guard-realignment`
 
@@ -407,8 +408,8 @@ Legacy sitemap replacement:
 
 6. `chore/dysonx-remove-legacy-static-ui`
 
-   Remove or replace `index.html`, `components/`, and `styles/` after a DysonX
-   preview or publishing surface is ready.
+   Partially completed: `index.html` is replaced. Review `components/` and
+   `styles/` separately because they are not loaded by the new shell.
 
 7. `chore/dysonx-prune-legacy-dependencies`
 
@@ -510,8 +511,8 @@ Remaining cleanup should happen in smaller PRs:
 
 1. `docs/dysonx-repository-identity-readme`
 
-   Replace EnergizeOS News Aggregator README wording with DysonX Intelligence
-   OS positioning and current dry-run status.
+   Completed: README now uses DysonX Intelligence OS positioning and current
+   dry-run status.
 
 2. `chore/dysonx-release-guard-realignment`
 
@@ -520,15 +521,41 @@ Remaining cleanup should happen in smaller PRs:
 
 3. `chore/dysonx-review-public-shell`
 
-   Review `index.html`, `components/`, and `styles/` to decide whether to
-   replace them with a DysonX-aligned preview shell or remove them after a
-   future publishing surface exists.
+   Partially completed: `index.html` is now a DysonX-aligned landing shell.
+   Review `components/` and `styles/` separately to decide whether to remove or
+   repurpose them.
 
 4. `chore/dysonx-prune-legacy-dependencies`
 
    Remove legacy-only dependencies such as `feedparser`, `newspaper3k`,
    `lxml_html_clean`, and `nltk` after confirming no remaining check or
    workflow needs them.
+
+## Repository Identity And Landing Shell Migration
+
+Implemented identity migration:
+
+- Replaced `README.md` with DysonX AI / AGI Intelligence OS positioning.
+- Documented the project as an AGI signal tracker and first-source AI
+  intelligence platform.
+- Made Signal-first, English-default, Chinese-switchable, Notion-managed source,
+  and V1 dry-run status explicit.
+- Replaced `index.html` with an English-canonical DysonX landing shell.
+- Added a visible EN / Chinese placeholder without implementing full
+  localization.
+- Updated title, description, Open Graph, and X/Twitter card metadata to DysonX
+  positioning.
+- Kept real publishing disabled and did not wire the landing shell to Publish
+  Packages or external integrations.
+
+Remaining static cleanup:
+
+- `components/` contains legacy static modules that are no longer loaded by
+  `index.html`.
+- `styles/main.css` contains legacy styles that are no longer loaded by
+  `index.html`.
+- `static/data/ads.json` and related content sync workflows need separate review
+  before removal because they are outside the root landing shell.
 
 ## Go / No-Go
 

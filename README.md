@@ -1,76 +1,110 @@
+# DysonX
 
-EnergizeOS™ News Aggregator
+DysonX is an AI / AGI Intelligence OS for tracking the signals shaping AGI.
 
-A multilingual, auto-updating energy news site covering PV, wind, storage, EV charging, and power electronics.
+It is an AGI signal tracker and first-source AI intelligence platform. The core
+object is the Signal, not the Article. DysonX is designed to turn high-authority
+AI and AGI source material into structured intelligence, rankings, quality
+review decisions, and decision-ready context.
 
-Features
+## Product Principles
 
-Hourly RSS fetch + English/Chinese summaries
+- Signal-first: Signals are the operating unit for intelligence value.
+- English-default: English is canonical for routes, metadata, and structured
+  output.
+- Chinese-switchable: Chinese is a future localization layer, not a separate
+  canonical product.
+- Notion-managed sources: monitored source configuration belongs in Notion, not
+  permanent hardcoded lists.
+- LLM-first interpretation: after collection, the first major interpretation
+  step is provider-neutral LLM analysis with audit records.
+- Quality-gated output: publishing must stay behind validation and review gates.
 
-One-click language toggle
+## Current V1 Status
 
-Tagging (PV / Wind / Storage / Charger / Power Electronics)
+The V1 dry-run pipeline is available and fixture-based.
 
-Lightweight, responsive UI
+Current dry-run flow:
 
-Automated via GitHub Actions; deployed on GitHub Pages
-
-Tech Stack
-
-Frontend: HTML, CSS, JavaScript
-
-Tasks: Python 3 (feedparser, newspaper3k, OpenAI API)
-
-CI/CD: GitHub Actions
-
-Hosting: GitHub Pages
-Quick Start
-```bash
-git clone https://github.com/enxpower/media.git
-cd media
-pip install -r requirements.txt
-export OPENAI_API_KEY=your_key_here
-python scripts/aggregator.py   # optional local run
+```text
+Raw Items Fixture
+-> Signal Candidate
+-> LLM Job / Audit
+-> Intelligence Signal
+-> Scoring / Ranking
+-> Quality Review
+-> Publish Package
+-> Pipeline Summary
 ```
 
-Automation
+The dry-run pipeline writes JSON audit reports under `tmp/` and does not publish
+website pages, post to social platforms, call real model providers, or fetch
+live Notion data.
 
-Workflow (e.g., update-content.yml) runs hourly:
+Run the V1 dry-run pipeline:
 
-Fetch RSS → summarize → categorize → write posts/pageX.html → commit.
-
-Manual trigger: GitHub “Actions” → Update workflow → Run.
-Structure (short)
 ```bash
-media/
-├─ posts/                 # generated pages
-├─ scripts/
-│  ├─ aggregator.py       # fetch/summarize entry
-│  └─ openai_summary.py   # GPT summarization
-├─ components/            # UI modules (lang toggle, pagination, etc.)
-├─ styles/
-├─ feeds.json             # RSS sources
-├─ index.html
-├─ .github/workflows/
-└─ requirements.txt
+python3 scripts/dysonx_v1_pipeline.py \
+  --raw-fixture tests/fixtures/raw_items_v1.json \
+  --output-dir tmp/dysonx_v1_pipeline \
+  --dry-run
 ```
 
-Deployment
+## Active Architecture
 
-GitHub Pages, branch: main, entry: index.html
+Key V1 layers already present:
 
-Local preview:
+- Notion source schema foundation
+- Local source fixture loader
+- Read-only Notion adapter interface
+- Source intake dry run
+- Raw Item to Signal Candidate pipeline
+- Provider-neutral LLM job and audit layer with fake provider
+- Intelligence Signal generation
+- Deterministic scoring and ranking
+- Quality review gate
+- Publish package metadata generation
+- Full V1 dry-run orchestrator
+
+## Governance
+
+Every task must read:
+
+- `AGENTS.md`
+- `docs/DYSONX_OWNER_INTENT.md`
+- `docs/DYSONX_PROJECT_CONTEXT.md`
+- `docs/DYSONX_PRODUCT_CONSTITUTION.md`
+- `docs/DYSONX_SYSTEM_ARCHITECTURE.md`
+- `docs/DYSONX_ENGINEERING_GOVERNANCE.md`
+
+Development is GitHub-first through branches and draft pull requests. No merge
+or production deployment should happen without explicit owner approval.
+
+## Validation
+
+Recommended checks:
+
 ```bash
-python3 -m http.server
-# open http://localhost:8000
+python3 scripts/constitution_guard.py
+python3 scripts/architecture_guard.py
+python3 scripts/release_guard.py
+python3 -m py_compile scripts/*.py
+python3 -m unittest discover -s tests
+python3 scripts/dysonx_v1_pipeline.py \
+  --raw-fixture tests/fixtures/raw_items_v1.json \
+  --output-dir tmp/dysonx_v1_pipeline \
+  --dry-run
+git diff --check
 ```
-License
 
-Copyright © 2025 Energize Solutions Inc.
-Licensed under CC BY-NC 4.0. See LICENSE.
+## Legacy Decommission
 
-Contact
+The old generated content path has been decommissioned in stages:
 
-Email: info@energizeos.com
+- legacy automation disabled
+- old aggregation scripts removed
+- hardcoded feed configuration removed
+- generated legacy pages and old sitemap removed
 
-GitHub: enxpower
+Remaining cleanup is tracked in
+`docs/DYSONX_LEGACY_AGGREGATOR_DECOMMISSION_PLAN.md`.
