@@ -1,0 +1,107 @@
+# DISABLED: Legacy news aggregation disabled. DysonX V1 pipeline is the active path.
+# This workflow is retained temporarily for decommission audit context only.
+
+name: Hourly Content Aggregation [DISABLED]
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # 每小时（UTC）
+  workflow_dispatch:
+
+# 不同分支的并发互不影响；同一分支仅保留最新一次运行
+concurrency:
+  group: aggregator-${{ github.repository }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      # 固定 Python 版本，保证 wheel 命中与依赖稳定
+      PY_VERSION: "3.12"
+      # NLTK 数据缓存目录（放在 workspace，避免 runner.temp 解析问题）
+      NLTK_DATA: ${{ github.workspace }}/.nltk_data
+      # —— 可选性能开关（aggregator.py 已支持）——
+      ENABLE_FULLTEXT: "1"           # 1=抓全文, 0=只用RSS摘要
+      MAX_FULLTEXT_PER_RUN: "40"     # 每次最多抓多少条全文；0=不限制（与旧行为一致）
+      ENABLE_TIMING_LOGS: "1"        # 打印阶段耗时
+      SUMMARIZE_CONCURRENCY: "4"     # 并发摘要数量
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # 如果你希望始终在 main 跑才加下面这行；否则保持注释即可在当前分支运行
+          # ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PY_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'requirements.txt'
+
+      # ✅ 缓存：抓全文/摘要的本地数据库 + NLTK 词库
+      - name: Restore aggregator & NLTK cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .cache/aggregator
+            summary_cache.json
+            ${{ env.NLTK_DATA }}
+          key: agg-nlp-${{ runner.os }}-${{ env.PY_VERSION }}-${{ hashFiles('feeds.json') }}
+          restore-keys: |
+            agg-nlp-${{ runner.os }}-${{ env.PY_VERSION }}-
+
+      - name: Install deps
+        run: |
+          pip install -r requirements.txt
+
+      - name: Ensure NLTK punkt (cached)
+        shell: bash
+        run: |
+          python - << 'PY'
+          import os, nltk
+          nltk.data.path.insert(0, os.environ.get("NLTK_DATA",""))
+          try:
+              nltk.data.find("tokenizers/punkt")
+              print("[nltk] punkt found in cache")
+          except LookupError:
+              print("[nltk] downloading punkt ...")
+              nltk.download("punkt", download_dir=os.environ.get("NLTK_DATA",""))
+          PY
+
+      - name: Run aggregator
+        run: |
+          set -e
+          python scripts/aggregator.py
+
+      - name: Generate sitemap
+        run: |
+          python scripts/generate_sitemap.py
+
+      # ✅ 提交产物；推回本次运行所在分支；缓存由 actions/cache 持久化
+      - name: Commit & push (safe retry to current branch)
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}   # 自动等于当前分支名
+        run: |
+          set -e
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add posts/ sitemap.xml
+          git commit -m "🤖 Auto-update content and sitemap" || { echo "Nothing to commit"; exit 0; }
+
+          # 先推到当前分支；失败则基于该分支 rebase 后重试（不触碰 main）
+          git push origin HEAD:refs/heads/$BRANCH_NAME || {
+            echo "Push failed; rebase on latest $BRANCH_NAME then retry..."
+            git fetch origin $BRANCH_NAME
+            git rebase origin/$BRANCH_NAME
+            git push origin HEAD:refs/heads/$BRANCH_NAME
+          }

@@ -5,57 +5,23 @@
   "native_ads": {
     "enabled": true,
     "shuffle": false,
-
-    "positions": [3, 7, 10],
-
+    "positions": [3],
     "cards": [
       {
         "id": "bess-1200-2064",
         "brand": "EnergizeOS™",
         "title": "1.2 MW / 2.064 MWh All-in-One BESS",
-        "href": "https://energizex.us/?utm_source=media&utm_medium=native&utm_campaign=bess1200#top",
+        "href": "https://energizeos.com/?utm_source=media&utm_medium=native&utm_campaign=bess1200",
         "img": "/ads/bess1200_1600x304_ultra.webp",
         "img_fallback": "/ads/bess1200_1600x304_ultra.jpg",
-        "srcset": "/ads/bess1200_800x152_ultra.webp 800w, /ads/bess1200_1600x304_ultra.webp 1600w",
+        "srcset": "/ads/bess1200_800x152_ultra.webp 800w, /ads/bess1200_1200x228_ultra.webp 1200w, /ads/bess1200_1600x304_ultra.webp 1600w",
         "sizes": "(max-width: 768px) calc(100vw - 16px), 948px",
         "img_alt": "EnergizeOS 1.2 MW / 2.064 MWh containerized BESS",
         "text": "Containerized AC/DC hybrid system for C&I microgrids and utility-scale blocks. Integrated PCS, battery, EMS and HVAC for rapid deployment and reliable operation."
-      },
-      {
-        "id": "ems-viz-pvsc",
-        "brand": "EnergizeOS™",
-        "title": "PV Self-Consumption Strategy Visualization",
-        "href": "https://viz.energizeos.com/?utm_source=media&utm_medium=native&utm_campaign=ems_pvsc",
-        "img": "/ads/ems_viz_pvsc_1600x304.webp",
-        "img_fallback": "/ads/ems_viz_pvsc_1600x304.jpg",
-        "srcset": "/ads/ems_viz_pvsc_800x152.webp 800w, /ads/ems_viz_pvsc_1600x304.webp 1600w",
-        "sizes": "(max-width: 768px) calc(100vw - 16px), 948px",
-        "img_alt": "EnergizeOS EMS – PV Self-Consumption Strategy Visualization",
-        "text": "Live PV, load, BESS, and PCC control with dual-axis thresholds and strategy switching."
-      },
-      
-      {
-        "id": "gpt-card-1",
-        "enabled": true,
-        "google": true,
-        "client": "ca-pub-4635648547987111",
-        "slot": "1666613842",
-        "insert_after": 9999,
-        "adtest": true,
-        "brand": "Sponsored",
-        "title": "Sponsored",
-        "text": "This is a Google ad card controlled by ads.json.",
-        "img": "",
-        "img_fallback": "",
-        "srcset": "",
-        "sizes": "",
-        "img_alt": "Sponsored"
       }
     ],
 
     "_note": "cards_off 是临时停用区，不会被前端读取；要恢复把条目移回 cards。",
-    "_note_google": "Google 卡片需 google=true、client/slot 有值；insert_after 控制插入位置；adtest=true 为测试模式。",
-
     "cards_off": [
       {
         "id": "ul1741sb-kit",
@@ -65,19 +31,6 @@
         "img": "/ads/ul1741sb_thumb.jpg",
         "img_alt": "UL 1741 SB Checklist",
         "text": "One-page checklist, templates, and evaluation notes for interconnection compliance."
-      },
-      {
-        "id": "wolong-ess-replus",
-        "brand": "Wolong ESS",
-        "title": "Empowering BESS Solutions for Grid-Scale and Microgrid",
-        "href": "https://ess.wolong.com/?utm_source=media&utm_medium=native&utm_campaign=REplus2025",
-        "img": "/ads/wolong_replus_banner_1600x304.webp",
-        "img_fallback": "/ads/wolong_replus_banner_1600x304.jpg",
-        "srcset": "/ads/wolong_replus_banner_800x152.webp 800w, /ads/wolong_replus_banner_1600x304.webp 1600w",
-        "sizes": "(max-width: 768px) calc(100vw - 16px), 948px",
-        "img_alt": "Wolong ESS – Grid-scale & Microgrid BESS",
-        "text": "High-reliability BESS for utility and microgrid applications. Visit Wolong ESS.",
-        "insert_after": 10
       },
       {
         "id": "bess-quote",

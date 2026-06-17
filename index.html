@@ -3,93 +3,317 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>EnergizeOS™ News Aggregator</title>
-
-  <!-- SEO -->
-  <meta name="description" content="Curated clean energy news from over 60 sources: solar, battery, wind, EV, grid and more. Updated hourly by EnergizeOS™." />
-  <meta name="keywords" content="solar, battery, BESS, wind, EV, energy storage, cleantech, aggregator, EnergizeOS" />
+  <title>DysonX | Signals Shaping AGI</title>
+  <meta name="description" content="DysonX tracks the signals shaping AGI: first-source AI intelligence structured into Signals, rankings, and decision-ready context." />
   <meta name="robots" content="index, follow" />
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="EnergizeOS™ News Aggregator" />
-  <meta property="og:description" content="Top curated clean energy news, updated hourly from 60+ global sources." />
-  <meta property="og:url" content="https://media.energizeos.com/" />
+  <meta property="og:title" content="DysonX tracks the signals shaping AGI." />
+  <meta property="og:description" content="First-source AI intelligence, structured into Signals, rankings, and decision-ready context." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://media.energizeos.com/og-cover.jpg" />
-
-  <!-- Canonical -->
-  <link rel="canonical" href="https://media.energizeos.com/" />
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles/main.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
+  <meta property="og:url" content="https://dysonx.ai/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DysonX tracks the signals shaping AGI." />
+  <meta name="twitter:description" content="First-source AI intelligence, structured into Signals, rankings, and decision-ready context." />
+  <link rel="canonical" href="https://dysonx.ai/" />
   <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --ink: #14171f;
+      --muted: #5c6472;
+      --line: #d9dee7;
+      --panel: #ffffff;
+      --accent: #126f7a;
+      --accent-2: #b15f24;
+      --good: #1f7a4c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      font-weight: 760;
+      letter-spacing: 0;
+      font-size: 20px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 14px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    nav a {
+      white-space: nowrap;
+    }
+
+    .language-toggle {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      font-size: 13px;
+      margin-left: 4px;
+    }
+
+    .language-toggle span {
+      padding: 5px 9px;
+    }
+
+    .language-toggle span:first-child {
+      background: var(--ink);
+      color: #ffffff;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    .hero {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 84px 20px 54px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+      gap: 44px;
+      align-items: start;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-weight: 720;
+      font-size: 14px;
+      margin: 0 0 16px;
+    }
+
     h1 {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      font-weight: bold;
+      font-size: clamp(42px, 7vw, 86px);
+      line-height: 0.98;
+      letter-spacing: 0;
+      margin: 0;
+      max-width: 900px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 21px;
+      margin: 24px 0 0;
+      max-width: 720px;
+    }
+
+    .status-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 22px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .status-panel h2,
+    .section h2 {
+      font-size: 16px;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .status-item {
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+
+    .status-label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .status-value {
+      font-weight: 720;
+    }
+
+    .status-value.ready {
+      color: var(--good);
+    }
+
+    .status-value.pending {
+      color: var(--accent-2);
+    }
+
+    .content-band {
+      border-top: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .sections {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 42px 20px 64px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .section {
+      border-left: 2px solid var(--accent);
+      padding: 4px 18px 4px 16px;
+    }
+
+    .section p {
+      color: var(--muted);
+      margin: 10px 0 0;
+      font-size: 15px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      background: #ffffff;
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 820px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      nav {
+        justify-content: flex-start;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 54px;
+      }
+
+      .sections {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
-
-  <!-- Google Funding Choices (EU/UK/CH consent) -->
-  <script async src="https://fundingchoicesmessages.google.com/i/pub-4635648547987111?ers=1" crossorigin="anonymous"></script>
-
-  <!-- Google AdSense (site-wide) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4635648547987111" crossorigin="anonymous"></script>
-
-  <!-- Google Analytics (GA4) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6RWKYBH04S"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-6RWKYBH04S');
-  </script>
 </head>
 <body>
-  <header>
-    <h1>EnergizeOS™ News Aggregator</h1>
-    <div id="toolbar">
-      <input type="text" id="searchBox" placeholder="Search news..." />
-      <button id="langToggle">中文</button>
-    </div>
-  </header>
+  <div class="shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="/" aria-label="DysonX home">DysonX</a>
+        <nav aria-label="Primary navigation">
+          <a href="#signals">Signals</a>
+          <a href="#trackers">Trackers</a>
+          <a href="#agi-map">AGI Map</a>
+          <a href="#companies">Companies</a>
+          <a href="#people">People</a>
+          <a href="#research">Research</a>
+          <a href="#reports">Reports</a>
+          <span class="language-toggle" aria-label="Language switch placeholder">
+            <span>EN</span>
+            <span>中文</span>
+          </span>
+        </nav>
+      </div>
+    </header>
 
-  <!-- 顶部横幅挂钩（默认隐藏；由 /static/data/ads.json 控制） -->
-  <section id="top-banner" class="banner banner-top" hidden></section>
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="eyebrow">AI / AGI Intelligence OS</p>
+          <h1 id="hero-title">DysonX tracks the signals shaping AGI.</h1>
+          <p class="subtitle">First-source AI intelligence, structured into Signals, rankings, and decision-ready context.</p>
+        </div>
 
-  <div id="pagination"></div>
+        <aside class="status-panel" aria-label="V1 status">
+          <h2>V1 Status</h2>
+          <div class="status-item">
+            <span class="status-label">Pipeline</span>
+            <span class="status-value ready">V1 dry-run pipeline available</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Publishing</span>
+            <span class="status-value pending">Real publishing not enabled yet</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Canonical language</span>
+            <span class="status-value">English default; Chinese optional future localization</span>
+          </div>
+        </aside>
+      </section>
 
-  <main id="newsContainer">
-    <!-- News content will be loaded here -->
-  </main>
+      <section class="content-band" aria-label="DysonX foundations">
+        <div class="sections">
+          <article class="section" id="signals">
+            <h2>Signal-first intelligence</h2>
+            <p>DysonX treats Signals as the core object, preserving source, confidence, impact, and decision context.</p>
+          </article>
+          <article class="section" id="trackers">
+            <h2>Notion-managed sources</h2>
+            <p>Source configuration is designed to be managed from Notion, with local fixtures only for V1 dry runs.</p>
+          </article>
+          <article class="section" id="agi-map">
+            <h2>Decision-ready structure</h2>
+            <p>Candidate Signals move through LLM audit, ranking, quality review, and publish package preparation.</p>
+          </article>
+        </div>
+      </section>
+    </main>
 
-  <!-- 底部分页挂钩（由 pagination-bottom.js 渲染） -->
-  <div id="pagination-bottom"></div>
-
-  <!-- （可选）侧栏赞助挂钩 -->
-  <!-- <ul id="side-sponsors" class="sponsor-list" hidden></ul> -->
-
-  <!-- 底部 CTA 挂钩（默认隐藏；由 /static/data/ads.json 控制） -->
-  <section id="footer-cta" class="footer-cta" hidden></section>
-
-  <script src="components/search.js"></script>
-  <script src="components/langToggle.js"></script>
-  <script src="components/pagination.js"></script>
-  <script src="components/pagination-bottom.js"></script>
-  <script src="components/footer.js"></script>
-  <script src="components/outboundTracker.js?v=2"></script>
-  <script src="components/shareButtons.js"></script>
-  <script src="components/shareTracker.js"></script>
-
-  <!-- 原生内嵌赞助卡（监听 pager:update，从 /static/data/ads.json 注入） -->
-  <script src="components/nativeAds.js"></script>
-
-  <!-- 运营内容注入脚本（读取 /static/data/ads.json，填充挂钩位） -->
-  <script type="module" src="components/ops.js"></script>
-
-  <!-- Google 卡片注入（与新闻卡同规格） -->
-  <script src="components/adslot-google.js" defer></script>
+    <footer>
+      <div class="footer-inner">
+        <span>DysonX Intelligence OS</span>
+        <span>No real publishing, social posting, or external provider integration is enabled in V1.</span>
+      </div>
+    </footer>
+  </div>
 </body>
 </html>
