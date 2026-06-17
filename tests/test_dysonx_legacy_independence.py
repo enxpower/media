@@ -12,6 +12,13 @@ REMOVED_LEGACY_PATHS = (
     ROOT / "scripts" / "generate_sitemap.py",
     ROOT / "feeds.json",
 )
+REMOVED_GENERATED_CONTENT_PATHS = (
+    ROOT / "posts" / "page1.html",
+    ROOT / "posts" / "page2.html",
+    ROOT / "posts" / "page3.html",
+    ROOT / "posts" / "page4.html",
+    ROOT / "sitemap.xml",
+)
 
 
 def imported_modules(path: pathlib.Path) -> set[str]:
@@ -29,6 +36,11 @@ def imported_modules(path: pathlib.Path) -> set[str]:
 class DysonXLegacyIndependenceTests(unittest.TestCase):
     def test_legacy_aggregator_files_are_removed(self):
         existing = [str(path.relative_to(ROOT)) for path in REMOVED_LEGACY_PATHS if path.exists()]
+
+        self.assertEqual([], existing)
+
+    def test_legacy_generated_news_content_is_removed(self):
+        existing = [str(path.relative_to(ROOT)) for path in REMOVED_GENERATED_CONTENT_PATHS if path.exists()]
 
         self.assertEqual([], existing)
 
