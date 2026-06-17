@@ -13,6 +13,22 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ARCH_DOC = ROOT / "docs/DYSONX_SYSTEM_ARCHITECTURE.md"
 
+GOVERNANCE_FILES = {
+    "AGENTS.md",
+    "docs/DYSONX_PRODUCT_CONSTITUTION.md",
+    "docs/DYSONX_SYSTEM_ARCHITECTURE.md",
+    "docs/DYSONX_ENGINEERING_GOVERNANCE.md",
+    "docs/DYSONX_PROJECT_CONTEXT.md",
+    "docs/DYSONX_OWNER_INTENT.md",
+    ".github/pull_request_template.md",
+}
+
+GUARD_FILES = {
+    "scripts/architecture_guard.py",
+}
+
+SCAN_SUFFIXES = {".md", ".py", ".js", ".ts", ".tsx", ".jsx", ".html", ".json", ".yml", ".yaml"}
+
 REQUIRED_LAYERS = [
     "Source Configuration Layer",
     "Collection Layer",
@@ -54,6 +70,17 @@ def read(path: pathlib.Path) -> str:
     return path.read_text(encoding="utf-8", errors="ignore")
 
 
+def drift_scan_files() -> list[pathlib.Path]:
+    return [
+        path for path in ROOT.rglob("*")
+        if path.is_file()
+        and ".git" not in path.parts
+        and path.relative_to(ROOT).as_posix() not in GOVERNANCE_FILES
+        and path.relative_to(ROOT).as_posix() not in GUARD_FILES
+        and path.suffix.lower() in SCAN_SUFFIXES
+    ]
+
+
 def main() -> None:
     if not ARCH_DOC.exists():
         fail("missing docs/DYSONX_SYSTEM_ARCHITECTURE.md")
@@ -69,9 +96,11 @@ def main() -> None:
         if term.lower() not in lower:
             fail(f"missing canonical flow term: {term}")
 
-    for phrase in FORBIDDEN_ARCHITECTURE_HINTS:
-        if phrase in lower and "forbidden" not in lower[max(0, lower.find(phrase)-120):lower.find(phrase)+120]:
-            fail(f"forbidden architecture hint appears without prohibition: {phrase}")
+    for path in drift_scan_files():
+        text = read(path).lower()
+        for phrase in FORBIDDEN_ARCHITECTURE_HINTS:
+            if phrase in text:
+                fail(f"forbidden architecture hint found in {path.relative_to(ROOT)}: {phrase}")
 
     print("[architecture-guard] PASS")
 

@@ -21,6 +21,20 @@ REQUIRED_FILES = [
     ".github/pull_request_template.md",
 ]
 
+GOVERNANCE_FILES = {
+    "AGENTS.md",
+    "docs/DYSONX_PRODUCT_CONSTITUTION.md",
+    "docs/DYSONX_SYSTEM_ARCHITECTURE.md",
+    "docs/DYSONX_ENGINEERING_GOVERNANCE.md",
+    "docs/DYSONX_PROJECT_CONTEXT.md",
+    "docs/DYSONX_OWNER_INTENT.md",
+    ".github/pull_request_template.md",
+}
+
+GUARD_FILES = {
+    "scripts/constitution_guard.py",
+}
+
 FORBIDDEN_PRIMARY_FRAMING = [
     "dysonx is an ai news aggregator",
     "dysonx is a news aggregator",
@@ -71,6 +85,8 @@ def check_forbidden_framing() -> None:
         p for p in ROOT.rglob("*")
         if p.is_file()
         and ".git" not in p.parts
+        and p.relative_to(ROOT).as_posix() not in GOVERNANCE_FILES
+        and p.relative_to(ROOT).as_posix() not in GUARD_FILES
         and p.suffix.lower() in {".md", ".py", ".js", ".ts", ".tsx", ".jsx", ".html", ".json", ".yml", ".yaml"}
     ]
     for path in text_files:
@@ -87,6 +103,10 @@ def check_signal_not_article_primary() -> None:
     ]
     for path in ROOT.rglob("*"):
         if not path.is_file() or ".git" in path.parts:
+            continue
+        if path.relative_to(ROOT).as_posix() in GOVERNANCE_FILES:
+            continue
+        if path.relative_to(ROOT).as_posix() in GUARD_FILES:
             continue
         if path.suffix.lower() not in {".md", ".py", ".js", ".ts", ".tsx", ".jsx"}:
             continue
