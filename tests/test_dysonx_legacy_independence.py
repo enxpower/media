@@ -6,6 +6,12 @@ import unittest
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = ROOT / "scripts"
 WORKFLOWS_DIR = ROOT / ".github" / "workflows"
+REMOVED_LEGACY_PATHS = (
+    ROOT / "scripts" / "aggregator.py",
+    ROOT / "scripts" / "openai_summary.py",
+    ROOT / "scripts" / "generate_sitemap.py",
+    ROOT / "feeds.json",
+)
 
 
 def imported_modules(path: pathlib.Path) -> set[str]:
@@ -21,6 +27,11 @@ def imported_modules(path: pathlib.Path) -> set[str]:
 
 
 class DysonXLegacyIndependenceTests(unittest.TestCase):
+    def test_legacy_aggregator_files_are_removed(self):
+        existing = [str(path.relative_to(ROOT)) for path in REMOVED_LEGACY_PATHS if path.exists()]
+
+        self.assertEqual([], existing)
+
     def test_v1_pipeline_does_not_import_legacy_aggregator(self):
         imports = imported_modules(SCRIPTS_DIR / "dysonx_v1_pipeline.py")
 

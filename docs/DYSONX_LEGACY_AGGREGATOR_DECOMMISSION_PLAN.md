@@ -63,7 +63,7 @@ Notion-managed Sources
 
 ### Legacy Runtime Scripts
 
-Likely legacy-only:
+Removed legacy-only files:
 
 - `scripts/aggregator.py`
   - Fetches RSS feeds with `feedparser`.
@@ -87,7 +87,7 @@ Likely legacy-only:
 
 ### Legacy Source and Output Files
 
-Likely legacy-only:
+Removed legacy-only files:
 
 - `feeds.json`
   - Hardcoded RSS source list.
@@ -171,16 +171,24 @@ fake provider and has no real provider dependency. Future real LLM integration
 should add provider dependencies intentionally through the provider-neutral LLM
 layer, not inherit them from legacy summary code.
 
-## Files Likely To Remove
+## Files Removed
 
-Recommended first-pass deletion candidates:
+Completed removal:
 
-- `.github/workflows/update.yml`
-- `.github/workflows/update-content.yml`
 - `scripts/aggregator.py`
 - `scripts/openai_summary.py`
 - `scripts/generate_sitemap.py`
 - `feeds.json`
+
+Previously disabled:
+
+- `.github/workflows/update.yml`
+- `.github/workflows/update-content.yml`
+
+## Files Likely To Remove
+
+Recommended next deletion candidates:
+
 - `posts/page1.html`
 - `posts/page2.html`
 - `posts/page3.html`
@@ -233,7 +241,7 @@ Keep:
 
 ## Dependency Map
 
-Legacy path:
+Removed legacy path:
 
 ```text
 feeds.json
@@ -272,7 +280,7 @@ tests/fixtures/raw_items_v1.json
 ```
 
 The V1 dry-run path does not import `scripts/aggregator.py` or
-`scripts/openai_summary.py`.
+`scripts/openai_summary.py`. Those files have been removed.
 
 ## Risks
 
@@ -305,8 +313,8 @@ Recommended sequence:
 
 2. Remove legacy aggregation scripts and hardcoded RSS sources.
 
-   Delete `scripts/aggregator.py`, `scripts/openai_summary.py`, and
-   `feeds.json`.
+   Completed: deleted `scripts/aggregator.py`, `scripts/openai_summary.py`,
+   `scripts/generate_sitemap.py`, and `feeds.json`.
 
 3. Remove generated legacy outputs.
 
@@ -413,7 +421,7 @@ Legacy sitemap replacement:
 
 ## Recommended Next Deletion PR
 
-Next PR:
+Completed PR:
 
 `chore/dysonx-disable-legacy-aggregation-workflows`
 
@@ -448,6 +456,44 @@ Implemented disablement path:
 
 This cuts off automated RSS/news/article aggregation while preserving the old
 workflow definitions temporarily for audit review and later deletion.
+
+## Legacy Aggregator Script Removal
+
+Implemented removal path:
+
+- Deleted `scripts/aggregator.py`.
+- Deleted `scripts/openai_summary.py`.
+- Deleted `scripts/generate_sitemap.py`.
+- Deleted `feeds.json`.
+- Updated V1 independence tests to require these legacy files to be absent.
+- Confirmed active workflow files ending in `.yml` or `.yaml` do not reference
+  the deleted files.
+
+This removes the old hardcoded RSS/news/article execution code while leaving
+generated legacy pages and static website UI for separate, smaller PRs.
+
+## Recommended Next Deletion PR
+
+Next PR:
+
+`chore/dysonx-remove-generated-legacy-content`
+
+Scope:
+
+- Delete `posts/page1.html`.
+- Delete `posts/page2.html`.
+- Delete `posts/page3.html`.
+- Delete `posts/page4.html`.
+- Delete `sitemap.xml`.
+- Keep `index.html`, `components/`, and `styles/` until the public shell
+  replacement is reviewed separately.
+- Run the full governance and V1 dry-run validation suite.
+
+Rationale:
+
+Generated legacy pages and sitemap are now orphaned because scheduled
+aggregation is disabled and the legacy generators are removed. Removing them
+next keeps the repository from presenting old article output as DysonX content.
 
 ## Go / No-Go
 
