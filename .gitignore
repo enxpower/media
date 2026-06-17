@@ -1,5 +1,7 @@
 _content/
 .gitmodules
+__pycache__/
+*.py[cod]
 # temp checkout of private repo
 ops/
 # block submodules

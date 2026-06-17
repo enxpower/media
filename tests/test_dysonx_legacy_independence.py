@@ -1,5 +1,6 @@
 import ast
 import pathlib
+import subprocess
 import unittest
 
 
@@ -43,6 +44,18 @@ class DysonXLegacyIndependenceTests(unittest.TestCase):
         existing = [str(path.relative_to(ROOT)) for path in REMOVED_GENERATED_CONTENT_PATHS if path.exists()]
 
         self.assertEqual([], existing)
+
+    def test_python_cache_files_are_not_tracked(self):
+        result = subprocess.run(
+            ["git", "ls-files", "*__pycache__*", "*.pyc", "*.pyo"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        tracked_cache_files = [line for line in result.stdout.splitlines() if line.strip()]
+        self.assertEqual([], tracked_cache_files)
 
     def test_v1_pipeline_does_not_import_legacy_aggregator(self):
         imports = imported_modules(SCRIPTS_DIR / "dysonx_v1_pipeline.py")
