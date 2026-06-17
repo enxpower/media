@@ -193,6 +193,26 @@ A source is eligible for future collection only when:
 
 Eligibility does not fetch anything. It only validates that the source record is ready for future collector work.
 
+## Local Fixture Loader
+
+Before real read-only Notion integration, V1 may use a local JSON fixture to exercise schema validation and conversion into local `Source` objects.
+
+The local fixture loader is allowed to:
+
+- Read local JSON records.
+- Validate records against this schema.
+- Convert valid enabled records into local `Source` objects.
+- Preserve validation errors for audit and debugging.
+
+The local fixture loader must not:
+
+- Connect to Notion API.
+- Fetch real Notion data.
+- Perform network requests.
+- Run collectors.
+- Call LLM APIs.
+- Publish pages.
+
 ## V1 Non-Goals
 
 This schema foundation must not:
