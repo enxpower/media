@@ -54,6 +54,10 @@ def notion_record_to_source(record: dict[str, Any], index: int) -> Source:
 
 def load_sources_from_fixture(path: str | pathlib.Path) -> SourceConfigLoadResult:
     records = load_source_records_from_fixture(path)
+    return load_sources_from_records(records)
+
+
+def load_sources_from_records(records: list[dict[str, Any]]) -> SourceConfigLoadResult:
     sources: list[Source] = []
     rejected_records: list[dict[str, Any]] = []
     validation_errors: dict[str, tuple[str, ...]] = {}

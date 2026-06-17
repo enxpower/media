@@ -213,6 +213,18 @@ The local fixture loader must not:
 - Call LLM APIs.
 - Publish pages.
 
+## Read-Only Adapter Interface
+
+Before real Notion integration, V1 may define a read-only adapter interface whose only responsibility is returning source records in this schema shape.
+
+The initial adapter implementation may be fixture-backed for tests. It must not:
+
+- Connect to the real Notion API.
+- Require real Notion credentials.
+- Read Notion tokens from environment variables.
+- Write, update, or delete Notion records.
+- Perform network requests.
+
 ## V1 Non-Goals
 
 This schema foundation must not:
