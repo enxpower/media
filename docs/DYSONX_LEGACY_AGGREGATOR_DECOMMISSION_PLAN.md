@@ -179,6 +179,11 @@ Completed removal:
 - `scripts/openai_summary.py`
 - `scripts/generate_sitemap.py`
 - `feeds.json`
+- `posts/page1.html`
+- `posts/page2.html`
+- `posts/page3.html`
+- `posts/page4.html`
+- `sitemap.xml`
 
 Previously disabled:
 
@@ -187,15 +192,7 @@ Previously disabled:
 
 ## Files Likely To Remove
 
-Recommended next deletion candidates:
-
-- `posts/page1.html`
-- `posts/page2.html`
-- `posts/page3.html`
-- `posts/page4.html`
-- `sitemap.xml`
-
-Recommended second-pass deletion or replacement candidates:
+Recommended remaining deletion or replacement candidates:
 
 - `index.html`
 - `components/*.js`
@@ -262,8 +259,8 @@ Legacy public surface:
 index.html
 -> components/*.js
 -> styles/main.css
--> posts/page*.html
--> sitemap.xml
+-> posts/page*.html (removed)
+-> sitemap.xml (removed)
 ```
 
 DysonX V1 dry-run path:
@@ -318,7 +315,7 @@ Recommended sequence:
 
 3. Remove generated legacy outputs.
 
-   Delete `posts/page*.html`, `sitemap.xml`, and any legacy caches if tracked.
+   Completed: deleted `posts/page*.html` and `sitemap.xml`.
 
 4. Replace repository identity.
 
@@ -472,9 +469,9 @@ Implemented removal path:
 This removes the old hardcoded RSS/news/article execution code while leaving
 generated legacy pages and static website UI for separate, smaller PRs.
 
-## Recommended Next Deletion PR
+## Completed Generated Content Removal
 
-Next PR:
+Completed PR:
 
 `chore/dysonx-remove-generated-legacy-content`
 
@@ -494,6 +491,44 @@ Rationale:
 Generated legacy pages and sitemap are now orphaned because scheduled
 aggregation is disabled and the legacy generators are removed. Removing them
 next keeps the repository from presenting old article output as DysonX content.
+
+Implemented removal path:
+
+- Deleted `posts/page1.html`.
+- Deleted `posts/page2.html`.
+- Deleted `posts/page3.html`.
+- Deleted `posts/page4.html`.
+- Deleted `sitemap.xml`.
+- Updated V1 independence tests to require these generated legacy artifacts to
+  remain absent.
+- Kept `index.html`, `components/`, and `styles/` for separate review because
+  they are static shell/UI assets rather than generated article output.
+
+## Remaining Legacy Cleanup
+
+Remaining cleanup should happen in smaller PRs:
+
+1. `docs/dysonx-repository-identity-readme`
+
+   Replace EnergizeOS News Aggregator README wording with DysonX Intelligence
+   OS positioning and current dry-run status.
+
+2. `chore/dysonx-release-guard-realignment`
+
+   Update release guard expectations away from legacy `index.html` and old
+   sitemap/feed assumptions, while keeping deployment risk checks.
+
+3. `chore/dysonx-review-public-shell`
+
+   Review `index.html`, `components/`, and `styles/` to decide whether to
+   replace them with a DysonX-aligned preview shell or remove them after a
+   future publishing surface exists.
+
+4. `chore/dysonx-prune-legacy-dependencies`
+
+   Remove legacy-only dependencies such as `feedparser`, `newspaper3k`,
+   `lxml_html_clean`, and `nltk` after confirming no remaining check or
+   workflow needs them.
 
 ## Go / No-Go
 
