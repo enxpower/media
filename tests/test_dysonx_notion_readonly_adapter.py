@@ -59,11 +59,10 @@ class DysonXNotionReadOnlyAdapterTests(unittest.TestCase):
         self.assertFalse(hasattr(adapter, "update_source_record"))
         self.assertFalse(hasattr(adapter, "delete_source_record"))
 
-    def test_adapter_does_not_perform_network_requests(self):
+    def test_fixture_adapter_does_not_perform_network_requests(self):
         module_source = pathlib.Path(adapter_module.__file__).read_text(encoding="utf-8")
 
         self.assertNotIn("requests", module_source)
-        self.assertNotIn("urllib", module_source)
         self.assertNotIn("http.client", module_source)
         self.assertNotIn("socket", module_source)
 
@@ -79,6 +78,79 @@ class DysonXNotionReadOnlyAdapterTests(unittest.TestCase):
 
         with self.assertRaises(adapter_module.NotionReadOnlyAdapterNotConfigured):
             client.list_source_records()
+
+    def test_real_adapter_queries_notion_database_read_only(self):
+        calls = []
+
+        def transport(url, headers, payload):
+            calls.append((url, headers, payload))
+            return {
+                "results": [
+                    {
+                        "id": "page_openai",
+                        "properties": {
+                            "Name": {"type": "title", "title": [{"plain_text": "OpenAI Blog"}]},
+                            "Source Type": {"type": "select", "select": {"name": "Official Company Blog"}},
+                            "URL": {"type": "url", "url": "https://openai.com/blog"},
+                            "Platform": {"type": "select", "select": {"name": "Website"}},
+                            "Priority": {"type": "select", "select": {"name": "Critical"}},
+                            "Authority Score": {"type": "number", "number": 95},
+                            "Language": {"type": "select", "select": {"name": "English"}},
+                            "Region": {"type": "select", "select": {"name": "Global"}},
+                            "Topic Tags": {
+                                "type": "multi_select",
+                                "multi_select": [{"name": "foundation models"}, {"name": "agents"}],
+                            },
+                            "Related Entities": {"type": "multi_select", "multi_select": [{"name": "OpenAI"}]},
+                            "Enabled": {"type": "checkbox", "checkbox": True},
+                            "Fetch Frequency": {"type": "number", "number": 60},
+                            "Last Fetched At": {"type": "date", "date": None},
+                            "Last Success At": {"type": "date", "date": None},
+                            "Last Error": {"type": "rich_text", "rich_text": []},
+                            "Notes": {"type": "rich_text", "rich_text": [{"plain_text": "Read-only test"}]},
+                        },
+                    }
+                ],
+                "has_more": False,
+                "next_cursor": None,
+            }
+
+        client = adapter_module.NotionReadOnlySourceClient(
+            token="secret_token",
+            database_id="database_id",
+            transport=transport,
+        )
+        records = client.list_source_records()
+
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["Name"], "OpenAI Blog")
+        self.assertEqual(records[0]["_notion_page_id"], "page_openai")
+        self.assertEqual(records[0]["Topic Tags"], ["foundation models", "agents"])
+        self.assertEqual(calls[0][0], "https://api.notion.com/v1/databases/database_id/query")
+        self.assertEqual(calls[0][1]["Authorization"], "Bearer secret_token")
+        self.assertEqual(calls[0][2], {"page_size": 100})
+        self.assertFalse(hasattr(client, "create_source_record"))
+        self.assertFalse(hasattr(client, "update_source_record"))
+        self.assertFalse(hasattr(client, "delete_source_record"))
+
+    def test_real_adapter_paginates_read_only_queries(self):
+        calls = []
+
+        def transport(_url, _headers, payload):
+            calls.append(payload)
+            if len(calls) == 1:
+                return {"results": [], "has_more": True, "next_cursor": "cursor_2"}
+            return {"results": [], "has_more": False, "next_cursor": None}
+
+        client = adapter_module.NotionReadOnlySourceClient(
+            token="secret_token",
+            database_id="database_id",
+            transport=transport,
+        )
+        records = client.list_source_records()
+
+        self.assertEqual([], records)
+        self.assertEqual(calls, [{"page_size": 100}, {"page_size": 100, "start_cursor": "cursor_2"}])
 
 
 if __name__ == "__main__":

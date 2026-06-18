@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -35,10 +36,17 @@ def load_source_records_from_fixture(path: str | pathlib.Path) -> list[dict[str,
     return data
 
 
+def stable_source_id(record: dict[str, Any], index: int) -> str:
+    identifier = str(record.get("_notion_page_id") or record.get("Name") or f"record_{index}")
+    normalized = re.sub(r"[^a-zA-Z0-9]+", "_", identifier).strip("_").lower()
+    return f"source_{normalized or index}"
+
+
 def notion_record_to_source(record: dict[str, Any], index: int) -> Source:
+    notion_page_id = str(record.get("_notion_page_id") or f"fixture_{index}")
     return Source(
-        id=f"source_fixture_{index}",
-        notion_page_id=f"fixture_{index}",
+        id=stable_source_id(record, index),
+        notion_page_id=notion_page_id,
         name=str(record["Name"]),
         source_type=str(record["Source Type"]),
         url=str(record["URL"]),
