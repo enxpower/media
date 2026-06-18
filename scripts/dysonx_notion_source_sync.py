@@ -26,7 +26,7 @@ from dysonx_notion_readonly_adapter import (
 )
 from dysonx_notion_source_schema import validate_notion_source_record
 from dysonx_source_config_loader import notion_record_to_source
-from dysonx_source_sync_storage import write_source_sync_store
+from dysonx_source_sync_storage import STORE_VERSION, write_source_sync_store
 
 
 DEFAULT_REPORT_PATH = pathlib.Path("tmp/dysonx_source_sync_report.json")
@@ -110,6 +110,7 @@ def sync_sources(
     duration = perf_counter() - started
 
     sync_metadata = {
+        "store_version": STORE_VERSION,
         "mode": mode,
         "sync_timestamp": sync_timestamp,
         "sync_duration_seconds": round(duration, 6),

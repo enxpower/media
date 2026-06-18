@@ -22,13 +22,9 @@ def build_store_document(
     validation_results: list[dict[str, Any]],
 ) -> dict[str, Any]:
     return {
-        "store_version": STORE_VERSION,
         "sources": sources,
         "sync_metadata": sync_metadata,
         "validation_results": validation_results,
-        "raw_articles_stored": False,
-        "llm_outputs_stored": False,
-        "publish_packages_stored": False,
     }
 
 
@@ -49,6 +45,7 @@ def read_source_sync_store(path: str | pathlib.Path) -> dict[str, Any]:
     data = json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise ValueError("DysonX source sync store must be a JSON object")
-    if data.get("store_version") != STORE_VERSION:
+    sync_metadata = data.get("sync_metadata")
+    if not isinstance(sync_metadata, dict) or sync_metadata.get("store_version") != STORE_VERSION:
         raise ValueError("Unsupported DysonX source sync store version")
     return data

@@ -99,6 +99,9 @@ The store contains:
 - `sync_metadata`
 - `validation_results`
 
+Those are the only top-level persisted JSON keys. Store version metadata lives
+inside `sync_metadata`.
+
 The store explicitly does not contain:
 
 - raw articles

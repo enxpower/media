@@ -42,11 +42,16 @@ class DysonXNotionSourceSyncTests(unittest.TestCase):
             self.assertTrue(storage_path.exists())
 
             stored = json.loads(storage_path.read_text(encoding="utf-8"))
+            self.assertEqual(set(stored), {"sources", "sync_metadata", "validation_results"})
             self.assertEqual(len(stored["sources"]), 1)
             self.assertEqual(stored["sync_metadata"]["valid_records"], 1)
-            self.assertFalse(stored["raw_articles_stored"])
-            self.assertFalse(stored["llm_outputs_stored"])
-            self.assertFalse(stored["publish_packages_stored"])
+            self.assertEqual(stored["sync_metadata"]["store_version"], "dysonx_source_sync_store_v1")
+            self.assertNotIn("raw_articles_stored", stored)
+            self.assertNotIn("llm_outputs_stored", stored)
+            self.assertNotIn("publish_packages_stored", stored)
+            self.assertFalse(report["raw_articles_stored"])
+            self.assertFalse(report["llm_outputs_stored"])
+            self.assertFalse(report["publish_packages_stored"])
 
     def test_invalid_records_are_audited_without_blocking_valid_records(self):
         valid_sources, invalid_records, skipped_records = source_sync.classify_source_records(
