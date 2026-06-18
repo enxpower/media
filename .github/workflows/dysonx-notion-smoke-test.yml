@@ -1,0 +1,87 @@
+name: DysonX Notion Read-Only Smoke Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notion-readonly-smoke:
+    name: Notion read-only source sync smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      DYSONX_NOTION_SOURCES_DATABASE_ID: ${{ secrets.DYSONX_NOTION_SOURCES_DATABASE_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run Notion read-only source sync
+        run: |
+          python3 scripts/dysonx_notion_source_sync.py \
+            --notion-readonly \
+            --output tmp/dysonx_source_sync_report.json \
+            --storage tmp/dysonx_source_sync_store.json
+
+      - name: Assert smoke-test safety boundary
+        run: |
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          report_path = pathlib.Path("tmp/dysonx_source_sync_report.json")
+          store_path = pathlib.Path("tmp/dysonx_source_sync_store.json")
+
+          report = json.loads(report_path.read_text(encoding="utf-8"))
+          store = json.loads(store_path.read_text(encoding="utf-8"))
+
+          expected_store_keys = {"sources", "sync_metadata", "validation_results"}
+          if set(store) != expected_store_keys:
+              print(f"[notion-smoke] FAIL: unexpected store keys: {sorted(store)}")
+              sys.exit(1)
+
+          expected_false_flags = {
+              "write_operations_performed": "Notion writes",
+              "notion_write_operations_performed": "Notion writes",
+              "collection_performed": "collection",
+              "llm_api_calls_performed": "LLM calls",
+              "publishing_performed": "publishing",
+              "social_posting_performed": "social posting",
+              "raw_articles_stored": "raw article storage",
+              "llm_outputs_stored": "LLM output storage",
+              "publish_packages_stored": "publish package storage",
+          }
+          for key, label in expected_false_flags.items():
+              if report.get(key) is not False:
+                  print(f"[notion-smoke] FAIL: {label} flag is not false: {key}={report.get(key)!r}")
+                  sys.exit(1)
+
+          print("[notion-smoke] PASS: read-only sync boundary confirmed")
+          print(
+              "[notion-smoke] records: "
+              f"total={report.get('total_records')} "
+              f"valid={report.get('valid_records')} "
+              f"invalid={report.get('invalid_records')} "
+              f"skipped={report.get('skipped_records')}"
+          )
+          PY
+
+      - name: Upload Notion sync report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dysonx-notion-source-sync-report
+          path: |
+            tmp/dysonx_source_sync_report.json
+            tmp/dysonx_source_sync_store.json
+          if-no-files-found: warn
