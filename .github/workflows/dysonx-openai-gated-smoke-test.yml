@@ -1,0 +1,119 @@
+name: DysonX OpenAI Gated Smoke Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  openai-gated-smoke:
+    name: OpenAI gated provider smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      DYSONX_OPENAI_SMOKE_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run V1 intelligence pipeline fixture
+        run: |
+          python3 scripts/dysonx_v1_intelligence_pipeline.py \
+            --source-store tests/fixtures/source_sync_store_v1.json \
+            --output-dir tmp/dysonx_v1_intelligence_pipeline
+          cp \
+            tmp/dysonx_v1_intelligence_pipeline/signal_candidate_report.json \
+            tmp/dysonx_v1_intelligence_pipeline/signal_candidates_report.json
+
+      - name: Run gated OpenAI provider smoke test
+        run: |
+          python3 - <<'PY'
+          import os
+          import subprocess
+
+          env = os.environ.copy()
+          env["OPENAI_API_KEY"] = env["DYSONX_OPENAI_SMOKE_API_KEY"]
+          subprocess.check_call(
+              [
+                  "python3",
+                  "scripts/dysonx_real_llm_provider.py",
+                  "--signal-candidates",
+                  "tmp/dysonx_v1_intelligence_pipeline/signal_candidates_report.json",
+                  "--provider",
+                  "openai",
+                  "--allow-real-llm",
+                  "--max-items",
+                  "1",
+                  "--output",
+                  "tmp/dysonx_openai_smoke_report.json",
+              ],
+              env=env,
+          )
+          PY
+
+      - name: Assert OpenAI smoke-test safety boundary
+        run: |
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          report_path = pathlib.Path("tmp/dysonx_openai_smoke_report.json")
+          report = json.loads(report_path.read_text(encoding="utf-8"))
+
+          expected_values = {
+              "provider": "openai",
+              "real_llm_api_used": True,
+              "llm_api_calls_performed": True,
+              "publishing_performed": False,
+              "website_pages_written": False,
+              "public_content_files_written": False,
+              "social_posting_performed": False,
+              "deployment_performed": False,
+              "notion_write_operations_performed": False,
+              "live_github_api_used": False,
+              "article_body_scraping_performed": False,
+              "raw_provider_response_stored": False,
+          }
+
+          for key, expected in expected_values.items():
+              actual = report.get(key)
+              if actual is not expected and actual != expected:
+                  print(f"[openai-smoke] FAIL: {key}={actual!r}, expected {expected!r}")
+                  sys.exit(1)
+
+          if int(report.get("items_requested", 0)) > 1:
+              print(f"[openai-smoke] FAIL: items_requested={report.get('items_requested')!r}")
+              sys.exit(1)
+
+          if int(report.get("items_processed", 0)) > 1:
+              print(f"[openai-smoke] FAIL: items_processed={report.get('items_processed')!r}")
+              sys.exit(1)
+
+          print("[openai-smoke] PASS: gated OpenAI boundary confirmed")
+          print(
+              "[openai-smoke] summary: "
+              f"provider={report.get('provider')} "
+              f"items_requested={report.get('items_requested')} "
+              f"items_processed={report.get('items_processed')} "
+              f"signals={report.get('intelligence_signals_created')}"
+          )
+          PY
+
+      - name: Upload safe OpenAI smoke artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dysonx-openai-gated-smoke-report
+          path: |
+            tmp/dysonx_openai_smoke_report.json
+            tmp/dysonx_v1_intelligence_pipeline/signal_candidates_report.json
+          if-no-files-found: warn
