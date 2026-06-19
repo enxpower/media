@@ -179,6 +179,7 @@ class DysonXV1IntelligencePipelineTests(unittest.TestCase):
                 "items_processed",
                 "prompt_version",
                 "publish_package_created",
+                "raw_provider_response_stored",
             ):
                 self.assertIn(field_name, report)
 
