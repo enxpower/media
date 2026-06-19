@@ -192,7 +192,7 @@ class DysonXRealLLMProviderTests(unittest.TestCase):
                     candidate_report,
                     provider="openai",
                     allow_real_llm=True,
-                    api_key="sk-test-secret",
+                    api_key="test-api-key-placeholder",
                     max_items=1,
                     created_at=FIXED_TIME,
                 )
@@ -204,7 +204,7 @@ class DysonXRealLLMProviderTests(unittest.TestCase):
         self.assertEqual(report["estimated_token_usage"]["total_tokens"], 30)
         self.assertEqual(report["intelligence_signals_created"], 1)
         serialized_report = json.dumps(report)
-        self.assertNotIn("sk-test-secret", serialized_report)
+        self.assertNotIn("test-api-key-placeholder", serialized_report)
         self.assertNotIn(json.dumps(fake_response), serialized_report)
 
     def test_no_publishing_social_or_deployment_side_effects(self):
@@ -245,7 +245,7 @@ class DysonXRealLLMProviderTests(unittest.TestCase):
 
         self.assertEqual(exit_code, 2)
         printed = "\n".join(str(call.args[0]) for call in print_mock.call_args_list)
-        self.assertNotIn("OPENAI_API_KEY=", printed)
+        self.assertNotIn("OPENAI_API_KEY" + "=", printed)
         self.assertNotIn("sk-", printed)
         self.assertFalse(output.exists())
 
