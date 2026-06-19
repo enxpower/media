@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>DysonX Fixture Feed</title>
+    <item>
+      <title>OpenAI announces agent reliability update</title>
+      <link>https://openai.com/blog/agent-reliability?utm_source=test</link>
+      <description>OpenAI describes an update to agent reliability.</description>
+      <pubDate>Thu, 18 Jun 2026 10:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>OpenAI announces agent reliability update</title>
+      <link>https://openai.com/blog/agent-reliability</link>
+      <description>Duplicate fixture item for deduplication.</description>
+      <pubDate>Thu, 18 Jun 2026 10:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>
