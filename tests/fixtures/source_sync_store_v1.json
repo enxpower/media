@@ -1,0 +1,76 @@
+{
+  "sources": [
+    {
+      "id": "source_openai_rss",
+      "notion_page_id": "fixture_openai_rss",
+      "name": "OpenAI RSS Fixture",
+      "source_type": "RSS",
+      "url": "tests/fixtures/collector_rss_feed_v1.xml",
+      "authority_score": 95.0,
+      "enabled": true,
+      "platform": "RSS",
+      "language": "English",
+      "region": "Global",
+      "priority": "Critical",
+      "notes": "Collector foundation RSS fixture."
+    },
+    {
+      "id": "source_manual_policy",
+      "notion_page_id": "fixture_manual_policy",
+      "name": "Manual Policy URL",
+      "source_type": "Manual URL",
+      "url": "https://example.gov/ai-policy-update",
+      "authority_score": 85.0,
+      "enabled": true,
+      "platform": "Manual",
+      "language": "English",
+      "region": "US",
+      "priority": "High",
+      "notes": "Manual URL skeleton fixture."
+    },
+    {
+      "id": "source_github_release",
+      "notion_page_id": "fixture_github_release",
+      "name": "Agent Runtime Releases",
+      "source_type": "GitHub Releases",
+      "url": "https://github.com/example/agent-runtime",
+      "authority_score": 80.0,
+      "enabled": true,
+      "platform": "GitHub",
+      "language": "English",
+      "region": "Global",
+      "priority": "Medium",
+      "github_releases_fixture": "tests/fixtures/github_releases_v1.json",
+      "notes": "GitHub release fixture only; no live API."
+    }
+  ],
+  "sync_metadata": {
+    "store_version": "dysonx_source_sync_store_v1",
+    "mode": "fixture",
+    "total_records": 3,
+    "valid_records": 3,
+    "invalid_records": 0,
+    "skipped_records": 0,
+    "notion_write_operations_performed": false
+  },
+  "validation_results": [
+    {
+      "record_name": "OpenAI RSS Fixture",
+      "notion_page_id": "fixture_openai_rss",
+      "status": "valid",
+      "errors": []
+    },
+    {
+      "record_name": "Manual Policy URL",
+      "notion_page_id": "fixture_manual_policy",
+      "status": "valid",
+      "errors": []
+    },
+    {
+      "record_name": "Agent Runtime Releases",
+      "notion_page_id": "fixture_github_release",
+      "status": "valid",
+      "errors": []
+    }
+  ]
+}
