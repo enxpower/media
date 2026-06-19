@@ -190,6 +190,7 @@ def summarize_pipeline(
             **SAFETY_FLAGS,
             "real_llm_api_used": bool(llm_audit_report.get("real_llm_api_used", False)),
             "llm_api_calls_performed": bool(llm_audit_report.get("llm_api_calls_performed", False)),
+            "raw_provider_response_stored": bool(llm_audit_report.get("raw_provider_response_stored", False)),
         },
     }
 
