@@ -1,0 +1,39 @@
+{
+  "candidates": [
+    {
+      "candidate_id": "candidate_strong",
+      "candidate_type": "model_release",
+      "confidence": 0.72,
+      "entities": [
+        "OpenAI",
+        "Agents"
+      ],
+      "source_id": "source_openai",
+      "source_name": "OpenAI",
+      "tags": [
+        "model",
+        "release"
+      ],
+      "title": "OpenAI releases agent infrastructure update",
+      "url": "https://openai.com/example-agent-update"
+    },
+    {
+      "candidate_id": "candidate_weak",
+      "candidate_type": "general_signal",
+      "confidence": 0.3,
+      "entities": [],
+      "source_id": "source_unknown",
+      "source_name": "",
+      "tags": [
+        "signal"
+      ],
+      "title": "AI changes everything",
+      "url": ""
+    }
+  ],
+  "candidates_created": 2,
+  "generated_at": "2026-06-19T00:00:00+00:00",
+  "llm_used": false,
+  "network_requests_performed": false,
+  "publishing_performed": false
+}
