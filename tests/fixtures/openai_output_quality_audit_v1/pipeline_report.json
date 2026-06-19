@@ -1,0 +1,20 @@
+{
+  "article_body_scraping_performed": false,
+  "deployment_performed": false,
+  "generated_at": "2026-06-19T00:00:00+00:00",
+  "intelligence_signals_created": 2,
+  "items_processed": 2,
+  "items_requested": 2,
+  "live_github_api_used": false,
+  "llm_api_calls_performed": true,
+  "notion_write_operations_performed": false,
+  "packages_created": 2,
+  "provider": "openai",
+  "public_content_files_written": false,
+  "publishing_performed": false,
+  "raw_provider_response_stored": false,
+  "real_llm_api_used": true,
+  "signal_candidates_created": 2,
+  "social_posting_performed": false,
+  "website_pages_written": false
+}

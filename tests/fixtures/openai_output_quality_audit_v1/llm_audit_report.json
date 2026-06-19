@@ -1,0 +1,45 @@
+{
+  "audit_records": [],
+  "generated_at": "2026-06-19T00:00:00+00:00",
+  "intelligence_signals": [
+    {
+      "agi_capability": "Agents",
+      "candidate_id": "candidate_strong",
+      "confidence": 0.82,
+      "created_at": "2026-06-19T00:00:00+00:00",
+      "prompt_version": "real_llm_provider_gated_v1",
+      "provider": "openai",
+      "related_entities": [
+        "OpenAI",
+        "Agents"
+      ],
+      "signal_id": "signal_strong",
+      "source_url": "https://openai.com/example-agent-update",
+      "summary": "OpenAI released a focused agent infrastructure update that adds new execution controls, tool-use boundaries, and monitoring hooks for production agent systems.",
+      "title": "OpenAI releases agent infrastructure update",
+      "watch_next": "Track follow-up benchmark evidence, enterprise adoption signals, and whether OpenAI exposes more controls for agent reliability evaluation.",
+      "why_it_matters": "This signals a shift from demo-centric agent releases toward operational infrastructure because reliability, tool boundaries, and monitoring directly affect whether agent systems can be trusted in high-value workflows."
+    },
+    {
+      "candidate_id": "candidate_weak",
+      "confidence": 0.95,
+      "created_at": "2026-06-19T00:00:00+00:00",
+      "prompt_version": "real_llm_provider_gated_v1",
+      "provider": "openai",
+      "related_entities": [],
+      "signal_id": "signal_weak",
+      "summary": "This is important. AI is transforming everything.",
+      "title": "AI changes everything"
+    }
+  ],
+  "items_processed": 2,
+  "items_requested": 2,
+  "llm_api_calls_performed": true,
+  "model": "gpt-5.5-mini",
+  "prompt_version": "real_llm_provider_gated_v1",
+  "provider": "openai",
+  "publishing_performed": false,
+  "raw_provider_response_stored": false,
+  "real_llm_api_used": true,
+  "website_pages_written": false
+}
