@@ -1,0 +1,49 @@
+{
+  "brief_source": "internal_intelligence_brief.json",
+  "brief_version": "internal_intelligence_brief_v1",
+  "decisions": [
+    {
+      "follow_up_note": "Check whether source evidence is sufficient before any later gate.",
+      "follow_up_required": true,
+      "owner_comment": "Strong enough to preserve for later review, not publication.",
+      "owner_decision": "approve_for_future_publish_readiness_review",
+      "priority": "high",
+      "signal_id": "signal_tier_a"
+    },
+    {
+      "follow_up_note": "Attach first-party benchmark context.",
+      "follow_up_required": true,
+      "owner_comment": "Useful but needs stronger evidence.",
+      "owner_decision": "request_more_sources",
+      "priority": "medium",
+      "signal_id": "signal_tier_b"
+    },
+    {
+      "follow_up_note": "Regenerate with clearer why_it_matters and entity links.",
+      "follow_up_required": true,
+      "owner_comment": "Too thin for current review.",
+      "owner_decision": "request_regeneration",
+      "priority": "medium",
+      "signal_id": "signal_tier_c"
+    },
+    {
+      "follow_up_note": "",
+      "follow_up_required": false,
+      "owner_comment": "Reject low-value generic output.",
+      "owner_decision": "reject",
+      "priority": "low",
+      "signal_id": "signal_tier_d"
+    },
+    {
+      "follow_up_note": "Revisit after next brief.",
+      "follow_up_required": false,
+      "owner_comment": "",
+      "owner_decision": "hold",
+      "priority": "low",
+      "signal_id": "signal_hold"
+    }
+  ],
+  "review_session_id": "owner-review-2026-06-20",
+  "reviewed_at": "2026-06-20T09:45:00+00:00",
+  "reviewer": "Owner"
+}
