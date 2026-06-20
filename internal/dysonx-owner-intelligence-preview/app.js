@@ -290,6 +290,7 @@ function renderReviewQueue(brief) {
     card.appendChild(fieldList([
       ["Signal ID", item.signal_id],
       ["Tier", tierLabel(item.tier || detail.quality_tier)],
+      ["Score", scoreText(detail)],
       ["Recommended action", item.action || detail.recommended_action],
       ["Source", detail.source_url],
       ["Source authority", detail.source_authority],

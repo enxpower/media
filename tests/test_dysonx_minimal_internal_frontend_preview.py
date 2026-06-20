@@ -101,6 +101,14 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         match = re.search(r"const ALLOWED_DECISIONS = DECISION_OPTIONS\.map", app)
         self.assertIsNotNone(match)
 
+    def test_owner_decision_queue_cards_include_score_values(self):
+        app = self.read_app()
+
+        start = app.index("function renderReviewQueue(brief)")
+        end = app.index("function renderBrief(brief, sourceName)")
+        queue_renderer = app[start:end]
+        self.assertIn('["Score", scoreText(detail)]', queue_renderer)
+
     def test_priority_values_are_limited_to_allowed_values(self):
         app = self.read_app()
 
