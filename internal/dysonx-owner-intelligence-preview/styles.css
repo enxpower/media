@@ -1,13 +1,14 @@
 :root {
   color-scheme: light;
-  --bg: #f7f8fa;
+  --bg: #f4f6f8;
   --panel: #ffffff;
-  --ink: #16202a;
-  --muted: #5b6673;
-  --line: #d8dde5;
+  --ink: #111827;
+  --muted: #5f6b7a;
+  --line: #d8dee8;
   --accent: #0f766e;
   --accent-dark: #115e59;
-  --warn: #9a3412;
+  --accent-soft: #e6f4f1;
+  --warn: #92400e;
   --danger: #991b1b;
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
 }
@@ -60,21 +61,29 @@ button:disabled {
 
 .topbar {
   align-items: flex-start;
-  background: #132027;
+  background: #102027;
   color: #ffffff;
   display: flex;
-  gap: 20px;
+  gap: 24px;
   justify-content: space-between;
-  padding: 24px;
+  padding: 26px;
+}
+
+.brand-block {
+  max-width: 760px;
 }
 
 .eyebrow {
-  color: #9ee7db;
-  font-size: 0.78rem;
-  font-weight: 700;
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 800;
   letter-spacing: 0;
-  margin: 0 0 6px;
+  margin: 0 0 5px;
   text-transform: uppercase;
+}
+
+.topbar .eyebrow {
+  color: #8ce7da;
 }
 
 h1,
@@ -85,20 +94,26 @@ p {
 }
 
 h1 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   letter-spacing: 0;
-  margin-bottom: 0;
+  margin-bottom: 6px;
 }
 
 h2 {
-  font-size: 1.12rem;
+  font-size: 1.18rem;
   letter-spacing: 0;
   margin-bottom: 10px;
 }
 
 h3 {
-  font-size: 1rem;
+  font-size: 1.02rem;
   letter-spacing: 0;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #dbeafe;
+  margin-bottom: 0;
 }
 
 .status-strip {
@@ -106,11 +121,11 @@ h3 {
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
-  max-width: 560px;
+  max-width: 620px;
 }
 
 .status-strip span {
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 999px;
   color: #e8fbf7;
   font-size: 0.82rem;
@@ -121,17 +136,12 @@ h3 {
   display: grid;
   gap: 16px;
   margin: 0 auto;
-  max-width: 1180px;
+  max-width: 1240px;
   padding: 18px;
   width: 100%;
 }
 
-.grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-}
-
+.cockpit,
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -141,14 +151,195 @@ h3 {
   padding: 16px;
 }
 
+.cockpit {
+  align-items: stretch;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+}
+
+.cockpit-intro p:last-child {
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+.score-cards {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.score-card {
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.score-card strong {
+  display: block;
+  font-size: 1.42rem;
+}
+
+.score-card span {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.product-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
+}
+
+.section-heading,
 .controls-panel,
-.section-heading {
+.action-heading {
   align-items: flex-start;
   display: flex;
   gap: 16px;
   justify-content: space-between;
 }
 
+.section-heading p {
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+.tier-pill {
+  background: var(--accent-soft);
+  border-radius: 999px;
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.top-signal-card,
+.review-card,
+.compact-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 14px;
+}
+
+.top-signal-card {
+  background: #fbfdfd;
+}
+
+.takeaway {
+  color: #263442;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.source-line {
+  overflow-wrap: anywhere;
+}
+
+a {
+  color: #0f5d91;
+}
+
+.field-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.field-list div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.field-list dt {
+  color: var(--muted);
+  display: inline;
+  font-weight: 800;
+}
+
+.field-list dd {
+  display: inline;
+  margin: 0;
+}
+
+.safety-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.review-list,
+.compact-list {
+  display: grid;
+  gap: 12px;
+}
+
+.review-card {
+  background: #ffffff;
+  position: relative;
+}
+
+.queue-rank {
+  background: #e2e8f0;
+  border-radius: 999px;
+  color: #334155;
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+}
+
+.review-controls {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 14px;
+  padding-top: 12px;
+}
+
+.review-controls label {
+  color: var(--muted);
+  display: grid;
+  font-weight: 800;
+  gap: 4px;
+  min-width: 0;
+}
+
+.review-controls textarea,
+.review-controls input[type="text"],
+.review-controls select {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  min-height: 38px;
+  min-width: 0;
+  padding: 8px;
+  width: 100%;
+}
+
+.review-controls textarea {
+  resize: vertical;
+}
+
+.checkbox-label {
+  align-content: end;
+  grid-template-columns: auto 1fr;
+}
+
+.checkbox-label input {
+  height: 18px;
+  width: 18px;
+}
+
+.button-row,
 .control-row {
   align-items: center;
   display: flex;
@@ -163,7 +354,7 @@ h3 {
   color: var(--ink);
   cursor: pointer;
   display: inline-flex;
-  font-weight: 700;
+  font-weight: 800;
   min-height: 40px;
   padding: 8px 12px;
 }
@@ -172,22 +363,48 @@ h3 {
   display: none;
 }
 
+#feedback-output {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  min-height: 300px;
+  overflow: auto;
+  padding: 12px;
+  resize: vertical;
+  white-space: pre;
+  width: 100%;
+}
+
 .status-text,
 .muted,
 .panel p {
   color: var(--muted);
 }
 
+.risk {
+  color: var(--danger);
+  font-weight: 800;
+}
+
+.warning {
+  color: var(--warn);
+  font-weight: 800;
+}
+
+.secondary-details summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
 .metadata-list {
   display: grid;
   gap: 8px;
   grid-template-columns: max-content minmax(0, 1fr);
-  margin: 0;
+  margin: 16px 0 0;
 }
 
 .metadata-list dt {
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .metadata-list dd {
@@ -196,139 +413,41 @@ h3 {
   overflow-wrap: anywhere;
 }
 
-.summary-grid {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.metric {
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 10px;
-}
-
-.metric strong {
-  display: block;
-  font-size: 1.28rem;
-}
-
-.card-list,
-.review-list {
-  display: grid;
-  gap: 12px;
-}
-
-.signal-card,
-.review-card {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  min-width: 0;
-  padding: 14px;
-}
-
-.signal-card h3,
-.review-card h3 {
-  overflow-wrap: anywhere;
-}
-
-.field-list {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-}
-
-.field-list div {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.field-list dt {
-  color: var(--muted);
-  display: inline;
-  font-weight: 700;
-}
-
-.field-list dd {
-  display: inline;
-  margin: 0;
-}
-
-.review-controls {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 12px;
-}
-
-.review-controls label {
-  color: var(--muted);
-  display: grid;
-  font-weight: 700;
-  gap: 4px;
-  min-width: 0;
-}
-
-.review-controls input[type="text"],
-.review-controls select {
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  color: var(--ink);
-  min-height: 38px;
-  min-width: 0;
-  padding: 8px;
-  width: 100%;
-}
-
-.checkbox-label {
-  align-content: end;
-  grid-template-columns: auto 1fr;
-}
-
-.checkbox-label input {
-  height: 18px;
-  width: 18px;
-}
-
-#feedback-output {
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  min-height: 260px;
-  overflow: auto;
-  padding: 12px;
-  resize: vertical;
-  white-space: pre;
-  width: 100%;
-}
-
-.boundary-panel li {
-  margin-bottom: 4px;
-}
-
-.risk {
-  color: var(--danger);
-  font-weight: 700;
-}
-
-.warning {
-  color: var(--warn);
-  font-weight: 700;
-}
-
-@media (max-width: 780px) {
+@media (max-width: 900px) {
   .topbar,
+  .cockpit,
+  .product-grid,
   .controls-panel,
-  .section-heading {
+  .section-heading,
+  .action-heading {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .status-strip {
     justify-content: flex-start;
   }
+}
 
-  .grid,
-  .summary-grid,
+@media (max-width: 680px) {
+  .topbar {
+    padding: 20px;
+  }
+
+  .shell {
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: 1.55rem;
+  }
+
+  .score-cards,
   .review-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .metadata-list {
     grid-template-columns: minmax(0, 1fr);
   }
 }
