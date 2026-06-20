@@ -1,76 +1,146 @@
 {
+  "brief_version": "internal_intelligence_brief_v1",
+  "created_at": "2026-06-20T00:00:00+00:00",
+  "source_score_report": "tmp/dysonx_signal_quality_score.json",
+  "generated_for": "internal_owner_review",
+  "signals_reviewed": 4,
+  "tier_counts": {
+    "Tier A: Decision-grade Signal": 1,
+    "Tier B: Useful Signal": 1,
+    "Tier C: Needs Review": 1,
+    "Tier D: Reject / Low-value": 1
+  },
   "blocked_count": 2,
+  "human_review_count": 4,
+  "correlation_recommended_count": 2,
+  "overall_recommendation": "Start with the agent-evaluation Signal, request more evidence on the useful review item, regenerate thin research analysis, and do not publish yet.",
+  "decision_grade_candidates": [
+    {
+      "signal_id": "sig_agi_eval_agent_reliability",
+      "title": "Independent agent evaluation benchmark exposes reliability gap in multi-step tool use",
+      "source_url": "https://example.org/research/agent-reliability-benchmark-2026",
+      "source_authority": "Independent evaluation lab release with methodology notes and reproducible task descriptions.",
+      "agi_capability": "Agents, Tool Use, Evaluation",
+      "entities": [
+        "independent evaluation lab",
+        "agent benchmark suite",
+        "frontier model providers"
+      ],
+      "executive_takeaway": "The most important Signal is that agent progress is now being constrained by reliability across long tool-use chains, not only raw reasoning scores.",
+      "why_it_matters": "For DysonX, this is decision-grade because it gives the Owner a concrete way to judge whether agent announcements are durable capability gains or demos that fail under longer workflows.",
+      "watch_next": "Watch whether model labs respond with benchmark-specific reliability improvements, tool-call recovery mechanisms, or public eval disclosures over the next two release cycles.",
+      "quality_score_total": 58,
+      "quality_score_max": 65,
+      "quality_tier": "Tier A: Decision-grade Signal",
+      "score": 58,
+      "tier": "Tier A: Decision-grade Signal",
+      "risk_summary": "No critical risk flags; still needs later confidence and correlation review before any publish-readiness path.",
+      "missing_fields": [],
+      "recommended_action": "candidate_for_human_approval",
+      "risk_flags": [],
+      "critical_risk_flags": [],
+      "score_explanation": "Score 58/65 (89.23%) maps to Tier A: Decision-grade Signal."
+    }
+  ],
+  "useful_review_queue": [
+    {
+      "signal_id": "sig_memory_product_architecture",
+      "title": "AI workspace vendors converge on persistent memory controls for enterprise assistants",
+      "source_url": "https://example.com/product-updates/enterprise-assistant-memory-controls",
+      "source_authority": "First-party product changelog plus implementation notes; useful but not yet independently verified.",
+      "agi_capability": "Memory, Tool Use, Enterprise Agents",
+      "entities": [
+        "AI workspace vendors",
+        "enterprise assistants",
+        "admin policy controls"
+      ],
+      "executive_takeaway": "Enterprise assistant products are shifting from stateless chat toward governed persistent memory.",
+      "why_it_matters": "This helps the Owner track when memory becomes a product infrastructure layer instead of a user-facing feature toggle.",
+      "watch_next": "Watch whether vendors expose audit logs, retention controls, and cross-tool memory boundaries for regulated customers.",
+      "quality_score_total": 44,
+      "quality_score_max": 65,
+      "quality_tier": "Tier B: Useful Signal",
+      "score": 44,
+      "tier": "Tier B: Useful Signal",
+      "risk_summary": "Useful but needs more source support and comparison against at least one other vendor announcement.",
+      "missing_fields": [
+        "cross_vendor_correlation"
+      ],
+      "recommended_action": "needs_human_review",
+      "risk_flags": [],
+      "critical_risk_flags": [],
+      "score_explanation": "Score 44/65 (67.69%) maps to Tier B: Useful Signal."
+    }
+  ],
   "blocked_or_low_value": [
     {
-      "critical_risk_flags": [],
-      "missing_fields": [
-        "related_entities"
+      "signal_id": "sig_robotics_policy_thin",
+      "title": "Robotics safety memorandum may affect embodied-agent deployment claims",
+      "source_url": "https://example.gov/policy/robotics-safety-memo",
+      "source_authority": "Government memorandum summary; primary text is referenced but not sufficiently interpreted.",
+      "agi_capability": "Robotics, AI Safety, Policy",
+      "entities": [
+        "government safety office",
+        "robotics developers",
+        "embodied agents"
       ],
+      "executive_takeaway": "The item may matter for robotics deployment, but the current analysis does not yet explain the practical capability impact.",
+      "why_it_matters": "Policy constraints can reshape robotics timelines, but this Signal needs stronger interpretation before it is useful to the Owner.",
+      "watch_next": "Watch for implementation guidance, industry responses, and whether labs change safety case disclosures.",
+      "quality_score_total": 32,
       "quality_score_max": 65,
-      "quality_score_total": 31,
       "quality_tier": "Tier C: Needs Review",
+      "score": 32,
+      "tier": "Tier C: Needs Review",
+      "risk_summary": "Needs regeneration because capability impact and owner decision value are underdeveloped.",
+      "missing_fields": [
+        "specific_capability_impact",
+        "owner_decision_implication"
+      ],
       "recommended_action": "improve_or_regenerate",
       "risk_flags": [],
-      "score_explanation": "Score 31/65 (47.69%) maps to Tier C: Needs Review.",
-      "signal_id": "signal_tier_c",
-      "source_url": "https://example.com/tier-c",
-      "title": "Potentially relevant research update"
+      "critical_risk_flags": [],
+      "score_explanation": "Score 32/65 (49.23%) maps to Tier C: Needs Review."
     },
     {
-      "critical_risk_flags": [
-        "generic_summary",
-        "missing_agi_capability",
-        "missing_source_url",
-        "missing_watch_next",
-        "missing_why_it_matters"
+      "signal_id": "sig_generic_ai_market_noise",
+      "title": "Several companies say AI demand remains strong",
+      "source_url": "https://example.net/market-roundup/ai-demand-comments",
+      "source_authority": "Secondhand market roundup with vague sourcing and no first-source evidence.",
+      "agi_capability": "Unclear",
+      "entities": [
+        "unnamed AI vendors"
       ],
-      "missing_fields": [
-        "source_url",
-        "why_it_matters",
-        "agi_capability",
-        "related_entities",
-        "watch_next"
-      ],
+      "executive_takeaway": "This item is too generic to support an Owner decision.",
+      "why_it_matters": "It does not yet matter for DysonX because it lacks source authority, AGI capability mapping, and a concrete watch-next point.",
+      "watch_next": "Do not track unless a first-source earnings call, product metric, or compute deployment claim appears.",
+      "quality_score_total": 12,
       "quality_score_max": 65,
-      "quality_score_total": 9,
       "quality_tier": "Tier D: Reject / Low-value",
+      "score": 12,
+      "tier": "Tier D: Reject / Low-value",
+      "risk_summary": "Blocked by generic-summary and weak-attribution risks.",
+      "missing_fields": [
+        "first_source_url",
+        "specific_agi_capability",
+        "source_authority_reasoning"
+      ],
       "recommended_action": "blocked_by_quality_risk",
       "risk_flags": [
         "generic_summary",
-        "missing_agi_capability",
-        "missing_source_url",
-        "missing_watch_next",
-        "missing_why_it_matters"
+        "weak_source_attribution"
       ],
-      "score_explanation": "Score 9/65 (13.85%) is blocked by critical risks.",
-      "signal_id": "signal_tier_d",
-      "source_url": "",
-      "title": "AI changes everything"
+      "critical_risk_flags": [
+        "generic_summary"
+      ],
+      "score_explanation": "Score 12/65 (18.46%) is blocked by critical risks."
     }
   ],
-  "brief_version": "internal_intelligence_brief_v1",
-  "correlation_recommended_count": 2,
-  "created_at": "2026-06-20T00:00:00+00:00",
-  "decision_grade_candidates": [
-    {
-      "critical_risk_flags": [],
-      "missing_fields": [],
-      "quality_score_max": 65,
-      "quality_score_total": 57,
-      "quality_tier": "Tier A: Decision-grade Signal",
-      "recommended_action": "candidate_for_human_approval",
-      "risk_flags": [],
-      "score_explanation": "Score 57/65 (87.69%) maps to Tier A: Decision-grade Signal.",
-      "signal_id": "signal_tier_a",
-      "source_url": "https://openai.com/example-agent-update",
-      "title": "OpenAI releases agent infrastructure update"
-    }
-  ],
-  "generated_for": "internal_owner_review",
-  "human_review_count": 4,
-  "overall_recommendation": "Review Tier A candidates internally, but do not publish yet.",
   "owner_review_queue": [
     {
+      "signal_id": "sig_agi_eval_agent_reliability",
+      "title": "Independent agent evaluation benchmark exposes reliability gap in multi-step tool use",
+      "tier": "Tier A: Decision-grade Signal",
       "action": "candidate_for_human_approval",
       "owner_decision_placeholder": [
         "approve_for_future_publish_readiness_review",
@@ -78,12 +148,12 @@
         "request_regeneration",
         "reject",
         "hold"
-      ],
-      "signal_id": "signal_tier_a",
-      "tier": "Tier A: Decision-grade Signal",
-      "title": "OpenAI releases agent infrastructure update"
+      ]
     },
     {
+      "signal_id": "sig_memory_product_architecture",
+      "title": "AI workspace vendors converge on persistent memory controls for enterprise assistants",
+      "tier": "Tier B: Useful Signal",
       "action": "needs_human_review",
       "owner_decision_placeholder": [
         "approve_for_future_publish_readiness_review",
@@ -91,12 +161,12 @@
         "request_regeneration",
         "reject",
         "hold"
-      ],
-      "signal_id": "signal_tier_b",
-      "tier": "Tier B: Useful Signal",
-      "title": "Useful model evaluation update"
+      ]
     },
     {
+      "signal_id": "sig_robotics_policy_thin",
+      "title": "Robotics safety memorandum may affect embodied-agent deployment claims",
+      "tier": "Tier C: Needs Review",
       "action": "improve_or_regenerate",
       "owner_decision_placeholder": [
         "approve_for_future_publish_readiness_review",
@@ -104,12 +174,12 @@
         "request_regeneration",
         "reject",
         "hold"
-      ],
-      "signal_id": "signal_tier_c",
-      "tier": "Tier C: Needs Review",
-      "title": "Potentially relevant research update"
+      ]
     },
     {
+      "signal_id": "sig_generic_ai_market_noise",
+      "title": "Several companies say AI demand remains strong",
+      "tier": "Tier D: Reject / Low-value",
       "action": "blocked_by_quality_risk",
       "owner_decision_placeholder": [
         "approve_for_future_publish_readiness_review",
@@ -117,17 +187,14 @@
         "request_regeneration",
         "reject",
         "hold"
-      ],
-      "signal_id": "signal_tier_d",
-      "tier": "Tier D: Reject / Low-value",
-      "title": "AI changes everything"
+      ]
     }
   ],
   "recommended_next_actions": [
     "Review Tier A and Tier B Signals internally.",
     "Regenerate or improve Tier C and Tier D Signals.",
-    "Run confidence calibration later.",
-    "Run correlation later.",
+    "Run confidence calibration later only if Owner review shows confidence is the blocker.",
+    "Run correlation later only for Signals the Owner keeps in review.",
     "Do not publish yet."
   ],
   "safety_flags": {
@@ -144,28 +211,5 @@
     "social_posting_performed": false,
     "website_pages_written": false,
     "workflow_dispatched": false
-  },
-  "signals_reviewed": 4,
-  "source_score_report": "tests/fixtures/internal_intelligence_brief_v1/signal_quality_score.json",
-  "tier_counts": {
-    "Tier A: Decision-grade Signal": 1,
-    "Tier B: Useful Signal": 1,
-    "Tier C: Needs Review": 1,
-    "Tier D: Reject / Low-value": 1
-  },
-  "useful_review_queue": [
-    {
-      "critical_risk_flags": [],
-      "missing_fields": [],
-      "quality_score_max": 65,
-      "quality_score_total": 43,
-      "quality_tier": "Tier B: Useful Signal",
-      "recommended_action": "needs_human_review",
-      "risk_flags": [],
-      "score_explanation": "Score 43/65 (66.15%) maps to Tier B: Useful Signal.",
-      "signal_id": "signal_tier_b",
-      "source_url": "https://example.com/tier-b",
-      "title": "Useful model evaluation update"
-    }
-  ]
+  }
 }

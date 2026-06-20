@@ -3,105 +3,123 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DysonX Internal Owner Intelligence Preview</title>
+  <title>DysonX Owner Intelligence Console</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <header class="topbar">
-    <div>
-      <p class="eyebrow">Internal preview only</p>
-      <h1>DysonX Owner Intelligence Loop</h1>
+    <div class="brand-block">
+      <p class="eyebrow">Internal owner console only</p>
+      <h1>DysonX Owner Intelligence Console</h1>
+      <p class="subtitle">Review the highest-value AI/AGI Signals, decide what needs work, and export Owner Review Feedback JSON.</p>
     </div>
-    <div class="status-strip" aria-label="Safety boundary">
+    <div class="status-strip" aria-label="Safety status">
       <span>Not publish-ready</span>
       <span>No public publishing</span>
-      <span>No deployment</span>
-      <span>No OpenAI call</span>
+      <span>No deployment triggered by this page</span>
+      <span>No OpenAI call from this page</span>
+      <span>No KG writes</span>
+      <span>No Prediction Engine</span>
     </div>
   </header>
 
   <main class="shell">
-    <section class="panel controls-panel" aria-labelledby="load-brief-heading">
-      <div>
-        <h2 id="load-brief-heading">Brief Input</h2>
-        <p>Load the included local fixture, or choose another Internal Intelligence Brief V1 JSON file from this machine.</p>
+    <section class="cockpit" aria-labelledby="today-heading">
+      <div class="cockpit-intro">
+        <p class="eyebrow">Today’s AGI Signal Brief</p>
+        <h2 id="today-heading">Today’s AGI Signal Brief</h2>
+        <p id="overall-recommendation">Load the local brief fixture to review today’s owner queue.</p>
       </div>
-      <div class="control-row">
-        <button id="load-fixture" type="button">Load fixture</button>
-        <label class="file-control">
-          <span>Choose JSON</span>
-          <input id="brief-file" type="file" accept="application/json,.json">
-        </label>
-      </div>
-      <p id="load-status" class="status-text" role="status">No brief loaded yet.</p>
+      <div id="score-cards" class="score-cards" aria-label="Signal tier summary"></div>
     </section>
 
-    <section class="grid">
-      <section class="panel" aria-labelledby="metadata-heading">
-        <h2 id="metadata-heading">Brief Metadata</h2>
-        <dl id="brief-metadata" class="metadata-list"></dl>
+    <section class="product-grid">
+      <section class="panel top-signal-panel" aria-labelledby="top-signal-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Top Signal</p>
+            <h2 id="top-signal-heading">Top Signal</h2>
+          </div>
+          <span id="top-signal-tier" class="tier-pill">No brief loaded</span>
+        </div>
+        <article id="top-signal-card" class="top-signal-card"></article>
       </section>
 
-      <section class="panel" aria-labelledby="summary-heading">
-        <h2 id="summary-heading">Executive Summary</h2>
-        <div id="executive-summary" class="summary-grid"></div>
+      <section class="panel safety-panel" aria-labelledby="safety-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Safety Status</p>
+            <h2 id="safety-heading">Safety Status</h2>
+          </div>
+        </div>
+        <ul class="safety-list">
+          <li>Internal owner console only</li>
+          <li>No public publishing</li>
+          <li>Not publish-ready</li>
+          <li>No deployment triggered by this page</li>
+          <li>No OpenAI call from this page</li>
+          <li>No KG writes</li>
+          <li>No Prediction Engine</li>
+        </ul>
       </section>
-    </section>
-
-    <section class="panel" aria-labelledby="decision-grade-heading">
-      <h2 id="decision-grade-heading">Decision-Grade Candidates</h2>
-      <div id="decision-grade-candidates" class="card-list"></div>
-    </section>
-
-    <section class="panel" aria-labelledby="useful-heading">
-      <h2 id="useful-heading">Useful Signals Requiring Review</h2>
-      <div id="useful-review-queue" class="card-list"></div>
-    </section>
-
-    <section class="panel" aria-labelledby="blocked-heading">
-      <h2 id="blocked-heading">Blocked / Low-Value Signals</h2>
-      <div id="blocked-low-value" class="card-list"></div>
     </section>
 
     <section class="panel" aria-labelledby="queue-heading">
-      <div class="section-heading">
+      <div class="section-heading action-heading">
         <div>
-          <h2 id="queue-heading">Owner Review Queue</h2>
-          <p>Choose one decision per Signal. No selection grants publication permission.</p>
+          <p class="eyebrow">Owner Decision Queue</p>
+          <h2 id="queue-heading">Owner Decision Queue</h2>
+          <p>Select one decision per Signal. Approval here means later review only, not publishing permission.</p>
         </div>
-        <button id="generate-feedback" type="button">Generate feedback JSON</button>
+        <button id="generate-feedback" type="button">Generate Feedback JSON</button>
       </div>
       <div id="owner-review-queue" class="review-list"></div>
     </section>
 
-    <section class="panel" aria-labelledby="export-heading">
+    <section class="panel" aria-labelledby="blocked-heading">
       <div class="section-heading">
         <div>
-          <h2 id="export-heading">Owner Feedback JSON</h2>
-          <p>Matches Owner Review Feedback V1. Download locally or copy from the textarea.</p>
+          <p class="eyebrow">Blocked / Low-value</p>
+          <h2 id="blocked-heading">Blocked / Low-value</h2>
         </div>
-        <button id="download-feedback" type="button" disabled>Download JSON</button>
       </div>
-      <textarea id="feedback-output" readonly spellcheck="false" aria-label="Generated owner feedback JSON"></textarea>
+      <div id="blocked-low-value" class="compact-list"></div>
     </section>
 
-    <section class="panel boundary-panel" aria-labelledby="boundary-heading">
-      <h2 id="boundary-heading">Safety Boundary</h2>
-      <ul>
-        <li>Internal preview only</li>
-        <li>Not publish-ready</li>
-        <li>No public publishing</li>
-        <li>No website/public content generation</li>
-        <li>No social distribution</li>
-        <li>No Knowledge Graph writes</li>
-        <li>No Prediction Engine work</li>
-        <li>No Confidence Calibration</li>
-        <li>No Correlation</li>
-        <li>No OpenAI call</li>
-        <li>No workflow dispatch</li>
-        <li>No deployment</li>
-      </ul>
+    <section class="panel export-panel" aria-labelledby="export-heading">
+      <div class="section-heading action-heading">
+        <div>
+          <p class="eyebrow">Export</p>
+          <h2 id="export-heading">Owner Feedback JSON</h2>
+          <p>This is structured internal feedback. It is not publishing approval.</p>
+        </div>
+        <div class="button-row">
+          <button id="copy-feedback" type="button" disabled>Copy JSON</button>
+          <button id="download-feedback" type="button" disabled>Download JSON</button>
+        </div>
+      </div>
+      <textarea id="feedback-output" readonly spellcheck="false" aria-label="Generated owner feedback JSON"></textarea>
+      <p id="export-status" class="status-text" role="status">Generate feedback to preview JSON here.</p>
     </section>
+
+    <details class="panel secondary-details">
+      <summary>Brief source and technical details</summary>
+      <section class="controls-panel" aria-labelledby="load-brief-heading">
+        <div>
+          <h2 id="load-brief-heading">Brief Input</h2>
+          <p>Loads the included local fixture by default. You can also choose another Internal Intelligence Brief V1 JSON file from this machine.</p>
+        </div>
+        <div class="control-row">
+          <button id="load-fixture" type="button">Reload fixture</button>
+          <label class="file-control">
+            <span>Choose JSON</span>
+            <input id="brief-file" type="file" accept="application/json,.json">
+          </label>
+        </div>
+        <p id="load-status" class="status-text" role="status">No brief loaded yet.</p>
+      </section>
+      <dl id="brief-metadata" class="metadata-list"></dl>
+    </details>
   </main>
 
   <script src="./app.js"></script>

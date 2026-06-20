@@ -10,7 +10,8 @@ INDEX = PREVIEW / "index.html"
 APP = PREVIEW / "app.js"
 STYLES = PREVIEW / "styles.css"
 FIXTURE = PREVIEW / "brief_fixture.json"
-DOC = ROOT / "docs" / "DYSONX_MINIMAL_INTERNAL_FRONTEND_PREVIEW_V1.md"
+PREVIEW_DOC = ROOT / "docs" / "DYSONX_MINIMAL_INTERNAL_FRONTEND_PREVIEW_V1.md"
+LAUNCH_PLAN = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_LAUNCH_PLAN.md"
 
 
 class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
@@ -29,34 +30,84 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertEqual(fixture["brief_version"], "internal_intelligence_brief_v1")
         self.assertGreaterEqual(len(fixture["owner_review_queue"]), 1)
 
-    def test_required_sections_render_from_static_markup(self):
+    def test_product_console_headings_are_visible(self):
         html = self.read_index()
 
-        for section in (
-            "Brief Metadata",
-            "Executive Summary",
-            "Decision-Grade Candidates",
-            "Useful Signals Requiring Review",
-            "Blocked / Low-Value Signals",
-            "Owner Review Queue",
-            "Safety Boundary",
+        for phrase in (
+            "DysonX Owner Intelligence Console",
+            "Today’s AGI Signal Brief",
+            "Top Signal",
+            "Owner Decision Queue",
+            "Blocked / Low-value",
+            "Safety Status",
         ):
-            self.assertIn(section, html)
+            self.assertIn(phrase, html)
 
-    def test_owner_decision_values_are_limited_to_allowed_values(self):
+    def test_raw_tier_counts_json_is_not_primary_summary(self):
+        html = self.read_index()
         app = self.read_app()
 
-        allowed = {
-            "approve_for_future_publish_readiness_review",
-            "request_more_sources",
-            "request_regeneration",
-            "reject",
-            "hold",
+        self.assertNotIn("raw tier_counts", html)
+        self.assertNotIn("JSON.stringify(brief.tier_counts", app)
+        for label in (
+            "Decision-grade",
+            "Useful review",
+            "Needs work",
+            "Rejected / blocked",
+        ):
+            self.assertIn(label, app)
+
+    def test_fixture_includes_owner_judgment_fields(self):
+        fixture = self.load_fixture()
+        records = (
+            fixture["decision_grade_candidates"]
+            + fixture["useful_review_queue"]
+            + fixture["blocked_or_low_value"]
+        )
+
+        for record in records:
+            for field in (
+                "title",
+                "source_url",
+                "source_authority",
+                "agi_capability",
+                "entities",
+                "executive_takeaway",
+                "why_it_matters",
+                "watch_next",
+                "score",
+                "tier",
+                "risk_summary",
+                "missing_fields",
+                "recommended_action",
+            ):
+                self.assertIn(field, record)
+                self.assertNotEqual(record[field], None)
+
+    def test_user_facing_decision_labels_map_to_allowed_internal_values(self):
+        app = self.read_app()
+
+        expected = {
+            "Approve for later review": "approve_for_future_publish_readiness_review",
+            "Need more sources": "request_more_sources",
+            "Regenerate analysis": "request_regeneration",
+            "Reject": "reject",
+            "Hold": "hold",
         }
-        match = re.search(r"const ALLOWED_DECISIONS = \[(.*?)\];", app, re.S)
+        for label, value in expected.items():
+            self.assertIn(f'label: "{label}"', app)
+            self.assertIn(f'value: "{value}"', app)
+
+        match = re.search(r"const ALLOWED_DECISIONS = DECISION_OPTIONS\.map", app)
         self.assertIsNotNone(match)
-        actual = set(re.findall(r'"([^"]+)"', match.group(1)))
-        self.assertEqual(actual, allowed)
+
+    def test_owner_decision_queue_cards_include_score_values(self):
+        app = self.read_app()
+
+        start = app.index("function renderReviewQueue(brief)")
+        end = app.index("function renderBrief(brief, sourceName)")
+        queue_renderer = app[start:end]
+        self.assertIn('["Score", scoreText(detail)]', queue_renderer)
 
     def test_priority_values_are_limited_to_allowed_values(self):
         app = self.read_app()
@@ -105,35 +156,36 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         ):
             self.assertIn(field, app)
 
-    def test_approve_for_future_review_does_not_imply_publish_readiness(self):
+    def test_feedback_json_generation_keeps_publish_readiness_disabled(self):
         app = self.read_app()
 
-        self.assertIn(
-            "owner_approved_for_later_publish_readiness_review_only",
-            app,
-        )
+        self.assertIn("owner_approved_for_later_publish_readiness_review_only", app)
         self.assertIn("later_publish_readiness_review_required", app)
         self.assertIn("publish_readiness_enabled: false", app)
         self.assertIn("Do not publish yet.", app)
+        self.assertIn("This is not publishing approval.", app)
 
     def test_safety_boundary_text_is_present(self):
         html = self.read_index()
 
         for phrase in (
-            "Internal preview only",
+            "Internal owner console only",
             "Not publish-ready",
             "No public publishing",
-            "No deployment",
-            "No OpenAI call",
-            "No Knowledge Graph writes",
-            "No Prediction Engine work",
-            "No Confidence Calibration",
-            "No Correlation",
+            "No deployment triggered by this page",
+            "No OpenAI call from this page",
+            "No KG writes",
+            "No Prediction Engine",
         ):
             self.assertIn(phrase, html)
 
     def test_no_openai_api_key_requirement_or_network_api_behavior(self):
-        combined = self.read_index() + self.read_app() + DOC.read_text(encoding="utf-8")
+        combined = (
+            self.read_index()
+            + self.read_app()
+            + PREVIEW_DOC.read_text(encoding="utf-8")
+            + LAUNCH_PLAN.read_text(encoding="utf-8")
+        )
 
         self.assertIn("does not require `OPENAI_API_KEY`", combined)
         self.assertNotIn("process.env", combined)
@@ -154,6 +206,8 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
             "prediction_engine_performed: false",
             "deployment_performed: false",
             "workflow_dispatched: false",
+            "notion_mutation_performed: false",
+            "live_github_api_used: false",
         ):
             self.assertIn(flag, app)
         self.assertNotIn("seo_metadata", app)
