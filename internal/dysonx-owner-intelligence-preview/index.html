@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DysonX Internal Owner Intelligence Preview</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Internal preview only</p>
+      <h1>DysonX Owner Intelligence Loop</h1>
+    </div>
+    <div class="status-strip" aria-label="Safety boundary">
+      <span>Not publish-ready</span>
+      <span>No public publishing</span>
+      <span>No deployment</span>
+      <span>No OpenAI call</span>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="panel controls-panel" aria-labelledby="load-brief-heading">
+      <div>
+        <h2 id="load-brief-heading">Brief Input</h2>
+        <p>Load the included local fixture, or choose another Internal Intelligence Brief V1 JSON file from this machine.</p>
+      </div>
+      <div class="control-row">
+        <button id="load-fixture" type="button">Load fixture</button>
+        <label class="file-control">
+          <span>Choose JSON</span>
+          <input id="brief-file" type="file" accept="application/json,.json">
+        </label>
+      </div>
+      <p id="load-status" class="status-text" role="status">No brief loaded yet.</p>
+    </section>
+
+    <section class="grid">
+      <section class="panel" aria-labelledby="metadata-heading">
+        <h2 id="metadata-heading">Brief Metadata</h2>
+        <dl id="brief-metadata" class="metadata-list"></dl>
+      </section>
+
+      <section class="panel" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">Executive Summary</h2>
+        <div id="executive-summary" class="summary-grid"></div>
+      </section>
+    </section>
+
+    <section class="panel" aria-labelledby="decision-grade-heading">
+      <h2 id="decision-grade-heading">Decision-Grade Candidates</h2>
+      <div id="decision-grade-candidates" class="card-list"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="useful-heading">
+      <h2 id="useful-heading">Useful Signals Requiring Review</h2>
+      <div id="useful-review-queue" class="card-list"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="blocked-heading">
+      <h2 id="blocked-heading">Blocked / Low-Value Signals</h2>
+      <div id="blocked-low-value" class="card-list"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="queue-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="queue-heading">Owner Review Queue</h2>
+          <p>Choose one decision per Signal. No selection grants publication permission.</p>
+        </div>
+        <button id="generate-feedback" type="button">Generate feedback JSON</button>
+      </div>
+      <div id="owner-review-queue" class="review-list"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="export-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="export-heading">Owner Feedback JSON</h2>
+          <p>Matches Owner Review Feedback V1. Download locally or copy from the textarea.</p>
+        </div>
+        <button id="download-feedback" type="button" disabled>Download JSON</button>
+      </div>
+      <textarea id="feedback-output" readonly spellcheck="false" aria-label="Generated owner feedback JSON"></textarea>
+    </section>
+
+    <section class="panel boundary-panel" aria-labelledby="boundary-heading">
+      <h2 id="boundary-heading">Safety Boundary</h2>
+      <ul>
+        <li>Internal preview only</li>
+        <li>Not publish-ready</li>
+        <li>No public publishing</li>
+        <li>No website/public content generation</li>
+        <li>No social distribution</li>
+        <li>No Knowledge Graph writes</li>
+        <li>No Prediction Engine work</li>
+        <li>No Confidence Calibration</li>
+        <li>No Correlation</li>
+        <li>No OpenAI call</li>
+        <li>No workflow dispatch</li>
+        <li>No deployment</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
