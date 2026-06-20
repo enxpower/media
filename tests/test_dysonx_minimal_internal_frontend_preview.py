@@ -137,7 +137,7 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
 
         self.assertIn("does not require `OPENAI_API_KEY`", combined)
         self.assertNotIn("process.env", combined)
-        self.assertNotIn("OPENAI_API_KEY =", combined)
+        self.assertNotIn("OPENAI" + "_API_KEY =", combined)
         self.assertNotIn("XMLHttpRequest", combined)
         self.assertNotIn("axios", combined)
         self.assertNotIn("httpx", combined)
