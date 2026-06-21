@@ -12,6 +12,7 @@ STYLES = PREVIEW / "styles.css"
 FIXTURE = PREVIEW / "brief_fixture.json"
 PREVIEW_DOC = ROOT / "docs" / "DYSONX_MINIMAL_INTERNAL_FRONTEND_PREVIEW_V1.md"
 LAUNCH_PLAN = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_LAUNCH_PLAN.md"
+WORKFLOW_COMPRESSION_DOC = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_WORKFLOW_COMPRESSION_V2.md"
 
 
 class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
@@ -145,49 +146,84 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
             "Hold",
         ):
             self.assertIn(label, app)
-        self.assertIn("humanAction(detail.auto_decision || item.action || detail.recommended_action)", app)
+        self.assertIn("humanAction(detail.auto_decision || detail.action || detail.recommended_action)", app)
 
-    def test_console_shows_reviewed_pending_total_status(self):
+    def test_console_shows_automation_aware_status_model(self):
         html = self.read_index()
         app = self.read_app()
 
-        self.assertIn('id="review-progress"', html)
-        self.assertIn("Reviewed:", app)
-        self.assertIn("Pending:", app)
-        self.assertIn("Total:", app)
-        self.assertIn('card.dataset.ownerConfirmed = "false"', app)
+        self.assertIn("Owner Work Summary", html)
+        self.assertIn('id="workflow-status"', html)
+        self.assertIn("System-decided:", app)
+        self.assertIn("Owner-overridden:", app)
+        self.assertIn("Needs Owner attention:", app)
+        self.assertIn("Total Signals:", app)
+        self.assertNotIn("Reviewed:", html)
+        self.assertNotIn("Pending:", html)
         self.assertIn("System default decision applied. Owner can override.", app)
 
     def test_feedback_action_is_prominent_near_workflow(self):
         html = self.read_index()
 
         self.assertIn('id="generate-feedback-top"', html)
+        self.assertIn('id="generate-feedback-sticky"', html)
+        self.assertIn('id="copy-feedback-sticky"', html)
+        self.assertIn('id="download-feedback-sticky"', html)
         self.assertIn("Review decisions", html)
 
     def test_owner_decision_queue_cards_include_score_values(self):
         app = self.read_app()
 
-        start = app.index("function renderReviewQueue(brief)")
-        end = app.index("function renderBrief(brief, sourceName)")
+        start = app.index("function compactSignalCard(detail, index)")
+        end = app.index("function renderReviewQueue(brief)")
         queue_renderer = app[start:end]
         self.assertIn('["Score", scoreText(detail)]', queue_renderer)
 
     def test_owner_decision_queue_keeps_context_fields_visible(self):
         app = self.read_app()
 
-        start = app.index("function renderReviewQueue(brief)")
-        end = app.index("function renderBrief(brief, sourceName)")
+        start = app.index("function compactSignalCard(detail, index)")
+        end = app.index("function renderReviewQueue(brief)")
         queue_renderer = app[start:end]
         for field in (
             '["Auto Decision", autoDecisionLabel(detail)]',
             '["Score", scoreText(detail)]',
-            '["Tier", tierLabel(item.tier || detail.quality_tier)]',
-            '["Risk summary", riskSummary(detail), risks(detail).length ? "risk" : ""]',
+            '["Tier", tierLabel(detail.tier || detail.quality_tier)]',
+            '["Risk summary", shortText(riskSummary(detail), 150), risks(detail).length ? "risk" : ""]',
             '["Missing fields", compactList(detail.missing_fields)]',
-            '["Why it matters", detail.why_it_matters]',
-            '["Watch next", detail.watch_next]',
+            '["Why it matters", shortText(detail.why_it_matters, 160)]',
+            '["Watch next", shortText(detail.watch_next, 160)]',
         ):
             self.assertIn(field, queue_renderer)
+
+    def test_signals_are_grouped_by_work_category(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertIn("Needs Owner Attention", html)
+        self.assertIn("Auto-handled", html)
+        self.assertIn('id="needs-owner-attention"', html)
+        self.assertIn('id="auto-handled"', html)
+        self.assertIn("const attention = records.filter(isOwnerAttention)", app)
+        self.assertIn("const autoHandled = records.filter", app)
+
+    def test_blocked_low_value_is_compact_by_default(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertIn("Blocked / Low-value", html)
+        self.assertIn("compact-list", html)
+        self.assertIn('el("article", "compact-card")', app)
+        self.assertIn("isBlockedLowValue", app)
+
+    def test_full_technical_details_are_expandable(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertIn("Brief source and technical details", html)
+        self.assertIn('details.className = "signal-details"', app)
+        self.assertIn('summary.textContent = "Show details"', app)
+        self.assertIn('["Raw auto decision", detail.auto_decision]', app)
 
     def test_priority_values_are_limited_to_allowed_values(self):
         app = self.read_app()
@@ -224,6 +260,10 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         for field in (
             "signal_id",
             "title",
+            "auto_decision",
+            "system_default_owner_decision",
+            "selected_owner_decision",
+            "owner_overridden",
             "original_tier",
             "original_recommended_action",
             "owner_decision",
@@ -245,6 +285,7 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertIn("publication_approved: false", app)
         self.assertIn("Do not publish yet.", app)
         self.assertIn("This is not publishing approval.", app)
+        self.assertIn("This is not publication approval.", app)
 
     def test_owner_override_remains_possible(self):
         app = self.read_app()
@@ -252,6 +293,16 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertIn("Owner can override", app)
         self.assertIn("owner_override_allowed: true", app)
         self.assertIn("markOwnerConfirmed", app)
+        self.assertIn('card.dataset.ownerOverridden = overridden ? "true" : "false"', app)
+        self.assertIn('overridden ? "Owner override"', app)
+
+    def test_feedback_json_includes_all_signals_with_system_defaults(self):
+        app = self.read_app()
+
+        self.assertIn("return allQueueDetails(state.brief).map", app)
+        self.assertIn("const defaultDecision = card?.dataset.systemDefaultOwnerDecision || ownerDecisionDefault(detail)", app)
+        self.assertIn("const ownerDecision = card?.querySelector(\".decision-input\").value || defaultDecision", app)
+        self.assertIn("owner_overridden: ownerOverridden", app)
 
     def test_safety_boundary_text_is_present(self):
         html = self.read_index()
@@ -273,6 +324,7 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
             + self.read_app()
             + PREVIEW_DOC.read_text(encoding="utf-8")
             + LAUNCH_PLAN.read_text(encoding="utf-8")
+            + WORKFLOW_COMPRESSION_DOC.read_text(encoding="utf-8")
         )
 
         self.assertIn("does not require `OPENAI_API_KEY`", combined)
