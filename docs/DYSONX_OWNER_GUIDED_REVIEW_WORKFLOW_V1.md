@@ -32,6 +32,8 @@ Review Attention Items
 
 The workflow highlights the current action, marks completed steps, and locks future steps until prerequisites are complete.
 
+The guided workflow must behave as a single active action console. Multiple competing highlighted actions, expanded completed cards, or unexplained disabled buttons are product failures.
+
 ## 4. Stepper States
 
 Each step has one visible state:

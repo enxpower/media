@@ -55,8 +55,30 @@ button:focus {
 }
 
 button:disabled {
-  background: #94a3b8;
+  background: #e2e8f0;
+  color: #64748b;
   cursor: not-allowed;
+}
+
+.secondary-action,
+.danger-secondary-action {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.secondary-action:hover,
+.secondary-action:focus {
+  background: #f8fafc;
+}
+
+.danger-secondary-action {
+  color: #7f1d1d;
+}
+
+.danger-secondary-action:hover,
+.danger-secondary-action:focus {
+  background: #fef2f2;
 }
 
 .topbar {
@@ -209,6 +231,51 @@ h3 {
   gap: 10px;
 }
 
+.owner-active-task {
+  align-items: center;
+  background: #0f2f35;
+  border: 1px solid #0f766e;
+  border-radius: 10px;
+  color: #ffffff;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.34fr);
+  padding: 18px;
+}
+
+.owner-active-task .eyebrow,
+.owner-active-task p {
+  color: #d5f7f1;
+}
+
+.owner-active-task h2 {
+  font-size: 1.38rem;
+  margin-bottom: 8px;
+}
+
+.active-task-progress {
+  font-weight: 800;
+  margin-bottom: 0;
+}
+
+.active-task-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.primary-action[data-primary-action="true"] {
+  background: #f8fafc;
+  color: #0f2f35;
+  font-size: 1rem;
+  min-height: 52px;
+  width: 100%;
+}
+
+.primary-action[data-primary-action="true"]:hover,
+.primary-action[data-primary-action="true"]:focus {
+  background: #ccfbf1;
+}
+
 .workflow-shell,
 .workflow-card,
 .auto-handled-panel,
@@ -219,6 +286,12 @@ h3 {
   gap: 12px;
   min-width: 0;
   padding: 12px;
+}
+
+.workflow-shell {
+  background: #f8fafc;
+  font-size: 0.9rem;
+  opacity: 0.9;
 }
 
 .workflow-stepper {
@@ -250,11 +323,13 @@ h3 {
   background: #eefdf3;
   border-color: #86efac;
   color: #14532d;
+  opacity: 0.72;
 }
 
 .workflow-step.locked {
   background: #f1f5f9;
   color: #64748b;
+  opacity: 0.72;
 }
 
 .step-marker,
@@ -291,6 +366,13 @@ h3 {
 .auto-handled-panel.complete {
   background: #eefdf3;
   border-color: #86efac;
+}
+
+.secondary-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .session-facts,
@@ -339,7 +421,8 @@ h3 {
 
 .score-card span {
   color: var(--muted);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .work-summary {
@@ -461,11 +544,12 @@ a {
 
 .review-card.completed-attention-item {
   background: #f8fafc;
-  opacity: 0.82;
+  opacity: 0.72;
 }
 
 .review-card.future-attention-item {
-  background: #fbfdff;
+  background: #f8fafc;
+  opacity: 0.72;
 }
 
 .compact-signal-card {
@@ -508,6 +592,55 @@ a {
 .guided-card-status.auto-handled {
   background: #e2e8f0;
   color: #334155;
+}
+
+.collapsed-card-summary {
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: none;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+}
+
+.collapsed-card-summary span {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.locked-note {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.review-card.completed-attention-item > :not(.queue-rank):not(.guided-card-status):not(.completed-summary) {
+  display: none;
+}
+
+.review-card.future-attention-item > :not(.queue-rank):not(.guided-card-status):not(.future-summary) {
+  display: none;
+}
+
+.review-card.completed-attention-item .completed-summary,
+.review-card.future-attention-item .future-summary {
+  display: flex;
+}
+
+.review-card:not(.active-attention-item) .guided-card-actions,
+.review-card:not(.active-attention-item) .review-controls,
+.review-card:not(.active-attention-item) .signal-details {
+  display: none;
+}
+
+#auto-handled.review-details .signal-details {
+  display: block;
+}
+
+.review-card.active-attention-item .future-summary,
+.review-card.active-attention-item .completed-summary {
+  display: none;
 }
 
 .system-default {
@@ -588,38 +721,6 @@ a {
   font-weight: 800;
 }
 
-.export-action-bar {
-  align-items: center;
-  background: #f8fafc;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  bottom: 10px;
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: space-between;
-  padding: 10px;
-  position: sticky;
-  z-index: 10;
-}
-
-.export-action-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.export-action-summary span {
-  background: #ffffff;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--ink);
-  font-size: 0.82rem;
-  font-weight: 800;
-  padding: 5px 8px;
-}
-
 .button-row,
 .control-row {
   align-items: center;
@@ -698,6 +799,7 @@ a {
   .topbar,
   .cockpit,
   .product-grid,
+  .owner-active-task,
   .controls-panel,
   .section-heading,
   .action-heading {
@@ -726,14 +828,25 @@ a {
   .score-cards,
   .work-summary,
   .review-controls,
-  .workflow-stepper,
   .session-facts,
   .completion-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .export-action-bar {
-    position: static;
+  .workflow-stepper {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .owner-active-task {
+    padding: 14px;
+  }
+
+  .collapsed-card-summary,
+  .secondary-controls,
+  .button-row {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .metadata-list {
