@@ -169,6 +169,40 @@ h3 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.quick-actions,
+.review-progress {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.quick-actions a,
+.review-progress span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--accent-dark);
+  font-weight: 800;
+  padding: 6px 10px;
+  text-decoration: none;
+}
+
+.quick-actions a {
+  background: var(--accent-soft);
+}
+
+.review-progress {
+  justify-content: flex-end;
+  margin-top: 0;
+}
+
+.review-progress span {
+  background: #f8fafc;
+  color: var(--ink);
+  font-size: 0.84rem;
+}
+
 .score-card {
   background: #f8fafc;
   border: 1px solid var(--line);
@@ -294,6 +328,15 @@ a {
   font-weight: 800;
   margin-bottom: 8px;
   padding: 4px 8px;
+}
+
+.system-default {
+  background: #eef6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  color: #1e3a8a;
+  font-weight: 800;
+  padding: 8px;
 }
 
 .review-controls {
