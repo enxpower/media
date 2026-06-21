@@ -89,6 +89,7 @@ const state = {
   brief: null,
   sourceName: "internal/dysonx-owner-intelligence-preview/brief_fixture.json",
   feedbackJson: "",
+  ownerDecisionDefaults: new Map(),
 };
 
 function text(value) {
@@ -181,6 +182,44 @@ function ownerDecisionDefault(record) {
   return AUTO_DECISION_TO_OWNER_DECISION[autoDecisionValue(record)] || "hold";
 }
 
+function shortText(value, maxLength = 180) {
+  const content = text(value);
+  if (content.length <= maxLength) return content;
+  return `${content.slice(0, maxLength - 1).trim()}…`;
+}
+
+function isOwnerAttention(record) {
+  const decision = autoDecisionValue(record);
+  return decision === "candidate_for_publish_readiness_review" || decision === "needs_more_sources";
+}
+
+function isBlockedLowValue(record) {
+  return autoDecisionValue(record) === "auto_reject"
+    || text(record.quality_tier || record.tier).includes("Tier D")
+    || risks(record).includes("generic_summary");
+}
+
+function allQueueDetails(brief) {
+  return brief.owner_review_queue.map((item) => recordForQueueItem(brief, item));
+}
+
+function workCounts(brief) {
+  const records = allQueueDetails(brief);
+  const counts = {
+    total: records.length,
+    ownerAttention: records.filter(isOwnerAttention).length,
+    autoHandled: records.filter((record) => !isOwnerAttention(record)).length,
+    candidates: records.filter((record) => autoDecisionValue(record) === "candidate_for_publish_readiness_review").length,
+    moreSources: records.filter((record) => autoDecisionValue(record) === "needs_more_sources").length,
+    regenerate: records.filter((record) => autoDecisionValue(record) === "needs_regeneration").length,
+    hold: records.filter((record) => autoDecisionValue(record) === "hold").length,
+    rejected: records.filter((record) => autoDecisionValue(record) === "auto_reject").length,
+    overridden: document.querySelectorAll('.review-card[data-owner-overridden="true"]').length,
+  };
+  counts.readyToExport = counts.total > 0 ? counts.total : 0;
+  return counts;
+}
+
 function compactList(values) {
   const filtered = arrayValue(values);
   return filtered.length ? filtered.join(", ") : "none";
@@ -212,15 +251,20 @@ function renderMetadata(brief) {
   });
 }
 
-function renderScoreCards(brief) {
-  const target = document.getElementById("score-cards");
+function renderWorkSummary(brief) {
+  const target = document.getElementById("work-summary");
   clear(target);
-  const tierCounts = brief.tier_counts || {};
+  const counts = workCounts(brief);
   const cards = [
-    ["Decision-grade", tierCounts["Tier A: Decision-grade Signal"] || 0],
-    ["Useful review", tierCounts["Tier B: Useful Signal"] || 0],
-    ["Needs work", tierCounts["Tier C: Needs Review"] || 0],
-    ["Rejected / blocked", tierCounts["Tier D: Reject / Low-value"] || 0],
+    ["Needs Owner Attention", counts.ownerAttention],
+    ["Auto-handled", counts.autoHandled],
+    ["Candidates", counts.candidates],
+    ["More Sources", counts.moreSources],
+    ["Regenerate", counts.regenerate],
+    ["Hold", counts.hold],
+    ["Rejected", counts.rejected],
+    ["Overrides", counts.overridden],
+    ["Ready to export feedback", counts.readyToExport],
   ];
   cards.forEach(([label, value]) => {
     const card = el("div", "score-card");
@@ -279,7 +323,7 @@ function renderTopSignal(brief) {
 function renderBlocked(brief) {
   const target = document.getElementById("blocked-low-value");
   clear(target);
-  const records = brief.blocked_or_low_value || [];
+  const records = allQueueDetails(brief).filter(isBlockedLowValue);
   if (!records.length) {
     target.appendChild(el("p", "muted", "No blocked or low-value Signals."));
     return;
@@ -290,7 +334,8 @@ function renderBlocked(brief) {
     card.appendChild(fieldList([
       ["Tier", tierLabel(record.quality_tier || record.tier)],
       ["Auto Decision", autoDecisionLabel(record)],
-      ["Reason", riskSummary(record), risks(record).length ? "risk" : ""],
+      ["Score", scoreText(record)],
+      ["Reason", shortText(riskSummary(record), 140), risks(record).length ? "risk" : ""],
       ["Missing fields", compactList(record.missing_fields)],
       ["Recommended action", humanAction(record.auto_decision || record.recommended_action)],
     ]));
@@ -322,72 +367,98 @@ function priorityControl(defaultValue) {
   return select;
 }
 
+function compactSignalCard(detail, index) {
+  const defaultDecision = ownerDecisionDefault(detail);
+  const card = el("article", "review-card compact-signal-card");
+  card.dataset.signalId = detail.signal_id;
+  card.dataset.systemDefaultOwnerDecision = defaultDecision;
+  card.dataset.ownerOverridden = "false";
+  card.dataset.needsOwnerAttention = isOwnerAttention(detail) ? "true" : "false";
+  state.ownerDecisionDefaults.set(detail.signal_id, defaultDecision);
+  card.appendChild(el("div", "queue-rank", `#${index + 1}`));
+  card.appendChild(el("h3", "", detail.title || "(untitled signal)"));
+  card.appendChild(el("p", "takeaway", shortText(detail.executive_takeaway || detail.why_it_matters || "No executive takeaway provided.", 190)));
+  card.appendChild(el("p", "system-default", "System default decision applied. Owner can override."));
+  card.appendChild(fieldList([
+    ["Auto Decision", autoDecisionLabel(detail)],
+    ["Score", scoreText(detail)],
+    ["Tier", tierLabel(detail.tier || detail.quality_tier)],
+    ["Risk summary", shortText(riskSummary(detail), 150), risks(detail).length ? "risk" : ""],
+    ["Missing fields", compactList(detail.missing_fields)],
+    ["Why it matters", shortText(detail.why_it_matters, 160)],
+    ["Watch next", shortText(detail.watch_next, 160)],
+  ]));
+
+  const controls = el("div", "review-controls");
+  const decisionLabel = el("label", "", "Owner decision");
+  const decision = decisionControl(defaultDecision);
+  decision.className = "decision-input";
+  decisionLabel.appendChild(decision);
+
+  const priorityLabel = el("label", "", "Priority");
+  const priority = priorityControl("medium");
+  priority.className = "priority-input";
+  priorityLabel.appendChild(priority);
+
+  const commentLabel = el("label", "", "Owner comment");
+  const comment = document.createElement("textarea");
+  comment.className = "comment-input";
+  comment.placeholder = "Why this decision?";
+  comment.rows = 2;
+  commentLabel.appendChild(comment);
+
+  const followLabel = el("label", "checkbox-label", "Follow-up required");
+  const follow = document.createElement("input");
+  follow.className = "follow-input";
+  follow.type = "checkbox";
+  followLabel.prepend(follow);
+
+  const noteLabel = el("label", "", "Follow-up note");
+  const note = document.createElement("input");
+  note.className = "follow-note-input";
+  note.type = "text";
+  note.placeholder = "What should happen next?";
+  noteLabel.appendChild(note);
+
+  controls.append(decisionLabel, priorityLabel, commentLabel, followLabel, noteLabel);
+  card.appendChild(controls);
+
+  const details = document.createElement("details");
+  details.className = "signal-details";
+  const summary = document.createElement("summary");
+  summary.textContent = "Show details";
+  details.appendChild(summary);
+  details.appendChild(fieldList([
+    ["Signal ID", detail.signal_id],
+    ["Source URL", detail.source_url],
+    ["Source authority", detail.source_authority],
+    ["AGI capability", detail.agi_capability],
+    ["Entities", compactList(detail.entities)],
+    ["Full why it matters", detail.why_it_matters],
+    ["Full watch next", detail.watch_next],
+    ["Recommended action", humanAction(detail.auto_decision || detail.action || detail.recommended_action)],
+    ["Raw action", detail.action || detail.recommended_action],
+    ["Raw auto decision", detail.auto_decision],
+  ]));
+  card.appendChild(details);
+  return card;
+}
+
 function renderReviewQueue(brief) {
-  const target = document.getElementById("owner-review-queue");
-  clear(target);
-  brief.owner_review_queue.forEach((item, index) => {
-    const detail = recordForQueueItem(brief, item);
-    const defaultDecision = ownerDecisionDefault(detail);
-    const card = el("article", "review-card");
-    card.dataset.signalId = item.signal_id;
-    card.dataset.ownerConfirmed = "false";
-    card.appendChild(el("div", "queue-rank", `#${index + 1}`));
-    card.appendChild(el("h3", "", item.title || "(untitled signal)"));
-    card.appendChild(el("p", "takeaway", detail.executive_takeaway || "No executive takeaway provided."));
-    card.appendChild(el("p", "system-default", "System default decision applied. Owner can override."));
-    card.appendChild(fieldList([
-      ["Signal ID", item.signal_id],
-      ["Auto Decision", autoDecisionLabel(detail)],
-      ["Score", scoreText(detail)],
-      ["Tier", tierLabel(item.tier || detail.quality_tier)],
-      ["Risk summary", riskSummary(detail), risks(detail).length ? "risk" : ""],
-      ["Missing fields", compactList(detail.missing_fields)],
-      ["Recommended action", humanAction(detail.auto_decision || item.action || detail.recommended_action)],
-      ["Source", detail.source_url],
-      ["Source authority", detail.source_authority],
-      ["AGI capability", detail.agi_capability],
-      ["Entities", compactList(detail.entities)],
-      ["Why it matters", detail.why_it_matters],
-      ["Watch next", detail.watch_next],
-    ]));
-
-    const controls = el("div", "review-controls");
-    const decisionLabel = el("label", "", "Owner decision");
-    const decision = decisionControl(defaultDecision);
-    decision.className = "decision-input";
-    decisionLabel.appendChild(decision);
-
-    const priorityLabel = el("label", "", "Priority");
-    const priority = priorityControl("medium");
-    priority.className = "priority-input";
-    priorityLabel.appendChild(priority);
-
-    const commentLabel = el("label", "", "Owner comment");
-    const comment = document.createElement("textarea");
-    comment.className = "comment-input";
-    comment.placeholder = "Why this decision?";
-    comment.rows = 3;
-    commentLabel.appendChild(comment);
-
-    const followLabel = el("label", "checkbox-label", "Follow-up required");
-    const follow = document.createElement("input");
-    follow.className = "follow-input";
-    follow.type = "checkbox";
-    followLabel.prepend(follow);
-
-    const noteLabel = el("label", "", "Follow-up note");
-    const note = document.createElement("input");
-    note.className = "follow-note-input";
-    note.type = "text";
-    note.placeholder = "What should happen next?";
-    noteLabel.appendChild(note);
-
-    controls.append(decisionLabel, priorityLabel, commentLabel, followLabel, noteLabel);
-    card.appendChild(controls);
-    target.appendChild(card);
-  });
+  const attentionTarget = document.getElementById("needs-owner-attention");
+  const autoTarget = document.getElementById("auto-handled");
+  clear(attentionTarget);
+  clear(autoTarget);
+  state.ownerDecisionDefaults.clear();
+  const records = allQueueDetails(brief);
+  const attention = records.filter(isOwnerAttention);
+  const autoHandled = records.filter((record) => !isOwnerAttention(record) && !isBlockedLowValue(record));
+  if (!attention.length) attentionTarget.appendChild(el("p", "muted", "No Signals require Owner attention."));
+  if (!autoHandled.length) autoTarget.appendChild(el("p", "muted", "No auto-handled Signals outside blocked summaries."));
+  attention.forEach((detail, index) => attentionTarget.appendChild(compactSignalCard(detail, index)));
+  autoHandled.forEach((detail, index) => autoTarget.appendChild(compactSignalCard(detail, index)));
   wireReviewProgressHandlers();
-  updateReviewProgress();
+  updateWorkflowStatus();
 }
 
 function renderBrief(brief, sourceName) {
@@ -396,13 +467,14 @@ function renderBrief(brief, sourceName) {
   state.sourceName = sourceName || state.sourceName;
   document.getElementById("overall-recommendation").textContent =
     brief.overall_recommendation || "Review Signals internally. Do not publish yet.";
-  renderScoreCards(brief);
+  renderWorkSummary(brief);
   renderTopSignal(brief);
   renderReviewQueue(brief);
   renderBlocked(brief);
   renderMetadata(brief);
   setStatus(`Loaded ${state.sourceName}`);
   document.getElementById("generate-feedback-top").disabled = false;
+  updateWorkflowStatus();
 }
 
 async function loadFixture() {
@@ -425,49 +497,70 @@ function loadFile(file) {
 }
 
 function feedbackRecords() {
-  return Array.from(document.querySelectorAll(".review-card")).map((card) => {
-    const signalId = card.dataset.signalId;
+  return allQueueDetails(state.brief).map((detail) => {
+    const signalId = detail.signal_id;
     const item = state.brief.owner_review_queue.find((entry) => entry.signal_id === signalId);
-    const ownerDecision = card.querySelector(".decision-input").value;
+    const card = document.querySelector(`.review-card[data-signal-id="${CSS.escape(signalId)}"]`);
+    const defaultDecision = card?.dataset.systemDefaultOwnerDecision || ownerDecisionDefault(detail);
+    const ownerDecision = card?.querySelector(".decision-input").value || defaultDecision;
+    const ownerOverridden = ownerDecision !== defaultDecision;
     return {
       signal_id: signalId,
-      title: item.title,
-      original_tier: item.tier,
-      original_recommended_action: item.action,
+      title: item.title || detail.title,
+      auto_decision: autoDecisionValue(detail),
+      system_default_owner_decision: defaultDecision,
+      selected_owner_decision: ownerDecision,
+      owner_overridden: ownerOverridden,
+      original_tier: item.tier || detail.tier || detail.quality_tier,
+      original_recommended_action: item.action || detail.recommended_action,
       owner_decision: ownerDecision,
-      owner_comment: card.querySelector(".comment-input").value,
-      priority: card.querySelector(".priority-input").value,
-      follow_up_required: card.querySelector(".follow-input").checked,
-      follow_up_note: card.querySelector(".follow-note-input").value,
+      owner_comment: card?.querySelector(".comment-input").value || "",
+      priority: card?.querySelector(".priority-input").value || "low",
+      follow_up_required: card?.querySelector(".follow-input").checked || false,
+      follow_up_note: card?.querySelector(".follow-note-input").value || "",
       resulting_status: RESULTING_STATUS_BY_DECISION[ownerDecision],
       next_action: NEXT_ACTION_BY_DECISION[ownerDecision],
       owner_override_allowed: true,
+      publish_readiness_candidate: Boolean(detail.publish_readiness_candidate),
       publication_approved: false,
     };
   });
 }
 
-function updateReviewProgress() {
+function updateWorkflowStatus() {
   const cards = Array.from(document.querySelectorAll(".review-card"));
-  const reviewed = cards.filter((card) => card.dataset.ownerConfirmed === "true").length;
-  const total = cards.length;
-  const pending = Math.max(total - reviewed, 0);
-  const progress = document.getElementById("review-progress");
+  const overridden = cards.filter((card) => card.dataset.ownerOverridden === "true").length;
+  const total = state.brief ? allQueueDetails(state.brief).length : cards.length;
+  const systemDecided = total;
+  const ownerAttention = state.brief ? workCounts(state.brief).ownerAttention : 0;
+  const progress = document.getElementById("workflow-status");
   progress.innerHTML = "";
   progress.append(
-    el("span", "", `Reviewed: ${reviewed}`),
-    el("span", "", `Pending: ${pending}`),
-    el("span", "", `Total: ${total}`),
+    el("span", "", `System-decided: ${systemDecided}`),
+    el("span", "", `Owner-overridden: ${overridden}`),
+    el("span", "", `Needs Owner attention: ${ownerAttention}`),
+    el("span", "", `Total Signals: ${total}`),
   );
+  const exportSummary = document.getElementById("export-action-summary");
+  exportSummary.innerHTML = "";
+  exportSummary.append(
+    el("span", "", `System-decided: ${systemDecided}`),
+    el("span", "", `Owner-overridden: ${overridden}`),
+    el("span", "", `Needs Owner attention: ${ownerAttention}`),
+  );
+  if (state.brief) renderWorkSummary(state.brief);
 }
 
 function markOwnerConfirmed(event) {
   const card = event.target.closest(".review-card");
   if (!card) return;
-  card.dataset.ownerConfirmed = "true";
+  const decision = card.querySelector(".decision-input").value;
+  const defaultDecision = card.dataset.systemDefaultOwnerDecision;
+  const overridden = decision !== defaultDecision;
+  card.dataset.ownerOverridden = overridden ? "true" : "false";
   const status = card.querySelector(".system-default");
-  if (status) status.textContent = "Owner decision confirmed or overridden.";
-  updateReviewProgress();
+  if (status) status.textContent = overridden ? "Owner override" : "System default decision applied. Owner can override.";
+  updateWorkflowStatus();
 }
 
 function wireReviewProgressHandlers() {
@@ -520,6 +613,7 @@ function generateFeedbackJson() {
     follow_up_required_count: records.filter((record) => record.follow_up_required).length,
     publish_readiness_enabled: false,
     publication_approved: false,
+    safety_statement: "This is not publication approval.",
     feedback_records: records,
     recommended_next_actions: recommendedNextActions(records),
     safety_flags: { ...SAFETY_FLAGS },
@@ -528,6 +622,8 @@ function generateFeedbackJson() {
   document.getElementById("feedback-output").value = state.feedbackJson;
   document.getElementById("download-feedback").disabled = false;
   document.getElementById("copy-feedback").disabled = false;
+  document.getElementById("download-feedback-sticky").disabled = false;
+  document.getElementById("copy-feedback-sticky").disabled = false;
   setExportStatus("Feedback JSON generated locally. This is not publishing approval.");
 }
 
@@ -559,8 +655,13 @@ document.getElementById("brief-file").addEventListener("change", (event) => {
 
 document.getElementById("generate-feedback").addEventListener("click", generateFeedbackJson);
 document.getElementById("generate-feedback-top").addEventListener("click", generateFeedbackJson);
+document.getElementById("generate-feedback-sticky").addEventListener("click", generateFeedbackJson);
 document.getElementById("download-feedback").addEventListener("click", downloadFeedbackJson);
+document.getElementById("download-feedback-sticky").addEventListener("click", downloadFeedbackJson);
 document.getElementById("copy-feedback").addEventListener("click", () => {
+  copyFeedbackJson().catch(() => setExportStatus("Copy failed. Select the JSON text and copy manually."));
+});
+document.getElementById("copy-feedback-sticky").addEventListener("click", () => {
   copyFeedbackJson().catch(() => setExportStatus("Copy failed. Select the JSON text and copy manually."));
 });
 

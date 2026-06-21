@@ -34,7 +34,7 @@
           <button id="generate-feedback-top" type="button">Generate Feedback JSON</button>
         </div>
       </div>
-      <div id="score-cards" class="score-cards" aria-label="Signal tier summary"></div>
+      <div id="work-summary" class="work-summary" aria-label="Owner Work Summary"></div>
     </section>
 
     <section class="product-grid">
@@ -76,14 +76,22 @@
           <h2 id="queue-heading">Owner Decision Queue</h2>
           <p>System default decisions reduce manual review. The Owner can override any Signal. Approval here means later review only, not publishing permission.</p>
         </div>
-        <div id="review-progress" class="review-progress" aria-label="Review progress">
-          <span>Reviewed: 0</span>
-          <span>Pending: 0</span>
-          <span>Total: 0</span>
+        <div id="workflow-status" class="review-progress" aria-label="Workflow status">
+          <span>System-decided: 0</span>
+          <span>Owner-overridden: 0</span>
+          <span>Needs Owner attention: 0</span>
+          <span>Total Signals: 0</span>
         </div>
         <button id="generate-feedback" type="button">Generate Feedback JSON</button>
       </div>
-      <div id="owner-review-queue" class="review-list"></div>
+      <section class="queue-group" aria-labelledby="needs-owner-attention-heading">
+        <h3 id="needs-owner-attention-heading">Needs Owner Attention</h3>
+        <div id="needs-owner-attention" class="review-list"></div>
+      </section>
+      <section class="queue-group" aria-labelledby="auto-handled-heading">
+        <h3 id="auto-handled-heading">Auto-handled</h3>
+        <div id="auto-handled" class="review-list"></div>
+      </section>
     </section>
 
     <section class="panel" aria-labelledby="blocked-heading">
@@ -95,6 +103,17 @@
       </div>
       <div id="blocked-low-value" class="compact-list"></div>
     </section>
+
+    <aside class="export-action-bar" aria-label="Feedback export actions">
+      <div id="export-action-summary" class="export-action-summary">
+        <span>System-decided: 0</span>
+        <span>Owner-overridden: 0</span>
+        <span>Needs Owner attention: 0</span>
+      </div>
+      <button id="generate-feedback-sticky" type="button">Generate Feedback JSON</button>
+      <button id="copy-feedback-sticky" type="button" disabled>Copy JSON</button>
+      <button id="download-feedback-sticky" type="button" disabled>Download JSON</button>
+    </aside>
 
     <section class="panel export-panel" aria-labelledby="export-heading">
       <div class="section-heading action-heading">
