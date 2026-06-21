@@ -444,6 +444,13 @@ This document must be read together with:
 - `docs/DYSONX_ENGINEERING_GOVERNANCE.md`
 - `docs/DYSONX_OWNER_USABILITY_GOVERNANCE.md`
 - `docs/DYSONX_AUTO_DECISION_ENGINE_V1.md`
+- `docs/DYSONX_AUTOMATION_PUBLICATION_STRATEGY_V1.md`
+
+Automation and public publication strategy is governed by:
+
+```text
+docs/DYSONX_AUTOMATION_PUBLICATION_STRATEGY_V1.md
+```
 
 ## 18. Non-Goals
 
