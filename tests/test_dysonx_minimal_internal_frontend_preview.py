@@ -13,6 +13,7 @@ FIXTURE = PREVIEW / "brief_fixture.json"
 PREVIEW_DOC = ROOT / "docs" / "DYSONX_MINIMAL_INTERNAL_FRONTEND_PREVIEW_V1.md"
 LAUNCH_PLAN = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_LAUNCH_PLAN.md"
 WORKFLOW_COMPRESSION_DOC = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_WORKFLOW_COMPRESSION_V2.md"
+REVIEW_SESSION_DOC = ROOT / "docs" / "DYSONX_REVIEW_SESSION_SAVE_V1.md"
 
 
 class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
@@ -304,6 +305,135 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertIn("const ownerDecision = card?.querySelector(\".decision-input\").value || defaultDecision", app)
         self.assertIn("owner_overridden: ownerOverridden", app)
 
+    def test_review_session_save_ui_exists(self):
+        html = self.read_index()
+
+        for phrase in (
+            "Review Session Save",
+            "Save Review Session",
+            "Load Saved Session",
+            "Clear Saved Session",
+            "Download Session JSON",
+        ):
+            self.assertIn(phrase, html)
+        for element_id in (
+            'id="save-session"',
+            'id="load-session"',
+            'id="clear-session"',
+            'id="download-session"',
+            'id="session-status"',
+        ):
+            self.assertIn(element_id, html)
+
+    def test_review_session_uses_namespaced_local_storage_key(self):
+        app = self.read_app()
+
+        self.assertIn('const REVIEW_SESSION_STORAGE_KEY = "dysonx.ownerConsole.reviewSession.v1"', app)
+        self.assertIn("localStorage.setItem(REVIEW_SESSION_STORAGE_KEY", app)
+        self.assertIn("localStorage.getItem(REVIEW_SESSION_STORAGE_KEY", app)
+        self.assertIn("localStorage.removeItem(REVIEW_SESSION_STORAGE_KEY", app)
+
+    def test_review_session_metadata_fields_are_present(self):
+        app = self.read_app()
+
+        for field in (
+            "review_session_id",
+            "created_at",
+            "updated_at",
+            "console_version",
+            "brief_id",
+            "source_brief_title",
+            "source_fixture",
+            "total_signals",
+            "system_decided_count",
+            "owner_overridden_count",
+            "needs_owner_attention_count",
+            "saved_locally",
+            "publication_approved",
+        ):
+            self.assertIn(field, app)
+        self.assertIn('const CONSOLE_VERSION = "owner_console_review_session_save_v1"', app)
+        self.assertIn("dysonx-review-", app)
+
+    def test_review_session_persists_form_values(self):
+        app = self.read_app()
+
+        for selector in (
+            ".decision-input",
+            ".priority-input",
+            ".comment-input",
+            ".follow-input",
+            ".follow-note-input",
+        ):
+            self.assertIn(selector, app)
+        for field in (
+            "selected_owner_decision",
+            "priority",
+            "owner_comment",
+            "follow_up_required",
+            "follow_up_note",
+            "owner_overridden",
+        ):
+            self.assertIn(field, app)
+        self.assertIn("function autoSaveReviewSession()", app)
+        self.assertIn("autoSaveReviewSession();", app)
+
+    def test_review_session_restore_and_saved_status_messages_exist(self):
+        app = self.read_app()
+
+        self.assertIn("Local review session restored.", app)
+        self.assertIn("Saved locally. Last saved:", app)
+        self.assertIn("No saved local review session found.", app)
+        self.assertIn("Saved local review session cleared. System defaults restored.", app)
+
+    def test_review_session_owner_override_can_toggle_false_again(self):
+        app = self.read_app()
+
+        self.assertIn("const ownerOverridden = ownerDecision !== defaultDecision", app)
+        self.assertIn("const overridden = decision !== defaultDecision", app)
+        self.assertIn('card.dataset.ownerOverridden = overridden ? "true" : "false"', app)
+        self.assertIn('status.textContent = overridden ? "Owner override" : "System default decision applied. Owner can override."', app)
+
+    def test_feedback_json_includes_review_session_metadata_and_safety_flags(self):
+        app = self.read_app()
+
+        for field in (
+            "review_session_id",
+            "updated_at",
+            "source_brief_title",
+            "brief_id",
+            "total_signals",
+            "system_decided_count",
+            "owner_overridden_count",
+            "needs_owner_attention_count",
+            "auto_decision_is_not_publication_approval: true",
+            "owner_feedback_is_not_publication_approval: true",
+            "review_session_is_not_publication_approval: true",
+            "publication_approved: false",
+        ):
+            self.assertIn(field, app)
+
+    def test_session_json_download_and_clear_behavior_are_present(self):
+        app = self.read_app()
+
+        self.assertIn("function downloadSessionJson()", app)
+        self.assertIn("dysonx_owner_console_review_session.json", app)
+        self.assertIn("function clearSavedSession()", app)
+        self.assertIn("state.restoredSession = null", app)
+        self.assertIn("Clear Saved Session", self.read_index())
+
+    def test_saved_review_session_safety_text_is_present(self):
+        html = self.read_index()
+        doc = REVIEW_SESSION_DOC.read_text(encoding="utf-8")
+
+        self.assertIn("Saved review session is not publication approval", html)
+        self.assertIn("Owner feedback is not publication approval", html)
+        self.assertIn("No public publishing", html)
+        self.assertIn("No OpenAI call from this page", html)
+        self.assertIn("No deployment triggered by this page", html)
+        self.assertIn("saved review session does not publish", doc.lower())
+        self.assertIn("does not implement", doc)
+
     def test_safety_boundary_text_is_present(self):
         html = self.read_index()
 
@@ -325,6 +455,7 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
             + PREVIEW_DOC.read_text(encoding="utf-8")
             + LAUNCH_PLAN.read_text(encoding="utf-8")
             + WORKFLOW_COMPRESSION_DOC.read_text(encoding="utf-8")
+            + REVIEW_SESSION_DOC.read_text(encoding="utf-8")
         )
 
         self.assertIn("does not require `OPENAI_API_KEY`", combined)

@@ -16,6 +16,7 @@
     <div class="status-strip" aria-label="Safety status">
       <span>Not publish-ready</span>
       <span>No public publishing</span>
+      <span>Saved review session is not publication approval</span>
       <span>No deployment triggered by this page</span>
       <span>No OpenAI call from this page</span>
       <span>No KG writes</span>
@@ -35,6 +36,23 @@
         </div>
       </div>
       <div id="work-summary" class="work-summary" aria-label="Owner Work Summary"></div>
+    </section>
+
+    <section class="panel session-panel" aria-labelledby="session-heading">
+      <div class="section-heading action-heading">
+        <div>
+          <p class="eyebrow">Review Session Save</p>
+          <h2 id="session-heading">Review Session Save</h2>
+          <p>Save, restore, clear, or download local browser review state. A saved review session is not publication approval.</p>
+        </div>
+        <div class="button-row">
+          <button id="save-session" type="button">Save Review Session</button>
+          <button id="load-session" type="button">Load Saved Session</button>
+          <button id="clear-session" type="button">Clear Saved Session</button>
+          <button id="download-session" type="button" disabled>Download Session JSON</button>
+        </div>
+      </div>
+      <p id="session-status" class="status-text" role="status">No saved local review session loaded yet.</p>
     </section>
 
     <section class="product-grid">
@@ -58,6 +76,8 @@
         </div>
         <ul class="safety-list">
           <li>Auto Decision is not publication approval</li>
+          <li>Owner feedback is not publication approval</li>
+          <li>Saved review session is not publication approval</li>
           <li>Internal owner console only</li>
           <li>No public publishing</li>
           <li>Not publish-ready</li>
