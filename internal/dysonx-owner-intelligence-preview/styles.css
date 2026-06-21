@@ -204,6 +204,15 @@ h3 {
   font-size: 0.84rem;
 }
 
+.session-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.session-panel .button-row {
+  justify-content: flex-end;
+}
+
 .score-card {
   background: #f8fafc;
   border: 1px solid var(--line);

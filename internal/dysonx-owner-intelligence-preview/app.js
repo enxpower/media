@@ -23,6 +23,8 @@ const DECISION_OPTIONS = [
 
 const ALLOWED_DECISIONS = DECISION_OPTIONS.map((option) => option.value);
 const ALLOWED_PRIORITIES = ["high", "medium", "low"];
+const CONSOLE_VERSION = "owner_console_review_session_save_v1";
+const REVIEW_SESSION_STORAGE_KEY = "dysonx.ownerConsole.reviewSession.v1";
 
 const AUTO_DECISION_TO_OWNER_DECISION = {
   auto_reject: "reject",
@@ -90,6 +92,10 @@ const state = {
   sourceName: "internal/dysonx-owner-intelligence-preview/brief_fixture.json",
   feedbackJson: "",
   ownerDecisionDefaults: new Map(),
+  reviewSession: null,
+  sessionJson: "",
+  restoredSession: null,
+  suppressAutosave: false,
 };
 
 function text(value) {
@@ -117,6 +123,10 @@ function setStatus(message) {
 
 function setExportStatus(message) {
   document.getElementById("export-status").textContent = message;
+}
+
+function setSessionStatus(message) {
+  document.getElementById("session-status").textContent = message;
 }
 
 function requireBrief(brief) {
@@ -218,6 +228,43 @@ function workCounts(brief) {
   };
   counts.readyToExport = counts.total > 0 ? counts.total : 0;
   return counts;
+}
+
+function sessionIdFromDate(date) {
+  return `dysonx-review-${date.toISOString().replace(/[-:]/g, "").slice(0, 15)}`;
+}
+
+function briefId(brief) {
+  return `${brief.brief_version || "brief"}:${brief.created_at || "unknown"}:${brief.signals_reviewed || 0}`;
+}
+
+function sourceBriefTitle(brief) {
+  const top = topSignal(brief);
+  return top?.title || "DysonX Internal Intelligence Brief";
+}
+
+function currentSessionMetadata(now = new Date()) {
+  const createdAt = state.reviewSession?.review_session?.created_at || now.toISOString();
+  const counts = state.brief ? workCounts(state.brief) : {
+    total: 0,
+    ownerAttention: 0,
+    overridden: 0,
+  };
+  return {
+    review_session_id: state.reviewSession?.review_session?.review_session_id || sessionIdFromDate(now),
+    created_at: createdAt,
+    updated_at: now.toISOString(),
+    console_version: CONSOLE_VERSION,
+    brief_id: state.brief ? briefId(state.brief) : "no-brief-loaded",
+    source_brief_title: state.brief ? sourceBriefTitle(state.brief) : "No brief loaded",
+    source_fixture: state.sourceName,
+    total_signals: counts.total,
+    system_decided_count: counts.total,
+    owner_overridden_count: document.querySelectorAll('.review-card[data-owner-overridden="true"]').length,
+    needs_owner_attention_count: counts.ownerAttention,
+    saved_locally: false,
+    publication_approved: false,
+  };
 }
 
 function compactList(values) {
@@ -474,6 +521,7 @@ function renderBrief(brief, sourceName) {
   renderMetadata(brief);
   setStatus(`Loaded ${state.sourceName}`);
   document.getElementById("generate-feedback-top").disabled = false;
+  restoreSessionIfAvailable();
   updateWorkflowStatus();
 }
 
@@ -527,6 +575,167 @@ function feedbackRecords() {
   });
 }
 
+function formStateRecords() {
+  return allQueueDetails(state.brief).map((detail) => {
+    const signalId = detail.signal_id;
+    const card = document.querySelector(`.review-card[data-signal-id="${CSS.escape(signalId)}"]`);
+    const defaultDecision = card?.dataset.systemDefaultOwnerDecision || ownerDecisionDefault(detail);
+    const selectedDecision = card?.querySelector(".decision-input").value || defaultDecision;
+    return {
+      signal_id: signalId,
+      system_default_owner_decision: defaultDecision,
+      selected_owner_decision: selectedDecision,
+      owner_overridden: selectedDecision !== defaultDecision,
+      priority: card?.querySelector(".priority-input").value || "low",
+      owner_comment: card?.querySelector(".comment-input").value || "",
+      follow_up_required: card?.querySelector(".follow-input").checked || false,
+      follow_up_note: card?.querySelector(".follow-note-input").value || "",
+      publication_approved: false,
+      publish_readiness_candidate: Boolean(detail.publish_readiness_candidate),
+    };
+  });
+}
+
+function buildReviewSession(savedLocally, now = new Date()) {
+  const metadata = currentSessionMetadata(now);
+  metadata.saved_locally = Boolean(savedLocally);
+  const records = formStateRecords();
+  return {
+    review_session_version: "review_session_save_v1",
+    review_session: metadata,
+    last_saved_at: metadata.updated_at,
+    source_brief: state.sourceName,
+    records,
+    generated_feedback_json: state.feedbackJson || "",
+    safety_statement: "Saved review session is not publication approval.",
+    auto_decision_is_not_publication_approval: true,
+    owner_feedback_is_not_publication_approval: true,
+    review_session_is_not_publication_approval: true,
+    publication_approved: false,
+  };
+}
+
+function applySession(session) {
+  if (!session || !Array.isArray(session.records)) return false;
+  state.suppressAutosave = true;
+  session.records.forEach((record) => {
+    const card = document.querySelector(`.review-card[data-signal-id="${CSS.escape(record.signal_id)}"]`);
+    if (!card) return;
+    const defaultDecision = card.dataset.systemDefaultOwnerDecision;
+    const decision = card.querySelector(".decision-input");
+    const priority = card.querySelector(".priority-input");
+    const comment = card.querySelector(".comment-input");
+    const follow = card.querySelector(".follow-input");
+    const note = card.querySelector(".follow-note-input");
+    if (decision && ALLOWED_DECISIONS.includes(record.selected_owner_decision)) {
+      decision.value = record.selected_owner_decision;
+    }
+    if (priority && ALLOWED_PRIORITIES.includes(record.priority)) priority.value = record.priority;
+    if (comment) comment.value = record.owner_comment || "";
+    if (follow) follow.checked = Boolean(record.follow_up_required);
+    if (note) note.value = record.follow_up_note || "";
+    const selected = decision?.value || defaultDecision;
+    const overridden = selected !== defaultDecision;
+    card.dataset.ownerOverridden = overridden ? "true" : "false";
+    const status = card.querySelector(".system-default");
+    if (status) status.textContent = overridden ? "Owner override" : "System default decision applied. Owner can override.";
+  });
+  if (session.generated_feedback_json) {
+    state.feedbackJson = session.generated_feedback_json;
+    document.getElementById("feedback-output").value = state.feedbackJson;
+    setFeedbackButtonsEnabled(true);
+  }
+  state.suppressAutosave = false;
+  updateWorkflowStatus();
+  return true;
+}
+
+function loadStoredSession() {
+  try {
+    const raw = localStorage.getItem(REVIEW_SESSION_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveReviewSession(showMessage = true) {
+  if (!state.brief) return null;
+  const session = buildReviewSession(true);
+  localStorage.setItem(REVIEW_SESSION_STORAGE_KEY, JSON.stringify(session));
+  state.reviewSession = session;
+  state.sessionJson = JSON.stringify(session, null, 2);
+  document.getElementById("download-session").disabled = false;
+  if (showMessage) setSessionStatus(`Saved locally. Last saved: ${session.last_saved_at}`);
+  return session;
+}
+
+function autoSaveReviewSession() {
+  if (state.suppressAutosave || !state.brief) return;
+  const session = saveReviewSession(false);
+  if (session) setSessionStatus(`Saved locally. Last saved: ${session.last_saved_at}`);
+}
+
+function restoreSessionIfAvailable() {
+  const stored = state.restoredSession || loadStoredSession();
+  if (!stored) return;
+  if (applySession(stored)) {
+    state.reviewSession = stored;
+    state.sessionJson = JSON.stringify(stored, null, 2);
+    document.getElementById("download-session").disabled = false;
+    setSessionStatus(`Local review session restored. Last saved: ${stored.last_saved_at || stored.review_session?.updated_at || "unknown"}`);
+  }
+}
+
+function loadSavedSession() {
+  const stored = loadStoredSession();
+  if (!stored) {
+    setSessionStatus("No saved local review session found.");
+    return;
+  }
+  state.restoredSession = stored;
+  if (state.brief && applySession(stored)) {
+    state.reviewSession = stored;
+    state.sessionJson = JSON.stringify(stored, null, 2);
+    document.getElementById("download-session").disabled = false;
+    setSessionStatus(`Local review session restored. Last saved: ${stored.last_saved_at || stored.review_session?.updated_at || "unknown"}`);
+  }
+}
+
+function clearSavedSession() {
+  localStorage.removeItem(REVIEW_SESSION_STORAGE_KEY);
+  state.reviewSession = null;
+  state.sessionJson = "";
+  state.restoredSession = null;
+  state.feedbackJson = "";
+  document.getElementById("feedback-output").value = "";
+  setFeedbackButtonsEnabled(false);
+  document.getElementById("download-session").disabled = true;
+  if (state.brief) renderBrief(state.brief, state.sourceName);
+  setSessionStatus("Saved local review session cleared. System defaults restored.");
+}
+
+function downloadSessionJson() {
+  if (!state.sessionJson) {
+    const session = saveReviewSession(false);
+    if (!session) return;
+  }
+  const blob = new Blob([`${state.sessionJson}\n`], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "dysonx_owner_console_review_session.json";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function setFeedbackButtonsEnabled(enabled) {
+  document.getElementById("download-feedback").disabled = !enabled;
+  document.getElementById("copy-feedback").disabled = !enabled;
+  document.getElementById("download-feedback-sticky").disabled = !enabled;
+  document.getElementById("copy-feedback-sticky").disabled = !enabled;
+}
+
 function updateWorkflowStatus() {
   const cards = Array.from(document.querySelectorAll(".review-card"));
   const overridden = cards.filter((card) => card.dataset.ownerOverridden === "true").length;
@@ -561,6 +770,7 @@ function markOwnerConfirmed(event) {
   const status = card.querySelector(".system-default");
   if (status) status.textContent = overridden ? "Owner override" : "System default decision applied. Owner can override.";
   updateWorkflowStatus();
+  autoSaveReviewSession();
 }
 
 function wireReviewProgressHandlers() {
@@ -599,31 +809,42 @@ function generateFeedbackJson() {
   }
   const now = new Date().toISOString();
   const records = feedbackRecords();
+  const session = saveReviewSession(false) || buildReviewSession(false, new Date(now));
+  const metadata = session.review_session;
   const report = {
     feedback_version: "owner_review_feedback_v1",
     created_at: now,
+    updated_at: now,
     reviewer: "Owner",
-    review_session_id: `owner-console-${now}`,
+    review_session_id: metadata.review_session_id,
     reviewed_at: now,
     source_brief: state.sourceName,
+    source_brief_title: metadata.source_brief_title,
+    brief_id: metadata.brief_id,
     brief_version: state.brief.brief_version,
     signals_reviewed: state.brief.signals_reviewed,
+    total_signals: metadata.total_signals,
+    system_decided_count: metadata.system_decided_count,
+    owner_overridden_count: metadata.owner_overridden_count,
+    needs_owner_attention_count: metadata.needs_owner_attention_count,
     decisions_recorded: records.length,
     decision_counts: decisionCounts(records),
     follow_up_required_count: records.filter((record) => record.follow_up_required).length,
     publish_readiness_enabled: false,
     publication_approved: false,
     safety_statement: "This is not publication approval.",
+    auto_decision_is_not_publication_approval: true,
+    owner_feedback_is_not_publication_approval: true,
+    review_session_is_not_publication_approval: true,
+    records,
     feedback_records: records,
     recommended_next_actions: recommendedNextActions(records),
     safety_flags: { ...SAFETY_FLAGS },
   };
   state.feedbackJson = JSON.stringify(report, null, 2);
   document.getElementById("feedback-output").value = state.feedbackJson;
-  document.getElementById("download-feedback").disabled = false;
-  document.getElementById("copy-feedback").disabled = false;
-  document.getElementById("download-feedback-sticky").disabled = false;
-  document.getElementById("copy-feedback-sticky").disabled = false;
+  setFeedbackButtonsEnabled(true);
+  saveReviewSession(false);
   setExportStatus("Feedback JSON generated locally. This is not publishing approval.");
 }
 
@@ -656,6 +877,10 @@ document.getElementById("brief-file").addEventListener("change", (event) => {
 document.getElementById("generate-feedback").addEventListener("click", generateFeedbackJson);
 document.getElementById("generate-feedback-top").addEventListener("click", generateFeedbackJson);
 document.getElementById("generate-feedback-sticky").addEventListener("click", generateFeedbackJson);
+document.getElementById("save-session").addEventListener("click", () => saveReviewSession(true));
+document.getElementById("load-session").addEventListener("click", loadSavedSession);
+document.getElementById("clear-session").addEventListener("click", clearSavedSession);
+document.getElementById("download-session").addEventListener("click", downloadSessionJson);
 document.getElementById("download-feedback").addEventListener("click", downloadFeedbackJson);
 document.getElementById("download-feedback-sticky").addEventListener("click", downloadFeedbackJson);
 document.getElementById("copy-feedback").addEventListener("click", () => {
