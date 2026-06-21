@@ -24,6 +24,31 @@ const DECISION_OPTIONS = [
 const ALLOWED_DECISIONS = DECISION_OPTIONS.map((option) => option.value);
 const ALLOWED_PRIORITIES = ["high", "medium", "low"];
 
+const AUTO_DECISION_TO_OWNER_DECISION = {
+  auto_reject: "reject",
+  needs_more_sources: "request_more_sources",
+  needs_regeneration: "request_regeneration",
+  hold: "hold",
+  candidate_for_publish_readiness_review: "approve_for_future_publish_readiness_review",
+};
+
+const HUMAN_ACTION_LABELS = {
+  candidate_for_human_approval: "Review for later readiness",
+  candidate_for_publish_readiness_review: "Candidate for later readiness review",
+  needs_human_review: "Needs human review",
+  improve_or_regenerate: "Regenerate analysis",
+  blocked_by_quality_risk: "Reject / blocked",
+  reject_or_regenerate: "Reject or regenerate",
+  auto_reject: "Reject automatically",
+  needs_more_sources: "Need more sources",
+  needs_regeneration: "Regenerate analysis",
+  hold: "Hold",
+  request_more_sources: "Need more sources",
+  request_regeneration: "Regenerate analysis",
+  reject: "Reject",
+  approve_for_future_publish_readiness_review: "Approve for later review",
+};
+
 const RESULTING_STATUS_BY_DECISION = {
   approve_for_future_publish_readiness_review: "owner_approved_for_later_publish_readiness_review_only",
   request_more_sources: "needs_more_sources",
@@ -44,6 +69,7 @@ const SAFETY_FLAGS = {
   openai_call_performed: false,
   workflow_dispatched: false,
   publishing_performed: false,
+  publication_approved: false,
   publish_readiness_enabled: false,
   public_content_generated: false,
   website_pages_written: false,
@@ -137,6 +163,24 @@ function riskSummary(record) {
   return text(record.risk_summary) || (risks(record).length ? risks(record).join(", ") : "No critical risk flags.");
 }
 
+function humanAction(value) {
+  const key = text(value);
+  return HUMAN_ACTION_LABELS[key] || key || "Hold";
+}
+
+function autoDecisionValue(record) {
+  const value = text(record.auto_decision);
+  return AUTO_DECISION_TO_OWNER_DECISION[value] ? value : "hold";
+}
+
+function autoDecisionLabel(record) {
+  return text(record.decision_label) || humanAction(autoDecisionValue(record));
+}
+
+function ownerDecisionDefault(record) {
+  return AUTO_DECISION_TO_OWNER_DECISION[autoDecisionValue(record)] || "hold";
+}
+
 function compactList(values) {
   const filtered = arrayValue(values);
   return filtered.length ? filtered.join(", ") : "none";
@@ -228,7 +272,7 @@ function renderTopSignal(brief) {
     ["Why it matters", signal.why_it_matters],
     ["Watch next", signal.watch_next],
     ["Risk summary", riskSummary(signal), risks(signal).length ? "risk" : ""],
-    ["Recommended owner action", signal.recommended_action],
+    ["Recommended owner action", humanAction(signal.auto_decision || signal.recommended_action)],
   ]));
 }
 
@@ -245,9 +289,10 @@ function renderBlocked(brief) {
     card.appendChild(el("h3", "", record.title || "(untitled signal)"));
     card.appendChild(fieldList([
       ["Tier", tierLabel(record.quality_tier || record.tier)],
+      ["Auto Decision", autoDecisionLabel(record)],
       ["Reason", riskSummary(record), risks(record).length ? "risk" : ""],
       ["Missing fields", compactList(record.missing_fields)],
-      ["Recommended action", record.recommended_action],
+      ["Recommended action", humanAction(record.auto_decision || record.recommended_action)],
     ]));
     target.appendChild(card);
   });
@@ -282,29 +327,33 @@ function renderReviewQueue(brief) {
   clear(target);
   brief.owner_review_queue.forEach((item, index) => {
     const detail = recordForQueueItem(brief, item);
+    const defaultDecision = ownerDecisionDefault(detail);
     const card = el("article", "review-card");
     card.dataset.signalId = item.signal_id;
+    card.dataset.ownerConfirmed = "false";
     card.appendChild(el("div", "queue-rank", `#${index + 1}`));
     card.appendChild(el("h3", "", item.title || "(untitled signal)"));
     card.appendChild(el("p", "takeaway", detail.executive_takeaway || "No executive takeaway provided."));
+    card.appendChild(el("p", "system-default", "System default decision applied. Owner can override."));
     card.appendChild(fieldList([
       ["Signal ID", item.signal_id],
-      ["Tier", tierLabel(item.tier || detail.quality_tier)],
+      ["Auto Decision", autoDecisionLabel(detail)],
       ["Score", scoreText(detail)],
-      ["Recommended action", item.action || detail.recommended_action],
+      ["Tier", tierLabel(item.tier || detail.quality_tier)],
+      ["Risk summary", riskSummary(detail), risks(detail).length ? "risk" : ""],
+      ["Missing fields", compactList(detail.missing_fields)],
+      ["Recommended action", humanAction(detail.auto_decision || item.action || detail.recommended_action)],
       ["Source", detail.source_url],
       ["Source authority", detail.source_authority],
       ["AGI capability", detail.agi_capability],
       ["Entities", compactList(detail.entities)],
       ["Why it matters", detail.why_it_matters],
       ["Watch next", detail.watch_next],
-      ["Risk summary", riskSummary(detail), risks(detail).length ? "risk" : ""],
-      ["Missing fields", compactList(detail.missing_fields)],
     ]));
 
     const controls = el("div", "review-controls");
     const decisionLabel = el("label", "", "Owner decision");
-    const decision = decisionControl("hold");
+    const decision = decisionControl(defaultDecision);
     decision.className = "decision-input";
     decisionLabel.appendChild(decision);
 
@@ -337,6 +386,8 @@ function renderReviewQueue(brief) {
     card.appendChild(controls);
     target.appendChild(card);
   });
+  wireReviewProgressHandlers();
+  updateReviewProgress();
 }
 
 function renderBrief(brief, sourceName) {
@@ -351,6 +402,7 @@ function renderBrief(brief, sourceName) {
   renderBlocked(brief);
   renderMetadata(brief);
   setStatus(`Loaded ${state.sourceName}`);
+  document.getElementById("generate-feedback-top").disabled = false;
 }
 
 async function loadFixture() {
@@ -389,7 +441,39 @@ function feedbackRecords() {
       follow_up_note: card.querySelector(".follow-note-input").value,
       resulting_status: RESULTING_STATUS_BY_DECISION[ownerDecision],
       next_action: NEXT_ACTION_BY_DECISION[ownerDecision],
+      owner_override_allowed: true,
+      publication_approved: false,
     };
+  });
+}
+
+function updateReviewProgress() {
+  const cards = Array.from(document.querySelectorAll(".review-card"));
+  const reviewed = cards.filter((card) => card.dataset.ownerConfirmed === "true").length;
+  const total = cards.length;
+  const pending = Math.max(total - reviewed, 0);
+  const progress = document.getElementById("review-progress");
+  progress.innerHTML = "";
+  progress.append(
+    el("span", "", `Reviewed: ${reviewed}`),
+    el("span", "", `Pending: ${pending}`),
+    el("span", "", `Total: ${total}`),
+  );
+}
+
+function markOwnerConfirmed(event) {
+  const card = event.target.closest(".review-card");
+  if (!card) return;
+  card.dataset.ownerConfirmed = "true";
+  const status = card.querySelector(".system-default");
+  if (status) status.textContent = "Owner decision confirmed or overridden.";
+  updateReviewProgress();
+}
+
+function wireReviewProgressHandlers() {
+  document.querySelectorAll(".review-card select, .review-card textarea, .review-card input").forEach((input) => {
+    input.addEventListener("change", markOwnerConfirmed);
+    input.addEventListener("input", markOwnerConfirmed);
   });
 }
 
@@ -434,6 +518,8 @@ function generateFeedbackJson() {
     decisions_recorded: records.length,
     decision_counts: decisionCounts(records),
     follow_up_required_count: records.filter((record) => record.follow_up_required).length,
+    publish_readiness_enabled: false,
+    publication_approved: false,
     feedback_records: records,
     recommended_next_actions: recommendedNextActions(records),
     safety_flags: { ...SAFETY_FLAGS },
@@ -472,6 +558,7 @@ document.getElementById("brief-file").addEventListener("change", (event) => {
 });
 
 document.getElementById("generate-feedback").addEventListener("click", generateFeedbackJson);
+document.getElementById("generate-feedback-top").addEventListener("click", generateFeedbackJson);
 document.getElementById("download-feedback").addEventListener("click", downloadFeedbackJson);
 document.getElementById("copy-feedback").addEventListener("click", () => {
   copyFeedbackJson().catch(() => setExportStatus("Copy failed. Select the JSON text and copy manually."));

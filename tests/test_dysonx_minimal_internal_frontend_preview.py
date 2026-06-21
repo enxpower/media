@@ -101,6 +101,69 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         match = re.search(r"const ALLOWED_DECISIONS = DECISION_OPTIONS\.map", app)
         self.assertIsNotNone(match)
 
+    def test_console_displays_auto_decision(self):
+        html = self.read_index()
+        app = self.read_app()
+        fixture = self.load_fixture()
+
+        self.assertIn("Auto Decision", app)
+        self.assertIn("auto_decision", app)
+        self.assertIn("Auto Decision is not publication approval", html)
+        for record in (
+            fixture["decision_grade_candidates"]
+            + fixture["useful_review_queue"]
+            + fixture["blocked_or_low_value"]
+        ):
+            self.assertIn("auto_decision", record)
+            self.assertIn("decision_label", record)
+
+    def test_console_defaults_controls_from_auto_decision(self):
+        app = self.read_app()
+
+        expected = {
+            "auto_reject": "reject",
+            "needs_more_sources": "request_more_sources",
+            "needs_regeneration": "request_regeneration",
+            "hold": "hold",
+            "candidate_for_publish_readiness_review": "approve_for_future_publish_readiness_review",
+        }
+        for auto_decision, owner_decision in expected.items():
+            self.assertIn(f"{auto_decision}: \"{owner_decision}\"", app)
+        self.assertIn("ownerDecisionDefault(detail)", app)
+
+    def test_console_uses_human_readable_action_labels(self):
+        app = self.read_app()
+
+        for label in (
+            "Review for later readiness",
+            "Candidate for later readiness review",
+            "Needs human review",
+            "Regenerate analysis",
+            "Reject / blocked",
+            "Reject automatically",
+            "Need more sources",
+            "Hold",
+        ):
+            self.assertIn(label, app)
+        self.assertIn("humanAction(detail.auto_decision || item.action || detail.recommended_action)", app)
+
+    def test_console_shows_reviewed_pending_total_status(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertIn('id="review-progress"', html)
+        self.assertIn("Reviewed:", app)
+        self.assertIn("Pending:", app)
+        self.assertIn("Total:", app)
+        self.assertIn('card.dataset.ownerConfirmed = "false"', app)
+        self.assertIn("System default decision applied. Owner can override.", app)
+
+    def test_feedback_action_is_prominent_near_workflow(self):
+        html = self.read_index()
+
+        self.assertIn('id="generate-feedback-top"', html)
+        self.assertIn("Review decisions", html)
+
     def test_owner_decision_queue_cards_include_score_values(self):
         app = self.read_app()
 
@@ -108,6 +171,23 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         end = app.index("function renderBrief(brief, sourceName)")
         queue_renderer = app[start:end]
         self.assertIn('["Score", scoreText(detail)]', queue_renderer)
+
+    def test_owner_decision_queue_keeps_context_fields_visible(self):
+        app = self.read_app()
+
+        start = app.index("function renderReviewQueue(brief)")
+        end = app.index("function renderBrief(brief, sourceName)")
+        queue_renderer = app[start:end]
+        for field in (
+            '["Auto Decision", autoDecisionLabel(detail)]',
+            '["Score", scoreText(detail)]',
+            '["Tier", tierLabel(item.tier || detail.quality_tier)]',
+            '["Risk summary", riskSummary(detail), risks(detail).length ? "risk" : ""]',
+            '["Missing fields", compactList(detail.missing_fields)]',
+            '["Why it matters", detail.why_it_matters]',
+            '["Watch next", detail.watch_next]',
+        ):
+            self.assertIn(field, queue_renderer)
 
     def test_priority_values_are_limited_to_allowed_values(self):
         app = self.read_app()
@@ -162,8 +242,16 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertIn("owner_approved_for_later_publish_readiness_review_only", app)
         self.assertIn("later_publish_readiness_review_required", app)
         self.assertIn("publish_readiness_enabled: false", app)
+        self.assertIn("publication_approved: false", app)
         self.assertIn("Do not publish yet.", app)
         self.assertIn("This is not publishing approval.", app)
+
+    def test_owner_override_remains_possible(self):
+        app = self.read_app()
+
+        self.assertIn("Owner can override", app)
+        self.assertIn("owner_override_allowed: true", app)
+        self.assertIn("markOwnerConfirmed", app)
 
     def test_safety_boundary_text_is_present(self):
         html = self.read_index()
