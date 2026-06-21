@@ -23,7 +23,8 @@ const DECISION_OPTIONS = [
 
 const ALLOWED_DECISIONS = DECISION_OPTIONS.map((option) => option.value);
 const ALLOWED_PRIORITIES = ["high", "medium", "low"];
-const CONSOLE_VERSION = "owner_console_review_session_save_v1";
+const CONSOLE_VERSION = "owner_console_single_active_action_v1";
+const SINGLE_ACTIVE_ACTION_WORKFLOW_VERSION = "v1";
 const REVIEW_SESSION_STORAGE_KEY = "dysonx.ownerConsole.reviewSession.v1";
 
 const WORKFLOW_STEPS = [
@@ -136,6 +137,11 @@ function defaultGuidedWorkflowState() {
     session_saved: false,
     feedback_generated: false,
     outputs_ready: false,
+    active_attention_index: 0,
+    override_mode_for_active_item: false,
+    output_downloaded: false,
+    output_step_complete: false,
+    active_primary_action: "accept_active_attention",
   };
 }
 
@@ -308,6 +314,18 @@ function firstIncompleteAttentionId() {
   return attentionRecords().find((record) => state.guidedWorkflow.attention_item_statuses[record.signal_id] !== "done")?.signal_id || null;
 }
 
+function activeAttentionRecord() {
+  const activeId = firstIncompleteAttentionId();
+  return attentionRecords().find((record) => record.signal_id === activeId) || null;
+}
+
+function activeAttentionIndex() {
+  const records = attentionRecords();
+  const active = activeAttentionRecord();
+  const index = active ? records.findIndex((record) => record.signal_id === active.signal_id) : -1;
+  return Math.max(0, index);
+}
+
 function attentionComplete() {
   return attentionRecords().every((record) => state.guidedWorkflow.attention_item_statuses[record.signal_id] === "done");
 }
@@ -319,6 +337,8 @@ function reviewPrerequisitesComplete() {
 function reconcileGuidedWorkflow() {
   if (!state.brief) return;
   const firstIncomplete = firstIncompleteAttentionId();
+  const activeRecord = activeAttentionRecord();
+  state.guidedWorkflow.active_attention_index = activeAttentionIndex();
   attentionRecords().forEach((record) => {
     if (state.guidedWorkflow.attention_item_statuses[record.signal_id] === "done") return;
     state.guidedWorkflow.attention_item_statuses[record.signal_id] = record.signal_id === firstIncomplete ? "active" : "next";
@@ -327,12 +347,16 @@ function reconcileGuidedWorkflow() {
   setCompleted("confirm_auto_handled", Boolean(state.guidedWorkflow.auto_handled_confirmed));
   setCompleted("save_session", Boolean(state.guidedWorkflow.session_saved));
   setCompleted("generate_feedback", Boolean(state.guidedWorkflow.feedback_generated));
-  setCompleted("download_copy", Boolean(state.guidedWorkflow.outputs_ready));
+  setCompleted("download_copy", Boolean(state.guidedWorkflow.output_step_complete || state.guidedWorkflow.outputs_ready));
   if (!completedSteps().has("review_attention_items")) state.guidedWorkflow.active_step = "review_attention_items";
   else if (!completedSteps().has("confirm_auto_handled")) state.guidedWorkflow.active_step = "confirm_auto_handled";
   else if (!completedSteps().has("save_session")) state.guidedWorkflow.active_step = "save_session";
   else if (!completedSteps().has("generate_feedback")) state.guidedWorkflow.active_step = "generate_feedback";
   else state.guidedWorkflow.active_step = "download_copy";
+  if (state.guidedWorkflow.active_step !== "review_attention_items" || !activeRecord) {
+    state.guidedWorkflow.override_mode_for_active_item = false;
+  }
+  state.guidedWorkflow.active_primary_action = activePrimaryAction();
 }
 
 function workflowStepState(stepId) {
@@ -351,6 +375,103 @@ function currentActionText() {
   if (step?.id === "generate_feedback") return "Generate Owner Feedback JSON.";
   if (step?.id === "download_copy") return "Download or copy outputs.";
   return step?.action || "Review the highlighted Signal.";
+}
+
+function activeTaskModel() {
+  if (!state.brief) {
+    return {
+      step: "Step 1 of 5",
+      title: "Load review brief",
+      instruction: "Load the local fixture to begin the internal review workflow.",
+      progress: "No brief loaded",
+      primary: "Load fixture",
+      primaryAction: "load_fixture",
+      secondary: "",
+      secondaryAction: "",
+    };
+  }
+  const step = state.guidedWorkflow.active_step;
+  const attention = attentionRecords();
+  const active = activeAttentionRecord();
+  if (step === "review_attention_items") {
+    const index = activeAttentionIndex();
+    const overrideMode = Boolean(state.guidedWorkflow.override_mode_for_active_item);
+    return {
+      step: "Step 1 of 5",
+      title: `Review attention item ${Math.min(index + 1, attention.length)} of ${attention.length}`,
+      instruction: overrideMode
+        ? "Choose the Owner decision, then mark this Signal done."
+        : "Accept the system decision or override it, then mark this item done.",
+      progress: active ? active.title : "All attention items complete",
+      primary: overrideMode ? "Mark done" : "Accept system decision and mark done",
+      primaryAction: overrideMode ? "mark_active_done" : "accept_active_attention",
+      secondary: overrideMode ? "" : "Override decision",
+      secondaryAction: overrideMode ? "" : "override_active_attention",
+    };
+  }
+  if (step === "confirm_auto_handled") {
+    const count = autoHandledRecords().length;
+    return {
+      step: "Step 2 of 5",
+      title: "Confirm auto-handled Signals",
+      instruction: `These ${count} Signals already have system decisions. Accept all unless you disagree.`,
+      progress: `${count} system-decided Signals`,
+      primary: "Accept all auto-handled system decisions",
+      primaryAction: "accept_auto_handled",
+      secondary: "Review auto-handled details",
+      secondaryAction: "review_auto_handled",
+    };
+  }
+  if (step === "save_session") {
+    return {
+      step: "Step 3 of 5",
+      title: "Save review session",
+      instruction: "Save the local browser review session before generating feedback.",
+      progress: "Save unlocks Owner Feedback JSON generation.",
+      primary: "Save review session locally",
+      primaryAction: "save_session",
+      secondary: "",
+      secondaryAction: "",
+    };
+  }
+  if (step === "generate_feedback") {
+    return {
+      step: "Step 4 of 5",
+      title: "Generate Owner Feedback JSON",
+      instruction: "Generate structured internal feedback. This is not publication approval.",
+      progress: "Feedback unlocks output download and copy actions.",
+      primary: "Generate Owner Feedback JSON",
+      primaryAction: "generate_feedback",
+      secondary: "",
+      secondaryAction: "",
+    };
+  }
+  if (completedSteps().has("download_copy")) {
+    return {
+      step: "Complete",
+      title: "Internal review complete",
+      instruction: "No public publishing occurred. Outputs remain local unless downloaded or copied.",
+      progress: "Next future stage: Publish Readiness Gate V1",
+      primary: "Start new review / clear saved review",
+      primaryAction: "clear_saved_review",
+      secondary: "Download outputs again",
+      secondaryAction: "download_feedback",
+    };
+  }
+  return {
+    step: "Step 5 of 5",
+    title: "Generate and download feedback",
+    instruction: "Download Owner Feedback JSON as the final active output action.",
+    progress: "Copy and session download are secondary actions.",
+    primary: "Download Owner Feedback JSON",
+    primaryAction: "download_feedback",
+    secondary: "Copy Feedback JSON",
+    secondaryAction: "copy_feedback",
+  };
+}
+
+function activePrimaryAction() {
+  return activeTaskModel().primaryAction;
 }
 
 function guidedBadgeText(status) {
@@ -372,6 +493,11 @@ function refreshGuidedCardStates() {
       badge.className = `guided-card-status ${status}`;
       badge.textContent = guidedBadgeText(status);
     }
+    const decision = card.querySelector(".decision-input")?.value || card.dataset.systemDefaultOwnerDecision;
+    const summary = card.querySelector(".selected-decision-summary");
+    if (summary) summary.textContent = `Selected decision: ${humanAction(decision)}`;
+    const details = card.querySelector("details");
+    if (details && status !== "active") details.open = false;
   });
 }
 
@@ -424,8 +550,46 @@ function setButtonsDisabled(ids, disabled) {
   });
 }
 
+function renderActiveTask() {
+  const task = activeTaskModel();
+  state.guidedWorkflow.active_primary_action = task.primaryAction;
+  document.getElementById("active-task-step").textContent = task.step;
+  document.getElementById("active-task-title").textContent = task.title;
+  document.getElementById("active-task-instruction").textContent = task.instruction;
+  document.getElementById("active-task-progress").textContent = task.progress;
+  const primary = document.getElementById("active-primary-action");
+  primary.textContent = task.primary;
+  primary.dataset.action = task.primaryAction;
+  primary.dataset.primaryAction = "true";
+  primary.disabled = !task.primaryAction;
+  const secondary = document.getElementById("active-secondary-action");
+  secondary.hidden = !task.secondaryAction;
+  secondary.textContent = task.secondary || "";
+  secondary.dataset.action = task.secondaryAction || "";
+}
+
+function updateGateMessages() {
+  const sessionGate = document.getElementById("session-gate-message");
+  if (completedSteps().has("save_session")) {
+    sessionGate.textContent = `Saved locally — ${state.reviewSession?.last_saved_at || "timestamp pending"} — ${currentSessionMetadata().review_session_id}`;
+  } else if (state.guidedWorkflow.active_step === "save_session") {
+    sessionGate.textContent = "Save review session locally is the current active task.";
+  } else {
+    sessionGate.textContent = "Save unlocks after attention and auto-handled steps are complete.";
+  }
+  const feedbackGate = document.getElementById("feedback-gate-message");
+  if (completedSteps().has("generate_feedback")) {
+    feedbackGate.textContent = "Feedback generated. Download is now the active output task.";
+  } else if (state.guidedWorkflow.active_step === "generate_feedback") {
+    feedbackGate.textContent = "Generate Owner Feedback JSON is the current active task.";
+  } else {
+    feedbackGate.textContent = "Feedback unlocks after session save.";
+  }
+}
+
 function renderGuidedWorkflow() {
   reconcileGuidedWorkflow();
+  renderActiveTask();
   const stepper = document.getElementById("workflow-stepper");
   clear(stepper);
   WORKFLOW_STEPS.forEach((step, index) => {
@@ -446,18 +610,18 @@ function renderGuidedWorkflow() {
   banner.innerHTML = "";
   banner.append(el("strong", "", bannerLabel), el("span", "", currentActionText()));
 
-  const saveReady = state.guidedWorkflow.active_step === "save_session" || completedSteps().has("save_session");
-  const feedbackReady = completedSteps().has("save_session");
   const outputsReady = completedSteps().has("generate_feedback");
-  setButtonsDisabled(["save-session"], !saveReady);
-  setButtonsDisabled(["generate-feedback", "generate-feedback-top", "generate-feedback-sticky"], !feedbackReady);
   setButtonsDisabled(["download-session"], !completedSteps().has("save_session"));
-  setButtonsDisabled(["copy-feedback", "copy-feedback-sticky", "download-feedback", "download-feedback-sticky"], !outputsReady);
+  setButtonsDisabled(["copy-feedback", "download-feedback"], !outputsReady);
 
   const autoPanel = document.getElementById("auto-handled-confirmation");
+  const autoCount = autoHandledRecords().length;
   autoPanel.classList.toggle("active", state.guidedWorkflow.active_step === "confirm_auto_handled");
   autoPanel.classList.toggle("complete", completedSteps().has("confirm_auto_handled"));
   autoPanel.classList.toggle("locked", !completedSteps().has("review_attention_items"));
+  autoPanel.querySelector("p").textContent = completedSteps().has("confirm_auto_handled")
+    ? `✓ Auto-handled confirmed — ${autoCount} system decisions accepted.`
+    : `These ${autoCount} Signals are already system-decided. Accept all unless you disagree.`;
   document.getElementById("accept-auto-handled").disabled = !completedSteps().has("review_attention_items") || completedSteps().has("confirm_auto_handled");
 
   const metadata = currentSessionMetadata();
@@ -466,9 +630,10 @@ function renderGuidedWorkflow() {
   document.getElementById("session-last-saved").textContent = state.reviewSession?.last_saved_at || "Not saved yet";
   document.getElementById("next-required-action").textContent = currentActionText();
   document.getElementById("review-session-card").classList.toggle("active", state.guidedWorkflow.active_step === "save_session");
+  updateGateMessages();
 
   const completion = document.getElementById("completion-panel");
-  completion.hidden = !completedSteps().has("generate_feedback");
+  completion.hidden = !completedSteps().has("download_copy");
 }
 
 function fieldRow(label, value, className) {
@@ -629,6 +794,25 @@ function compactSignalCard(detail, index) {
   card.appendChild(el("div", "queue-rank", `#${index + 1}`));
   card.appendChild(el("div", `guided-card-status ${guidedStatus}`, guidedBadgeText(guidedStatus)));
   card.appendChild(el("h3", "", detail.title || "(untitled signal)"));
+  const completedSummary = el("div", "collapsed-card-summary completed-summary");
+  completedSummary.append(
+    el("strong", "", "✓ Done"),
+    el("span", "", detail.title || "(untitled signal)"),
+    el("span", "selected-decision-summary", `Selected decision: ${humanAction(defaultDecision)}`),
+  );
+  const edit = el("button", "edit-completed-card secondary-action", "Edit");
+  edit.type = "button";
+  edit.dataset.action = "edit-completed-card";
+  completedSummary.appendChild(edit);
+  card.appendChild(completedSummary);
+  const futureSummary = el("div", "collapsed-card-summary future-summary");
+  futureSummary.append(
+    el("strong", "", "Next"),
+    el("span", "", detail.title || "(untitled signal)"),
+    el("span", "", `System suggested decision: ${humanAction(defaultDecision)}`),
+    el("span", "locked-note", "Locked until previous item complete"),
+  );
+  card.appendChild(futureSummary);
   card.appendChild(el("p", "takeaway", shortText(detail.executive_takeaway || detail.why_it_matters || "No executive takeaway provided.", 190)));
   card.appendChild(el("p", "system-default", "System default decision applied. Owner can override."));
   card.appendChild(fieldList([
@@ -677,13 +861,13 @@ function compactSignalCard(detail, index) {
 
   if (isOwnerAttention(detail)) {
     const guidedActions = el("div", "guided-card-actions");
-    const accept = el("button", "accept-system-decision", "Accept system decision");
+    const accept = el("button", "accept-system-decision", "Accept system decision and mark done");
     accept.type = "button";
     accept.dataset.action = "accept-system-decision";
-    const override = el("button", "override-decision", "Override decision");
+    const override = el("button", "override-decision secondary-action", "Override decision");
     override.type = "button";
     override.dataset.action = "override-decision";
-    const done = el("button", "mark-signal-done", "Mark done");
+    const done = el("button", "mark-signal-done secondary-action", "Mark done");
     done.type = "button";
     done.dataset.action = "mark-done";
     guidedActions.append(accept, override, done);
@@ -837,6 +1021,11 @@ function buildReviewSession(savedLocally, now = new Date()) {
     session_saved: state.guidedWorkflow.session_saved,
     feedback_generated: state.guidedWorkflow.feedback_generated,
     outputs_ready: state.guidedWorkflow.outputs_ready,
+    active_attention_index: state.guidedWorkflow.active_attention_index,
+    override_mode_for_active_item: state.guidedWorkflow.override_mode_for_active_item,
+    output_downloaded: state.guidedWorkflow.output_downloaded,
+    output_step_complete: state.guidedWorkflow.output_step_complete,
+    active_primary_action: state.guidedWorkflow.active_primary_action,
     internal_review_complete: Boolean(state.guidedWorkflow.outputs_ready),
     safety_statement: "Saved review session is not publication approval.",
     auto_decision_is_not_publication_approval: true,
@@ -859,6 +1048,11 @@ function applySession(session) {
     session_saved: Boolean(session.session_saved || session.guided_workflow_status?.session_saved),
     feedback_generated: Boolean(session.feedback_generated || session.guided_workflow_status?.feedback_generated),
     outputs_ready: Boolean(session.outputs_ready || session.guided_workflow_status?.outputs_ready),
+    active_attention_index: session.active_attention_index || session.guided_workflow_status?.active_attention_index || 0,
+    override_mode_for_active_item: Boolean(session.override_mode_for_active_item || session.guided_workflow_status?.override_mode_for_active_item),
+    output_downloaded: Boolean(session.output_downloaded || session.guided_workflow_status?.output_downloaded),
+    output_step_complete: Boolean(session.output_step_complete || session.guided_workflow_status?.output_step_complete),
+    active_primary_action: session.active_primary_action || session.guided_workflow_status?.active_primary_action || "accept_active_attention",
   };
   session.records.forEach((record) => {
     const card = document.querySelector(`.review-card[data-signal-id="${CSS.escape(record.signal_id)}"]`);
@@ -980,8 +1174,6 @@ function downloadSessionJson() {
 function setFeedbackButtonsEnabled(enabled) {
   document.getElementById("download-feedback").disabled = !enabled;
   document.getElementById("copy-feedback").disabled = !enabled;
-  document.getElementById("download-feedback-sticky").disabled = !enabled;
-  document.getElementById("copy-feedback-sticky").disabled = !enabled;
 }
 
 function updateWorkflowStatus() {
@@ -998,13 +1190,6 @@ function updateWorkflowStatus() {
     el("span", "", `Needs Owner attention: ${ownerAttention}`),
     el("span", "", `Total Signals: ${total}`),
   );
-  const exportSummary = document.getElementById("export-action-summary");
-  exportSummary.innerHTML = "";
-  exportSummary.append(
-    el("span", "", `System-decided: ${systemDecided}`),
-    el("span", "", `Owner-overridden: ${overridden}`),
-    el("span", "", `Needs Owner attention: ${ownerAttention}`),
-  );
   if (state.brief) renderWorkSummary(state.brief);
   if (state.brief) renderGuidedWorkflow();
 }
@@ -1018,6 +1203,8 @@ function markOwnerConfirmed(event) {
   card.dataset.ownerOverridden = overridden ? "true" : "false";
   const status = card.querySelector(".system-default");
   if (status) status.textContent = overridden ? "Owner override" : "System default decision applied. Owner can override.";
+  const summary = card.querySelector(".selected-decision-summary");
+  if (summary) summary.textContent = `Selected decision: ${humanAction(decision)}`;
   updateWorkflowStatus();
   autoSaveReviewSession();
 }
@@ -1025,6 +1212,7 @@ function markOwnerConfirmed(event) {
 function markAttentionDone(signalId) {
   if (!signalId) return;
   state.guidedWorkflow.attention_item_statuses[signalId] = "done";
+  state.guidedWorkflow.override_mode_for_active_item = false;
   reconcileGuidedWorkflow();
   refreshGuidedCardStates();
   updateWorkflowStatus();
@@ -1046,8 +1234,10 @@ function overrideDecision(card) {
     decision.focus();
     decision.classList.add("override-focus");
   }
+  state.guidedWorkflow.override_mode_for_active_item = true;
   const status = card.querySelector(".system-default");
   if (status) status.textContent = "Owner override pending. Choose a decision, then Mark done.";
+  renderGuidedWorkflow();
 }
 
 function handleGuidedCardAction(event) {
@@ -1058,6 +1248,37 @@ function handleGuidedCardAction(event) {
   if (button.dataset.action === "accept-system-decision") acceptSystemDecision(card);
   if (button.dataset.action === "override-decision") overrideDecision(card);
   if (button.dataset.action === "mark-done") markAttentionDone(card.dataset.signalId);
+  if (button.dataset.action === "edit-completed-card") {
+    state.guidedWorkflow.attention_item_statuses[card.dataset.signalId] = "active";
+    state.guidedWorkflow.override_mode_for_active_item = true;
+    setCompleted("review_attention_items", false);
+    reconcileGuidedWorkflow();
+    renderReviewQueue(state.brief);
+  }
+}
+
+function activeAttentionCard() {
+  const record = activeAttentionRecord();
+  if (!record) return null;
+  return document.querySelector(`.review-card[data-signal-id="${CSS.escape(record.signal_id)}"]`);
+}
+
+function runActiveTaskAction(action) {
+  const card = activeAttentionCard();
+  if (action === "load_fixture") {
+    loadFixture().catch((error) => setStatus(error.message));
+    return;
+  }
+  if (action === "accept_active_attention" && card) acceptSystemDecision(card);
+  if (action === "override_active_attention" && card) overrideDecision(card);
+  if (action === "mark_active_done" && card) markAttentionDone(card.dataset.signalId);
+  if (action === "accept_auto_handled") acceptAllAutoHandled();
+  if (action === "review_auto_handled") reviewAutoHandledDetails();
+  if (action === "save_session") saveReviewSession(true);
+  if (action === "generate_feedback") generateFeedbackJson();
+  if (action === "download_feedback") downloadFeedbackJson();
+  if (action === "copy_feedback") copyFeedbackJson().catch(() => setExportStatus("Copy failed. Select the JSON text and copy manually."));
+  if (action === "clear_saved_review") clearSavedSession();
 }
 
 function acceptAllAutoHandled() {
@@ -1069,7 +1290,9 @@ function acceptAllAutoHandled() {
 }
 
 function reviewAutoHandledDetails() {
-  document.getElementById("auto-handled")?.querySelector("details")?.setAttribute("open", "open");
+  const target = document.getElementById("auto-handled");
+  target?.classList.add("review-details");
+  target?.querySelectorAll("details").forEach((details) => details.setAttribute("open", "open"));
 }
 
 function wireReviewProgressHandlers() {
@@ -1138,6 +1361,9 @@ function generateFeedbackJson() {
     follow_up_required_count: records.filter((record) => record.follow_up_required).length,
     publish_readiness_enabled: false,
     publication_approved: false,
+    single_active_action_workflow_version: SINGLE_ACTIVE_ACTION_WORKFLOW_VERSION,
+    active_primary_action: state.guidedWorkflow.active_primary_action,
+    output_step_complete: Boolean(state.guidedWorkflow.output_step_complete),
     guided_workflow_status: { ...state.guidedWorkflow },
     completed_steps: [...state.guidedWorkflow.completed_steps],
     internal_review_complete: false,
@@ -1151,12 +1377,17 @@ function generateFeedbackJson() {
     safety_flags: { ...SAFETY_FLAGS },
   };
   state.guidedWorkflow.feedback_generated = true;
-  state.guidedWorkflow.outputs_ready = true;
+  state.guidedWorkflow.outputs_ready = false;
+  state.guidedWorkflow.output_step_complete = false;
+  state.guidedWorkflow.output_downloaded = false;
   setCompleted("generate_feedback", true);
-  setCompleted("download_copy", true);
+  setCompleted("download_copy", false);
+  reconcileGuidedWorkflow();
   report.guided_workflow_status = { ...state.guidedWorkflow };
   report.completed_steps = [...state.guidedWorkflow.completed_steps];
-  report.internal_review_complete = true;
+  report.active_primary_action = state.guidedWorkflow.active_primary_action;
+  report.output_step_complete = Boolean(state.guidedWorkflow.output_step_complete);
+  report.internal_review_complete = false;
   state.feedbackJson = JSON.stringify(report, null, 2);
   document.getElementById("feedback-output").value = state.feedbackJson;
   setFeedbackButtonsEnabled(true);
@@ -1180,6 +1411,23 @@ function downloadFeedbackJson() {
   link.download = "dysonx_owner_review_feedback_console.json";
   link.click();
   URL.revokeObjectURL(url);
+  state.guidedWorkflow.output_downloaded = true;
+  state.guidedWorkflow.outputs_ready = true;
+  state.guidedWorkflow.output_step_complete = true;
+  setCompleted("download_copy", true);
+  state.feedbackJson = JSON.stringify({
+    ...JSON.parse(state.feedbackJson),
+    guided_workflow_status: { ...state.guidedWorkflow },
+    completed_steps: [...state.guidedWorkflow.completed_steps],
+    active_primary_action: state.guidedWorkflow.active_primary_action,
+    output_step_complete: true,
+    internal_review_complete: true,
+    publication_approved: false,
+  }, null, 2);
+  document.getElementById("feedback-output").value = state.feedbackJson;
+  saveReviewSession(false, false);
+  setExportStatus("Owner Feedback JSON downloaded. Internal review complete; no publication occurred.");
+  renderGuidedWorkflow();
 }
 
 document.getElementById("load-fixture").addEventListener("click", () => {
@@ -1191,21 +1439,15 @@ document.getElementById("brief-file").addEventListener("change", (event) => {
   if (file) loadFile(file);
 });
 
-document.getElementById("generate-feedback").addEventListener("click", generateFeedbackJson);
-document.getElementById("generate-feedback-top").addEventListener("click", generateFeedbackJson);
-document.getElementById("generate-feedback-sticky").addEventListener("click", generateFeedbackJson);
-document.getElementById("save-session").addEventListener("click", () => saveReviewSession(true));
+document.getElementById("active-primary-action").addEventListener("click", (event) => runActiveTaskAction(event.currentTarget.dataset.action));
+document.getElementById("active-secondary-action").addEventListener("click", (event) => runActiveTaskAction(event.currentTarget.dataset.action));
 document.getElementById("load-session").addEventListener("click", loadSavedSession);
 document.getElementById("clear-session").addEventListener("click", clearSavedSession);
 document.getElementById("download-session").addEventListener("click", downloadSessionJson);
 document.getElementById("accept-auto-handled").addEventListener("click", acceptAllAutoHandled);
 document.getElementById("review-auto-handled-details").addEventListener("click", reviewAutoHandledDetails);
 document.getElementById("download-feedback").addEventListener("click", downloadFeedbackJson);
-document.getElementById("download-feedback-sticky").addEventListener("click", downloadFeedbackJson);
 document.getElementById("copy-feedback").addEventListener("click", () => {
-  copyFeedbackJson().catch(() => setExportStatus("Copy failed. Select the JSON text and copy manually."));
-});
-document.getElementById("copy-feedback-sticky").addEventListener("click", () => {
   copyFeedbackJson().catch(() => setExportStatus("Copy failed. Select the JSON text and copy manually."));
 });
 

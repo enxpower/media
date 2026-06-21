@@ -24,6 +24,8 @@ Workflow Compression V2 made the console usable as an auto-decision control desk
 
 Review Session Save must be embedded in a guided workflow. The Owner should not have to infer which button to press next.
 
+Review Session Save controls must not appear as an unstructured button cluster. Save must be presented as the current active task only when prerequisites are complete.
+
 ## Relationship To Owner Feedback JSON
 
 Owner Feedback JSON remains the exportable structured feedback artifact. Review Session Save V1 integrates with it by preserving the same selected/default decision state and including review session metadata in generated feedback JSON.

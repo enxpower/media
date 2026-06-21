@@ -15,6 +15,7 @@ LAUNCH_PLAN = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_LAUNCH_PLAN.md"
 WORKFLOW_COMPRESSION_DOC = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_WORKFLOW_COMPRESSION_V2.md"
 REVIEW_SESSION_DOC = ROOT / "docs" / "DYSONX_REVIEW_SESSION_SAVE_V1.md"
 GUIDED_WORKFLOW_DOC = ROOT / "docs" / "DYSONX_OWNER_GUIDED_REVIEW_WORKFLOW_V1.md"
+SINGLE_ACTIVE_ACTION_DOC = ROOT / "docs" / "DYSONX_OWNER_SINGLE_ACTIVE_ACTION_WORKFLOW_V1.md"
 
 
 class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
@@ -166,11 +167,11 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
 
     def test_feedback_action_is_prominent_near_workflow(self):
         html = self.read_index()
+        app = self.read_app()
 
-        self.assertIn('id="generate-feedback-top"', html)
-        self.assertIn('id="generate-feedback-sticky"', html)
-        self.assertIn('id="copy-feedback-sticky"', html)
-        self.assertIn('id="download-feedback-sticky"', html)
+        self.assertIn('id="owner-active-task"', html)
+        self.assertIn('id="active-primary-action"', html)
+        self.assertIn("Generate Owner Feedback JSON", app)
         self.assertIn("Review decisions", html)
 
     def test_owner_decision_queue_cards_include_score_values(self):
@@ -311,14 +312,12 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
 
         for phrase in (
             "Review Session Save",
-            "Save Review Session",
             "Load Saved Session",
-            "Clear Saved Session",
-            "Download Session JSON",
+            "Reset local test state",
+            "Download Review Session JSON",
         ):
             self.assertIn(phrase, html)
         for element_id in (
-            'id="save-session"',
             'id="load-session"',
             'id="clear-session"',
             'id="download-session"',
@@ -353,7 +352,7 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
             "publication_approved",
         ):
             self.assertIn(field, app)
-        self.assertIn('const CONSOLE_VERSION = "owner_console_review_session_save_v1"', app)
+        self.assertIn('const CONSOLE_VERSION = "owner_console_single_active_action_v1"', app)
         self.assertIn("dysonx-review-", app)
 
     def test_review_session_persists_form_values(self):
@@ -421,7 +420,7 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertIn("dysonx_owner_console_review_session.json", app)
         self.assertIn("function clearSavedSession()", app)
         self.assertIn("state.restoredSession = null", app)
-        self.assertIn("Clear Saved Session", self.read_index())
+        self.assertIn("Reset local test state", self.read_index())
 
     def test_guided_workflow_stepper_exists(self):
         html = self.read_index()
@@ -448,6 +447,38 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertIn("Current action:", app)
         self.assertIn("Review this Signal or accept the system decision.", app)
 
+    def test_single_active_task_header_exists(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertIn('id="owner-active-task"', html)
+        self.assertIn('id="active-task-step"', html)
+        self.assertIn('id="active-task-title"', html)
+        self.assertIn('id="active-task-instruction"', html)
+        self.assertIn('id="active-task-progress"', html)
+        self.assertIn("Step 1 of 5", html)
+        self.assertIn("function activeTaskModel()", app)
+
+    def test_exactly_one_primary_action_marker_exists(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertEqual(html.count('data-primary-action="true"'), 1)
+        self.assertIn('primary.dataset.primaryAction = "true"', app)
+        self.assertIn("active_primary_action", app)
+
+    def test_active_task_primary_action_variants_exist(self):
+        app = self.read_app()
+
+        for phrase in (
+            "Accept system decision and mark done",
+            "Save review session locally",
+            "Generate Owner Feedback JSON",
+            "Download Owner Feedback JSON",
+            "Start new review / clear saved review",
+        ):
+            self.assertIn(phrase, app)
+
     def test_attention_item_guided_states_exist(self):
         app = self.read_app()
 
@@ -462,7 +493,7 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         app = self.read_app()
 
         for phrase in (
-            "Accept system decision",
+            "Accept system decision and mark done",
             "Override decision",
             "Mark done",
             "accept-system-decision",
@@ -473,6 +504,23 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertIn("function acceptSystemDecision", app)
         self.assertIn("function overrideDecision", app)
         self.assertIn("function markAttentionDone", app)
+
+    def test_attention_cards_collapse_when_not_active(self):
+        app = self.read_app()
+        styles = STYLES.read_text(encoding="utf-8")
+
+        for phrase in (
+            "completed-summary",
+            "future-summary",
+            "Selected decision:",
+            "System suggested decision:",
+            "Locked until previous item complete",
+            "edit-completed-card",
+        ):
+            self.assertIn(phrase, app)
+        self.assertIn(".review-card.completed-attention-item", styles)
+        self.assertIn(".review-card.future-attention-item", styles)
+        self.assertIn("display: none", styles)
 
     def test_auto_handled_confirmation_step_exists(self):
         html = self.read_index()
@@ -486,10 +534,11 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
 
     def test_workflow_gates_later_actions(self):
         app = self.read_app()
+        html = self.read_index()
 
-        self.assertIn('setButtonsDisabled(["save-session"], !saveReady)', app)
-        self.assertIn('setButtonsDisabled(["generate-feedback", "generate-feedback-top", "generate-feedback-sticky"], !feedbackReady)', app)
-        self.assertIn('setButtonsDisabled(["copy-feedback", "copy-feedback-sticky", "download-feedback", "download-feedback-sticky"], !outputsReady)', app)
+        self.assertIn("Save unlocks after attention and auto-handled steps are complete.", html)
+        self.assertIn("Feedback unlocks after session save.", html)
+        self.assertIn('setButtonsDisabled(["copy-feedback", "download-feedback"], !outputsReady)', app)
         self.assertIn('state.guidedWorkflow.active_step === "save_session"', app)
         self.assertIn('completedSteps().has("save_session")', app)
         self.assertIn('completedSteps().has("generate_feedback")', app)
@@ -506,6 +555,11 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
             "session_saved",
             "feedback_generated",
             "outputs_ready",
+            "active_attention_index",
+            "override_mode_for_active_item",
+            "output_downloaded",
+            "output_step_complete",
+            "active_primary_action",
         ):
             self.assertIn(field, app)
         self.assertIn("localStorage.setItem(REVIEW_SESSION_STORAGE_KEY", app)
@@ -526,7 +580,7 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertIn("Completed internal review. No public publishing occurred.", html)
         self.assertIn("Next future stage", html)
         self.assertIn("Publish Readiness Gate V1", html)
-        self.assertIn("completion.hidden = !completedSteps().has(\"generate_feedback\")", app)
+        self.assertIn("completion.hidden = !completedSteps().has(\"download_copy\")", app)
 
     def test_feedback_json_includes_guided_workflow_status(self):
         app = self.read_app()
@@ -534,16 +588,37 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertIn("guided_workflow_status", app)
         self.assertIn("completed_steps", app)
         self.assertIn("internal_review_complete", app)
+        self.assertIn("single_active_action_workflow_version", app)
+        self.assertIn("active_primary_action", app)
+        self.assertIn("output_step_complete", app)
         self.assertIn("publication_approved: false", app)
 
     def test_raw_json_stays_below_guided_workflow(self):
         html = self.read_index()
 
-        workflow_index = html.index('id="workflow-stepper"')
+        workflow_index = html.index('id="owner-active-task"')
         output_index = html.index('id="feedback-output"')
         self.assertLess(workflow_index, output_index)
         self.assertIn("Brief source and technical details", html)
         self.assertIn("<details", html)
+
+    def test_no_duplicate_primary_export_clusters_exist(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertNotIn("generate-feedback-top", html)
+        self.assertNotIn("generate-feedback-sticky", html)
+        self.assertNotIn("export-action-bar", html)
+        self.assertIn("Generate Owner Feedback JSON", app)
+        self.assertEqual(html.count('data-primary-action="true"'), 1)
+
+    def test_responsive_css_avoids_obvious_metric_wrapping(self):
+        styles = STYLES.read_text(encoding="utf-8")
+
+        self.assertIn("word-break: normal", styles)
+        self.assertIn("overflow-wrap: break-word", styles)
+        self.assertIn(".owner-active-task", styles)
+        self.assertIn("grid-template-columns: repeat(2, minmax(0, 1fr))", styles)
 
     def test_guided_workflow_documentation_exists(self):
         doc = GUIDED_WORKFLOW_DOC.read_text(encoding="utf-8")
@@ -563,6 +638,33 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
             "If Owner can complete a review without external explanation, proceed to Publish Readiness Gate V1.",
         ):
             self.assertIn(phrase, doc)
+
+    def test_single_active_action_documentation_exists(self):
+        doc = SINGLE_ACTIVE_ACTION_DOC.read_text(encoding="utf-8")
+
+        for phrase in (
+            "Why The Previous Guided Workflow Still Failed",
+            "Single Active Action Rule",
+            "Active Task Header",
+            "One Primary Action Rule",
+            "Collapsed Completed Cards",
+            "Collapsed Future Cards",
+            "Auto-Handled Confirmation Behavior",
+            "Save / Feedback / Output Gating",
+            "Final Completion State",
+            "Responsive Usability Requirement",
+            "active_primary_action",
+            "If Owner can complete internal review without asking what to click next, proceed to Publish Readiness Gate V1.",
+        ):
+            self.assertIn(phrase, doc)
+
+    def test_existing_docs_reference_single_active_action_constraints(self):
+        guided = GUIDED_WORKFLOW_DOC.read_text(encoding="utf-8")
+        review_session = REVIEW_SESSION_DOC.read_text(encoding="utf-8")
+
+        self.assertIn("single active action console", guided)
+        self.assertIn("unexplained disabled buttons are product failures", guided)
+        self.assertIn("must not appear as an unstructured button cluster", review_session)
 
     def test_saved_review_session_safety_text_is_present(self):
         html = self.read_index()
@@ -599,6 +701,7 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
             + WORKFLOW_COMPRESSION_DOC.read_text(encoding="utf-8")
             + REVIEW_SESSION_DOC.read_text(encoding="utf-8")
             + GUIDED_WORKFLOW_DOC.read_text(encoding="utf-8")
+            + SINGLE_ACTIVE_ACTION_DOC.read_text(encoding="utf-8")
         )
 
         self.assertIn("does not require `OPENAI_API_KEY`", combined)

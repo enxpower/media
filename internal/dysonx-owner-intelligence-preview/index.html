@@ -17,6 +17,7 @@
       <span>Not publish-ready</span>
       <span>No public publishing</span>
       <span>Saved review session is not publication approval</span>
+      <span>Completed single-action review is not publication approval</span>
       <span>No deployment triggered by this page</span>
       <span>No OpenAI call from this page</span>
       <span>No KG writes</span>
@@ -32,13 +33,24 @@
         <p id="overall-recommendation">Load the local brief fixture to review today’s owner queue.</p>
         <div class="quick-actions">
           <a href="#queue-heading">Review decisions</a>
-          <button id="generate-feedback-top" type="button">Generate Feedback JSON</button>
         </div>
       </div>
       <div id="work-summary" class="work-summary" aria-label="Owner Work Summary"></div>
     </section>
 
     <section class="panel session-panel" aria-labelledby="session-heading">
+      <section id="owner-active-task" class="owner-active-task" aria-labelledby="active-task-title">
+        <div>
+          <p id="active-task-step" class="eyebrow">Step 1 of 5</p>
+          <h2 id="active-task-title">Review attention item</h2>
+          <p id="active-task-instruction">Accept the system decision or override it, then mark this item done.</p>
+          <p id="active-task-progress" class="active-task-progress">Attention item 1 of 1</p>
+        </div>
+        <div class="active-task-actions">
+          <button id="active-primary-action" class="primary-action" type="button" data-primary-action="true">Accept system decision and mark done</button>
+          <button id="active-secondary-action" class="secondary-action" type="button" hidden>Override decision</button>
+        </div>
+      </section>
       <div class="workflow-shell" aria-label="Guided review workflow">
         <ol id="workflow-stepper" class="workflow-stepper" aria-label="Workflow stepper"></ol>
         <div id="current-action-banner" class="current-action-banner" role="status">
@@ -50,13 +62,7 @@
         <div>
           <p class="eyebrow">Review Session Save</p>
           <h2 id="session-heading">Review Session Save</h2>
-          <p>Follow the guided workflow, then save local browser review state. A saved review session is not publication approval.</p>
-        </div>
-        <div class="button-row">
-          <button id="save-session" type="button">Save Review Session</button>
-          <button id="load-session" type="button">Load Saved Session</button>
-          <button id="clear-session" type="button">Clear Saved Session</button>
-          <button id="download-session" type="button" disabled>Download Session JSON</button>
+          <p id="session-gate-message">Save unlocks after attention and auto-handled steps are complete.</p>
         </div>
       </div>
       <div id="review-session-card" class="workflow-card">
@@ -68,6 +74,11 @@
           <div><dt>Publication approval</dt><dd>No</dd></div>
           <div><dt>Next required action</dt><dd id="next-required-action">Review the highlighted Signal.</dd></div>
         </dl>
+        <div class="secondary-controls" aria-label="Secondary review session controls">
+          <button id="load-session" class="secondary-action" type="button">Load Saved Session</button>
+          <button id="clear-session" class="danger-secondary-action" type="button">Reset local test state</button>
+          <button id="download-session" class="secondary-action" type="button" disabled>Download Review Session JSON</button>
+        </div>
       </div>
       <p id="session-status" class="status-text" role="status">No saved local review session loaded yet.</p>
     </section>
@@ -119,7 +130,6 @@
           <span>Needs Owner attention: 0</span>
           <span>Total Signals: 0</span>
         </div>
-        <button id="generate-feedback" type="button">Generate Feedback JSON</button>
       </div>
       <section class="queue-group" aria-labelledby="needs-owner-attention-heading">
         <h3 id="needs-owner-attention-heading">Needs Owner Attention</h3>
@@ -148,27 +158,16 @@
       <div id="blocked-low-value" class="compact-list"></div>
     </section>
 
-    <aside class="export-action-bar" aria-label="Feedback export actions">
-      <div id="export-action-summary" class="export-action-summary">
-        <span>System-decided: 0</span>
-        <span>Owner-overridden: 0</span>
-        <span>Needs Owner attention: 0</span>
-      </div>
-      <button id="generate-feedback-sticky" type="button">Generate Feedback JSON</button>
-      <button id="copy-feedback-sticky" type="button" disabled>Copy JSON</button>
-      <button id="download-feedback-sticky" type="button" disabled>Download JSON</button>
-    </aside>
-
     <section class="panel export-panel" aria-labelledby="export-heading">
       <div class="section-heading action-heading">
         <div>
           <p class="eyebrow">Export</p>
           <h2 id="export-heading">Owner Feedback JSON</h2>
-          <p>This is structured internal feedback. It is not publishing approval.</p>
+          <p id="feedback-gate-message">Feedback unlocks after session save.</p>
         </div>
-        <div class="button-row">
-          <button id="copy-feedback" type="button" disabled>Copy JSON</button>
-          <button id="download-feedback" type="button" disabled>Download JSON</button>
+        <div id="output-controls" class="button-row secondary-controls">
+          <button id="copy-feedback" class="secondary-action" type="button" disabled>Copy Feedback JSON</button>
+          <button id="download-feedback" class="secondary-action" type="button" disabled>Download Owner Feedback JSON</button>
         </div>
       </div>
       <textarea id="feedback-output" readonly spellcheck="false" aria-label="Generated owner feedback JSON"></textarea>
