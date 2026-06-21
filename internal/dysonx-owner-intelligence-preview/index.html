@@ -39,11 +39,18 @@
     </section>
 
     <section class="panel session-panel" aria-labelledby="session-heading">
+      <div class="workflow-shell" aria-label="Guided review workflow">
+        <ol id="workflow-stepper" class="workflow-stepper" aria-label="Workflow stepper"></ol>
+        <div id="current-action-banner" class="current-action-banner" role="status">
+          <strong>Current action:</strong>
+          <span>Load the local brief fixture to begin guided review.</span>
+        </div>
+      </div>
       <div class="section-heading action-heading">
         <div>
           <p class="eyebrow">Review Session Save</p>
           <h2 id="session-heading">Review Session Save</h2>
-          <p>Save, restore, clear, or download local browser review state. A saved review session is not publication approval.</p>
+          <p>Follow the guided workflow, then save local browser review state. A saved review session is not publication approval.</p>
         </div>
         <div class="button-row">
           <button id="save-session" type="button">Save Review Session</button>
@@ -51,6 +58,16 @@
           <button id="clear-session" type="button">Clear Saved Session</button>
           <button id="download-session" type="button" disabled>Download Session JSON</button>
         </div>
+      </div>
+      <div id="review-session-card" class="workflow-card">
+        <dl class="session-facts">
+          <div><dt>Session ID</dt><dd id="session-id-display">Not created yet</dd></div>
+          <div><dt>Save status</dt><dd id="session-save-status">Not saved</dd></div>
+          <div><dt>Last saved</dt><dd id="session-last-saved">Not saved yet</dd></div>
+          <div><dt>Storage</dt><dd>Local browser only</dd></div>
+          <div><dt>Publication approval</dt><dd>No</dd></div>
+          <div><dt>Next required action</dt><dd id="next-required-action">Review the highlighted Signal.</dd></div>
+        </dl>
       </div>
       <p id="session-status" class="status-text" role="status">No saved local review session loaded yet.</p>
     </section>
@@ -110,6 +127,13 @@
       </section>
       <section class="queue-group" aria-labelledby="auto-handled-heading">
         <h3 id="auto-handled-heading">Auto-handled</h3>
+        <div id="auto-handled-confirmation" class="auto-handled-panel locked" aria-label="Auto-handled confirmation">
+          <p>These Signals already have system decisions. You do not need to review them unless you disagree.</p>
+          <div class="button-row">
+            <button id="accept-auto-handled" type="button">Accept all auto-handled system decisions</button>
+            <button id="review-auto-handled-details" type="button">Review auto-handled details</button>
+          </div>
+        </div>
         <div id="auto-handled" class="review-list"></div>
       </section>
     </section>
@@ -149,6 +173,40 @@
       </div>
       <textarea id="feedback-output" readonly spellcheck="false" aria-label="Generated owner feedback JSON"></textarea>
       <p id="export-status" class="status-text" role="status">Generate feedback to preview JSON here.</p>
+    </section>
+
+    <section id="completion-panel" class="panel completion-panel" aria-labelledby="completion-heading" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Review Complete</p>
+          <h2 id="completion-heading">Internal review complete.</h2>
+        </div>
+      </div>
+      <p>Completed internal review. No public publishing occurred.</p>
+      <div class="completion-grid">
+        <div>
+          <h3>Generated</h3>
+          <ul>
+            <li>Owner Feedback JSON</li>
+            <li>Review Session JSON</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Not performed</h3>
+          <ul>
+            <li>public publishing</li>
+            <li>publication approval</li>
+            <li>deployment</li>
+            <li>OpenAI call</li>
+            <li>KG write</li>
+            <li>Prediction Engine</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Next future stage</h3>
+          <p>Publish Readiness Gate V1</p>
+        </div>
+      </div>
     </section>
 
     <details class="panel secondary-details">

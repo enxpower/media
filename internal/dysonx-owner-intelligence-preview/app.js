@@ -26,6 +26,34 @@ const ALLOWED_PRIORITIES = ["high", "medium", "low"];
 const CONSOLE_VERSION = "owner_console_review_session_save_v1";
 const REVIEW_SESSION_STORAGE_KEY = "dysonx.ownerConsole.reviewSession.v1";
 
+const WORKFLOW_STEPS = [
+  {
+    id: "review_attention_items",
+    label: "Review Attention Items",
+    action: "Review the highlighted Signal.",
+  },
+  {
+    id: "confirm_auto_handled",
+    label: "Confirm Auto-handled",
+    action: "Confirm auto-handled Signals.",
+  },
+  {
+    id: "save_session",
+    label: "Save Session",
+    action: "Save the review session.",
+  },
+  {
+    id: "generate_feedback",
+    label: "Generate Feedback",
+    action: "Generate Owner Feedback JSON.",
+  },
+  {
+    id: "download_copy",
+    label: "Download / Copy",
+    action: "Download or copy outputs.",
+  },
+];
+
 const AUTO_DECISION_TO_OWNER_DECISION = {
   auto_reject: "reject",
   needs_more_sources: "request_more_sources",
@@ -96,7 +124,20 @@ const state = {
   sessionJson: "",
   restoredSession: null,
   suppressAutosave: false,
+  guidedWorkflow: defaultGuidedWorkflowState(),
 };
+
+function defaultGuidedWorkflowState() {
+  return {
+    active_step: "review_attention_items",
+    completed_steps: [],
+    attention_item_statuses: {},
+    auto_handled_confirmed: false,
+    session_saved: false,
+    feedback_generated: false,
+    outputs_ready: false,
+  };
+}
 
 function text(value) {
   return String(value || "").trim();
@@ -230,6 +271,110 @@ function workCounts(brief) {
   return counts;
 }
 
+function completedSteps() {
+  return new Set(state.guidedWorkflow.completed_steps || []);
+}
+
+function setCompleted(stepId, complete) {
+  const steps = completedSteps();
+  if (complete) steps.add(stepId);
+  else steps.delete(stepId);
+  state.guidedWorkflow.completed_steps = Array.from(steps);
+}
+
+function attentionRecords() {
+  return state.brief ? allQueueDetails(state.brief).filter(isOwnerAttention) : [];
+}
+
+function autoHandledRecords() {
+  return state.brief
+    ? allQueueDetails(state.brief).filter((record) => !isOwnerAttention(record) && !isBlockedLowValue(record))
+    : [];
+}
+
+function initializeGuidedWorkflowForBrief() {
+  const existing = state.guidedWorkflow || defaultGuidedWorkflowState();
+  const next = { ...defaultGuidedWorkflowState(), ...existing };
+  next.attention_item_statuses = { ...(existing.attention_item_statuses || {}) };
+  attentionRecords().forEach((record, index) => {
+    const current = next.attention_item_statuses[record.signal_id];
+    next.attention_item_statuses[record.signal_id] = current === "done" ? "done" : (index === 0 ? "active" : "next");
+  });
+  state.guidedWorkflow = next;
+  reconcileGuidedWorkflow();
+}
+
+function firstIncompleteAttentionId() {
+  return attentionRecords().find((record) => state.guidedWorkflow.attention_item_statuses[record.signal_id] !== "done")?.signal_id || null;
+}
+
+function attentionComplete() {
+  return attentionRecords().every((record) => state.guidedWorkflow.attention_item_statuses[record.signal_id] === "done");
+}
+
+function reviewPrerequisitesComplete() {
+  return completedSteps().has("review_attention_items") && completedSteps().has("confirm_auto_handled");
+}
+
+function reconcileGuidedWorkflow() {
+  if (!state.brief) return;
+  const firstIncomplete = firstIncompleteAttentionId();
+  attentionRecords().forEach((record) => {
+    if (state.guidedWorkflow.attention_item_statuses[record.signal_id] === "done") return;
+    state.guidedWorkflow.attention_item_statuses[record.signal_id] = record.signal_id === firstIncomplete ? "active" : "next";
+  });
+  setCompleted("review_attention_items", attentionComplete());
+  setCompleted("confirm_auto_handled", Boolean(state.guidedWorkflow.auto_handled_confirmed));
+  setCompleted("save_session", Boolean(state.guidedWorkflow.session_saved));
+  setCompleted("generate_feedback", Boolean(state.guidedWorkflow.feedback_generated));
+  setCompleted("download_copy", Boolean(state.guidedWorkflow.outputs_ready));
+  if (!completedSteps().has("review_attention_items")) state.guidedWorkflow.active_step = "review_attention_items";
+  else if (!completedSteps().has("confirm_auto_handled")) state.guidedWorkflow.active_step = "confirm_auto_handled";
+  else if (!completedSteps().has("save_session")) state.guidedWorkflow.active_step = "save_session";
+  else if (!completedSteps().has("generate_feedback")) state.guidedWorkflow.active_step = "generate_feedback";
+  else state.guidedWorkflow.active_step = "download_copy";
+}
+
+function workflowStepState(stepId) {
+  if (completedSteps().has(stepId)) return "complete";
+  if (state.guidedWorkflow.active_step === stepId) return "active";
+  return "locked";
+}
+
+function currentActionText() {
+  if (!state.brief) return "Load the local brief fixture to begin guided review.";
+  if (completedSteps().has("download_copy")) return "Complete: Internal review saved and feedback generated. No publication occurred.";
+  const step = WORKFLOW_STEPS.find((item) => item.id === state.guidedWorkflow.active_step);
+  if (step?.id === "review_attention_items") return "Review this Signal or accept the system decision.";
+  if (step?.id === "confirm_auto_handled") return "Confirm auto-handled Signals.";
+  if (step?.id === "save_session") return "Save the review session.";
+  if (step?.id === "generate_feedback") return "Generate Owner Feedback JSON.";
+  if (step?.id === "download_copy") return "Download or copy outputs.";
+  return step?.action || "Review the highlighted Signal.";
+}
+
+function guidedBadgeText(status) {
+  if (status === "done") return "Done";
+  if (status === "active") return "Current action";
+  if (status === "next") return "Next";
+  return "System handled";
+}
+
+function refreshGuidedCardStates() {
+  document.querySelectorAll(".review-card").forEach((card) => {
+    const status = state.guidedWorkflow.attention_item_statuses[card.dataset.signalId] || (card.dataset.needsOwnerAttention === "true" ? "next" : "auto-handled");
+    card.dataset.guidedStatus = status;
+    card.classList.toggle("active-attention-item", status === "active");
+    card.classList.toggle("completed-attention-item", status === "done");
+    card.classList.toggle("future-attention-item", status === "next");
+    const badge = card.querySelector(".guided-card-status");
+    if (badge) {
+      badge.className = `guided-card-status ${status}`;
+      badge.textContent = guidedBadgeText(status);
+    }
+  });
+}
+
 function sessionIdFromDate(date) {
   return `dysonx-review-${date.toISOString().replace(/[-:]/g, "").slice(0, 15)}`;
 }
@@ -270,6 +415,60 @@ function currentSessionMetadata(now = new Date()) {
 function compactList(values) {
   const filtered = arrayValue(values);
   return filtered.length ? filtered.join(", ") : "none";
+}
+
+function setButtonsDisabled(ids, disabled) {
+  ids.forEach((id) => {
+    const node = document.getElementById(id);
+    if (node) node.disabled = disabled;
+  });
+}
+
+function renderGuidedWorkflow() {
+  reconcileGuidedWorkflow();
+  const stepper = document.getElementById("workflow-stepper");
+  clear(stepper);
+  WORKFLOW_STEPS.forEach((step, index) => {
+    const status = workflowStepState(step.id);
+    const item = el("li", `workflow-step ${status}`, "");
+    item.dataset.step = step.id;
+    item.dataset.stepState = status;
+    item.setAttribute("aria-current", status === "active" ? "step" : "false");
+    const marker = el("span", "step-marker", status === "complete" ? "✓" : String(index + 1));
+    const label = el("span", "step-label", step.label);
+    const stateLabel = status === "locked" ? "locked" : status;
+    item.append(marker, label, el("span", "step-state", stateLabel));
+    stepper.appendChild(item);
+  });
+
+  const banner = document.getElementById("current-action-banner");
+  const bannerLabel = completedSteps().has("download_copy") ? "Complete:" : "Current action:";
+  banner.innerHTML = "";
+  banner.append(el("strong", "", bannerLabel), el("span", "", currentActionText()));
+
+  const saveReady = state.guidedWorkflow.active_step === "save_session" || completedSteps().has("save_session");
+  const feedbackReady = completedSteps().has("save_session");
+  const outputsReady = completedSteps().has("generate_feedback");
+  setButtonsDisabled(["save-session"], !saveReady);
+  setButtonsDisabled(["generate-feedback", "generate-feedback-top", "generate-feedback-sticky"], !feedbackReady);
+  setButtonsDisabled(["download-session"], !completedSteps().has("save_session"));
+  setButtonsDisabled(["copy-feedback", "copy-feedback-sticky", "download-feedback", "download-feedback-sticky"], !outputsReady);
+
+  const autoPanel = document.getElementById("auto-handled-confirmation");
+  autoPanel.classList.toggle("active", state.guidedWorkflow.active_step === "confirm_auto_handled");
+  autoPanel.classList.toggle("complete", completedSteps().has("confirm_auto_handled"));
+  autoPanel.classList.toggle("locked", !completedSteps().has("review_attention_items"));
+  document.getElementById("accept-auto-handled").disabled = !completedSteps().has("review_attention_items") || completedSteps().has("confirm_auto_handled");
+
+  const metadata = currentSessionMetadata();
+  document.getElementById("session-id-display").textContent = metadata.review_session_id;
+  document.getElementById("session-save-status").textContent = completedSteps().has("save_session") ? "Saved locally" : "Not saved";
+  document.getElementById("session-last-saved").textContent = state.reviewSession?.last_saved_at || "Not saved yet";
+  document.getElementById("next-required-action").textContent = currentActionText();
+  document.getElementById("review-session-card").classList.toggle("active", state.guidedWorkflow.active_step === "save_session");
+
+  const completion = document.getElementById("completion-panel");
+  completion.hidden = !completedSteps().has("generate_feedback");
 }
 
 function fieldRow(label, value, className) {
@@ -421,8 +620,14 @@ function compactSignalCard(detail, index) {
   card.dataset.systemDefaultOwnerDecision = defaultDecision;
   card.dataset.ownerOverridden = "false";
   card.dataset.needsOwnerAttention = isOwnerAttention(detail) ? "true" : "false";
+  const guidedStatus = state.guidedWorkflow.attention_item_statuses[detail.signal_id] || (isOwnerAttention(detail) ? "next" : "auto-handled");
+  card.dataset.guidedStatus = guidedStatus;
+  card.classList.toggle("active-attention-item", guidedStatus === "active");
+  card.classList.toggle("completed-attention-item", guidedStatus === "done");
+  card.classList.toggle("future-attention-item", guidedStatus === "next");
   state.ownerDecisionDefaults.set(detail.signal_id, defaultDecision);
   card.appendChild(el("div", "queue-rank", `#${index + 1}`));
+  card.appendChild(el("div", `guided-card-status ${guidedStatus}`, guidedBadgeText(guidedStatus)));
   card.appendChild(el("h3", "", detail.title || "(untitled signal)"));
   card.appendChild(el("p", "takeaway", shortText(detail.executive_takeaway || detail.why_it_matters || "No executive takeaway provided.", 190)));
   card.appendChild(el("p", "system-default", "System default decision applied. Owner can override."));
@@ -470,6 +675,21 @@ function compactSignalCard(detail, index) {
   controls.append(decisionLabel, priorityLabel, commentLabel, followLabel, noteLabel);
   card.appendChild(controls);
 
+  if (isOwnerAttention(detail)) {
+    const guidedActions = el("div", "guided-card-actions");
+    const accept = el("button", "accept-system-decision", "Accept system decision");
+    accept.type = "button";
+    accept.dataset.action = "accept-system-decision";
+    const override = el("button", "override-decision", "Override decision");
+    override.type = "button";
+    override.dataset.action = "override-decision";
+    const done = el("button", "mark-signal-done", "Mark done");
+    done.type = "button";
+    done.dataset.action = "mark-done";
+    guidedActions.append(accept, override, done);
+    card.appendChild(guidedActions);
+  }
+
   const details = document.createElement("details");
   details.className = "signal-details";
   const summary = document.createElement("summary");
@@ -497,6 +717,7 @@ function renderReviewQueue(brief) {
   clear(attentionTarget);
   clear(autoTarget);
   state.ownerDecisionDefaults.clear();
+  initializeGuidedWorkflowForBrief();
   const records = allQueueDetails(brief);
   const attention = records.filter(isOwnerAttention);
   const autoHandled = records.filter((record) => !isOwnerAttention(record) && !isBlockedLowValue(record));
@@ -506,6 +727,7 @@ function renderReviewQueue(brief) {
   autoHandled.forEach((detail, index) => autoTarget.appendChild(compactSignalCard(detail, index)));
   wireReviewProgressHandlers();
   updateWorkflowStatus();
+  renderGuidedWorkflow();
 }
 
 function renderBrief(brief, sourceName) {
@@ -520,7 +742,6 @@ function renderBrief(brief, sourceName) {
   renderBlocked(brief);
   renderMetadata(brief);
   setStatus(`Loaded ${state.sourceName}`);
-  document.getElementById("generate-feedback-top").disabled = false;
   restoreSessionIfAvailable();
   updateWorkflowStatus();
 }
@@ -597,6 +818,7 @@ function formStateRecords() {
 }
 
 function buildReviewSession(savedLocally, now = new Date()) {
+  reconcileGuidedWorkflow();
   const metadata = currentSessionMetadata(now);
   metadata.saved_locally = Boolean(savedLocally);
   const records = formStateRecords();
@@ -607,6 +829,15 @@ function buildReviewSession(savedLocally, now = new Date()) {
     source_brief: state.sourceName,
     records,
     generated_feedback_json: state.feedbackJson || "",
+    guided_workflow_status: { ...state.guidedWorkflow },
+    active_step: state.guidedWorkflow.active_step,
+    completed_steps: [...state.guidedWorkflow.completed_steps],
+    attention_item_statuses: { ...state.guidedWorkflow.attention_item_statuses },
+    auto_handled_confirmed: state.guidedWorkflow.auto_handled_confirmed,
+    session_saved: state.guidedWorkflow.session_saved,
+    feedback_generated: state.guidedWorkflow.feedback_generated,
+    outputs_ready: state.guidedWorkflow.outputs_ready,
+    internal_review_complete: Boolean(state.guidedWorkflow.outputs_ready),
     safety_statement: "Saved review session is not publication approval.",
     auto_decision_is_not_publication_approval: true,
     owner_feedback_is_not_publication_approval: true,
@@ -618,6 +849,17 @@ function buildReviewSession(savedLocally, now = new Date()) {
 function applySession(session) {
   if (!session || !Array.isArray(session.records)) return false;
   state.suppressAutosave = true;
+  state.guidedWorkflow = {
+    ...defaultGuidedWorkflowState(),
+    ...(session.guided_workflow_status || {}),
+    active_step: session.active_step || session.guided_workflow_status?.active_step || "review_attention_items",
+    completed_steps: session.completed_steps || session.guided_workflow_status?.completed_steps || [],
+    attention_item_statuses: session.attention_item_statuses || session.guided_workflow_status?.attention_item_statuses || {},
+    auto_handled_confirmed: Boolean(session.auto_handled_confirmed || session.guided_workflow_status?.auto_handled_confirmed),
+    session_saved: Boolean(session.session_saved || session.guided_workflow_status?.session_saved),
+    feedback_generated: Boolean(session.feedback_generated || session.guided_workflow_status?.feedback_generated),
+    outputs_ready: Boolean(session.outputs_ready || session.guided_workflow_status?.outputs_ready),
+  };
   session.records.forEach((record) => {
     const card = document.querySelector(`.review-card[data-signal-id="${CSS.escape(record.signal_id)}"]`);
     if (!card) return;
@@ -659,20 +901,25 @@ function loadStoredSession() {
   }
 }
 
-function saveReviewSession(showMessage = true) {
+function saveReviewSession(showMessage = true, markWorkflowSaved = true) {
   if (!state.brief) return null;
+  if (markWorkflowSaved) {
+    state.guidedWorkflow.session_saved = true;
+    setCompleted("save_session", true);
+  }
   const session = buildReviewSession(true);
   localStorage.setItem(REVIEW_SESSION_STORAGE_KEY, JSON.stringify(session));
   state.reviewSession = session;
   state.sessionJson = JSON.stringify(session, null, 2);
   document.getElementById("download-session").disabled = false;
   if (showMessage) setSessionStatus(`Saved locally. Last saved: ${session.last_saved_at}`);
+  renderGuidedWorkflow();
   return session;
 }
 
 function autoSaveReviewSession() {
   if (state.suppressAutosave || !state.brief) return;
-  const session = saveReviewSession(false);
+  const session = saveReviewSession(false, false);
   if (session) setSessionStatus(`Saved locally. Last saved: ${session.last_saved_at}`);
 }
 
@@ -708,6 +955,7 @@ function clearSavedSession() {
   state.sessionJson = "";
   state.restoredSession = null;
   state.feedbackJson = "";
+  state.guidedWorkflow = defaultGuidedWorkflowState();
   document.getElementById("feedback-output").value = "";
   setFeedbackButtonsEnabled(false);
   document.getElementById("download-session").disabled = true;
@@ -758,6 +1006,7 @@ function updateWorkflowStatus() {
     el("span", "", `Needs Owner attention: ${ownerAttention}`),
   );
   if (state.brief) renderWorkSummary(state.brief);
+  if (state.brief) renderGuidedWorkflow();
 }
 
 function markOwnerConfirmed(event) {
@@ -773,10 +1022,63 @@ function markOwnerConfirmed(event) {
   autoSaveReviewSession();
 }
 
+function markAttentionDone(signalId) {
+  if (!signalId) return;
+  state.guidedWorkflow.attention_item_statuses[signalId] = "done";
+  reconcileGuidedWorkflow();
+  refreshGuidedCardStates();
+  updateWorkflowStatus();
+  autoSaveReviewSession();
+}
+
+function acceptSystemDecision(card) {
+  const decision = card.querySelector(".decision-input");
+  if (decision) decision.value = card.dataset.systemDefaultOwnerDecision;
+  card.dataset.ownerOverridden = "false";
+  const status = card.querySelector(".system-default");
+  if (status) status.textContent = "System default decision applied. Owner can override.";
+  markAttentionDone(card.dataset.signalId);
+}
+
+function overrideDecision(card) {
+  const decision = card.querySelector(".decision-input");
+  if (decision) {
+    decision.focus();
+    decision.classList.add("override-focus");
+  }
+  const status = card.querySelector(".system-default");
+  if (status) status.textContent = "Owner override pending. Choose a decision, then Mark done.";
+}
+
+function handleGuidedCardAction(event) {
+  const button = event.target.closest("[data-action]");
+  if (!button) return;
+  const card = button.closest(".review-card");
+  if (!card) return;
+  if (button.dataset.action === "accept-system-decision") acceptSystemDecision(card);
+  if (button.dataset.action === "override-decision") overrideDecision(card);
+  if (button.dataset.action === "mark-done") markAttentionDone(card.dataset.signalId);
+}
+
+function acceptAllAutoHandled() {
+  state.guidedWorkflow.auto_handled_confirmed = true;
+  setCompleted("confirm_auto_handled", true);
+  reconcileGuidedWorkflow();
+  renderGuidedWorkflow();
+  autoSaveReviewSession();
+}
+
+function reviewAutoHandledDetails() {
+  document.getElementById("auto-handled")?.querySelector("details")?.setAttribute("open", "open");
+}
+
 function wireReviewProgressHandlers() {
   document.querySelectorAll(".review-card select, .review-card textarea, .review-card input").forEach((input) => {
     input.addEventListener("change", markOwnerConfirmed);
     input.addEventListener("input", markOwnerConfirmed);
+  });
+  document.querySelectorAll(".guided-card-actions button").forEach((button) => {
+    button.addEventListener("click", handleGuidedCardAction);
   });
 }
 
@@ -807,9 +1109,13 @@ function generateFeedbackJson() {
     setStatus("Load a brief before generating feedback.");
     return;
   }
+  if (!completedSteps().has("save_session")) {
+    setExportStatus("Save the review session before generating Owner Feedback JSON.");
+    return;
+  }
   const now = new Date().toISOString();
   const records = feedbackRecords();
-  const session = saveReviewSession(false) || buildReviewSession(false, new Date(now));
+  const session = saveReviewSession(false, false) || buildReviewSession(false, new Date(now));
   const metadata = session.review_session;
   const report = {
     feedback_version: "owner_review_feedback_v1",
@@ -832,6 +1138,9 @@ function generateFeedbackJson() {
     follow_up_required_count: records.filter((record) => record.follow_up_required).length,
     publish_readiness_enabled: false,
     publication_approved: false,
+    guided_workflow_status: { ...state.guidedWorkflow },
+    completed_steps: [...state.guidedWorkflow.completed_steps],
+    internal_review_complete: false,
     safety_statement: "This is not publication approval.",
     auto_decision_is_not_publication_approval: true,
     owner_feedback_is_not_publication_approval: true,
@@ -841,11 +1150,19 @@ function generateFeedbackJson() {
     recommended_next_actions: recommendedNextActions(records),
     safety_flags: { ...SAFETY_FLAGS },
   };
+  state.guidedWorkflow.feedback_generated = true;
+  state.guidedWorkflow.outputs_ready = true;
+  setCompleted("generate_feedback", true);
+  setCompleted("download_copy", true);
+  report.guided_workflow_status = { ...state.guidedWorkflow };
+  report.completed_steps = [...state.guidedWorkflow.completed_steps];
+  report.internal_review_complete = true;
   state.feedbackJson = JSON.stringify(report, null, 2);
   document.getElementById("feedback-output").value = state.feedbackJson;
   setFeedbackButtonsEnabled(true);
-  saveReviewSession(false);
+  saveReviewSession(false, false);
   setExportStatus("Feedback JSON generated locally. This is not publishing approval.");
+  renderGuidedWorkflow();
 }
 
 async function copyFeedbackJson() {
@@ -881,6 +1198,8 @@ document.getElementById("save-session").addEventListener("click", () => saveRevi
 document.getElementById("load-session").addEventListener("click", loadSavedSession);
 document.getElementById("clear-session").addEventListener("click", clearSavedSession);
 document.getElementById("download-session").addEventListener("click", downloadSessionJson);
+document.getElementById("accept-auto-handled").addEventListener("click", acceptAllAutoHandled);
+document.getElementById("review-auto-handled-details").addEventListener("click", reviewAutoHandledDetails);
 document.getElementById("download-feedback").addEventListener("click", downloadFeedbackJson);
 document.getElementById("download-feedback-sticky").addEventListener("click", downloadFeedbackJson);
 document.getElementById("copy-feedback").addEventListener("click", () => {

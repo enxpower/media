@@ -22,6 +22,8 @@ Review Session Save V1 preserves the Owner's selected decision alongside the sys
 
 Workflow Compression V2 made the console usable as an auto-decision control desk. Review Session Save V1 makes that control desk resumable by saving compact-card form values and override status in local browser storage.
 
+Review Session Save must be embedded in a guided workflow. The Owner should not have to infer which button to press next.
+
 ## Relationship To Owner Feedback JSON
 
 Owner Feedback JSON remains the exportable structured feedback artifact. Review Session Save V1 integrates with it by preserving the same selected/default decision state and including review session metadata in generated feedback JSON.
