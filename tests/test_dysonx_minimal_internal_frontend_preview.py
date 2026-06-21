@@ -14,6 +14,7 @@ PREVIEW_DOC = ROOT / "docs" / "DYSONX_MINIMAL_INTERNAL_FRONTEND_PREVIEW_V1.md"
 LAUNCH_PLAN = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_LAUNCH_PLAN.md"
 WORKFLOW_COMPRESSION_DOC = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_WORKFLOW_COMPRESSION_V2.md"
 REVIEW_SESSION_DOC = ROOT / "docs" / "DYSONX_REVIEW_SESSION_SAVE_V1.md"
+GUIDED_WORKFLOW_DOC = ROOT / "docs" / "DYSONX_OWNER_GUIDED_REVIEW_WORKFLOW_V1.md"
 
 
 class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
@@ -422,6 +423,147 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertIn("state.restoredSession = null", app)
         self.assertIn("Clear Saved Session", self.read_index())
 
+    def test_guided_workflow_stepper_exists(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertIn('id="workflow-stepper"', html)
+        for step in (
+            "Review Attention Items",
+            "Confirm Auto-handled",
+            "Save Session",
+            "Generate Feedback",
+            "Download / Copy",
+        ):
+            self.assertIn(step, app)
+        for state in ("active", "complete", "locked"):
+            self.assertIn(state, app)
+
+    def test_current_action_banner_exists(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertIn('id="current-action-banner"', html)
+        self.assertIn("Current action:", html)
+        self.assertIn("Current action:", app)
+        self.assertIn("Review this Signal or accept the system decision.", app)
+
+    def test_attention_item_guided_states_exist(self):
+        app = self.read_app()
+
+        self.assertIn("active-attention-item", app)
+        self.assertIn("completed-attention-item", app)
+        self.assertIn("future-attention-item", app)
+        self.assertIn("Done", app)
+        self.assertIn("Next", app)
+        self.assertIn("Current action", app)
+
+    def test_per_card_guided_actions_exist(self):
+        app = self.read_app()
+
+        for phrase in (
+            "Accept system decision",
+            "Override decision",
+            "Mark done",
+            "accept-system-decision",
+            "override-decision",
+            "mark-done",
+        ):
+            self.assertIn(phrase, app)
+        self.assertIn("function acceptSystemDecision", app)
+        self.assertIn("function overrideDecision", app)
+        self.assertIn("function markAttentionDone", app)
+
+    def test_auto_handled_confirmation_step_exists(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertIn('id="auto-handled-confirmation"', html)
+        self.assertIn("These Signals already have system decisions", html)
+        self.assertIn("Accept all auto-handled system decisions", html)
+        self.assertIn("Review auto-handled details", html)
+        self.assertIn("function acceptAllAutoHandled", app)
+
+    def test_workflow_gates_later_actions(self):
+        app = self.read_app()
+
+        self.assertIn('setButtonsDisabled(["save-session"], !saveReady)', app)
+        self.assertIn('setButtonsDisabled(["generate-feedback", "generate-feedback-top", "generate-feedback-sticky"], !feedbackReady)', app)
+        self.assertIn('setButtonsDisabled(["copy-feedback", "copy-feedback-sticky", "download-feedback", "download-feedback-sticky"], !outputsReady)', app)
+        self.assertIn('state.guidedWorkflow.active_step === "save_session"', app)
+        self.assertIn('completedSteps().has("save_session")', app)
+        self.assertIn('completedSteps().has("generate_feedback")', app)
+
+    def test_workflow_state_is_persisted_in_local_storage(self):
+        app = self.read_app()
+
+        for field in (
+            "guided_workflow_status",
+            "active_step",
+            "completed_steps",
+            "attention_item_statuses",
+            "auto_handled_confirmed",
+            "session_saved",
+            "feedback_generated",
+            "outputs_ready",
+        ):
+            self.assertIn(field, app)
+        self.assertIn("localStorage.setItem(REVIEW_SESSION_STORAGE_KEY", app)
+
+    def test_clear_saved_session_resets_workflow_to_step_one(self):
+        app = self.read_app()
+
+        self.assertIn("state.guidedWorkflow = defaultGuidedWorkflowState();", app)
+        self.assertIn('active_step: "review_attention_items"', app)
+        self.assertIn("Saved local review session cleared. System defaults restored.", app)
+
+    def test_final_completion_panel_exists(self):
+        html = self.read_index()
+        app = self.read_app()
+
+        self.assertIn('id="completion-panel"', html)
+        self.assertIn("Internal review complete.", html)
+        self.assertIn("Completed internal review. No public publishing occurred.", html)
+        self.assertIn("Next future stage", html)
+        self.assertIn("Publish Readiness Gate V1", html)
+        self.assertIn("completion.hidden = !completedSteps().has(\"generate_feedback\")", app)
+
+    def test_feedback_json_includes_guided_workflow_status(self):
+        app = self.read_app()
+
+        self.assertIn("guided_workflow_status", app)
+        self.assertIn("completed_steps", app)
+        self.assertIn("internal_review_complete", app)
+        self.assertIn("publication_approved: false", app)
+
+    def test_raw_json_stays_below_guided_workflow(self):
+        html = self.read_index()
+
+        workflow_index = html.index('id="workflow-stepper"')
+        output_index = html.index('id="feedback-output"')
+        self.assertLess(workflow_index, output_index)
+        self.assertIn("Brief source and technical details", html)
+        self.assertIn("<details", html)
+
+    def test_guided_workflow_documentation_exists(self):
+        doc = GUIDED_WORKFLOW_DOC.read_text(encoding="utf-8")
+
+        for phrase in (
+            "Why Button Existence Was Not Enough",
+            "Owner Guided Workflow Model",
+            "Stepper States",
+            "Current Action Banner",
+            "Active Item Highlighting",
+            "Per-Card Actions",
+            "Auto-Handled Confirmation",
+            "Save / Generate / Download Gating",
+            "Workflow Persistence",
+            "Completion State",
+            "Safety Boundaries",
+            "If Owner can complete a review without external explanation, proceed to Publish Readiness Gate V1.",
+        ):
+            self.assertIn(phrase, doc)
+
     def test_saved_review_session_safety_text_is_present(self):
         html = self.read_index()
         doc = REVIEW_SESSION_DOC.read_text(encoding="utf-8")
@@ -456,6 +598,7 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
             + LAUNCH_PLAN.read_text(encoding="utf-8")
             + WORKFLOW_COMPRESSION_DOC.read_text(encoding="utf-8")
             + REVIEW_SESSION_DOC.read_text(encoding="utf-8")
+            + GUIDED_WORKFLOW_DOC.read_text(encoding="utf-8")
         )
 
         self.assertIn("does not require `OPENAI_API_KEY`", combined)
