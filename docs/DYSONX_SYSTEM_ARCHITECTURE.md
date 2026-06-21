@@ -128,6 +128,8 @@ A Signal may be published only after passing the quality gate.
 
 Published Signal pages should include title, summary, source attribution, authority score, confidence score, AGI impact score, related entities, related capabilities, DysonX Take, Watch Next, internal links to trackers, English default content, Chinese localized content when available, structured data, and SEO metadata.
 
+Public-facing surfaces are governed by `docs/DYSONX_PUBLIC_INTELLIGENCE_SURFACES_V1.md`.
+
 ## Tracker Layer
 
 Trackers are persistent intelligence surfaces for companies, people, topics, capabilities, models, papers, policies, and GitHub projects.

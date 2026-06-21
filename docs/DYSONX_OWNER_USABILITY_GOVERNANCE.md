@@ -163,6 +163,26 @@ All future Codex prompts for DysonX Owner-facing work must include this document
 docs/DYSONX_OWNER_USABILITY_GOVERNANCE.md
 ```
 
+Future Owner-facing and public-surface Codex prompts must include:
+
+- `docs/DYSONX_OWNER_USABILITY_GOVERNANCE.md`
+- `docs/DYSONX_PUBLIC_INTELLIGENCE_SURFACES_V1.md`
+- `docs/DYSONX_AUTO_DECISION_ENGINE_V1.md`
+
+The public intelligence surfaces document is mandatory when work touches:
+
+- public website
+- public Signals
+- Trackers
+- AGI Map
+- Reports
+- Publish Readiness Gate
+- public page generation
+- public content generation
+- publishing workflow
+- Owner Console to public handoff
+- AutoDecision to public handoff
+
 All future prompts must also include the Strategic Priority -- Minimal Usable Owner Intelligence Loop block until the internal frontend is usable and launched.
 
 ## 13. Explicit Non-Goals
