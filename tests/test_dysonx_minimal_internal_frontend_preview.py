@@ -15,6 +15,11 @@ LAUNCH_PLAN = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_LAUNCH_PLAN.md"
 WORKFLOW_COMPRESSION_DOC = ROOT / "docs" / "DYSONX_OWNER_CONSOLE_WORKFLOW_COMPRESSION_V2.md"
 REVIEW_SESSION_DOC = ROOT / "docs" / "DYSONX_REVIEW_SESSION_SAVE_V1.md"
 GUIDED_WORKFLOW_DOC = ROOT / "docs" / "DYSONX_OWNER_GUIDED_REVIEW_WORKFLOW_V1.md"
+WIZARD = ROOT / "internal" / "dysonx-owner-review-wizard"
+WIZARD_INDEX = WIZARD / "index.html"
+WIZARD_APP = WIZARD / "app.js"
+WIZARD_STYLES = WIZARD / "styles.css"
+WIZARD_DOC = ROOT / "docs" / "DYSONX_OWNER_REVIEW_WIZARD_V1.md"
 
 
 class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
@@ -26,6 +31,12 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
 
     def load_fixture(self) -> dict:
         return json.loads(FIXTURE.read_text(encoding="utf-8"))
+
+    def read_wizard_index(self) -> str:
+        return WIZARD_INDEX.read_text(encoding="utf-8")
+
+    def read_wizard_app(self) -> str:
+        return WIZARD_APP.read_text(encoding="utf-8")
 
     def test_preview_fixture_can_be_loaded(self):
         fixture = self.load_fixture()
@@ -640,6 +651,232 @@ class DysonXMinimalInternalFrontendPreviewTests(unittest.TestCase):
         self.assertTrue(relative.startswith("internal/"))
         self.assertFalse(relative.startswith("static/"))
         self.assertFalse(relative.startswith("downloads/"))
+
+    def test_owner_review_wizard_route_exists(self):
+        html = self.read_wizard_index()
+
+        self.assertTrue(WIZARD_INDEX.exists())
+        self.assertTrue(WIZARD_APP.exists())
+        self.assertTrue(WIZARD_STYLES.exists())
+        self.assertIn("DysonX Owner Review Wizard", html)
+        self.assertIn("wizard-screen", html)
+        self.assertIn("owner-review-wizard-v1", "/internal/dysonx-owner-review-wizard/?v=owner-review-wizard-v1")
+
+    def test_owner_review_wizard_start_screen_is_simple(self):
+        app = self.read_wizard_app()
+
+        self.assertIn("DysonX Owner Review Wizard", app)
+        self.assertIn("Review only the few Signals that need Owner attention. The system handles the rest.", app)
+        self.assertIn("Start Review", app)
+        self.assertIn("Open Advanced Console", app)
+        self.assertIn("This will not publish anything.", app)
+        self.assertIn("Resume Saved Review", app)
+        self.assertIn("Start New Review", app)
+        self.assertIn("Starting new clears only this browser's saved review state.", app)
+
+    def test_owner_review_wizard_attention_screens_are_single_signal(self):
+        app = self.read_wizard_app()
+
+        self.assertIn("Review ${index + 1} of ${items.length}", app)
+        self.assertIn("Accept system recommendation", app)
+        self.assertIn("Change decision", app)
+        self.assertIn("Skip for now", app)
+        self.assertIn("Save decision and continue", app)
+        self.assertIn("Cancel change", app)
+        self.assertIn("function renderAttentionScreen", app)
+        self.assertIn("attentionSignals().length", app)
+        self.assertNotIn("renderAllSignals", app)
+
+    def test_owner_review_wizard_decision_form_only_appears_in_change_mode(self):
+        app = self.read_wizard_app()
+
+        self.assertIn("if (state.changeMode)", app)
+        self.assertIn("decisionForm(signal)", app)
+        self.assertIn("Owner decision", app)
+        self.assertIn("Priority", app)
+        self.assertIn("Optional comment", app)
+        self.assertIn("Follow-up required", app)
+        self.assertIn("Optional follow-up note", app)
+
+    def test_owner_review_wizard_auto_handled_confirmation_exists(self):
+        app = self.read_wizard_app()
+
+        self.assertIn("The system already handled ${handled.length} Signals.", app)
+        self.assertIn("You do not need to review these unless you disagree.", app)
+        self.assertIn("Accept system-handled Signals", app)
+        self.assertIn("Review system-handled details", app)
+        self.assertIn("function acceptSystemHandledSignals", app)
+        self.assertIn("Hold", app)
+        self.assertIn("Regenerate", app)
+        self.assertIn("Reject", app)
+
+    def test_owner_review_wizard_save_generate_download_complete_screens_exist(self):
+        app = self.read_wizard_app()
+
+        for phrase in (
+            "Ready to save your internal review.",
+            "Save Internal Review",
+            "Internal review saved.",
+            "Generate Owner Feedback JSON",
+            "Feedback generated.",
+            "Download Owner Feedback JSON",
+            "Download Review Session JSON",
+            "Copy Feedback JSON",
+            "Internal Review Complete",
+            "No public publishing occurred.",
+            "Next future stage: Publish Readiness Gate V1",
+        ):
+            self.assertIn(phrase, app)
+
+    def test_owner_review_wizard_local_storage_and_state_fields_exist(self):
+        app = self.read_wizard_app()
+
+        self.assertIn('const WIZARD_STORAGE_KEY = "dysonx.ownerReviewWizard.v1"', app)
+        for field in (
+            "wizard_session_id",
+            "current_screen",
+            "attention_index",
+            "attention_item_statuses",
+            "selected_owner_decisions",
+            "priority_values",
+            "owner_comments",
+            "follow_up_required",
+            "follow_up_notes",
+            "owner_overridden",
+            "auto_handled_accepted",
+            "internal_review_saved",
+            "feedback_generated",
+            "feedback_downloaded",
+            "session_created_at",
+            "session_updated_at",
+        ):
+            self.assertIn(field, app)
+        self.assertIn("localStorage.setItem(WIZARD_STORAGE_KEY", app)
+        self.assertIn("localStorage.getItem(WIZARD_STORAGE_KEY", app)
+        self.assertIn("localStorage.removeItem(WIZARD_STORAGE_KEY", app)
+
+    def test_owner_review_wizard_feedback_json_has_required_safety_fields(self):
+        app = self.read_wizard_app()
+
+        for field in (
+            "owner_review_wizard_version",
+            "internal_review_complete",
+            "auto_handled_accepted",
+            "records",
+            "auto_decision_is_not_publication_approval: true",
+            "owner_feedback_is_not_publication_approval: true",
+            "review_session_is_not_publication_approval: true",
+            "wizard_review_is_not_publication_approval: true",
+            "publication_approved: false",
+        ):
+            self.assertIn(field, app)
+        self.assertNotIn("publication_approved: true", app)
+
+    def test_owner_review_wizard_one_primary_action_pattern(self):
+        app = self.read_wizard_app()
+
+        self.assertIn('button.dataset.primaryAction = "true"', app)
+        self.assertIn('link.dataset.secondaryAction = "true"', app)
+        self.assertIn('button.dataset.secondaryAction = "true"', app)
+        for renderer in (
+            "renderStartScreen",
+            "renderAttentionScreen",
+            "renderAutoHandledScreen",
+            "renderSaveScreen",
+            "renderGenerateScreen",
+            "renderDownloadScreen",
+            "renderCompleteScreen",
+        ):
+            start = app.index(f"function {renderer}")
+            end = app.find("\nfunction ", start + 1)
+            block = app[start:] if end == -1 else app[start:end]
+            self.assertIn("primaryButton(", block)
+            self.assertLessEqual(block.count("primaryButton("), 2 if renderer in {"renderStartScreen", "renderAttentionScreen"} else 1)
+        self.assertLessEqual(app.count("secondaryButton("), 12)
+
+    def test_owner_review_wizard_screens_have_no_more_than_three_actions(self):
+        app = self.read_wizard_app()
+
+        for renderer in (
+            "renderStartScreen",
+            "renderAttentionScreen",
+            "renderAutoHandledScreen",
+            "renderSaveScreen",
+            "renderGenerateScreen",
+            "renderDownloadScreen",
+            "renderCompleteScreen",
+        ):
+            start = app.index(f"function {renderer}")
+            end = app.find("\nfunction ", start + 1)
+            block = app[start:] if end == -1 else app[start:end]
+            action_count = block.count("primaryButton(") + block.count("secondaryButton(") + block.count("smallButton(") + block.count("linkButton(")
+            self.assertLessEqual(action_count, 5 if renderer == "renderAttentionScreen" else 4 if renderer == "renderStartScreen" else 3)
+
+    def test_owner_review_wizard_safety_text_and_advanced_console_separation(self):
+        html = self.read_wizard_index()
+        app = self.read_wizard_app()
+
+        for phrase in (
+            "No public publishing",
+            "Not publication approval",
+            "No deployment",
+            "No OpenAI call",
+            "Local browser review only",
+        ):
+            self.assertIn(phrase, app)
+        self.assertIn("../dysonx-owner-intelligence-preview/?v=advanced-console", html)
+        self.assertIn("../dysonx-owner-intelligence-preview/?v=advanced-console", app)
+        self.assertTrue(INDEX.exists())
+
+    def test_owner_review_wizard_keeps_raw_json_out_of_main_flow(self):
+        app = self.read_wizard_app()
+        html = self.read_wizard_index()
+
+        self.assertNotIn("<pre", html)
+        self.assertNotIn("feedback-output", html)
+        self.assertNotIn("screen.appendChild(JSON.stringify", app)
+        self.assertNotIn("innerHTML = JSON.stringify", app)
+        self.assertIn("downloadJson", app)
+        self.assertIn("View details", app)
+
+    def test_owner_review_wizard_no_external_effects_or_public_publishing_behavior(self):
+        app = self.read_wizard_app()
+        html = self.read_wizard_index()
+
+        combined = app + html
+        self.assertIn("No public publishing occurred.", app)
+        self.assertNotIn("XMLHttpRequest", combined)
+        self.assertNotIn("axios", combined)
+        self.assertNotIn("OPENAI" + "_API_KEY", combined)
+        self.assertNotIn("gh workflow", combined)
+        self.assertNotIn("deploy", combined.lower().replace("no deployment", ""))
+        self.assertNotIn("publishSignal", combined)
+        self.assertNotIn("publicPage", combined)
+
+    def test_owner_review_wizard_documentation_exists(self):
+        doc = WIZARD_DOC.read_text(encoding="utf-8")
+
+        for phrase in (
+            "Why Previous Owner Console Attempts Failed",
+            "Why Wizard Mode Is Required",
+            "One Screen / One Task / One Primary Action Rule",
+            "Wizard Screens",
+            "Attention Item Review",
+            "Auto-Handled Confirmation",
+            "Save / Generate / Download Flow",
+            "Local Persistence",
+            "Feedback JSON",
+            "Safety Boundaries",
+            "Owner Acceptance Criteria",
+            "If Owner can complete the review without asking what to click next, then merge Wizard and proceed to Publish Readiness Gate V1.",
+        ):
+            self.assertIn(phrase, doc)
+
+    def test_owner_usability_governance_prefers_wizard_mode(self):
+        doc = (ROOT / "docs" / "DYSONX_OWNER_USABILITY_GOVERNANCE.md").read_text(encoding="utf-8")
+
+        self.assertIn("Wizard mode is preferred over dense console mode", doc)
+        self.assertIn("one screen / one task / one primary action", doc)
 
 
 if __name__ == "__main__":

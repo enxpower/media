@@ -188,6 +188,8 @@ All future prompts must also include the Strategic Priority -- Minimal Usable Ow
 
 Future prompts must preserve the automation and publication strategy: maximize safe automation, minimize unnecessary Owner review, avoid blocking all progress on pending Owner review, and keep Publish Readiness Gate mandatory before any publication.
 
+For Owner-facing review flows, Wizard mode is preferred over dense console mode. Owner workflows must follow one screen / one task / one primary action.
+
 ## 13. Explicit Non-Goals
 
 This governance does not authorize:
