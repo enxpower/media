@@ -131,6 +131,8 @@ Publish Readiness Gate must verify:
 
 Only after Publish Readiness Gate may an item become Ready to Publish.
 
+Public Signal Page Generator V1 must only consume Signals that pass `docs/DYSONX_PUBLISH_READINESS_GATE_V1.md`. Passing that gate means ready for future public generation; it does not mean published.
+
 ## 7. Public Website Responsibility
 
 Public website is the external product surface.

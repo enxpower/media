@@ -1,0 +1,18 @@
+{
+  "gate_version": "publish_readiness_gate_v1",
+  "signals_evaluated": 6,
+  "ready_count": 1,
+  "blocked_count": 5,
+  "expected_decisions": {
+    "sig_ready_synthetic_agent_eval": "ready_for_public_generation",
+    "sig_fixture_candidate_missing_public_fields": "blocked_fixture_only",
+    "sig_needs_more_sources": "blocked_needs_more_sources",
+    "sig_hold": "blocked_hold",
+    "sig_needs_regeneration": "blocked_needs_regeneration",
+    "sig_rejected_generic": "blocked_rejected"
+  },
+  "no_public_publishing_performed": true,
+  "no_deployment_performed": true,
+  "no_openai_call_performed": true,
+  "no_workflow_dispatch_performed": true
+}
