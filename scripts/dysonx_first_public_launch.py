@@ -207,6 +207,20 @@ def verify_launch_inputs(
     return list(dict.fromkeys(blockers))
 
 
+def public_source_pack_entry(entry: dict[str, Any]) -> dict[str, Any]:
+    public_entry: dict[str, Any] = {
+        "signal_id": signal_id(entry),
+        "title": title(entry),
+        "slug": slug(entry),
+        "source_count": entry.get("source_count", 0),
+    }
+    for key in ("summary", "agi_relevance", "quality_confidence"):
+        value = normalize_text(entry.get(key))
+        if value:
+            public_entry[key] = value
+    return public_entry
+
+
 def copy_index(production_pack_dir: pathlib.Path, public_output_root: pathlib.Path, created_at: str) -> None:
     source_index = production_pack_dir / "signals" / "index.html"
     target_index = public_output_root / "signals" / "index.html"
@@ -260,7 +274,7 @@ def generate_launch(
                 "public_url_path": f"/signals/{page_slug}/",
                 "published": True,
                 "production_publish_performed": True,
-                "source_pack_entry": entry,
+                "source_pack_entry": public_source_pack_entry(entry),
             }
         )
 
@@ -290,7 +304,6 @@ def generate_launch(
         "pages_launched": len(launched),
         "pages_blocked": len(blocked),
         "launched": launched,
-        "blocked": blocked,
         "release_guard_passed": True,
         "manual_publish_approval_verified": True,
         "publish_readiness_gate_verified": True,
