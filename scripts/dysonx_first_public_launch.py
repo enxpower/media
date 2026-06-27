@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
+import re
 import shutil
 import sys
 from datetime import datetime, timezone
@@ -115,6 +116,29 @@ def transform_launched_html(html: str, created_at: str) -> str:
     launched = html.replace("Production Publish Candidate / Not Yet Deployed", "Published")
     launched = launched.replace("Draft Preview / Not Published", "Published")
     launched = launched.replace('  <meta name="robots" content="noindex,nofollow">\n', "")
+    if "</head>" in launched and "<style>" not in launched:
+        launched = launched.replace(
+            "</head>",
+            """  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #17202a; line-height: 1.6; background: #ffffff; }
+    main { max-width: 860px; margin: 0 auto; padding: 32px 20px 56px; }
+    h1 { margin: 0 0 16px; font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.05; }
+    h2 { margin-top: 28px; font-size: 1.05rem; }
+    a { color: #0f6f8f; }
+    code { background: #f6f8fa; padding: 1px 4px; }
+    .status { display: inline-block; margin-bottom: 16px; padding: 5px 9px; border: 1px solid #97b6c4; background: #eef7fa; color: #24505e; font-weight: 700; font-size: 0.85rem; }
+    .notice { border: 1px solid #d8dee6; border-left: 4px solid #97b6c4; background: #f6f8fa; padding: 14px; }
+    .meta { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin: 20px 0; }
+    .muted { color: #667085; font-size: 0.9rem; }
+  </style>
+</head>""",
+        )
+    launched = re.sub(
+        r"<ul><li><a[^>]+href=\"https?://[^\"]+\.test/[^\"]*\"[^>]*>.*?</a></li></ul>",
+        "<p>Source attribution retained in launch metadata; external source URL omitted for this V1 launch sample.</p>",
+        launched,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
     launched = launched.replace(
         "Step 5 explicit Owner launch authorization is required before production release.",
         "Published through DysonX First Public Launch V1 after explicit Owner launch authorization.",
@@ -136,11 +160,18 @@ def transform_launched_html(html: str, created_at: str) -> str:
         "Published static public Signal page.",
     )
     launched = launched.replace(
+        "Production publish pack candidate only.",
+        "First public launch complete.",
+    )
+    launched = launched.replace(
         "This packaged page is a production publish candidate. It is not published, not live, and not deployed.",
         "This page is a published DysonX public Signal. External deployment status depends on repository hosting automation.",
     )
     launched = launched.replace("DysonX Draft Preview", "DysonX Public Signal")
     launched = launched.replace("Back to Public Signals Draft Preview", "Back to Public Signals")
+    launched = launched.replace('href="../"', 'href="/signals/"')
+    if 'href="/signals/"' not in launched and "</main>" in launched:
+        launched = launched.replace("</main>", '<p><a href="/signals/">Back to Public Signals</a></p>\n</main>')
     if "</main>" in launched:
         launched = launched.replace(
             "</main>",
