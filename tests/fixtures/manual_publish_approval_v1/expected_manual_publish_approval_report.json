@@ -1,0 +1,16 @@
+{
+  "approved_slugs": [
+    "agent-evaluation-recovery-metric"
+  ],
+  "blocked_expectations": {
+    "agent-evaluation-recovery-metric:hold": "decision_not_approve_for_production_pack",
+    "agent-evaluation-recovery-metric:reject": "decision_not_approve_for_production_pack",
+    "blocked-by-generator:approve_for_production_pack": "signal_was_blocked_by_generator",
+    "production-publish-performed-page:approve_for_production_pack": "page_production_publish_performed_true",
+    "published-true-page:approve_for_production_pack": "published_true_blocks_manual_approval",
+    "unknown-slug:approve_for_production_pack": "page_not_found_in_generator_manifest"
+  },
+  "pages_approved": 1,
+  "pages_blocked": 6,
+  "pages_seen": 3
+}

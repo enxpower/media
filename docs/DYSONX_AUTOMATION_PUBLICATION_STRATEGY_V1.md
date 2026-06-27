@@ -190,6 +190,8 @@ Fast publication progress also means automating blockers and readiness checks th
 
 Step 2 of the strict 5-Step Final Launch Plan is `docs/DYSONX_PUBLIC_SIGNAL_PAGE_GENERATOR_V1.md`: Public Signal Page Generator V1, Public Signals Index V1, and Local Public Preview V1. This step creates static draft preview artifacts only; generated drafts and local preview are not publication, do not replace Manual Publish Approval V1, and must remain visually simple while preserving credibility, readability, attribution, copyright safety, and gate approval.
 
+Step 3 of the strict 5-Step Final Launch Plan is `docs/DYSONX_MANUAL_PUBLISH_APPROVAL_V1.md`: Manual Publish Approval V1. This step consumes the Step 2 generator manifest plus explicit Owner approval input and emits an approval report for Step 4 Production Publish Pack. It does not publish, deploy, dispatch workflows, call OpenAI, or modify generated public HTML. `approved_for_production_pack` is not `published`; production release still requires Step 4 and Step 5.
+
 ## 8. Owner Role
 
 Owner is a strategic decision-maker, not a daily manual editor.
