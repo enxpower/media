@@ -186,6 +186,8 @@ Speed must not override:
 
 Fast progress should come from deterministic automation, concise Owner exception workflows, and clean handoffs between internal review and future public publication gates.
 
+Fast publication progress also means automating blockers and readiness checks through `docs/DYSONX_PUBLISH_READINESS_GATE_V1.md`, not bypassing the gate.
+
 ## 8. Owner Role
 
 Owner is a strategic decision-maker, not a daily manual editor.

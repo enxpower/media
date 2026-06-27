@@ -1,0 +1,69 @@
+{
+  "score_version": "signal_quality_score_v1",
+  "created_at": "2026-06-22T00:00:00+00:00",
+  "signals_scored": 6,
+  "score_records": [
+    {
+      "signal_id": "sig_ready_synthetic_agent_eval",
+      "score": 59,
+      "max_score": 65,
+      "quality_tier": "Tier A: Decision-grade Signal",
+      "critical_risk_flags": [],
+      "risk_flags": [],
+      "publish_readiness_candidate": true
+    },
+    {
+      "signal_id": "sig_fixture_candidate_missing_public_fields",
+      "score": 58,
+      "max_score": 65,
+      "quality_tier": "Tier A: Decision-grade Signal",
+      "critical_risk_flags": [],
+      "risk_flags": [],
+      "publish_readiness_candidate": true
+    },
+    {
+      "signal_id": "sig_needs_more_sources",
+      "score": 50,
+      "max_score": 65,
+      "quality_tier": "Tier B: Useful Signal",
+      "critical_risk_flags": [],
+      "risk_flags": [],
+      "publish_readiness_candidate": false
+    },
+    {
+      "signal_id": "sig_hold",
+      "score": 48,
+      "max_score": 65,
+      "quality_tier": "Tier B: Useful Signal",
+      "critical_risk_flags": [],
+      "risk_flags": [],
+      "publish_readiness_candidate": false
+    },
+    {
+      "signal_id": "sig_needs_regeneration",
+      "score": 37,
+      "max_score": 65,
+      "quality_tier": "Tier C: Needs Review",
+      "critical_risk_flags": [],
+      "risk_flags": [],
+      "publish_readiness_candidate": false
+    },
+    {
+      "signal_id": "sig_rejected_generic",
+      "score": 18,
+      "max_score": 65,
+      "quality_tier": "Tier D: Reject / Low-value",
+      "critical_risk_flags": ["generic_summary"],
+      "risk_flags": ["generic_summary", "weak_source_attribution"],
+      "publish_readiness_candidate": false
+    }
+  ],
+  "safety_flags": {
+    "openai_call_performed": false,
+    "workflow_dispatched": false,
+    "publishing_performed": false,
+    "publish_readiness_enabled": false,
+    "website_pages_written": false,
+    "deployment_performed": false
+  }
+}

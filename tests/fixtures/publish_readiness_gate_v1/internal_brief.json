@@ -1,0 +1,77 @@
+{
+  "brief_version": "internal_intelligence_brief_v1",
+  "created_at": "2026-06-22T00:00:00+00:00",
+  "source_score_report": "tests/fixtures/publish_readiness_gate_v1/signal_quality_score.json",
+  "generated_for": "internal_owner_review",
+  "signals_reviewed": 6,
+  "tier_counts": {
+    "Tier A: Decision-grade Signal": 2,
+    "Tier B: Useful Signal": 2,
+    "Tier C: Needs Review": 1,
+    "Tier D: Reject / Low-value": 1
+  },
+  "decision_grade_candidates": [
+    {
+      "signal_id": "sig_ready_synthetic_agent_eval",
+      "title": "Synthetic agent reliability benchmark adds recovery metric for tool-use failures",
+      "source_url": "https://source.dysonx.test/research/agent-recovery-benchmark",
+      "source_authority": "Synthetic first-party benchmark fixture with methodology fields for gate testing.",
+      "agi_capability": "Agents, Tool Use, Evaluation",
+      "entities": ["Synthetic Eval Lab", "agent recovery benchmark"],
+      "why_it_matters": "Recovery behavior is a concrete constraint on whether agents can execute long tool-use workflows reliably.",
+      "watch_next": "Watch whether model providers report recovery rates alongside success rates in the next benchmark cycle.",
+      "auto_decision": "candidate_for_publish_readiness_review",
+      "publish_readiness_candidate": true,
+      "publication_approved": false
+    },
+    {
+      "signal_id": "sig_fixture_candidate_missing_public_fields",
+      "title": "Fixture candidate uses example source and lacks public fields",
+      "source_url": "https://example.org/research/fixture-candidate",
+      "source_authority": "Fixture source for gate testing only.",
+      "agi_capability": "Evaluation",
+      "entities": ["Fixture Lab"],
+      "why_it_matters": "This fixture proves a high score is not enough for future public generation.",
+      "watch_next": "Replace fixture source and complete public fields.",
+      "auto_decision": "candidate_for_publish_readiness_review",
+      "publish_readiness_candidate": true,
+      "publication_approved": false
+    }
+  ],
+  "useful_review_queue": [
+    {
+      "signal_id": "sig_needs_more_sources",
+      "title": "Enterprise assistant memory controls need additional source support",
+      "auto_decision": "needs_more_sources",
+      "publication_approved": false
+    },
+    {
+      "signal_id": "sig_hold",
+      "title": "Synthetic inference cost note is useful but not urgent",
+      "auto_decision": "hold",
+      "publication_approved": false
+    }
+  ],
+  "blocked_or_low_value": [
+    {
+      "signal_id": "sig_needs_regeneration",
+      "title": "Synthetic robotics policy item needs regeneration",
+      "auto_decision": "needs_regeneration",
+      "publication_approved": false
+    },
+    {
+      "signal_id": "sig_rejected_generic",
+      "title": "Generic AI demand roundup is rejected",
+      "auto_decision": "auto_reject",
+      "publication_approved": false
+    }
+  ],
+  "owner_review_queue": [],
+  "safety_flags": {
+    "publishing_performed": false,
+    "public_content_generated": false,
+    "openai_call_performed": false,
+    "workflow_dispatched": false,
+    "deployment_performed": false
+  }
+}
