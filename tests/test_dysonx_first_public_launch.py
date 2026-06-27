@@ -73,6 +73,7 @@ class DysonXFirstPublicLaunchTests(unittest.TestCase):
         html = launched_page.read_text(encoding="utf-8")
         self.assertIn("Published", html)
         self.assertNotIn("Production Publish Candidate / Not Yet Deployed", html)
+        self.assertNotIn("noindex,nofollow", html)
 
     def test_missing_owner_launch_authorization_blocks_launch(self):
         result, manifest, output_root = self.run_launch(authorization="missing")

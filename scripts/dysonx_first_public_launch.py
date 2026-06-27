@@ -114,6 +114,7 @@ def resolve_packaged_page_path(production_pack_dir: pathlib.Path, entry: dict[st
 def transform_launched_html(html: str, created_at: str) -> str:
     launched = html.replace("Production Publish Candidate / Not Yet Deployed", "Published")
     launched = launched.replace("Draft Preview / Not Published", "Published")
+    launched = launched.replace('  <meta name="robots" content="noindex,nofollow">\n', "")
     launched = launched.replace(
         "Step 5 explicit Owner launch authorization is required before production release.",
         "Published through DysonX First Public Launch V1 after explicit Owner launch authorization.",
