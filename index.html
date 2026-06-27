@@ -9,11 +9,9 @@
   <meta property="og:title" content="DysonX tracks the signals shaping AGI." />
   <meta property="og:description" content="First-source AI intelligence, structured into Signals, rankings, and decision-ready context." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://dysonx.ai/" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="DysonX tracks the signals shaping AGI." />
   <meta name="twitter:description" content="First-source AI intelligence, structured into Signals, rankings, and decision-ready context." />
-  <link rel="canonical" href="https://dysonx.ai/" />
   <style>
     :root {
       color-scheme: light;
@@ -84,8 +82,14 @@
       justify-content: flex-end;
     }
 
-    nav a {
+    nav a,
+    nav .nav-disabled {
       white-space: nowrap;
+    }
+
+    nav .nav-disabled {
+      color: #8a93a3;
+      cursor: default;
     }
 
     .language-toggle {
@@ -250,13 +254,13 @@
       <div class="topbar-inner">
         <a class="brand" href="/" aria-label="DysonX home">DysonX</a>
         <nav aria-label="Primary navigation">
-          <a href="#signals">Signals</a>
-          <a href="#trackers">Trackers</a>
-          <a href="#agi-map">AGI Map</a>
-          <a href="#companies">Companies</a>
-          <a href="#people">People</a>
-          <a href="#research">Research</a>
-          <a href="#reports">Reports</a>
+          <a href="/signals/">Signals</a>
+          <span class="nav-disabled" aria-disabled="true">Trackers</span>
+          <span class="nav-disabled" aria-disabled="true">AGI Map</span>
+          <span class="nav-disabled" aria-disabled="true">Companies</span>
+          <span class="nav-disabled" aria-disabled="true">People</span>
+          <span class="nav-disabled" aria-disabled="true">Research</span>
+          <span class="nav-disabled" aria-disabled="true">Reports</span>
           <span class="language-toggle" aria-label="Language switch placeholder">
             <span>EN</span>
             <span>中文</span>

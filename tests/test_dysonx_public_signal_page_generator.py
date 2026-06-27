@@ -83,7 +83,7 @@ class DysonXPublicSignalPageGeneratorTests(unittest.TestCase):
         html = (output_dir / "signals" / "agent-evaluation-recovery-metric" / "index.html").read_text(encoding="utf-8")
 
         self.assertIn("Source attributed to Synthetic Research Lab benchmark note.", html)
-        self.assertIn("https://source.dysonx.invalid/research/agent-recovery-benchmark", html)
+        self.assertIn("https://source.example.org/research/agent-recovery-benchmark", html)
 
     def test_index_page_includes_generated_signals_and_summary(self):
         _, _, output_dir = self.run_generator()

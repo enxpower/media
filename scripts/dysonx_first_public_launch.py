@@ -136,7 +136,7 @@ def transform_launched_html(html: str, created_at: str) -> str:
 </head>""",
         )
     launched = re.sub(
-        r"<ul><li><a[^>]+href=\"https?://[^\"]+[.]tes" + r"t/[^\"]*\"[^>]*>.*?</a></li></ul>",
+        r"<ul><li><a[^>]+href=\"https?://[^\"]+[.](?:invalid|tes" + r"t)/[^\"]*\"[^>]*>.*?</a></li></ul>",
         "<p>Source attribution retained in launch metadata; external source URL omitted for this V1 launch sample.</p>",
         launched,
         flags=re.IGNORECASE | re.DOTALL,
@@ -172,8 +172,13 @@ def transform_launched_html(html: str, created_at: str) -> str:
     launched = launched.replace("DysonX Draft Preview", "DysonX Public Signal")
     launched = launched.replace("Back to Public Signals Draft Preview", "Back to Public Signals")
     launched = launched.replace('href="../"', 'href="/signals/"')
+    if 'href="/"' not in launched and 'href="/signals/"' in launched:
+        launched = launched.replace(
+            '<p><a href="/signals/">Back to Public Signals</a></p>',
+            '<p><a href="/">Home</a> · <a href="/signals/">Back to Public Signals</a></p>',
+        )
     if 'href="/signals/"' not in launched and "</main>" in launched:
-        launched = launched.replace("</main>", '<p><a href="/signals/">Back to Public Signals</a></p>\n</main>')
+        launched = launched.replace("</main>", '<p><a href="/">Home</a> · <a href="/signals/">Back to Public Signals</a></p>\n</main>')
     if "</main>" in launched:
         launched = launched.replace(
             "</main>",

@@ -63,8 +63,18 @@ class DysonXIdentityLandingTests(unittest.TestCase):
         self.assertIn('name="twitter:title"', html)
         self.assertIn('name="twitter:description"', html)
         self.assertIn("English default; Chinese optional future localization", html)
-        self.assertIn('property="og:url" content="https://dysonx.ai/"', html)
-        self.assertIn('<link rel="canonical" href="https://dysonx.ai/" />', html)
+        self.assertNotIn('property="og:url"', html)
+        self.assertNotIn('rel="canonical"', html)
+
+    def test_index_public_links_are_domain_agnostic_and_valid(self):
+        html = INDEX.read_text(encoding="utf-8")
+
+        self.assertIn('href="/"', html)
+        self.assertIn('href="/signals/"', html)
+        self.assertNotIn('href="#signals"', html)
+        self.assertNotIn("https://dysonx." + "ai", html)
+        for nav_item in ("Trackers", "AGI Map", "Companies", "People", "Research", "Reports"):
+            self.assertIn(f'<span class="nav-disabled" aria-disabled="true">{nav_item}</span>', html)
 
     def test_index_does_not_use_legacy_public_positioning(self):
         html = read_lower(INDEX)

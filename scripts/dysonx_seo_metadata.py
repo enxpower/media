@@ -6,7 +6,7 @@ from __future__ import annotations
 from dataclasses import dataclass, asdict
 
 
-DEFAULT_SITE_URL = "https://dysonx.ai"
+DEFAULT_SITE_URL = ""
 
 
 @dataclass(frozen=True)
@@ -30,7 +30,7 @@ def truncate_text(value: str, limit: int) -> str:
 def build_seo_metadata(title: str, summary: str, slug: str, site_url: str = DEFAULT_SITE_URL) -> SEOMetadataV1:
     seo_title = truncate_text(title, 70)
     description = truncate_text(summary, 160)
-    canonical_url = f"{site_url.rstrip('/')}/signals/{slug}"
+    canonical_url = f"{site_url.rstrip('/')}/signals/{slug}" if site_url else f"/signals/{slug}"
     return SEOMetadataV1(
         title=seo_title,
         description=description,
