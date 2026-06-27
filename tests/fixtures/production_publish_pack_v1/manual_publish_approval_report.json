@@ -1,0 +1,106 @@
+{
+  "approval_version": "manual_publish_approval_v1",
+  "approved": [
+    {
+      "approved_for_production_pack": true,
+      "decision": "approve_for_production_pack",
+      "preview_path": "signals/agent-evaluation-recovery-metric/",
+      "production_publish_performed": false,
+      "published": false,
+      "signal_id": "sig_ready_agent_eval",
+      "slug": "agent-evaluation-recovery-metric",
+      "source_page_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/agent-evaluation-recovery-metric/index.html",
+      "title": "Agent evaluation benchmark adds recovery metric"
+    },
+    {
+      "approved_for_production_pack": false,
+      "decision": "hold",
+      "preview_path": "signals/unapproved-page/",
+      "production_publish_performed": false,
+      "published": false,
+      "signal_id": "sig_unapproved",
+      "slug": "unapproved-page",
+      "source_page_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/unapproved-page/index.html",
+      "title": "Unapproved page should block"
+    },
+    {
+      "approved_for_production_pack": true,
+      "decision": "approve_for_production_pack",
+      "preview_path": "signals/missing-source-html/",
+      "production_publish_performed": false,
+      "published": false,
+      "signal_id": "sig_missing_source_html",
+      "slug": "missing-source-html",
+      "source_page_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/missing-source-html/index.html",
+      "title": "Missing source HTML should block"
+    },
+    {
+      "approved_for_production_pack": true,
+      "decision": "approve_for_production_pack",
+      "preview_path": "signals/published-true-page/",
+      "production_publish_performed": false,
+      "published": true,
+      "signal_id": "sig_published_true",
+      "slug": "published-true-page",
+      "source_page_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/published-true-page/index.html",
+      "title": "Published true page should not be packaged"
+    },
+    {
+      "approved_for_production_pack": true,
+      "decision": "approve_for_production_pack",
+      "preview_path": "signals/production-publish-performed-page/",
+      "production_publish_performed": true,
+      "published": false,
+      "signal_id": "sig_production_publish_performed",
+      "slug": "production-publish-performed-page",
+      "source_page_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/production-publish-performed-page/index.html",
+      "title": "Production publish performed page should not be packaged"
+    },
+    {
+      "approved_for_production_pack": true,
+      "decision": "approve_for_production_pack",
+      "deployed": true,
+      "preview_path": "signals/deployed-true-page/",
+      "production_publish_performed": false,
+      "published": false,
+      "signal_id": "sig_deployed_true",
+      "slug": "deployed-true-page",
+      "source_page_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/deployed-true-page/index.html",
+      "title": "Deployed true page should not be packaged"
+    }
+  ],
+  "approved_at": "2026-06-27T00:00:00Z",
+  "blocked": [
+    {
+      "blockers": [
+        "decision_not_approve_for_production_pack"
+      ],
+      "decision": "hold",
+      "required_next_actions": [
+        "change_decision_to_approve_for_production_pack_after_owner_review"
+      ],
+      "signal_id": "sig_blocked_by_manual_approval",
+      "slug": "blocked-by-manual-approval",
+      "title": "Blocked by manual approval"
+    }
+  ],
+  "created_at": "2026-06-27T00:00:00+00:00",
+  "input_files": {
+    "approval_input": "tests/fixtures/manual_publish_approval_v1/manual_publish_approval_input.json",
+    "manifest": "tests/fixtures/production_publish_pack_v1/public_signal_pages_manifest.json"
+  },
+  "manual_publish_approval_completed": true,
+  "no_deployment_performed": true,
+  "no_openai_call_performed": true,
+  "no_public_publishing_performed": true,
+  "no_workflow_dispatch_performed": true,
+  "owner": {
+    "name": "Andy Gong",
+    "role": "Owner"
+  },
+  "pages_approved": 6,
+  "pages_blocked": 1,
+  "pages_seen": 5,
+  "production_pack_required": true,
+  "production_publish_performed": false
+}

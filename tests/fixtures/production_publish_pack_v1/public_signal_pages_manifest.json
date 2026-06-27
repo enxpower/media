@@ -1,0 +1,89 @@
+{
+  "blocked": [
+    {
+      "blockers": [
+        "public_generation_blocked"
+      ],
+      "required_next_actions": [
+        "resolve_publish_readiness_gate_blockers"
+      ],
+      "signal_id": "sig_blocked_by_generator",
+      "slug": "blocked-by-generator",
+      "title": "Blocked generator Signal"
+    }
+  ],
+  "created_at": "2026-06-27T00:00:00+00:00",
+  "generator_version": "public_signal_page_generator_v1",
+  "input_files": {
+    "gate_report": "tests/fixtures/public_signal_page_generator_v1/publish_readiness_gate_report.json"
+  },
+  "manual_publish_approval_required": true,
+  "no_deployment_performed": true,
+  "no_openai_call_performed": true,
+  "no_public_publishing_performed": true,
+  "no_workflow_dispatch_performed": true,
+  "output_directory": "tests/fixtures/production_publish_pack_v1/public_signal_pages",
+  "pages": [
+    {
+      "output_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/agent-evaluation-recovery-metric/index.html",
+      "preview_path": "signals/agent-evaluation-recovery-metric/",
+      "publication_approved": false,
+      "publish_readiness_gate_passed": true,
+      "published": false,
+      "ready_for_public_generation": true,
+      "signal_id": "sig_ready_agent_eval",
+      "slug": "agent-evaluation-recovery-metric",
+      "title": "Agent evaluation benchmark adds recovery metric"
+    },
+    {
+      "output_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/missing-source-html/index.html",
+      "preview_path": "signals/missing-source-html/",
+      "publication_approved": false,
+      "publish_readiness_gate_passed": true,
+      "published": false,
+      "ready_for_public_generation": true,
+      "signal_id": "sig_missing_source_html",
+      "slug": "missing-source-html",
+      "title": "Missing source HTML should block"
+    },
+    {
+      "output_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/published-true-page/index.html",
+      "preview_path": "signals/published-true-page/",
+      "publication_approved": false,
+      "publish_readiness_gate_passed": true,
+      "published": true,
+      "ready_for_public_generation": true,
+      "signal_id": "sig_published_true",
+      "slug": "published-true-page",
+      "title": "Published true page should not be packaged"
+    },
+    {
+      "output_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/production-publish-performed-page/index.html",
+      "preview_path": "signals/production-publish-performed-page/",
+      "production_publish_performed": true,
+      "publication_approved": false,
+      "publish_readiness_gate_passed": true,
+      "published": false,
+      "ready_for_public_generation": true,
+      "signal_id": "sig_production_publish_performed",
+      "slug": "production-publish-performed-page",
+      "title": "Production publish performed page should not be packaged"
+    },
+    {
+      "deployed": true,
+      "output_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/deployed-true-page/index.html",
+      "preview_path": "signals/deployed-true-page/",
+      "publication_approved": false,
+      "publish_readiness_gate_passed": true,
+      "published": false,
+      "ready_for_public_generation": true,
+      "signal_id": "sig_deployed_true",
+      "slug": "deployed-true-page",
+      "title": "Deployed true page should not be packaged"
+    }
+  ],
+  "production_publish_performed": false,
+  "signals_blocked": 1,
+  "signals_generated": 5,
+  "signals_seen": 6
+}
