@@ -94,7 +94,7 @@ The manifest records:
 - source pack manifest
 - source release guard report
 - pages launched
-- pages blocked
+- pages blocked count
 - release guard status
 - manual approval verification
 - Publish Readiness Gate verification
@@ -104,6 +104,8 @@ The manifest records:
 - manual external deployment flag
 - social distribution flag
 - newsletter distribution flag
+
+The public launch manifest must remain public-safe. It may expose the blocked count, but it must not expose blocked Signal titles, blocked slugs, internal blocker codes, required next actions, fixture/test language, private review state, raw article body, or non-public decision-trail details.
 
 ## 6. Hosting Boundary
 

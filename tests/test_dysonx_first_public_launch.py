@@ -150,13 +150,53 @@ class DysonXFirstPublicLaunchTests(unittest.TestCase):
         _, manifest, _ = self.run_launch()
 
         self.assertTrue(all(item["published"] is True for item in manifest["launched"]))
-        self.assertFalse(any(item.get("published") is True for item in manifest["blocked"]))
+        self.assertNotIn("blocked", manifest)
 
     def test_launch_manifest_sets_production_publish_performed_true_only_for_launched_pages(self):
         _, manifest, _ = self.run_launch()
 
         self.assertTrue(all(item["production_publish_performed"] is True for item in manifest["launched"]))
-        self.assertFalse(any(item.get("production_publish_performed") is True for item in manifest["blocked"]))
+        self.assertNotIn("blocked", manifest)
+
+    def test_public_launch_manifest_does_not_expose_blocked_details(self):
+        _, manifest, _ = self.run_launch()
+
+        self.assertEqual(manifest["pages_blocked"], 1)
+        self.assertNotIn("blocked", manifest)
+
+    def test_public_launch_manifest_does_not_expose_internal_blocker_codes(self):
+        _, _, output_root = self.run_launch()
+
+        text = (output_root / "signals" / "public_launch_manifest.json").read_text(encoding="utf-8")
+        self.assertNotIn("not_approved_for_production_pack", text)
+        self.assertNotIn("source_html_file_missing", text)
+        self.assertNotIn("page_not_found_in_public_pages_manifest", text)
+
+    def test_public_launch_manifest_does_not_expose_required_next_actions(self):
+        _, _, output_root = self.run_launch()
+
+        text = (output_root / "signals" / "public_launch_manifest.json").read_text(encoding="utf-8")
+        self.assertNotIn("required_next_actions", text)
+        self.assertNotIn("regenerate_public_signal_pages_manifest", text)
+
+    def test_public_launch_manifest_does_not_expose_fixture_titles(self):
+        _, _, output_root = self.run_launch()
+
+        text = (output_root / "signals" / "public_launch_manifest.json").read_text(encoding="utf-8")
+        self.assertNotIn("Unapproved page should block", text)
+        self.assertNotIn("Missing source HTML should block", text)
+        self.assertNotIn("Published true page should not be packaged", text)
+
+    def test_launched_entries_remain_public_safe(self):
+        _, manifest, _ = self.run_launch()
+
+        launched = manifest["launched"][0]
+        source_pack_entry = launched["source_pack_entry"]
+        self.assertEqual(launched["public_url_path"], "/signals/agent-evaluation-recovery-metric/")
+        self.assertNotIn("packaged_page_path", source_pack_entry)
+        self.assertNotIn("source_page_path", source_pack_entry)
+        self.assertNotIn("approved_for_production_pack", source_pack_entry)
+        self.assertNotIn("deployed", source_pack_entry)
 
     def test_launch_manifest_confirms_no_openai_call(self):
         _, manifest, _ = self.run_launch()
@@ -180,7 +220,7 @@ class DysonXFirstPublicLaunchTests(unittest.TestCase):
         self.assertEqual(manifest["pages_launched"], expected["pages_launched"])
         self.assertEqual(manifest["pages_blocked"], expected["pages_blocked"])
         self.assertEqual([item["slug"] for item in manifest["launched"]], expected["launched_slugs"])
-        self.assertEqual([item["slug"] for item in manifest["blocked"]], expected["blocked_slugs"])
+        self.assertNotIn("blocked", manifest)
         self.assertEqual(manifest["release_guard_passed"], expected["release_guard_passed"])
         self.assertEqual(manifest["openai_call_performed"], expected["openai_call_performed"])
         self.assertEqual(manifest["workflow_dispatch_performed"], expected["workflow_dispatch_performed"])
