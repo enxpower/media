@@ -130,6 +130,8 @@ Published Signal pages should include title, summary, source attribution, author
 
 Public-facing surfaces are governed by `docs/DYSONX_PUBLIC_INTELLIGENCE_SURFACES_V1.md`.
 
+Public Signal Page Generator V1 is the Step 2 static draft generator governed by `docs/DYSONX_PUBLIC_SIGNAL_PAGE_GENERATOR_V1.md`. It may generate local preview HTML only after Publish Readiness Gate V1 passes, and those draft pages are not publication, production approval, deployment, or public release.
+
 ## Tracker Layer
 
 Trackers are persistent intelligence surfaces for companies, people, topics, capabilities, models, papers, policies, and GitHub projects.
