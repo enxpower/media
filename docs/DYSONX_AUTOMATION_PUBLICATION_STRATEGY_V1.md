@@ -91,7 +91,50 @@ Review Session Save
 
 Public publication is the strategic target, but the next public-facing implementation must still pass through an explicit Publish Readiness Gate.
 
-## 5. Publish Readiness Gate Requirement
+## 5. Functional Publishing Before Aesthetic Polish
+
+Current strategic priority is to complete the safe, controllable, verifiable public publishing path.
+
+Core rule:
+
+```text
+Functional publishing before aesthetic polish;
+quality and safety gates before public release.
+```
+
+Current mainline:
+
+```text
+Owner Review Wizard
+-> Publish Readiness Gate
+-> Public Signal Page Generator
+-> Public Signals Index
+-> Local Public Preview
+-> Manual Publish Approval
+-> media.energizeos.com
+```
+
+Owner Console and Owner Review Wizard UI can be improved later in a dedicated UI/UX sprint. The current Wizard is acceptable for this stage if it is usable enough for the Owner to complete internal review.
+
+Public Signal page visual polish can also be improved later in a dedicated UI/UX sprint. V1 public pages may be visually simple, but they must be credible, clear, structured, source-attributed, copyright-safe, previewable, quality-gated, and not misleadingly published.
+
+Do not let Owner Console UI/UX polish block Publish Readiness Gate V1 or Public Signal Page Generator V1 unless the Owner workflow becomes unusable.
+
+Do not let Public Page visual polish block the publication mainline unless it blocks trust, safety, attribution, basic readability, or publication clarity.
+
+Speed means moving through the governed publication pipeline, not skipping gates.
+
+This priority does not weaken:
+
+- Publish Readiness Gate
+- source attribution
+- copyright safety
+- quality score requirements
+- risk blockers
+- public metadata requirements
+- manual publish approval before production release
+
+## 6. Publish Readiness Gate Requirement
 
 No Signal may be published merely because:
 
@@ -122,7 +165,7 @@ Publish Readiness Gate must still verify:
 
 Until that gate exists and passes, `publication_approved` must remain `false`.
 
-## 6. Speed With Safety
+## 7. Speed With Safety
 
 DysonX should move quickly.
 
@@ -143,7 +186,7 @@ Speed must not override:
 
 Fast progress should come from deterministic automation, concise Owner exception workflows, and clean handoffs between internal review and future public publication gates.
 
-## 7. Owner Role
+## 8. Owner Role
 
 Owner is a strategic decision-maker, not a daily manual editor.
 
@@ -159,7 +202,7 @@ Owner should not be required to review every auto-rejected, auto-held, or clearl
 
 The Owner Console should remain the place for exception handling, strategic judgment, and review-session capture, not a manual queue for every low-value item.
 
-## 8. Required Future Prompt Language
+## 9. Required Future Prompt Language
 
 All future Codex prompts touching DysonX must include this document:
 
@@ -183,10 +226,17 @@ Future prompts must restate:
 - minimize unnecessary Owner review
 - do not block all progress on pending Owner review
 - public publication is the strategic target
+- Functional publishing before aesthetic polish
+- Quality and safety gates before public release
+- Owner Wizard UI polish is a later sprint
+- Public page visual polish is a later sprint
+- current mainline is Owner Review Wizard -> Publish Readiness Gate -> Public Signal Page Generator -> Public Signals Index -> Local Public Preview -> Manual Publish Approval -> media.energizeos.com
+- do not continue polishing internal UI unless it blocks usability
+- do not continue polishing public UI unless it blocks trust, safety, attribution, basic readability, or publication clarity
 - Publish Readiness Gate is mandatory before publication
 - quality and safety remain prerequisites
 
-## 9. Non-Goals
+## 10. Non-Goals
 
 This document does not authorize immediate implementation of:
 
