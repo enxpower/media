@@ -34,6 +34,10 @@ SignalQualityScore
 
 Until the internal frontend is usable, DysonX must not prioritize complex backend intelligence layers over the Owner-facing product loop.
 
+The Owner Review Wizard is the current usable Owner path. Further Owner UI/UX upgrades should be handled as a dedicated future sprint and should not block Publish Readiness Gate V1 or Public Signal Page Generator V1 unless the Owner workflow becomes unusable.
+
+Do not continue polishing internal UI unless it blocks usability.
+
 ## 4. Big-Step Rule
 
 Bigger PRs are allowed when they move the Owner-facing product forward.
@@ -189,6 +193,8 @@ All future prompts must also include the Strategic Priority -- Minimal Usable Ow
 Future prompts must preserve the automation and publication strategy: maximize safe automation, minimize unnecessary Owner review, avoid blocking all progress on pending Owner review, and keep Publish Readiness Gate mandatory before any publication.
 
 For Owner-facing review flows, Wizard mode is preferred over dense console mode. Owner workflows must follow one screen / one task / one primary action.
+
+Future prompts must restate that Functional publishing comes before aesthetic polish, quality and safety gates come before public release, Owner Wizard UI polish is a later sprint, and internal UI polish must not continue unless it blocks usability.
 
 ## 13. Explicit Non-Goals
 

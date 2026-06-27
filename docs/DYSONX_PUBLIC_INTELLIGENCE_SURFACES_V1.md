@@ -162,7 +162,21 @@ The public website is not the intelligence factory.
 
 It is the presentation layer for already-qualified public intelligence assets.
 
-## 8. Public Surface Types
+## 8. Functional Public Surface V1 Priority
+
+Public surface V1 should prioritize safe and credible publication structure before final visual polish.
+
+Public UI/UX refinement is a later dedicated sprint. V1 public pages may be simple, but they must still satisfy:
+
+- source attribution
+- copyright safety
+- public metadata
+- quality-gate requirements
+- basic readability
+- no exposure of internal state
+- no misleading publication status
+
+## 9. Public Surface Types
 
 ### A. Signals
 
@@ -275,7 +289,7 @@ Reports should answer:
 
 Reports are the most commercializable public asset.
 
-## 9. Recommended Public Routes
+## 10. Recommended Public Routes
 
 Recommended public routes:
 
@@ -304,7 +318,7 @@ Internal routes:
 
 Internal routes must require access control before any public deployment.
 
-## 10. Public Publication State Machine
+## 11. Public Publication State Machine
 
 Canonical state machine:
 
@@ -328,7 +342,7 @@ Only Published items appear on public surfaces.
 
 `publication_approved` must remain false until a future explicit Publish Readiness Gate exists and passes.
 
-## 11. Public Signal Page Template
+## 12. Public Signal Page Template
 
 A public Signal page should include:
 
@@ -348,7 +362,7 @@ Public Signal pages should be short, dense, structured, and evidence-linked.
 
 They should not become long generic AI blog posts.
 
-## 12. Tracker Page Template
+## 13. Tracker Page Template
 
 A Tracker page should include:
 
@@ -362,7 +376,7 @@ A Tracker page should include:
 - Risks / uncertainties
 - Related reports
 
-## 13. Report Page Template
+## 14. Report Page Template
 
 A Report page should include:
 
@@ -376,7 +390,7 @@ A Report page should include:
 - Watch Next
 - Related Signals and Trackers
 
-## 14. Owner Role In The Public Loop
+## 15. Owner Role In The Public Loop
 
 Owner is not a daily manual editor.
 
@@ -393,7 +407,7 @@ Owner should mainly decide:
 - whether a system decision should be overridden
 - whether a Signal belongs in a report or tracker
 
-## 15. Public Launch Sequence
+## 16. Public Launch Sequence
 
 Recommended sequence:
 
@@ -410,7 +424,7 @@ Recommended sequence:
 
 Do not skip Publish Readiness Gate.
 
-## 16. Forbidden Drift
+## 17. Forbidden Drift
 
 Explicitly forbidden:
 
@@ -429,7 +443,7 @@ Explicitly forbidden:
 - publishing without `watch_next`
 - volume-over-value publishing
 
-## 17. Prompt Requirement
+## 18. Prompt Requirement
 
 All future Codex prompts that touch DysonX public website, public publishing, Signals, Trackers, AGI Map, Reports, Owner Console, AutoDecision, Publish Readiness Gate, or public content generation must include this document in the mandatory reading list:
 
@@ -452,7 +466,7 @@ Automation and public publication strategy is governed by:
 docs/DYSONX_AUTOMATION_PUBLICATION_STRATEGY_V1.md
 ```
 
-## 18. Non-Goals
+## 19. Non-Goals
 
 This document does not authorize implementation of:
 
