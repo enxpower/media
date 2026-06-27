@@ -1,0 +1,17 @@
+{
+  "packaged_slugs": [
+    "agent-evaluation-recovery-metric"
+  ],
+  "pages_approved_for_pack": 6,
+  "pages_blocked": 6,
+  "pages_packaged": 1,
+  "pages_seen": 5,
+  "required_blockers": {
+    "blocked-by-manual-approval": "decision_not_approve_for_production_pack",
+    "deployed-true-page": "approval_deployed_true",
+    "missing-source-html": "source_html_file_missing",
+    "production-publish-performed-page": "approval_production_publish_performed_true",
+    "published-true-page": "approval_published_true",
+    "unapproved-page": "not_approved_for_production_pack"
+  }
+}

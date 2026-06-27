@@ -52,6 +52,8 @@ It must not set:
 
 `approved_for_production_pack` means only that Step 4 may include the approved draft page in a production publish pack candidate. Published remains false until Step 5 production launch.
 
+Production Publish Pack V1 is governed by `docs/DYSONX_PRODUCTION_PUBLISH_PACK_V1.md`. It consumes the Step 2 generator output and this Step 3 approval report to create production-ready artifacts for Step 5. It does not publish, deploy, dispatch workflows, call OpenAI, write to `media.energizeos.com`, or mark `published` true.
+
 ## 3. CLI
 
 ```bash
