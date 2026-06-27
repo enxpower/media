@@ -41,6 +41,49 @@ The dry-run pipeline writes JSON audit reports under `tmp/` and does not publish
 website pages, post to social platforms, call real model providers, or fetch
 live Notion data.
 
+## DysonX Public Intelligence Pipeline
+
+The completed public intelligence automation chain is:
+
+```text
+DysonX Sources
+-> Source Collector V1
+-> DysonX Signal Intake
+-> Public Signals Sync PR
+-> Public Signals Auto-Merge Gate
+-> automatic squash merge when DYSONX_PUBLIC_SIGNALS_AUTO_MERGE=true
+-> public page update
+```
+
+Workflows:
+
+- `DysonX Source Collector V1` reads DysonX Sources, writes safe candidates to
+  Signal Intake, and does not write public pages.
+- `DysonX Notion Public Signals Sync` reads Signal Intake, generates public
+  Signals static output, and opens a content PR.
+- `DysonX Public Signals Auto-Merge V1` gates only public Signals sync PRs,
+  requires strict quality and safety checks, and auto-merges only when
+  `DYSONX_PUBLIC_SIGNALS_AUTO_MERGE=true`.
+
+Safety gates require Critical source priority, `Quality Hint >= 92`,
+`Attribution Status = Complete`, `Copyright Status = Safe Summary Only`,
+`Ready for Pipeline = true`, `Published = true`, all non-excluded GitHub checks
+green, no OpenAI call, no source-page body scraping, no raw article body
+copying, no manual deployment, no hardcoded deployment domain, and changed files
+restricted to `signals/` public output.
+
+Kill switch:
+
+- Repository variable: `DYSONX_PUBLIC_SIGNALS_AUTO_MERGE`
+- `true` enables automatic merge.
+- Missing or `false` means the gate may run, but no merge occurs.
+
+Detailed docs:
+
+- `docs/DYSONX_SOURCE_COLLECTOR_V1.md`
+- `docs/DYSONX_NOTION_PUBLIC_SIGNALS_SYNC_V1.md`
+- `docs/DYSONX_PUBLIC_SIGNALS_AUTO_MERGE_V1.md`
+
 Run the V1 dry-run pipeline:
 
 ```bash
