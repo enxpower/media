@@ -188,6 +188,8 @@ Fast progress should come from deterministic automation, concise Owner exception
 
 Fast publication progress also means automating blockers and readiness checks through `docs/DYSONX_PUBLISH_READINESS_GATE_V1.md`, not bypassing the gate.
 
+Step 2 of the strict 5-Step Final Launch Plan is `docs/DYSONX_PUBLIC_SIGNAL_PAGE_GENERATOR_V1.md`: Public Signal Page Generator V1, Public Signals Index V1, and Local Public Preview V1. This step creates static draft preview artifacts only; generated drafts and local preview are not publication, do not replace Manual Publish Approval V1, and must remain visually simple while preserving credibility, readability, attribution, copyright safety, and gate approval.
+
 ## 8. Owner Role
 
 Owner is a strategic decision-maker, not a daily manual editor.

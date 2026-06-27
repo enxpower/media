@@ -1,0 +1,118 @@
+{
+  "gate_version": "publish_readiness_gate_v1",
+  "created_at": "2026-06-27T00:00:00+00:00",
+  "input_files": {
+    "owner_feedback": "tests/fixtures/publish_readiness_gate_v1/owner_feedback.json",
+    "brief": "tests/fixtures/publish_readiness_gate_v1/internal_brief.json",
+    "score_report": "tests/fixtures/publish_readiness_gate_v1/signal_quality_score.json"
+  },
+  "signals_evaluated": 5,
+  "ready_count": 2,
+  "blocked_count": 3,
+  "warning_count": 1,
+  "no_public_publishing_performed": true,
+  "no_deployment_performed": true,
+  "no_openai_call_performed": true,
+  "no_workflow_dispatch_performed": true,
+  "evaluations": [
+    {
+      "signal_id": "sig_ready_agent_eval",
+      "canonical_signal_id": "sig_ready_agent_eval",
+      "publication_candidate_id": "pubcand_sig_ready_agent_eval",
+      "title": "Agent evaluation benchmark adds recovery metric",
+      "public_title": "Agent evaluation benchmark adds recovery metric",
+      "public_slug": "agent-evaluation-recovery-metric",
+      "public_summary": "A synthetic benchmark update adds an explicit recovery metric for tool-use failures.",
+      "public_why_it_matters": "Recovery behavior is a concrete indicator of whether agent systems can handle failed tool calls without brittle manual intervention.",
+      "public_watch_next": "Watch whether model providers report recovery rates alongside task-completion benchmarks.",
+      "public_capability_area": "Agents",
+      "public_source_label": "Synthetic Research Lab benchmark note",
+      "public_attribution": "Source attributed to Synthetic Research Lab benchmark note.",
+      "source_url": "https://source.dysonx.test/research/agent-recovery-benchmark",
+      "source_authority": "First-party synthetic lab source for fixture validation.",
+      "source_urls": [
+        "https://source.dysonx.test/research/agent-recovery-benchmark"
+      ],
+      "score_normalized_to_65": 59,
+      "quality_tier": "Tier A: Decision-grade Signal",
+      "confidence_summary": "High confidence fixture with complete attribution.",
+      "warnings": [],
+      "publish_readiness_gate_passed": true,
+      "ready_for_public_generation": true,
+      "public_generation_blocked": false,
+      "gate_decision": "ready_for_public_generation",
+      "published": false,
+      "publication_approved": false
+    },
+    {
+      "signal_id": "sig_blocked_needs_more_sources",
+      "title": "Enterprise memory control note needs more source support",
+      "public_slug": "enterprise-memory-control-needs-more-sources",
+      "public_summary": "A useful note lacks enough source support for public generation.",
+      "public_capability_area": "Memory",
+      "source_url": "https://source.dysonx.test/product/memory-controls",
+      "quality_tier": "Tier B: Useful Signal",
+      "score_normalized_to_65": 50,
+      "publish_readiness_gate_passed": false,
+      "ready_for_public_generation": false,
+      "public_generation_blocked": true,
+      "gate_decision": "blocked_needs_more_sources",
+      "blockers": [
+        "blocked_needs_more_sources"
+      ],
+      "required_next_actions": [
+        "collect_or_attach_more_sources"
+      ],
+      "published": false,
+      "publication_approved": false
+    },
+    {
+      "signal_id": "sig_missing_gate_fields",
+      "title": "Missing gate fields should be blocked",
+      "public_slug": "missing-gate-fields",
+      "public_summary": "This record intentionally omits required gate pass fields.",
+      "published": false,
+      "publication_approved": false
+    },
+    {
+      "signal_id": "sig_published_true",
+      "title": "Published true should not generate draft",
+      "public_slug": "published-true-should-not-generate",
+      "public_summary": "This record is gate-passed but has published true.",
+      "public_why_it_matters": "It proves the generator refuses already-published records.",
+      "public_watch_next": "Keep publication flags separate from draft preview generation.",
+      "public_capability_area": "Agents",
+      "public_source_label": "Synthetic publication flag test",
+      "public_attribution": "Synthetic publication flag test source.",
+      "source_url": "https://source.dysonx.test/research/published-flag",
+      "score_normalized_to_65": 60,
+      "quality_tier": "Tier A: Decision-grade Signal",
+      "publish_readiness_gate_passed": true,
+      "ready_for_public_generation": true,
+      "public_generation_blocked": false,
+      "published": true,
+      "publication_approved": false
+    },
+    {
+      "signal_id": "sig_publication_approved_true",
+      "title": "Publication approved true should not be required",
+      "public_title": "Publication approved true should not be required",
+      "public_slug": "publication-approved-true-should-not-generate",
+      "public_summary": "Draft generation must not require or imply publication approval.",
+      "public_why_it_matters": "Manual Publish Approval V1 remains a later step.",
+      "public_watch_next": "Confirm drafts never mark approval.",
+      "public_capability_area": "Evaluation",
+      "public_source_label": "Synthetic approval boundary test",
+      "public_attribution": "Synthetic approval boundary test source.",
+      "source_url": "https://source.dysonx.test/research/approval-boundary",
+      "score_normalized_to_65": 61,
+      "quality_tier": "Tier A: Decision-grade Signal",
+      "publish_readiness_gate_passed": true,
+      "ready_for_public_generation": true,
+      "public_generation_blocked": false,
+      "published": false,
+      "publication_approved": true,
+      "article_body": "This raw article body must never appear in generated pages."
+    }
+  ]
+}
