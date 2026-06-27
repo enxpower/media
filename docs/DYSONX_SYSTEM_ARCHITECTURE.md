@@ -132,6 +132,8 @@ Public-facing surfaces are governed by `docs/DYSONX_PUBLIC_INTELLIGENCE_SURFACES
 
 Public Signal Page Generator V1 is the Step 2 static draft generator governed by `docs/DYSONX_PUBLIC_SIGNAL_PAGE_GENERATOR_V1.md`. It may generate local preview HTML only after Publish Readiness Gate V1 passes, and those draft pages are not publication, production approval, deployment, or public release.
 
+Manual Publish Approval V1 is the Step 3 offline approval report governed by `docs/DYSONX_MANUAL_PUBLISH_APPROVAL_V1.md`. It consumes the Step 2 manifest and explicit Owner approval input for the future Production Publish Pack. `approved_for_production_pack` is not publication, does not modify generated HTML, and does not deploy.
+
 ## Tracker Layer
 
 Trackers are persistent intelligence surfaces for companies, people, topics, capabilities, models, papers, policies, and GitHub projects.

@@ -147,7 +147,15 @@ Safety fields must state:
 - `manual_publish_approval_required: true`
 - `production_publish_performed: false`
 
-## 9. Non-Goals
+## 9. Manual Publish Approval Handoff
+
+Manual Publish Approval V1 is governed by `docs/DYSONX_MANUAL_PUBLISH_APPROVAL_V1.md`.
+
+The Step 2 manifest is the input to Step 3. Step 3 may approve generated draft pages for a future Production Publish Pack only after explicit Owner approval.
+
+`approved_for_production_pack` is not publication. It does not change generated HTML, does not deploy, does not dispatch workflows, and does not make `published` true.
+
+## 10. Non-Goals
 
 This step does not implement:
 

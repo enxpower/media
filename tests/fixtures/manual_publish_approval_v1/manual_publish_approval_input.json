@@ -1,0 +1,45 @@
+{
+  "approval_version": "manual_publish_approval_v1",
+  "approved_at": "2026-06-27T00:00:00Z",
+  "decisions": [
+    {
+      "decision": "approve_for_production_pack",
+      "notes": "Approved after local public preview.",
+      "slug": "agent-evaluation-recovery-metric"
+    },
+    {
+      "decision": "hold",
+      "notes": "Hold for later review.",
+      "slug": "agent-evaluation-recovery-metric"
+    },
+    {
+      "decision": "reject",
+      "notes": "Reject for this production pack.",
+      "slug": "agent-evaluation-recovery-metric"
+    },
+    {
+      "decision": "approve_for_production_pack",
+      "notes": "Unknown slug should block.",
+      "slug": "unknown-slug"
+    },
+    {
+      "decision": "approve_for_production_pack",
+      "notes": "Published true must block.",
+      "slug": "published-true-page"
+    },
+    {
+      "decision": "approve_for_production_pack",
+      "notes": "Production publish performed must block.",
+      "slug": "production-publish-performed-page"
+    },
+    {
+      "decision": "approve_for_production_pack",
+      "notes": "Blocked generator Signal must block.",
+      "slug": "blocked-by-generator"
+    }
+  ],
+  "owner": {
+    "name": "Andy Gong",
+    "role": "Owner"
+  }
+}

@@ -135,6 +135,8 @@ Public Signal Page Generator V1 must only consume Signals that pass `docs/DYSONX
 
 Public Signal Page Generator V1 is governed by `docs/DYSONX_PUBLIC_SIGNAL_PAGE_GENERATOR_V1.md`. It creates static draft / local preview artifacts only. Generated page drafts and local preview are not publication, and Manual Publish Approval V1 remains required before production release.
 
+Manual Publish Approval V1 is governed by `docs/DYSONX_MANUAL_PUBLISH_APPROVAL_V1.md`. It creates an offline approval report for Step 4 Production Publish Pack only; it does not publish, deploy, dispatch workflows, call OpenAI, or modify generated public HTML. `approved_for_production_pack` must not be treated as `published`.
+
 ## 7. Public Website Responsibility
 
 Public website is the external product surface.
