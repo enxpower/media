@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-06-27T06:07:12.218225+00:00",
+  "created_at": "2026-06-27T10:24:41.532429+00:00",
   "launch_authorization": "explicit_owner_authorization_in_step_5_prompt",
   "launch_version": "first_public_launch_v1",
   "launched": [
@@ -33,7 +33,7 @@
   "publish_readiness_gate_verified": true,
   "release_guard_passed": true,
   "social_distribution_performed": false,
-  "source_pack_manifest": "tmp/production_publish_pack/production_publish_pack_manifest.json",
-  "source_release_guard_report": "tmp/production_publish_pack/release_guard_report.json",
+  "source_pack_manifest": "internal_release_artifact_reference",
+  "source_release_guard_report": "internal_release_guard_reference",
   "workflow_dispatch_performed": false
 }

@@ -11,7 +11,7 @@ Owner Review Wizard
 -> Public Signals Index
 -> Local Public Preview
 -> Manual Publish Approval
--> media.energizeos.com
+-> current deployment host
 ```
 
 It creates a deterministic offline approval report from Step 2 Public Signal Page Generator V1 manifest output and an explicit Owner approval input.
@@ -52,7 +52,7 @@ It must not set:
 
 `approved_for_production_pack` means only that Step 4 may include the approved draft page in a production publish pack candidate. Published remains false until Step 5 production launch.
 
-Production Publish Pack V1 is governed by `docs/DYSONX_PRODUCTION_PUBLISH_PACK_V1.md`. It consumes the Step 2 generator output and this Step 3 approval report to create production-ready artifacts for Step 5. It does not publish, deploy, dispatch workflows, call OpenAI, write to `media.energizeos.com`, or mark `published` true.
+Production Publish Pack V1 is governed by `docs/DYSONX_PRODUCTION_PUBLISH_PACK_V1.md`. It consumes the Step 2 generator output and this Step 3 approval report to create production-ready artifacts for Step 5. It does not publish, deploy, dispatch workflows, call OpenAI, write to `current deployment host`, or mark `published` true.
 
 First Public Launch V1 is governed by `docs/DYSONX_FIRST_PUBLIC_LAUNCH_V1.md`. It is the only launch step allowed to mark launched pages `published: true`, and only after Step 4 release guard evidence plus explicit Owner launch authorization.
 

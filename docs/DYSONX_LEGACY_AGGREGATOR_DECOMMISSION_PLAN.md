@@ -81,7 +81,7 @@ Removed legacy-only files:
 
 - `scripts/generate_sitemap.py`
   - Generates `sitemap.xml` from legacy `posts/page*.html`.
-  - Uses `https://media.energizeos.com`.
+  - Uses `https://current deployment host`.
   - Should be replaced by a future DysonX Signal sitemap generator after
     publishing exists.
 

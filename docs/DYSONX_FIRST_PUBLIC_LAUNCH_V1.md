@@ -12,7 +12,7 @@ Owner Review Wizard
 -> Local Public Preview
 -> Manual Publish Approval
 -> Production Publish Pack
--> media.energizeos.com
+-> public static Signal routes
 ```
 
 It consumes the Step 4 production publish pack and release guard report, requires explicit Owner launch authorization, and copies only approved static Signal pages into the repository public static output path.
@@ -39,9 +39,9 @@ This authorization permits only the first controlled public Signal launch from t
 
 ```bash
 python3 scripts/dysonx_first_public_launch.py \
-  --production-pack-dir tmp/production_publish_pack \
-  --pack-manifest tmp/production_publish_pack/production_publish_pack_manifest.json \
-  --release-guard-report tmp/production_publish_pack/release_guard_report.json \
+  --production-pack-dir tmp/<production-publish-pack> \
+  --pack-manifest tmp/<production-publish-pack>/production_publish_pack_manifest.json \
+  --release-guard-report tmp/<production-publish-pack>/release_guard_report.json \
   --public-output-root . \
   --owner-launch-authorization explicit_owner_authorization_in_step_5_prompt
 ```
@@ -107,13 +107,23 @@ The manifest records:
 
 The public launch manifest must remain public-safe. It may expose the blocked count, but it must not expose blocked Signal titles, blocked slugs, internal blocker codes, required next actions, fixture/test language, private review state, raw article body, or non-public decision-trail details.
 
-## 6. Hosting Boundary
+## 6. Domain-Agnostic Public Output
+
+Public static pages, manifests, generated links, tests, and docs must not hardcode the current deployment domain. The current hosting domain is temporary and deployment-specific.
+
+Generated public links should use relative URL paths by default, such as `/`, `/signals/`, `/signals/<slug>/`, `/static/...`, and `/assets/...`. Future domain changes must not require changing generated HTML or launch-generator logic.
+
+If a canonical base URL is required for SEO, feeds, Open Graph metadata, callbacks, CORS, analytics, or external integrations, it must be injected through explicit configuration, an environment variable, a CLI argument, a build parameter, or centralized deployment configuration. `CNAME` may contain the current host because it is a deployment binding file, but generated HTML, manifests, scripts, tests, and docs must not depend on that host.
+
+The public launch manifest should expose public URL paths, not absolute domains. It should also expose public-safe release references such as `internal_release_artifact_reference` and `internal_release_guard_reference`, not local temporary artifact paths.
+
+## 7. Hosting Boundary
 
 First Public Launch V1 copies static files into the repository public surface. It does not manually dispatch workflows and does not run an external deployment command.
 
 If repository hosting deploys from `main` automatically, merging the static files to `main` may allow hosting automation to publish according to repository settings. The launch guard itself does not verify external deployment success and must not claim that external deployment succeeded.
 
-## 7. Functional Publishing Priority
+## 8. Functional Publishing Priority
 
 This step completes:
 
@@ -124,7 +134,7 @@ quality and safety gates before public release.
 
 The launched pages may remain visually simple. They must remain readable, credible, source-attributed, copyright-safe, and free of internal review state.
 
-## 8. Non-Goals
+## 9. Non-Goals
 
 This step does not implement:
 

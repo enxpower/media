@@ -4,7 +4,7 @@
 Creates a deterministic offline production publish pack candidate from Step 2
 draft public pages and Step 3 manual approval. This tool does not publish,
 deploy, call OpenAI, dispatch workflows, fetch URLs, scrape sources, write to
-media.energizeos.com, or mark any page as published.
+current deployment host, or mark any page as published.
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ from typing import Any
 
 PACK_VERSION = "production_publish_pack_v1"
 RELEASE_GUARD_VERSION = "production_publish_pack_release_guard_v1"
-DEFAULT_OUTPUT_DIR = pathlib.Path("tmp/production_publish_pack")
+DEFAULT_OUTPUT_DIR = pathlib.Path("tmp") / "production_publish_pack"
 RAW_BODY_MARKERS = (
     "raw article body",
     "raw_body",
@@ -458,7 +458,7 @@ It is not deployed. Step 5 explicit Owner launch authorization is still required
 Suggested local check:
 
 ```bash
-python3 -m http.server --directory tmp/production_publish_pack 8081
+python3 -m http.server --directory tmp/<production-publish-pack> 8081
 ```
 
 Then visit:

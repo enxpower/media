@@ -12,7 +12,7 @@ Owner Review Wizard
 -> Local Public Preview
 -> Manual Publish Approval
 -> Production Publish Pack
--> media.energizeos.com
+-> current deployment host
 ```
 
 It creates deterministic offline production-ready artifacts for Step 5 from:
@@ -31,7 +31,7 @@ Production Publish Pack V1 does not:
 - dispatch workflows
 - call OpenAI
 - scrape or fetch sources
-- write to `media.energizeos.com`
+- write to `current deployment host`
 - write to a production site root
 - mark `published` true
 - mark `production_publish_performed` true
@@ -46,7 +46,7 @@ python3 scripts/dysonx_production_publish_pack.py \
   --public-pages-dir tests/fixtures/production_publish_pack_v1/public_signal_pages \
   --public-pages-manifest tests/fixtures/production_publish_pack_v1/public_signal_pages_manifest.json \
   --approval-report tests/fixtures/production_publish_pack_v1/manual_publish_approval_report.json \
-  --output-dir tmp/production_publish_pack
+  --output-dir tmp/<production-publish-pack>
 ```
 
 The CLI reads local files only and uses Python standard library modules.
@@ -72,17 +72,17 @@ All other pages are blocked with explicit blockers and required next actions.
 Default output:
 
 ```text
-tmp/production_publish_pack/
+tmp/<production-publish-pack>/
 ```
 
 Generated files:
 
 ```text
-tmp/production_publish_pack/signals/<slug>/index.html
-tmp/production_publish_pack/signals/index.html
-tmp/production_publish_pack/production_publish_pack_manifest.json
-tmp/production_publish_pack/release_guard_report.json
-tmp/production_publish_pack/README.md
+tmp/<production-publish-pack>/signals/<slug>/index.html
+tmp/<production-publish-pack>/signals/index.html
+tmp/<production-publish-pack>/production_publish_pack_manifest.json
+tmp/<production-publish-pack>/release_guard_report.json
+tmp/<production-publish-pack>/README.md
 ```
 
 Packaged pages may relabel:
@@ -104,7 +104,7 @@ They must not claim the page is published, live, deployed, or production deploye
 The pack includes:
 
 ```text
-tmp/production_publish_pack/release_guard_report.json
+tmp/<production-publish-pack>/release_guard_report.json
 ```
 
 The release guard checks:
