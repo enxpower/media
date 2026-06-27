@@ -63,8 +63,8 @@ class DysonXPublicLaunchCorrectnessTests(unittest.TestCase):
         text = LAUNCH_MANIFEST.read_text(encoding="utf-8")
         data = json.loads(text)
 
-        self.assertEqual(data["pages_launched"], 1)
-        self.assertEqual(data["pages_blocked"], 6)
+        self.assertEqual(data["pages_launched"], 6)
+        self.assertEqual(data["pages_blocked"], 0)
         self.assertNotIn("blocked", data)
         self.assertNotIn("source.dysonx." + "test", text)
         self.assertNotIn(".tes" + "t/", text)

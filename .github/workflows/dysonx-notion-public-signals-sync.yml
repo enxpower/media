@@ -1,0 +1,71 @@
+name: DysonX Notion Public Signals Sync
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  notion-public-signals-sync:
+    name: Sync public Signals from Notion
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      NOTION_SIGNAL_INTAKE_DATABASE_ID: ${{ secrets.NOTION_SIGNAL_INTAKE_DATABASE_ID }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Sync Notion public Signals
+        run: python3 scripts/dysonx_notion_public_signals_sync.py --output-root .
+
+      - name: Run static link integrity check
+        run: python3 scripts/dysonx_static_preview_check.py --root .
+
+      - name: Run public output grep guards
+        run: |
+          ! grep -R "https://dysonx.ai" -n signals scripts tests docs
+          ! grep -R "media.energizeos.com" -n signals scripts tests docs
+          ! grep -R "source.dysonx.invalid" -n signals scripts tests docs
+          ! grep -R "\.invalid" -n signals scripts tests docs
+          ! grep -R "\.test/" -n signals scripts tests docs
+          ! grep -R "tmp/production_publish_pack" -n signals scripts tests docs
+
+      - name: Detect public Signals changes
+        id: signals_changes
+        run: |
+          if git diff --quiet -- signals; then
+            echo "[notion-public-signals-sync] no signals changes"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open content sync PR
+        if: steps.signals_changes.outputs.changed == 'true'
+        run: |
+          BRANCH="automation/dysonx-notion-signals-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add signals/
+          git commit -m "content: sync DysonX public Signals from Notion"
+          git push --set-upstream origin "$BRANCH"
+          gh pr create \
+            --title "content: sync DysonX public Signals from Notion" \
+            --body "Automated Notion public Signals sync. Opens PR only; no auto-merge, no OpenAI call, no scraping, no raw article body copying, no hardcoded deployment domain." \
+            --base main \
+            --head "$BRANCH"

@@ -17,11 +17,6 @@ ROBOTS = ROOT / "robots.txt"
 WORKFLOWS = ROOT / ".github" / "workflows"
 RAW_FIXTURE = ROOT / "tests" / "fixtures" / "raw_items_v1.json"
 PIPELINE_OUTPUT_DIR = ROOT / "tmp" / "dysonx_static_preview_check" / "v1_pipeline"
-PUBLIC_HTML_FILES = (
-    pathlib.Path("index.html"),
-    pathlib.Path("signals/index.html"),
-    pathlib.Path("signals/agent-evaluation-recovery-metric/index.html"),
-)
 FORBIDDEN_HREF_TOKENS = (
     "." "invalid",
     "." "test",
@@ -172,8 +167,20 @@ def root_relative_target_exists(root: pathlib.Path, href: str) -> bool:
     return target.exists()
 
 
+def public_html_files(root: pathlib.Path) -> list[pathlib.Path]:
+    files = [pathlib.Path("index.html")]
+    signals_index = root / "signals" / "index.html"
+    if signals_index.exists():
+        files.append(pathlib.Path("signals/index.html"))
+    signals_root = root / "signals"
+    if signals_root.exists():
+        for path in sorted(signals_root.glob("*/index.html")):
+            files.append(path.relative_to(root))
+    return files
+
+
 def check_public_static_links(root: pathlib.Path) -> None:
-    for relative_path in PUBLIC_HTML_FILES:
+    for relative_path in public_html_files(root):
         path = root / relative_path
         if not path.exists():
             fail(f"public static HTML is missing: {relative_path}")
