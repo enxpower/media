@@ -194,6 +194,8 @@ Step 3 of the strict 5-Step Final Launch Plan is `docs/DYSONX_MANUAL_PUBLISH_APP
 
 Step 4 of the strict 5-Step Final Launch Plan is `docs/DYSONX_PRODUCTION_PUBLISH_PACK_V1.md`: Production Publish Pack V1 and Release Guard Integration V1. This step consumes Step 2 generated public pages and Step 3 manual approval, packages only approved pages, and emits release guard evidence for Step 5. It does not publish to production, deploy, dispatch workflows, call OpenAI, write to `media.energizeos.com`, or mark `published` or `production_publish_performed` true. Step 5 explicit Owner launch authorization remains required.
 
+Step 5 of the strict 5-Step Final Launch Plan is `docs/DYSONX_FIRST_PUBLIC_LAUNCH_V1.md`: First Public Launch V1. This step consumes the Step 4 production publish pack and release guard report, requires explicit Owner launch authorization, and copies only approved static Signal pages into the repository public static output path. It may mark launched pages `published: true` and `production_publish_performed: true` only inside public-safe launch metadata. It does not call OpenAI, scrape, manually dispatch workflows, add backend/database systems, perform social/newsletter distribution, or create Step 6.
+
 ## 8. Owner Role
 
 Owner is a strategic decision-maker, not a daily manual editor.

@@ -153,6 +153,8 @@ Manual Publish Approval V1 is governed by `docs/DYSONX_MANUAL_PUBLISH_APPROVAL_V
 
 The Step 2 manifest is the input to Step 3. Step 3 may approve generated draft pages for a future Production Publish Pack only after explicit Owner approval.
 
+First Public Launch V1 is governed by `docs/DYSONX_FIRST_PUBLIC_LAUNCH_V1.md`. Step 2 draft pages are not public launch artifacts until they pass Manual Publish Approval V1, Production Publish Pack V1 release guard, and explicit Step 5 Owner launch authorization.
+
 `approved_for_production_pack` is not publication. It does not change generated HTML, does not deploy, does not dispatch workflows, and does not make `published` true.
 
 Production Publish Pack V1 is governed by `docs/DYSONX_PRODUCTION_PUBLISH_PACK_V1.md`. Step 4 consumes the Step 2 generated output plus Step 3 approval report to create production-ready artifacts for Step 5, without deployment or production publishing.

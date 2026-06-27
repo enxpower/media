@@ -37,7 +37,7 @@ Production Publish Pack V1 does not:
 - mark `production_publish_performed` true
 - mark `deployed` true
 
-Step 5 explicit Owner launch authorization is still required before production release.
+Step 5 explicit Owner launch authorization is still required before production release. First Public Launch V1 is governed by `docs/DYSONX_FIRST_PUBLIC_LAUNCH_V1.md`; it consumes this pack plus the release guard report and may copy only approved, release-guarded static files into the repository public static output path.
 
 ## 3. CLI
 
@@ -141,7 +141,7 @@ The pack prioritizes a safe, controllable, verifiable launch path over visual po
 
 This step does not implement:
 
-- Step 5 public launch
+- Step 5 public launch, which is governed separately by `docs/DYSONX_FIRST_PUBLIC_LAUNCH_V1.md`
 - production deployment
 - workflow dispatch
 - OpenAI calls

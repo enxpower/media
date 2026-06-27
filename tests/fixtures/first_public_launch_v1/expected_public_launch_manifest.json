@@ -1,0 +1,16 @@
+{
+  "blocked_slugs": [
+    "unapproved-page"
+  ],
+  "launched_slugs": [
+    "agent-evaluation-recovery-metric"
+  ],
+  "manual_external_deployment_performed": false,
+  "newsletter_distribution_performed": false,
+  "openai_call_performed": false,
+  "pages_blocked": 1,
+  "pages_launched": 1,
+  "release_guard_passed": true,
+  "social_distribution_performed": false,
+  "workflow_dispatch_performed": false
+}
