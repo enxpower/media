@@ -139,6 +139,8 @@ Manual Publish Approval V1 is governed by `docs/DYSONX_MANUAL_PUBLISH_APPROVAL_V
 
 Production Publish Pack V1 is governed by `docs/DYSONX_PRODUCTION_PUBLISH_PACK_V1.md`. It creates production-ready artifacts for Step 5 only. It does not write to `media.energizeos.com`, deploy, publish, dispatch workflows, call OpenAI, or mark `published` true. Step 5 explicit Owner launch authorization remains required.
 
+First Public Launch V1 is governed by `docs/DYSONX_FIRST_PUBLIC_LAUNCH_V1.md`. It may copy only approved, release-guarded static Signal pages into the repository public static output path after explicit Owner launch authorization. It does not call OpenAI, scrape, manually dispatch workflows, perform social/newsletter distribution, add backend/database systems, or create a Step 6.
+
 ## 7. Public Website Responsibility
 
 Public website is the external product surface.

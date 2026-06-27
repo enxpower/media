@@ -136,6 +136,8 @@ Manual Publish Approval V1 is the Step 3 offline approval report governed by `do
 
 Production Publish Pack V1 is the Step 4 offline artifact pack governed by `docs/DYSONX_PRODUCTION_PUBLISH_PACK_V1.md`. It consumes Step 2 generated pages and Step 3 approval, packages only approved pages for Step 5, emits release guard evidence, and does not publish, deploy, dispatch workflows, call OpenAI, write to `media.energizeos.com`, or mark `published` true.
 
+First Public Launch V1 is the Step 5 launch guard governed by `docs/DYSONX_FIRST_PUBLIC_LAUNCH_V1.md`. It requires explicit Owner launch authorization and passed Step 4 release guard evidence before copying approved static Signal pages into the repository public static output path. It does not call OpenAI, scrape, add backend/database systems, manually dispatch workflows, or perform social/newsletter distribution.
+
 ## Tracker Layer
 
 Trackers are persistent intelligence surfaces for companies, people, topics, capabilities, models, papers, policies, and GitHub projects.

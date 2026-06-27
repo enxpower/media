@@ -1,0 +1,52 @@
+{
+  "blocked": [
+    {
+      "blockers": [
+        "not_approved_for_production_pack"
+      ],
+      "required_next_actions": [
+        "obtain_manual_publish_approval_before_packaging"
+      ],
+      "signal_id": "sig-unapproved",
+      "slug": "unapproved-page",
+      "title": "Unapproved Page"
+    }
+  ],
+  "created_at": "2026-06-27T00:00:00+00:00",
+  "input_files": {
+    "approval_report": "tests/fixtures/production_publish_pack_v1/manual_publish_approval_report.json",
+    "public_pages_dir": "tests/fixtures/production_publish_pack_v1/public_signal_pages",
+    "public_pages_manifest": "tests/fixtures/production_publish_pack_v1/public_signal_pages_manifest.json"
+  },
+  "no_deployment_performed": true,
+  "no_openai_call_performed": true,
+  "no_public_publishing_performed": true,
+  "no_workflow_dispatch_performed": true,
+  "output_directory": "tests/fixtures/first_public_launch_v1/production_publish_pack",
+  "pack_version": "production_publish_pack_v1",
+  "packaged": [
+    {
+      "agi_relevance": "Recovery metrics matter because agentic systems need auditable progress, failure handling, and safe retry behavior.",
+      "approved_for_production_pack": true,
+      "deployed": false,
+      "packaged_page_path": "tests/fixtures/first_public_launch_v1/production_publish_pack/signals/agent-evaluation-recovery-metric/index.html",
+      "packaged_preview_path": "signals/agent-evaluation-recovery-metric/",
+      "production_publish_performed": false,
+      "published": false,
+      "quality_confidence": "Quality score 0.94 with high confidence.",
+      "signal_id": "sig-agent-eval-recovery",
+      "slug": "agent-evaluation-recovery-metric",
+      "source_count": 1,
+      "source_page_path": "tests/fixtures/public_signal_page_generator_v1/public_signal_pages/signals/agent-evaluation-recovery-metric/index.html",
+      "summary": "A synthetic evaluation Signal about agent recovery metrics for long-running task reliability.",
+      "title": "Agent Evaluation Recovery Metric"
+    }
+  ],
+  "pages_approved_for_pack": 1,
+  "pages_blocked": 1,
+  "pages_packaged": 1,
+  "pages_seen": 2,
+  "production_publish_performed": false,
+  "release_guard_passed": true,
+  "step_5_launch_authorization_required": true
+}

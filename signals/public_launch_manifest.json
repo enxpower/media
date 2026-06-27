@@ -1,0 +1,120 @@
+{
+  "blocked": [
+    {
+      "blockers": [
+        "not_approved_for_production_pack",
+        "page_not_found_in_public_pages_manifest"
+      ],
+      "required_next_actions": [
+        "obtain_manual_publish_approval_before_packaging",
+        "regenerate_public_signal_pages_manifest"
+      ],
+      "signal_id": "sig_unapproved",
+      "slug": "unapproved-page",
+      "title": "Unapproved page should block"
+    },
+    {
+      "blockers": [
+        "source_html_file_missing"
+      ],
+      "required_next_actions": [
+        "provide_generated_public_signal_page_html"
+      ],
+      "signal_id": "sig_missing_source_html",
+      "slug": "missing-source-html",
+      "title": "Missing source HTML should block"
+    },
+    {
+      "blockers": [
+        "approval_published_true",
+        "manifest_published_true"
+      ],
+      "required_next_actions": [
+        "use_only_not_published_not_deployed_step_2_and_step_3_artifacts"
+      ],
+      "signal_id": "sig_published_true",
+      "slug": "published-true-page",
+      "title": "Published true page should not be packaged"
+    },
+    {
+      "blockers": [
+        "approval_production_publish_performed_true",
+        "manifest_production_publish_performed_true"
+      ],
+      "required_next_actions": [
+        "use_only_not_published_not_deployed_step_2_and_step_3_artifacts"
+      ],
+      "signal_id": "sig_production_publish_performed",
+      "slug": "production-publish-performed-page",
+      "title": "Production publish performed page should not be packaged"
+    },
+    {
+      "blockers": [
+        "approval_deployed_true",
+        "manifest_deployed_true",
+        "source_page_claims_published_or_deployed"
+      ],
+      "required_next_actions": [
+        "use_only_not_published_not_deployed_step_2_and_step_3_artifacts"
+      ],
+      "signal_id": "sig_deployed_true",
+      "slug": "deployed-true-page",
+      "title": "Deployed true page should not be packaged"
+    },
+    {
+      "blockers": [
+        "decision_not_approve_for_production_pack"
+      ],
+      "required_next_actions": [
+        "change_decision_to_approve_for_production_pack_after_owner_review"
+      ],
+      "signal_id": "sig_blocked_by_manual_approval",
+      "slug": "blocked-by-manual-approval",
+      "title": "Blocked by manual approval"
+    }
+  ],
+  "created_at": "2026-06-27T05:41:36.136551+00:00",
+  "launch_authorization": "explicit_owner_authorization_in_step_5_prompt",
+  "launch_version": "first_public_launch_v1",
+  "launched": [
+    {
+      "production_publish_performed": true,
+      "public_path": "signals/agent-evaluation-recovery-metric/index.html",
+      "public_url_path": "/signals/agent-evaluation-recovery-metric/",
+      "published": true,
+      "signal_id": "sig_ready_agent_eval",
+      "slug": "agent-evaluation-recovery-metric",
+      "source_pack_entry": {
+        "agi_relevance": "Agents and evaluation.",
+        "approved_for_production_pack": true,
+        "deployed": false,
+        "packaged_page_path": "tmp/production_publish_pack/signals/agent-evaluation-recovery-metric/index.html",
+        "packaged_preview_path": "signals/agent-evaluation-recovery-metric/",
+        "production_publish_performed": false,
+        "published": false,
+        "quality_confidence": "Quality score: 59/65; Tier: A; Confidence: high attribution confidence.",
+        "signal_id": "sig_ready_agent_eval",
+        "slug": "agent-evaluation-recovery-metric",
+        "source_count": 2,
+        "source_page_path": "tests/fixtures/production_publish_pack_v1/public_signal_pages/signals/agent-evaluation-recovery-metric/index.html",
+        "summary": "A synthetic benchmark note adds a recovery metric for agent evaluation.",
+        "title": "Agent evaluation benchmark adds recovery metric"
+      },
+      "title": "Agent evaluation benchmark adds recovery metric"
+    }
+  ],
+  "manual_external_deployment_performed": false,
+  "manual_publish_approval_verified": true,
+  "newsletter_distribution_performed": false,
+  "openai_call_performed": false,
+  "pages_blocked": 6,
+  "pages_launched": 1,
+  "production_pack_verified": true,
+  "public_output_root": ".",
+  "publish_readiness_gate_verified": true,
+  "release_guard_passed": true,
+  "social_distribution_performed": false,
+  "source_pack_manifest": "tmp/production_publish_pack/production_publish_pack_manifest.json",
+  "source_release_guard_report": "tmp/production_publish_pack/release_guard_report.json",
+  "workflow_dispatch_performed": false
+}

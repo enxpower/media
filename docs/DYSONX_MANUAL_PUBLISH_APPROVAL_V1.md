@@ -54,6 +54,8 @@ It must not set:
 
 Production Publish Pack V1 is governed by `docs/DYSONX_PRODUCTION_PUBLISH_PACK_V1.md`. It consumes the Step 2 generator output and this Step 3 approval report to create production-ready artifacts for Step 5. It does not publish, deploy, dispatch workflows, call OpenAI, write to `media.energizeos.com`, or mark `published` true.
 
+First Public Launch V1 is governed by `docs/DYSONX_FIRST_PUBLIC_LAUNCH_V1.md`. It is the only launch step allowed to mark launched pages `published: true`, and only after Step 4 release guard evidence plus explicit Owner launch authorization.
+
 ## 3. CLI
 
 ```bash

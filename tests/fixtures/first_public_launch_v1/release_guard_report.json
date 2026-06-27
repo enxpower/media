@@ -1,0 +1,24 @@
+{
+  "blockers": [],
+  "checked_pack_manifest": "tests/fixtures/first_public_launch_v1/production_publish_pack_manifest.json",
+  "checks": {
+    "index_generated": true,
+    "manual_approval_report_present": true,
+    "no_deployed_true": true,
+    "no_deployment_performed": true,
+    "no_internal_review_state_detected": true,
+    "no_openai_call_performed": true,
+    "no_production_publish_performed_true": true,
+    "no_published_true_before_launch": true,
+    "no_raw_article_body_detected": true,
+    "no_unapproved_pages_packaged": true,
+    "no_workflow_dispatch_performed": true,
+    "only_approved_pages_packaged": true,
+    "packaged_files_exist": true,
+    "step_5_launch_authorization_required": true
+  },
+  "created_at": "2026-06-27T00:00:00+00:00",
+  "release_guard_passed": true,
+  "release_guard_version": "production_publish_pack_release_guard_v1",
+  "warnings": []
+}
