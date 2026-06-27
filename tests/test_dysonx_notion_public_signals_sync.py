@@ -22,6 +22,7 @@ def eligible_record(**overrides):
         "AGI Relevance": "Agents and evaluation",
         "Source URL": "https://example.org/agent-reliability",
         "Source Label": "Example Research Source",
+        "Source Priority": "Critical",
         "Ready for Pipeline": True,
         "Published": True,
         "Attribution Status": "Complete",
@@ -106,7 +107,21 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
 
         self.assertIs(manifest["openai_call_performed"], False)
         self.assertIs(manifest["source_scraping_performed"], False)
+        self.assertIs(manifest["network_source_fetch_performed"], False)
         self.assertIs(manifest["raw_article_body_copied"], False)
+
+    def test_manifest_includes_auto_merge_gate_fields(self):
+        manifest = sync.sync_records([eligible_record(**{"Quality Hint": 94})], self.root)
+        entry = next(item for item in manifest["launched"] if item["slug"] == "notion-agent-reliability")
+
+        self.assertEqual(entry["source_name"], "Example Research Source")
+        self.assertEqual(entry["source_url"], "https://example.org/agent-reliability")
+        self.assertEqual(entry["source_priority"], "Critical")
+        self.assertEqual(entry["attribution_status"], "Complete")
+        self.assertEqual(entry["copyright_status"], "Safe Summary Only")
+        self.assertEqual(entry["quality_hint"], 94)
+        self.assertIs(entry["ready_for_pipeline"], True)
+        self.assertIs(entry["published"], True)
 
 
 if __name__ == "__main__":
