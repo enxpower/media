@@ -75,7 +75,10 @@ class DysonXFirstPublicLaunchTests(unittest.TestCase):
         self.assertNotIn("Production Publish Candidate / Not Yet Deployed", html)
         self.assertNotIn("noindex,nofollow", html)
         self.assertNotIn("source.dysonx." + "test", html)
+        self.assertNotIn("source.dysonx." + "invalid", html)
         self.assertNotIn(".tes" + "t/", html)
+        self.assertNotIn("." + "invalid", html)
+        self.assertIn('href="/"', html)
         self.assertIn('href="/signals/"', html)
 
     def test_missing_owner_launch_authorization_blocks_launch(self):

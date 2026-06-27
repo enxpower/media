@@ -322,7 +322,7 @@ def render_signal_page(record: dict[str, Any], generated_at: str) -> str:
 <p>{escape(risk_summary(record))}</p>
 <h2>Watch Next</h2>
 <p>{escape(watch_next(record))}</p>
-<p><a href="../">Back to Public Signals Draft Preview</a></p>
+<p><a href="/signals/">Back to Public Signals Draft Preview</a></p>
 """
     return render_layout(title, body, generated_at)
 
@@ -331,7 +331,7 @@ def render_index_page(pages: list[dict[str, Any]], blocked: list[dict[str, Any]]
     items = []
     for page in pages:
         item = page["record"]
-        href = f"{escape(page['slug'], quote=True)}/"
+        href = f"/signals/{escape(page['slug'], quote=True)}/"
         items.append(
             f"""
 <article class="card">

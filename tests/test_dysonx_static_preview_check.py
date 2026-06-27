@@ -16,8 +16,18 @@ class DysonXStaticPreviewCheckTests(unittest.TestCase):
 
         self.assertIn("index.html exists", passed)
         self.assertIn("index.html has English canonical metadata", passed)
+        self.assertIn("public static links are valid", passed)
         self.assertIn("active workflows avoid deleted legacy scripts", passed)
         self.assertIn("V1 dry-run pipeline still works", passed)
+
+    def test_forbidden_href_tokens_are_enforced_without_hardcoded_public_domains(self):
+        tokens = preview_check.FORBIDDEN_HREF_TOKENS
+
+        self.assertIn("." + "invalid", tokens)
+        self.assertIn("." + "test", tokens)
+        self.assertIn("source.dysonx." + "invalid", tokens)
+        self.assertIn("source.dysonx." + "test", tokens)
+        self.assertIn("https://dysonx." + "ai", tokens)
 
     def test_active_workflow_scan_excludes_disabled_legacy_workflows(self):
         active_names = [

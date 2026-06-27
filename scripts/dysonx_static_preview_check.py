@@ -6,7 +6,9 @@ from __future__ import annotations
 import pathlib
 import subprocess
 import sys
+import argparse
 from html.parser import HTMLParser
+from urllib.parse import urlsplit
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -15,6 +17,21 @@ ROBOTS = ROOT / "robots.txt"
 WORKFLOWS = ROOT / ".github" / "workflows"
 RAW_FIXTURE = ROOT / "tests" / "fixtures" / "raw_items_v1.json"
 PIPELINE_OUTPUT_DIR = ROOT / "tmp" / "dysonx_static_preview_check" / "v1_pipeline"
+PUBLIC_HTML_FILES = (
+    pathlib.Path("index.html"),
+    pathlib.Path("signals/index.html"),
+    pathlib.Path("signals/agent-evaluation-recovery-metric/index.html"),
+)
+FORBIDDEN_HREF_TOKENS = (
+    "." "invalid",
+    "." "test",
+    "source.dysonx." "invalid",
+    "source.dysonx." "test",
+    "media." "energizeos.com",
+    "https://dysonx." "ai",
+    "tmp/",
+    "javascript:",
+)
 
 REMOVED_PUBLIC_ARTIFACTS = (
     "posts/page1.html",
@@ -82,6 +99,20 @@ class IndexMetadataParser(HTMLParser):
         return ""
 
 
+class PublicHrefParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.hrefs: list[str] = []
+        self.ids: set[str] = set()
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attr_map = {key.lower(): value or "" for key, value in attrs}
+        if "id" in attr_map and attr_map["id"]:
+            self.ids.add(attr_map["id"])
+        if "href" in attr_map:
+            self.hrefs.append(attr_map["href"])
+
+
 def fail(message: str) -> None:
     raise AssertionError(message)
 
@@ -111,14 +142,65 @@ def check_index_metadata(html: str, parser: IndexMetadataParser) -> None:
         fail("index.html must include English description metadata")
     if "DysonX" not in description or "Signals" not in description:
         fail("index.html description must preserve DysonX Signal identity")
-    if parser.canonical_href() != "https://dysonx.ai/":
-        fail("index.html must use the English canonical root URL")
+    if parser.canonical_href():
+        fail("index.html must not hardcode a canonical deployment domain")
     if not parser.meta_content("property", "og:title"):
         fail("index.html must include Open Graph title metadata")
     if not parser.meta_content("name", "twitter:title"):
         fail("index.html must include Twitter/X title metadata")
     if "<html lang=\"en\"" not in html:
         fail("index.html English canonical metadata should be explicit")
+
+
+def html_route_for(path: pathlib.Path) -> str:
+    if path.name != "index.html":
+        return "/" + path.with_suffix("").as_posix()
+    parent = path.parent.as_posix()
+    if parent == ".":
+        return "/"
+    return f"/{parent}/"
+
+
+def root_relative_target_exists(root: pathlib.Path, href: str) -> bool:
+    path = urlsplit(href).path
+    if path == "/":
+        return (root / "index.html").exists()
+    relative = path.lstrip("/")
+    if path.endswith("/"):
+        return (root / relative / "index.html").exists()
+    target = root / relative
+    return target.exists()
+
+
+def check_public_static_links(root: pathlib.Path) -> None:
+    for relative_path in PUBLIC_HTML_FILES:
+        path = root / relative_path
+        if not path.exists():
+            fail(f"public static HTML is missing: {relative_path}")
+        html = read(path)
+        parser = PublicHrefParser()
+        parser.feed(html)
+        for href in parser.hrefs:
+            lowered = href.lower()
+            if not href:
+                fail(f"{relative_path} contains empty href")
+            if href == "#":
+                fail(f"{relative_path} contains bare # href")
+            for token in FORBIDDEN_HREF_TOKENS:
+                if token in lowered:
+                    fail(f"{relative_path} contains forbidden href token: {token}")
+            if href.startswith("#"):
+                anchor = href[1:]
+                if anchor not in parser.ids:
+                    fail(f"{relative_path} links to missing same-page anchor: {href}")
+                continue
+            if href.startswith("/"):
+                if not root_relative_target_exists(root, href):
+                    fail(f"{relative_path} links to missing public path: {href}")
+                continue
+            if href.startswith(("http://", "https://", "mailto:", "tel:")):
+                continue
+            fail(f"{relative_path} contains non-root-relative href: {href}")
 
 
 def check_identity_and_language_placeholder(parser: IndexMetadataParser) -> None:
@@ -194,7 +276,7 @@ def check_v1_dry_run_pipeline() -> None:
         fail(f"V1 dry-run pipeline summary is missing safety flags: {', '.join(missing)}")
 
 
-def run_checks() -> list[str]:
+def run_checks(root: pathlib.Path = ROOT) -> list[str]:
     html, parser = parse_index()
     checks = [
         ("index.html exists", lambda: None),
@@ -204,6 +286,7 @@ def run_checks() -> list[str]:
         ("index.html has EN / Chinese switch placeholder", lambda: ("EN" in html and "中文" in html) or fail("language switch placeholder missing")),
         ("index.html avoids deleted public artifacts", lambda: check_deleted_artifact_references(html)),
         ("robots.txt avoids deleted sitemap.xml", lambda: check_deleted_artifact_references(html)),
+        ("public static links are valid", lambda: check_public_static_links(root)),
         ("active workflows avoid deleted legacy scripts", check_active_workflows),
         ("V1 dry-run pipeline still works", check_v1_dry_run_pipeline),
     ]
@@ -215,9 +298,17 @@ def run_checks() -> list[str]:
     return passed
 
 
-def main() -> int:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run DysonX static preview safety and link checks.")
+    parser.add_argument("--root", default=str(ROOT), help="Repository/public output root to inspect.")
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    root = pathlib.Path(args.root).resolve()
     try:
-        passed = run_checks()
+        passed = run_checks(root)
     except AssertionError as exc:
         print(f"[dysonx-static-preview-check] FAIL: {exc}")
         return 1

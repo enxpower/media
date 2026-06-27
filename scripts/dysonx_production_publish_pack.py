@@ -263,12 +263,12 @@ def render_index(packaged: list[dict[str, Any]], blocked: list[dict[str, Any]], 
         items.append(
             f"""
 <article>
-  <h2><a href="{escape(item['slug'], quote=True)}/">{escape(item['title'])}</a></h2>
+  <h2><a href="/signals/{escape(item['slug'], quote=True)}/">{escape(item['title'])}</a></h2>
   <p><strong>Slug:</strong> <code>{escape(item['slug'])}</code></p>
   <p><strong>Summary:</strong> {escape(item.get('summary') or 'Summary preserved in packaged Signal page.')}</p>
   <p><strong>AGI relevance:</strong> {escape(item.get('agi_relevance') or 'AGI relevance preserved in packaged Signal page.')}</p>
   <p><strong>Quality / confidence:</strong> {escape(item.get('quality_confidence') or 'Quality and confidence preserved in packaged Signal page.')}</p>
-  <p><strong>Sources:</strong> {item.get('source_count', 0)} source link(s) detected in packaged page.</p>
+  <p><strong>Sources:</strong> Source attribution retained in packaged Signal page.</p>
 </article>
 """
         )
@@ -301,6 +301,7 @@ def render_index(packaged: list[dict[str, Any]], blocked: list[dict[str, Any]], 
 <p><strong>Generated pages:</strong> {len(packaged)}. <strong>Blocked pages:</strong> {len(blocked)}.</p>
 {list_html}
 <p>Generated at {escape(generated_at)}. Production publish pack candidate only.</p>
+<p><a href="/">Home</a></p>
 </main>
 </body>
 </html>
