@@ -199,6 +199,18 @@ def source_label(record: dict[str, Any]) -> str:
     return normalize_text(field(record, "Source Label", "Source", "source_label")) or "Source"
 
 
+def source_priority(record: dict[str, Any]) -> str:
+    return normalize_text(field(record, "Source Priority", "Priority", "source_priority"))
+
+
+def attribution_status(record: dict[str, Any]) -> str:
+    return normalize_text(field(record, "Attribution Status", "attribution_status"))
+
+
+def copyright_status(record: dict[str, Any]) -> str:
+    return normalize_text(field(record, "Copyright Status", "copyright_status"))
+
+
 def tags(record: dict[str, Any]) -> list[str]:
     value = field(record, "Tags", "Tag", "Categories", "Category")
     return [normalize_text(item) for item in as_list(value) if normalize_text(item)]
@@ -224,9 +236,9 @@ def eligibility_blockers(record: dict[str, Any]) -> list[str]:
         blockers.append("ready_for_pipeline_not_checked")
     if field(record, "Published", "published") is not True:
         blockers.append("published_not_checked")
-    if normalize_text(field(record, "Attribution Status", "attribution_status")) != "Complete":
+    if attribution_status(record) != "Complete":
         blockers.append("attribution_not_complete")
-    if normalize_text(field(record, "Copyright Status", "copyright_status")) != "Safe Summary Only":
+    if copyright_status(record) != "Safe Summary Only":
         blockers.append("copyright_not_safe_summary_only")
     if quality_hint(record) < 80:
         blockers.append("quality_hint_below_80")
@@ -293,6 +305,12 @@ def existing_public_signals(output_root: pathlib.Path) -> list[dict[str, Any]]:
                 "title": title,
                 "summary": parser.summary or "Existing public Signal summary retained.",
                 "source_label": "existing public Signal",
+                "source_url": "",
+                "source_priority": "",
+                "attribution_status": "",
+                "copyright_status": "",
+                "ready_for_pipeline": True,
+                "published": True,
                 "agi_relevance": "Retained",
                 "quality_hint": "",
                 "tags": [],
@@ -313,6 +331,11 @@ def record_from_notion(record: dict[str, Any]) -> dict[str, Any]:
         "agi_relevance": text_field(record, "AGI Relevance", "agi_relevance", default="AGI relevance retained in Notion metadata."),
         "source_label": source_label(record),
         "source_url": source_url(record),
+        "source_priority": source_priority(record),
+        "attribution_status": attribution_status(record),
+        "copyright_status": copyright_status(record),
+        "ready_for_pipeline": field(record, "Ready for Pipeline", "ready_for_pipeline") is True,
+        "published": field(record, "Published", "published") is True,
         "quality_hint": int(quality_hint(record)),
         "risk_notes": text_field(record, "Risk Notes", "Safety Notes", "risk_notes", default="Summary-only public treatment. No raw article body is reproduced."),
         "watch_next": text_field(record, "Watch Next", "watch_next", default="Watch for follow-up Signals in the Notion-managed intake."),
@@ -451,6 +474,13 @@ def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_
             "public_path": f"signals/{record['slug']}/index.html",
             "public_url_path": f"/signals/{record['slug']}/",
             "published": True,
+            "source_name": record.get("source_label", ""),
+            "source_url": record.get("source_url", ""),
+            "source_priority": record.get("source_priority", ""),
+            "attribution_status": record.get("attribution_status", ""),
+            "copyright_status": record.get("copyright_status", ""),
+            "quality_hint": record.get("quality_hint", ""),
+            "ready_for_pipeline": bool(record.get("ready_for_pipeline")),
             "production_publish_performed": True,
         }
         for record in records
@@ -464,6 +494,7 @@ def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_
         "launched": launched,
         "openai_call_performed": False,
         "source_scraping_performed": False,
+        "network_source_fetch_performed": False,
         "raw_article_body_copied": False,
         "manual_external_deployment_performed": False,
         "workflow_dispatch_performed": False,

@@ -1,0 +1,129 @@
+name: DysonX Public Signals Auto-Merge V1
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+
+jobs:
+  public-signals-auto-merge-v1:
+    name: Gate and auto-merge public Signals sync PRs
+    if: github.event.pull_request.title == 'content: sync DysonX public Signals from Notion' && startsWith(github.event.pull_request.head.ref, 'automation/dysonx-notion-signals-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      AUTO_MERGE_ENABLED: ${{ vars.DYSONX_PUBLIC_SIGNALS_AUTO_MERGE }}
+
+    steps:
+      - name: Validate PR identity
+        run: |
+          if [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]; then
+            echo "[public-signals-auto-merge] blocked: PR must come from the same repository"
+            exit 1
+          fi
+          if [ "${{ github.event.pull_request.draft }}" = "true" ]; then
+            echo "[public-signals-auto-merge] blocked: PR is draft"
+            exit 1
+          fi
+          if [ "${{ github.event.pull_request.title }}" != "content: sync DysonX public Signals from Notion" ]; then
+            echo "[public-signals-auto-merge] skipped: title does not match public Signals sync PR"
+            exit 0
+          fi
+          case "${{ github.event.pull_request.head.ref }}" in
+            automation/dysonx-notion-signals-*) ;;
+            *)
+              echo "[public-signals-auto-merge] skipped: head branch is not an automation public Signals branch"
+              exit 0
+              ;;
+          esac
+          gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" --json body --jq '.body' > pr_body.txt
+          if ! grep -Fxq "AUTO_MERGE_CANDIDATE: dysonx-public-signals-v1" pr_body.txt; then
+            echo "[public-signals-auto-merge] blocked: missing auto-merge candidate marker"
+            exit 1
+          fi
+
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Fetch changed files
+        run: |
+          gh pr diff "$PR_NUMBER" --repo "${{ github.repository }}" --name-only > changed_files.txt
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          files = [line.strip() for line in Path("changed_files.txt").read_text(encoding="utf-8").splitlines() if line.strip()]
+          Path("changed_files.json").write_text(json.dumps(files, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Reject files outside public Signals output
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          allowed = re.compile(r"^(signals/index\.html|signals/public_launch_manifest\.json|signals/[^/]+/index\.html)$")
+          files = json.loads(Path("changed_files.json").read_text(encoding="utf-8"))
+          bad = [path for path in files if not allowed.match(path)]
+          if bad:
+              raise SystemExit(f"changed files outside allowed signals paths: {bad}")
+          print("[public-signals-auto-merge] changed file scope PASS")
+          PY
+
+      - name: Run static link integrity check
+        run: python3 scripts/dysonx_static_preview_check.py --root .
+
+      - name: Run forbidden public output grep guards
+        run: |
+          ! grep -R "https://dysonx.ai" -n signals scripts tests docs
+          ! grep -R "media.energizeos.com" -n signals scripts tests docs
+          ! grep -R "source.dysonx.invalid" -n signals scripts tests docs
+          ! grep -R "\.invalid" -n signals scripts tests docs
+          ! grep -R "\.test/" -n signals scripts tests docs
+          ! grep -R "tmp/production_publish_pack" -n signals scripts tests docs
+
+      - name: Run strict public Signals auto-merge gate
+        run: |
+          python3 scripts/dysonx_public_signals_auto_merge_gate.py \
+            --manifest signals/public_launch_manifest.json \
+            --changed-files-json changed_files.json \
+            --min-quality 92 \
+            --required-priority Critical \
+            --require-attribution-complete \
+            --require-safe-summary-only
+
+      - name: Confirm all non-excluded checks are green
+        run: |
+          python3 scripts/dysonx_pr_checks_gate.py \
+            --repo "${{ github.repository }}" \
+            --pr-number "$PR_NUMBER" \
+            --exclude-check-name "DysonX Public Signals Auto-Merge V1 / Gate and auto-merge public Signals sync PRs" \
+            --timeout-seconds 900 \
+            --poll-seconds 15
+
+      - name: Respect emergency kill switch
+        run: |
+          if [ "$AUTO_MERGE_ENABLED" != "true" ]; then
+            echo "[public-signals-auto-merge] gate passed, but DYSONX_PUBLIC_SIGNALS_AUTO_MERGE is not true; no merge performed"
+            exit 0
+          fi
+
+      - name: Squash merge public Signals sync PR
+        if: env.AUTO_MERGE_ENABLED == 'true'
+        run: gh pr merge "$PR_NUMBER" --repo "${{ github.repository }}" --squash --delete-branch

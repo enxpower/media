@@ -44,6 +44,34 @@ jobs:
           ! grep -R "\.test/" -n signals scripts tests docs
           ! grep -R "tmp/production_publish_pack" -n signals scripts tests docs
 
+      - name: Check auto-merge marker eligibility
+        id: auto_merge_marker
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          marker = Path("auto_merge_marker.txt")
+          manifest_path = Path("signals/public_launch_manifest.json")
+          required = {
+              "source_name",
+              "source_url",
+              "source_priority",
+              "attribution_status",
+              "copyright_status",
+              "quality_hint",
+              "ready_for_pipeline",
+              "published",
+          }
+          eligible = False
+          if manifest_path.exists():
+              data = json.loads(manifest_path.read_text(encoding="utf-8"))
+              launched = data.get("launched", [])
+              eligible = bool(launched) and all(isinstance(item, dict) and required <= set(item) for item in launched)
+          marker.write_text("AUTO_MERGE_CANDIDATE: dysonx-public-signals-v1\n" if eligible else "", encoding="utf-8")
+          print(f"eligible={str(eligible).lower()}")
+          PY
+
       - name: Detect public Signals changes
         id: signals_changes
         run: |
@@ -66,6 +94,6 @@ jobs:
           git push --set-upstream origin "$BRANCH"
           gh pr create \
             --title "content: sync DysonX public Signals from Notion" \
-            --body "Automated Notion public Signals sync. Opens PR only; no auto-merge, no OpenAI call, no scraping, no raw article body copying, no hardcoded deployment domain." \
+            --body "$(printf 'Automated Notion public Signals sync. Opens PR only unless the strict DysonX public Signals auto-merge gate passes. No OpenAI call, no scraping, no raw article body copying, no hardcoded deployment domain.\n\n'; cat auto_merge_marker.txt)" \
             --base main \
             --head "$BRANCH"
