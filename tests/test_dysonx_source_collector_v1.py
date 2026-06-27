@@ -44,6 +44,62 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
         self.assertEqual(candidate["Signal Title"], "Compute-aware evaluation for autonomous AI agents")
         self.assertEqual(candidate["Category"], "Research")
 
+    def test_relative_canonical_path_becomes_absolute_url(self):
+        source = collector.SourceRecord(
+            notion_page_id="source-page",
+            name="Official Lab",
+            url="https://example.org/research/index.html",
+            source_type="Official Website",
+            platform="Website",
+            priority="High",
+            authority_score=95,
+            enabled=True,
+        )
+        html = """
+        <html>
+          <head>
+            <title>Agent safety evaluation update</title>
+            <link rel="canonical" href="/research/agent-safety-update" />
+            <meta name="description" content="Agent safety evaluation metadata summary." />
+          </head>
+        </html>
+        """
+
+        item = collector.parse_page_metadata(html, source)[0]
+        candidate = collector.candidate_from_item(item)
+
+        self.assertEqual(item.link, "https://example.org/research/agent-safety-update")
+        self.assertEqual(candidate["Source URL"], "https://example.org/research/agent-safety-update")
+        self.assertEqual(candidate["Attribution Status"], "Complete")
+
+    def test_relative_rss_item_link_becomes_absolute_url(self):
+        source = collector.SourceRecord(
+            notion_page_id="source-feed",
+            name="Official Lab RSS",
+            url="https://example.org/rss.xml",
+            source_type="RSS",
+            platform="RSS",
+            priority="High",
+            authority_score=95,
+            enabled=True,
+        )
+        feed = """
+        <rss><channel>
+          <item>
+            <title>Agent benchmark update</title>
+            <link>/research/agent-benchmark</link>
+            <description>Agent benchmark metadata summary.</description>
+          </item>
+        </channel></rss>
+        """
+
+        item = collector.parse_feed_items(feed, source)[0]
+        candidate = collector.candidate_from_item(item)
+
+        self.assertEqual(item.link, "https://example.org/research/agent-benchmark")
+        self.assertEqual(candidate["Source URL"], "https://example.org/research/agent-benchmark")
+        self.assertEqual(candidate["Attribution Status"], "Complete")
+
     def test_unsupported_source_is_skipped(self):
         sources = [load_records("source_registry_sample.json")[5]]
         result = collector.build_candidates(sources, [], fetch=self.fixture_fetch)
@@ -92,6 +148,26 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
         self.assertFalse(candidate["Ready for Pipeline"])
         self.assertFalse(candidate["Published"])
         self.assertEqual(candidate["Attribution Status"], "Missing")
+
+    def test_non_http_source_url_cannot_auto_publish(self):
+        item = collector.SourceItem(
+            title="Agent safety evaluation update",
+            link="mailto:research@example.org",
+            published_date="",
+            summary="Agent safety evaluation metadata summary.",
+            source_name="Official Lab",
+            source_url="mailto:research@example.org",
+            source_type="RSS",
+            priority="High",
+            authority_score=95,
+            attribution_complete=True,
+        )
+        candidate = collector.candidate_from_item(item)
+
+        self.assertEqual(candidate["Source URL"], "")
+        self.assertEqual(candidate["Attribution Status"], "Missing")
+        self.assertFalse(candidate["Ready for Pipeline"])
+        self.assertFalse(candidate["Published"])
 
     def test_raw_body_is_never_included(self):
         sources = [load_records("source_registry_sample.json")[0]]
@@ -240,6 +316,14 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
             self.assertIn(properties["Category"]["select"]["name"], allowed_categories)
             self.assertIn(properties["Status"]["select"]["name"], allowed_statuses)
             self.assertIn(properties["Attribution Status"]["select"]["name"], allowed_attribution)
+
+    def test_source_collector_workflow_cron_is_offset_from_public_sync(self):
+        collector_workflow = (ROOT / ".github" / "workflows" / "dysonx-source-collector-v1.yml").read_text(encoding="utf-8")
+        public_sync_workflow = (ROOT / ".github" / "workflows" / "dysonx-notion-public-signals-sync.yml").read_text(encoding="utf-8")
+
+        self.assertIn('cron: "50 23,5,11,17 * * *"', collector_workflow)
+        self.assertNotIn('cron: "17 */6 * * *"', collector_workflow)
+        self.assertIn('cron: "0 */6 * * *"', public_sync_workflow)
 
 
 if __name__ == "__main__":

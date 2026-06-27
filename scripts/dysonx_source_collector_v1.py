@@ -147,6 +147,14 @@ def parse_date(value: str) -> str:
         return value
 
 
+def absolute_http_url(value: str, base_url: str = "") -> str:
+    url = urllib.parse.urljoin(normalize_text(base_url), normalize_text(value))
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return ""
+    return url
+
+
 def notion_plain_text(items: list[dict[str, Any]] | None) -> str:
     if not items:
         return ""
@@ -336,7 +344,7 @@ def parse_feed_items(xml_text_value: str, source: SourceRecord) -> list[SourceIt
     items: list[SourceItem] = []
     for entry in entries[:20]:
         title = xml_text(entry, ("title",))
-        link = xml_link(entry)
+        link = absolute_http_url(xml_link(entry), source.url)
         summary = xml_text(entry, ("description", "summary", "subtitle", "content"))
         published = xml_text(entry, ("pubdate", "published", "updated", "date"))
         if title and link:
@@ -361,7 +369,7 @@ def parse_page_metadata(page_html: str, source: SourceRecord) -> list[SourceItem
     parser = MetadataHTMLParser()
     parser.feed(page_html)
     title = normalize_text(parser.title) or source.name
-    link = normalize_text(parser.canonical) or source.url
+    link = absolute_http_url(parser.canonical or source.url, source.url)
     summary = short_summary(parser.description or title)
     return [
         SourceItem(
@@ -434,7 +442,7 @@ def can_auto_publish(item: SourceItem, candidate: dict[str, Any]) -> bool:
         item.priority in AUTO_PUBLISH_PRIORITIES
         and item.authority_score >= 85
         and item.attribution_complete
-        and bool(item.link)
+        and bool(absolute_http_url(item.link))
         and len(candidate["Summary"]) <= 260
         and candidate["Copyright Status"] == COPYRIGHT_STATUS
         and candidate["AGI Relevance"] != "Low"
@@ -445,11 +453,13 @@ def can_auto_publish(item: SourceItem, candidate: dict[str, Any]) -> bool:
 
 def candidate_from_item(item: SourceItem) -> dict[str, Any]:
     summary = safe_summary_only(item)
+    source_url = absolute_http_url(item.link)
+    attribution_complete = item.attribution_complete and bool(source_url)
     candidate = {
         "Signal Title": item.title,
         "Slug": slugify(item.title),
         "Source Name": item.source_name,
-        "Source URL": item.link,
+        "Source URL": source_url,
         "Published Date": item.published_date,
         "Category": category_for(item),
         "AGI Relevance": ai_relevance_text(item),
@@ -457,7 +467,7 @@ def candidate_from_item(item: SourceItem) -> dict[str, Any]:
         "Why It Matters": f"This source is a monitored DysonX {item.priority.lower()}-priority signal for {category_for(item).lower()} tracking.",
         "Evidence": f"Metadata collected from {item.source_name}; no source-page body was copied.",
         "Risk / Safety Notes": "Rule-based V1 candidate. Requires Owner review unless all auto-publish gates pass.",
-        "Attribution Status": ATTRIBUTION_STATUS if item.attribution_complete and item.link else "Missing",
+        "Attribution Status": ATTRIBUTION_STATUS if attribution_complete else "Missing",
         "Copyright Status": COPYRIGHT_STATUS,
         "Quality Hint": quality_hint(item),
         "Status": "Needs Owner Review",
