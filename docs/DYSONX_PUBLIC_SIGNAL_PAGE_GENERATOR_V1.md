@@ -11,7 +11,7 @@ Owner Review Wizard
 -> Public Signals Index
 -> Local Public Preview
 -> Manual Publish Approval
--> media.energizeos.com
+-> current deployment host
 ```
 
 It generates static draft public Signal preview pages from Publish Readiness Gate-approved Signals.

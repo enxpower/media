@@ -14,7 +14,7 @@
     {
       "signal_id": "sig_ready_synthetic_agent_eval",
       "title": "Synthetic agent reliability benchmark adds recovery metric for tool-use failures",
-      "source_url": "https://source.dysonx.test/research/agent-recovery-benchmark",
+      "source_url": "https://source.dysonx.invalid/research/agent-recovery-benchmark",
       "source_authority": "Synthetic first-party benchmark fixture with methodology fields for gate testing.",
       "agi_capability": "Agents, Tool Use, Evaluation",
       "entities": ["Synthetic Eval Lab", "agent recovery benchmark"],

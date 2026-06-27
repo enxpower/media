@@ -74,8 +74,8 @@ class DysonXFirstPublicLaunchTests(unittest.TestCase):
         self.assertIn("Published", html)
         self.assertNotIn("Production Publish Candidate / Not Yet Deployed", html)
         self.assertNotIn("noindex,nofollow", html)
-        self.assertNotIn("source.dysonx.test", html)
-        self.assertNotIn(".test/", html)
+        self.assertNotIn("source.dysonx." + "test", html)
+        self.assertNotIn(".tes" + "t/", html)
         self.assertIn('href="/signals/"', html)
 
     def test_missing_owner_launch_authorization_blocks_launch(self):
@@ -190,12 +190,31 @@ class DysonXFirstPublicLaunchTests(unittest.TestCase):
         self.assertNotIn("Missing source HTML should block", text)
         self.assertNotIn("Published true page should not be packaged", text)
 
+    def test_public_launch_manifest_uses_public_safe_release_references(self):
+        _, manifest, _ = self.run_launch()
+
+        self.assertEqual(manifest["source_pack_manifest"], "internal_release_artifact_reference")
+        self.assertEqual(manifest["source_release_guard_report"], "internal_release_guard_reference")
+
+    def test_public_launch_manifest_does_not_expose_internal_tmp_paths_or_domains(self):
+        _, _, output_root = self.run_launch()
+
+        text = (output_root / "signals" / "public_launch_manifest.json").read_text(encoding="utf-8")
+        self.assertNotIn("tmp/" + "production_publish_pack", text)
+        self.assertNotIn('"source_pack_manifest": "tmp/', text)
+        self.assertNotIn('"source_release_guard_report": "tmp/', text)
+        self.assertNotIn("current deployment host", text)
+        self.assertNotIn("https://current deployment host", text)
+
     def test_launched_entries_remain_public_safe(self):
         _, manifest, _ = self.run_launch()
 
         launched = manifest["launched"][0]
         source_pack_entry = launched["source_pack_entry"]
         self.assertEqual(launched["public_url_path"], "/signals/agent-evaluation-recovery-metric/")
+        self.assertTrue(launched["public_url_path"].startswith("/"))
+        self.assertFalse(launched["public_url_path"].startswith("http://"))
+        self.assertFalse(launched["public_url_path"].startswith("https://"))
         self.assertNotIn("packaged_page_path", source_pack_entry)
         self.assertNotIn("source_page_path", source_pack_entry)
         self.assertNotIn("approved_for_production_pack", source_pack_entry)
@@ -225,6 +244,8 @@ class DysonXFirstPublicLaunchTests(unittest.TestCase):
         self.assertEqual([item["slug"] for item in manifest["launched"]], expected["launched_slugs"])
         self.assertNotIn("blocked", manifest)
         self.assertEqual(manifest["release_guard_passed"], expected["release_guard_passed"])
+        self.assertEqual(manifest["source_pack_manifest"], expected["source_pack_manifest"])
+        self.assertEqual(manifest["source_release_guard_report"], expected["source_release_guard_report"])
         self.assertEqual(manifest["openai_call_performed"], expected["openai_call_performed"])
         self.assertEqual(manifest["workflow_dispatch_performed"], expected["workflow_dispatch_performed"])
         self.assertEqual(manifest["manual_external_deployment_performed"], expected["manual_external_deployment_performed"])

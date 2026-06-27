@@ -8,6 +8,8 @@
   "pages_blocked": 1,
   "pages_launched": 1,
   "release_guard_passed": true,
+  "source_pack_manifest": "internal_release_artifact_reference",
+  "source_release_guard_report": "internal_release_guard_reference",
   "social_distribution_performed": false,
   "workflow_dispatch_performed": false
 }

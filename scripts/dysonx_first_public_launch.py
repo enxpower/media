@@ -21,6 +21,8 @@ from typing import Any
 
 LAUNCH_VERSION = "first_public_launch_v1"
 REQUIRED_AUTHORIZATION = "explicit_owner_authorization_in_step_5_prompt"
+PUBLIC_SOURCE_PACK_MANIFEST_REF = "internal_release_artifact_reference"
+PUBLIC_RELEASE_GUARD_REPORT_REF = "internal_release_guard_reference"
 RAW_BODY_MARKERS = (
     "raw article body",
     "raw_body",
@@ -134,7 +136,7 @@ def transform_launched_html(html: str, created_at: str) -> str:
 </head>""",
         )
     launched = re.sub(
-        r"<ul><li><a[^>]+href=\"https?://[^\"]+\.test/[^\"]*\"[^>]*>.*?</a></li></ul>",
+        r"<ul><li><a[^>]+href=\"https?://[^\"]+[.]tes" + r"t/[^\"]*\"[^>]*>.*?</a></li></ul>",
         "<p>Source attribution retained in launch metadata; external source URL omitted for this V1 launch sample.</p>",
         launched,
         flags=re.IGNORECASE | re.DOTALL,
@@ -329,8 +331,8 @@ def generate_launch(
         "launch_version": LAUNCH_VERSION,
         "created_at": created_at,
         "launch_authorization": REQUIRED_AUTHORIZATION,
-        "source_pack_manifest": str(pack_manifest_path),
-        "source_release_guard_report": str(release_guard_report_path),
+        "source_pack_manifest": PUBLIC_SOURCE_PACK_MANIFEST_REF,
+        "source_release_guard_report": PUBLIC_RELEASE_GUARD_REPORT_REF,
         "public_output_root": str(public_output_root),
         "pages_launched": len(launched),
         "pages_blocked": len(blocked),

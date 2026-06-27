@@ -137,7 +137,7 @@ Public Signal Page Generator V1 is governed by `docs/DYSONX_PUBLIC_SIGNAL_PAGE_G
 
 Manual Publish Approval V1 is governed by `docs/DYSONX_MANUAL_PUBLISH_APPROVAL_V1.md`. It creates an offline approval report for Step 4 Production Publish Pack only; it does not publish, deploy, dispatch workflows, call OpenAI, or modify generated public HTML. `approved_for_production_pack` must not be treated as `published`.
 
-Production Publish Pack V1 is governed by `docs/DYSONX_PRODUCTION_PUBLISH_PACK_V1.md`. It creates production-ready artifacts for Step 5 only. It does not write to `media.energizeos.com`, deploy, publish, dispatch workflows, call OpenAI, or mark `published` true. Step 5 explicit Owner launch authorization remains required.
+Production Publish Pack V1 is governed by `docs/DYSONX_PRODUCTION_PUBLISH_PACK_V1.md`. It creates production-ready artifacts for Step 5 only. It does not write to a deployment host, deploy, publish, dispatch workflows, call OpenAI, or mark `published` true. Step 5 explicit Owner launch authorization remains required.
 
 First Public Launch V1 is governed by `docs/DYSONX_FIRST_PUBLIC_LAUNCH_V1.md`. It may copy only approved, release-guarded static Signal pages into the repository public static output path after explicit Owner launch authorization. It does not call OpenAI, scrape, manually dispatch workflows, perform social/newsletter distribution, add backend/database systems, or create a Step 6.
 
@@ -186,7 +186,17 @@ Public UI/UX refinement is a later dedicated sprint. V1 public pages may be simp
 - no exposure of internal state
 - no misleading publication status
 
-## 9. Public Surface Types
+## 9. Domain-Agnostic Public Output
+
+Public static pages, manifests, generated links, tests, and docs must not hardcode the current deployment domain. The current hosting domain is temporary and deployment-specific.
+
+Generated public links should use relative URL paths by default, such as `/`, `/signals/`, `/signals/<slug>/`, `/static/...`, and `/assets/...`. Future domain changes must not require changing generated HTML or generator logic.
+
+If a canonical base URL is required, it must be injected through explicit configuration, an environment variable, a CLI argument, a build parameter, or centralized deployment configuration. `CNAME` may contain the current host because it is a deployment binding file, but generated HTML, manifests, scripts, tests, and docs must not depend on that host.
+
+The public launch manifest should expose public URL paths, not absolute domains.
+
+## 10. Public Surface Types
 
 ### A. Signals
 
