@@ -91,7 +91,7 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
 
         self.assertFalse(candidate["Ready for Pipeline"])
         self.assertFalse(candidate["Published"])
-        self.assertEqual(candidate["Attribution Status"], "Incomplete")
+        self.assertEqual(candidate["Attribution Status"], "Missing")
 
     def test_raw_body_is_never_included(self):
         sources = [load_records("source_registry_sample.json")[0]]
@@ -119,7 +119,7 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
 
         self.assertTrue(candidate["Ready for Pipeline"])
         self.assertTrue(candidate["Published"])
-        self.assertEqual(candidate["Status"], "Auto-Ready")
+        self.assertEqual(candidate["Status"], "Ready for Quality Audit")
         self.assertGreaterEqual(candidate["Quality Hint"], 85)
 
     def test_generated_candidate_has_safe_summary_only_copyright_status(self):
@@ -180,6 +180,66 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
         self.assertEqual(auto["Copyright Status"], expected["copyright_status"])
         self.assertEqual(result["openai_call_performed"], expected["openai_call_performed"])
         self.assertEqual(result["public_static_files_written"], expected["public_static_files_written"])
+
+    def test_notion_writeback_properties_match_signal_intake_schema(self):
+        sources = [load_records("source_registry_sample.json")[1]]
+        result = collector.build_candidates(sources, [], fetch=self.fixture_fetch)
+        candidate = result["candidates"][0]
+        properties = collector.notion_candidate_properties(candidate)
+        allowed = {
+            "Signal Title",
+            "Source Name",
+            "Source URL",
+            "Published Date",
+            "Category",
+            "AGI Relevance",
+            "Status",
+            "Attribution Status",
+            "Copyright Status",
+            "Quality Hint",
+            "Summary",
+            "Why It Matters",
+            "Evidence",
+            "Risk / Safety Notes",
+            "Ready for Pipeline",
+            "Published",
+            "Notes",
+        }
+
+        self.assertEqual(set(properties), allowed)
+        self.assertNotIn("Slug", properties)
+        self.assertNotIn("Collector Version", properties)
+        self.assertEqual(properties["Notes"]["rich_text"][0]["text"]["content"], "Collector Version: source_collector_v1")
+
+    def test_notion_select_values_match_signal_intake_schema(self):
+        sources = load_records("source_registry_sample.json")[:3]
+        result = collector.build_candidates(sources, [], fetch=self.fixture_fetch)
+        allowed_categories = {
+            "Frontier Lab",
+            "Research",
+            "Compute",
+            "Open Source",
+            "Policy",
+            "Safety",
+            "Enterprise AI",
+            "Market Signal",
+            "Other",
+        }
+        allowed_statuses = {
+            "New",
+            "Ready for Quality Audit",
+            "Needs More Sources",
+            "Needs Owner Review",
+            "Blocked",
+            "Archived",
+        }
+        allowed_attribution = {"Complete", "Partial", "Missing"}
+
+        for candidate in result["candidates"]:
+            properties = collector.notion_candidate_properties(candidate)
+            self.assertIn(properties["Category"]["select"]["name"], allowed_categories)
+            self.assertIn(properties["Status"]["select"]["name"], allowed_statuses)
+            self.assertIn(properties["Attribution Status"]["select"]["name"], allowed_attribution)
 
 
 if __name__ == "__main__":

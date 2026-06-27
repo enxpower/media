@@ -406,10 +406,10 @@ def category_for(item: SourceItem) -> str:
     if "arxiv" in item.source_type.lower() or "research" in text or "paper" in text:
         return "Research"
     if "agent" in text:
-        return "Agents"
+        return "Research"
     if "compute" in text or "inference" in text:
-        return "Infrastructure"
-    return "AI / AGI"
+        return "Compute"
+    return "Market Signal"
 
 
 def quality_hint(item: SourceItem) -> int:
@@ -457,7 +457,7 @@ def candidate_from_item(item: SourceItem) -> dict[str, Any]:
         "Why It Matters": f"This source is a monitored DysonX {item.priority.lower()}-priority signal for {category_for(item).lower()} tracking.",
         "Evidence": f"Metadata collected from {item.source_name}; no source-page body was copied.",
         "Risk / Safety Notes": "Rule-based V1 candidate. Requires Owner review unless all auto-publish gates pass.",
-        "Attribution Status": ATTRIBUTION_STATUS if item.attribution_complete and item.link else "Incomplete",
+        "Attribution Status": ATTRIBUTION_STATUS if item.attribution_complete and item.link else "Missing",
         "Copyright Status": COPYRIGHT_STATUS,
         "Quality Hint": quality_hint(item),
         "Status": "Needs Owner Review",
@@ -468,7 +468,7 @@ def candidate_from_item(item: SourceItem) -> dict[str, Any]:
     if can_auto_publish(item, candidate):
         candidate["Ready for Pipeline"] = True
         candidate["Published"] = True
-        candidate["Status"] = "Auto-Ready"
+        candidate["Status"] = "Ready for Quality Audit"
     elif candidate["AGI Relevance"] == "Low":
         candidate["Status"] = "Needs More Sources"
     return candidate
@@ -574,9 +574,9 @@ def notion_candidate_properties(candidate: dict[str, Any]) -> dict[str, Any]:
     def rich(value: Any) -> dict[str, Any]:
         return {"rich_text": [{"text": {"content": normalize_text(value)[:1900]}}]}
 
+    notes = normalize_text(candidate.get("Notes")) or f"Collector Version: {normalize_text(candidate.get('Collector Version') or 'source_collector_v1')}"
     return {
         "Signal Title": {"title": [{"text": {"content": normalize_text(candidate["Signal Title"])[:1900]}}]},
-        "Slug": rich(candidate["Slug"]),
         "Source Name": rich(candidate["Source Name"]),
         "Source URL": {"url": normalize_text(candidate["Source URL"])},
         "Published Date": {"date": {"start": candidate["Published Date"]}} if candidate.get("Published Date") else {"date": None},
@@ -592,7 +592,7 @@ def notion_candidate_properties(candidate: dict[str, Any]) -> dict[str, Any]:
         "Status": {"select": {"name": normalize_text(candidate["Status"])}},
         "Ready for Pipeline": {"checkbox": bool(candidate["Ready for Pipeline"])},
         "Published": {"checkbox": bool(candidate["Published"])},
-        "Collector Version": rich(candidate["Collector Version"]),
+        "Notes": rich(notes),
     }
 
 
