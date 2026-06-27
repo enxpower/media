@@ -11,9 +11,12 @@ import time
 from typing import Any, Callable
 
 
-PASSING_CONCLUSIONS = {"success", "skipped", "neutral"}
-FAILING_CONCLUSIONS = {"failure", "cancelled", "timed_out", "action_required"}
-WAITING_STATES = {"queued", "in_progress", "pending", "expected"}
+PASSING_BUCKETS = {"pass", "skipping"}
+FAILING_BUCKETS = {"fail", "cancel"}
+WAITING_BUCKETS = {"pending"}
+PASSING_STATE_TOKENS = ("success", "pass", "skipped", "neutral")
+FAILING_STATE_TOKENS = ("fail", "error", "cancel", "timed_out", "action_required")
+WAITING_STATE_TOKENS = ("pending", "queued", "in_progress", "expected")
 
 
 class PRChecksGateError(RuntimeError):
@@ -34,17 +37,17 @@ def normalize(value: Any) -> str:
 
 
 def check_name(check: dict[str, Any]) -> str:
-    workflow = normalize(check.get("workflowName") or check.get("workflow"))
-    name = normalize(check.get("name") or check.get("context"))
+    workflow = normalize(check.get("workflow"))
+    name = normalize(check.get("name"))
     return f"{workflow} / {name}" if workflow and name else name or workflow or "<unnamed check>"
 
 
+def check_bucket(check: dict[str, Any]) -> str:
+    return normalize(check.get("bucket")).lower()
+
+
 def check_state(check: dict[str, Any]) -> str:
-    return normalize(check.get("state") or check.get("status")).lower()
-
-
-def check_conclusion(check: dict[str, Any]) -> str:
-    return normalize(check.get("conclusion") or check.get("state") or check.get("status")).lower()
+    return normalize(check.get("state")).lower()
 
 
 def load_checks(repo: str, pr_number: str, runner: Runner = run_gh) -> list[dict[str, Any]]:
@@ -57,7 +60,7 @@ def load_checks(repo: str, pr_number: str, runner: Runner = run_gh) -> list[dict
             "--repo",
             repo,
             "--json",
-            "name,workflowName,state,conclusion,status",
+            "name,workflow,state,bucket,link",
         ]
     )
     data = json.loads(output)
@@ -75,17 +78,28 @@ def classify_checks(checks: list[dict[str, Any]], exclude_check_name: str) -> tu
         if name == exclude_check_name:
             continue
         checked += 1
-        conclusion = check_conclusion(check)
+        bucket = check_bucket(check)
         state = check_state(check)
-        if conclusion in PASSING_CONCLUSIONS:
+        if bucket in PASSING_BUCKETS:
             continue
-        if conclusion in FAILING_CONCLUSIONS:
-            failing.append(f"{name}: {conclusion}")
+        if bucket in FAILING_BUCKETS:
+            failing.append(f"{name}: {bucket}")
             continue
-        if state in WAITING_STATES or conclusion in WAITING_STATES or not conclusion:
-            waiting.append(f"{name}: {state or conclusion or 'pending'}")
+        if bucket in WAITING_BUCKETS:
+            waiting.append(f"{name}: {bucket}")
             continue
-        failing.append(f"{name}: unexpected conclusion {conclusion}")
+        if bucket:
+            failing.append(f"{name}: unknown bucket {bucket}")
+            continue
+        if any(token in state for token in PASSING_STATE_TOKENS):
+            continue
+        if any(token in state for token in FAILING_STATE_TOKENS):
+            failing.append(f"{name}: {state}")
+            continue
+        if any(token in state for token in WAITING_STATE_TOKENS) or not state:
+            waiting.append(f"{name}: {state or 'pending'}")
+            continue
+        failing.append(f"{name}: unknown state {state}")
     return failing, waiting, checked
 
 

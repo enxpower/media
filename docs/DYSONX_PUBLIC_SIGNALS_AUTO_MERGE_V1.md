@@ -92,9 +92,13 @@ Manifest safety flags must include:
 
 Auto-merge requires all relevant PR checks to be green, not only branch-protection-required checks.
 
-The checks gate waits for every non-excluded PR check to reach a terminal state. It passes only when every non-excluded conclusion is `success`, `skipped`, or `neutral`.
+The checks gate uses official `gh pr checks` JSON fields: `name`, `workflow`, `state`, `bucket`, and `link`.
 
-Failures in non-required checks still block auto-merge. `failure`, `cancelled`, `timed_out`, and `action_required` all block.
+The gate classifies `bucket` values first. It passes only when every non-excluded check has `bucket = pass` or `bucket = skipping`.
+
+Failures in non-required checks still block auto-merge. `bucket = fail` and `bucket = cancel` both block. `bucket = pending` waits until the check reaches a terminal bucket.
+
+If a bucket is missing, the gate falls back to `state` conservatively and fails closed for unknown states.
 
 The auto-merge workflow excludes its own check:
 

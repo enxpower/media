@@ -13,13 +13,13 @@ import dysonx_pr_checks_gate as gate  # noqa: E402
 EXCLUDED = "DysonX Public Signals Auto-Merge V1 / Gate and auto-merge public Signals sync PRs"
 
 
-def check(name, conclusion=None, state="COMPLETED", workflow="CI"):
+def check(name, bucket="pass", state="", workflow="CI"):
     return {
         "name": name,
-        "workflowName": workflow,
+        "workflow": workflow,
         "state": state,
-        "status": state,
-        "conclusion": conclusion,
+        "bucket": bucket,
+        "link": "https://example.org/check",
     }
 
 
@@ -61,42 +61,42 @@ class DysonXPRChecksGateTests(unittest.TestCase):
         )
         return runner.calls
 
-    def test_passes_when_all_checks_success_skipped_or_neutral(self):
-        calls = self.wait([[check("unit", "success"), check("docs", "skipped"), check("lint", "neutral")]])
+    def test_passes_when_bucket_is_pass(self):
+        calls = self.wait([[check("unit", "pass")]])
         self.assertEqual(calls, 1)
 
-    def test_fails_when_any_check_is_failure(self):
-        with self.assertRaisesRegex(gate.PRChecksGateError, "unit: failure"):
-            self.wait([[check("unit", "failure")]])
+    def test_passes_when_bucket_is_skipping(self):
+        calls = self.wait([[check("docs", "skipping")]])
+        self.assertEqual(calls, 1)
 
-    def test_fails_when_any_check_is_cancelled(self):
-        with self.assertRaisesRegex(gate.PRChecksGateError, "unit: cancelled"):
-            self.wait([[check("unit", "cancelled")]])
+    def test_waits_when_bucket_pending_then_passes(self):
+        calls = self.wait([[check("unit", "pending")], [check("unit", "pass")]])
+        self.assertEqual(calls, 2)
 
-    def test_fails_when_any_check_is_timed_out(self):
-        with self.assertRaisesRegex(gate.PRChecksGateError, "unit: timed_out"):
-            self.wait([[check("unit", "timed_out")]])
+    def test_fails_when_bucket_is_fail(self):
+        with self.assertRaisesRegex(gate.PRChecksGateError, "unit: fail"):
+            self.wait([[check("unit", "fail")]])
 
-    def test_fails_when_any_check_is_action_required(self):
-        with self.assertRaisesRegex(gate.PRChecksGateError, "unit: action_required"):
-            self.wait([[check("unit", "action_required")]])
+    def test_fails_when_bucket_is_cancel(self):
+        with self.assertRaisesRegex(gate.PRChecksGateError, "unit: cancel"):
+            self.wait([[check("unit", "cancel")]])
 
-    def test_pending_in_progress_and_queued_wait_until_terminal(self):
-        calls = self.wait(
-            [
-                [check("unit", None, state="QUEUED")],
-                [check("unit", None, state="IN_PROGRESS")],
-                [check("unit", "success", state="COMPLETED")],
-            ]
-        )
-        self.assertEqual(calls, 3)
+    def test_falls_back_to_state_when_bucket_missing(self):
+        calls = self.wait([[check("unit", bucket="", state="SUCCESS")]])
+        self.assertEqual(calls, 1)
+
+    def test_fail_closed_on_unknown_bucket_or_state(self):
+        with self.assertRaisesRegex(gate.PRChecksGateError, "unknown bucket mystery"):
+            self.wait([[check("unit", "mystery")]])
+        with self.assertRaisesRegex(gate.PRChecksGateError, "unknown state weird"):
+            self.wait([[check("unit", bucket="", state="WEIRD")]])
 
     def test_excluded_auto_merge_check_does_not_block(self):
         calls = self.wait(
             [
                 [
                     check("Gate and auto-merge public Signals sync PRs", None, state="IN_PROGRESS", workflow="DysonX Public Signals Auto-Merge V1"),
-                    check("unit", "success"),
+                    check("unit", "pass"),
                 ]
             ]
         )
@@ -104,7 +104,7 @@ class DysonXPRChecksGateTests(unittest.TestCase):
 
     def test_timeout_fails_with_clear_message(self):
         with self.assertRaisesRegex(gate.PRChecksGateError, "timed out waiting for checks"):
-            self.wait([[check("unit", None, state="IN_PROGRESS")]], timeout=10, poll=5)
+            self.wait([[check("unit", "pending")]], timeout=10, poll=5)
 
 
 if __name__ == "__main__":
