@@ -74,6 +74,9 @@ class DysonXFirstPublicLaunchTests(unittest.TestCase):
         self.assertIn("Published", html)
         self.assertNotIn("Production Publish Candidate / Not Yet Deployed", html)
         self.assertNotIn("noindex,nofollow", html)
+        self.assertNotIn("source.dysonx.test", html)
+        self.assertNotIn(".test/", html)
+        self.assertIn('href="/signals/"', html)
 
     def test_missing_owner_launch_authorization_blocks_launch(self):
         result, manifest, output_root = self.run_launch(authorization="missing")
@@ -238,6 +241,7 @@ class DysonXFirstPublicLaunchTests(unittest.TestCase):
                 imports.add(node.module.split(".")[0])
 
         allowed = {"__future__", "argparse", "json", "pathlib", "shutil", "sys", "datetime", "typing"}
+        allowed.add("re")
         self.assertLessEqual(imports, allowed)
 
 

@@ -131,7 +131,7 @@ def check_identity_and_language_placeholder(parser: IndexMetadataParser) -> None
         "AGI Map",
         "EN",
         "中文",
-        "Real publishing not enabled yet",
+        "First public Signal published",
     )
     missing = [token for token in required_tokens if token not in text]
     if missing:

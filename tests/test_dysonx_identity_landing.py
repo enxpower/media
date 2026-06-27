@@ -47,7 +47,8 @@ class DysonXIdentityLandingTests(unittest.TestCase):
         for nav_item in ("Signals", "Trackers", "AGI Map", "Companies", "People", "Research", "Reports"):
             self.assertIn(nav_item, html)
         self.assertIn("V1 dry-run pipeline available", html)
-        self.assertIn("Real publishing not enabled yet", html)
+        self.assertIn("First public Signal published", html)
+        self.assertNotIn("Real publishing not enabled yet", html)
         self.assertIn("EN", html)
         self.assertIn("中文", html)
 
