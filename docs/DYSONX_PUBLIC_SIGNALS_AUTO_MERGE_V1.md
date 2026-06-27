@@ -88,6 +88,22 @@ Manifest safety flags must include:
 - `network_source_fetch_performed = false`
 - `manual_external_deployment_performed = false`
 
+## GitHub Checks Rule
+
+Auto-merge requires all relevant PR checks to be green, not only branch-protection-required checks.
+
+The checks gate waits for every non-excluded PR check to reach a terminal state. It passes only when every non-excluded conclusion is `success`, `skipped`, or `neutral`.
+
+Failures in non-required checks still block auto-merge. `failure`, `cancelled`, `timed_out`, and `action_required` all block.
+
+The auto-merge workflow excludes its own check:
+
+```text
+DysonX Public Signals Auto-Merge V1 / Gate and auto-merge public Signals sync PRs
+```
+
+This self-exclusion prevents a deadlock where the workflow waits for itself to complete before it can finish.
+
 ## Critical-Only Rule
 
 Non-Critical content must not auto-merge.

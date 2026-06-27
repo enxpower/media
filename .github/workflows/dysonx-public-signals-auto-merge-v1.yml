@@ -108,9 +108,14 @@ jobs:
             --require-attribution-complete \
             --require-safe-summary-only
 
-      - name: Confirm required checks are green
+      - name: Confirm all non-excluded checks are green
         run: |
-          gh pr checks "$PR_NUMBER" --repo "${{ github.repository }}" --required --watch
+          python3 scripts/dysonx_pr_checks_gate.py \
+            --repo "${{ github.repository }}" \
+            --pr-number "$PR_NUMBER" \
+            --exclude-check-name "DysonX Public Signals Auto-Merge V1 / Gate and auto-merge public Signals sync PRs" \
+            --timeout-seconds 900 \
+            --poll-seconds 15
 
       - name: Respect emergency kill switch
         run: |
