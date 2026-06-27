@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Official AI Lab RSS</title>
+    <item>
+      <title>Agent evaluation benchmark improves reliability scoring</title>
+      <link>https://example.org/research/agent-evaluation-benchmark</link>
+      <pubDate>Sat, 27 Jun 2026 08:00:00 GMT</pubDate>
+      <description>Official metadata summary: a new agent evaluation benchmark tracks recovery, reliability, and task completion behavior.</description>
+    </item>
+    <item>
+      <title>General company operations update</title>
+      <link>https://example.org/company/operations-update</link>
+      <pubDate>Sat, 27 Jun 2026 09:00:00 GMT</pubDate>
+      <description>Metadata summary about office operations without direct AI relevance.</description>
+    </item>
+  </channel>
+</rss>

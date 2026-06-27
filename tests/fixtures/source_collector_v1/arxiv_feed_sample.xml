@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>arXiv AI Agents</title>
+  <entry>
+    <title>Compute-aware evaluation for autonomous AI agents</title>
+    <link href="https://arxiv.org/abs/2606.12345" />
+    <published>2026-06-27T10:00:00Z</published>
+    <summary>Abstract metadata summary describing compute-aware benchmarks for autonomous AI agent evaluation.</summary>
+  </entry>
+</feed>

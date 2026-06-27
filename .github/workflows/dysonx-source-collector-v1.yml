@@ -1,0 +1,41 @@
+name: DysonX Source Collector V1
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-collector-v1:
+    name: Collect source metadata into Signal Intake
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      DYSONX_NOTION_SOURCES_DATABASE_ID: ${{ secrets.DYSONX_NOTION_SOURCES_DATABASE_ID }}
+      NOTION_SIGNAL_INTAKE_DATABASE_ID: ${{ secrets.NOTION_SIGNAL_INTAKE_DATABASE_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run Source Collector V1
+        run: python3 scripts/dysonx_source_collector_v1.py
+
+      - name: Confirm no public static files changed
+        run: |
+          if ! git diff --quiet -- signals index.html; then
+            echo "[source-collector-v1] FAIL: collector must not modify public static files"
+            git diff -- signals index.html
+            exit 1
+          fi
+          echo "[source-collector-v1] PASS: no public static files changed"

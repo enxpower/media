@@ -1,0 +1,62 @@
+{
+  "records": [
+    {
+      "_notion_page_id": "src_high_rss",
+      "Name": "Official AI Lab RSS",
+      "URL": "https://example.org/rss.xml",
+      "Source Type": "RSS",
+      "Platform": "RSS",
+      "Priority": "High",
+      "Authority Score": 92,
+      "Enabled": true,
+      "Fetch Frequency": "6 hours"
+    },
+    {
+      "_notion_page_id": "src_arxiv",
+      "Name": "arXiv AI Agents",
+      "URL": "https://export.arxiv.org/rss/cs.AI",
+      "Source Type": "arXiv",
+      "Platform": "RSS",
+      "Priority": "Critical",
+      "Authority Score": 90,
+      "Enabled": true
+    },
+    {
+      "_notion_page_id": "src_low_authority",
+      "Name": "Medium Authority AI Blog",
+      "URL": "https://example.org/medium-rss.xml",
+      "Source Type": "RSS",
+      "Platform": "RSS",
+      "Priority": "Medium",
+      "Authority Score": 70,
+      "Enabled": true
+    },
+    {
+      "_notion_page_id": "src_disabled",
+      "Name": "Disabled Source",
+      "URL": "https://example.org/disabled.xml",
+      "Source Type": "RSS",
+      "Priority": "High",
+      "Authority Score": 90,
+      "Enabled": false
+    },
+    {
+      "_notion_page_id": "src_missing_url",
+      "Name": "Missing URL Source",
+      "URL": "",
+      "Source Type": "RSS",
+      "Priority": "High",
+      "Authority Score": 90,
+      "Enabled": true
+    },
+    {
+      "_notion_page_id": "src_unsupported",
+      "Name": "Unsupported Source",
+      "URL": "https://example.org/video",
+      "Source Type": "Video",
+      "Priority": "High",
+      "Authority Score": 90,
+      "Enabled": true
+    }
+  ]
+}
