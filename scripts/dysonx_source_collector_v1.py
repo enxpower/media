@@ -460,6 +460,7 @@ def candidate_from_item(item: SourceItem) -> dict[str, Any]:
         "Slug": slugify(item.title),
         "Source Name": item.source_name,
         "Source URL": source_url,
+        "Source Priority": item.priority,
         "Published Date": item.published_date,
         "Category": category_for(item),
         "AGI Relevance": ai_relevance_text(item),
@@ -564,9 +565,16 @@ class NotionClient:
     def create_signal_intake_row(self, candidate: dict[str, Any]) -> None:
         payload = {
             "parent": {"database_id": self.signal_intake_database_id},
-            "properties": notion_candidate_properties(candidate),
+            "properties": notion_candidate_properties(candidate, supported_properties=self.signal_intake_property_names()),
         }
         self.transport("https://api.notion.com/v1/pages", self.headers, payload, "POST")
+
+    def signal_intake_property_names(self) -> set[str]:
+        response = self.transport(f"https://api.notion.com/v1/databases/{self.signal_intake_database_id}", self.headers, None, "GET")
+        properties = response.get("properties")
+        if not isinstance(properties, dict):
+            return set()
+        return {str(name) for name in properties}
 
     def update_source_fetch_status(self, source: SourceRecord, fetched_at: str, success: bool, error: str = "") -> None:
         if not source.notion_page_id:
@@ -580,12 +588,12 @@ class NotionClient:
         self.transport(f"https://api.notion.com/v1/pages/{source.notion_page_id}", self.headers, {"properties": properties}, "PATCH")
 
 
-def notion_candidate_properties(candidate: dict[str, Any]) -> dict[str, Any]:
+def notion_candidate_properties(candidate: dict[str, Any], supported_properties: set[str] | None = None) -> dict[str, Any]:
     def rich(value: Any) -> dict[str, Any]:
         return {"rich_text": [{"text": {"content": normalize_text(value)[:1900]}}]}
 
     notes = normalize_text(candidate.get("Notes")) or f"Collector Version: {normalize_text(candidate.get('Collector Version') or 'source_collector_v1')}"
-    return {
+    properties = {
         "Signal Title": {"title": [{"text": {"content": normalize_text(candidate["Signal Title"])[:1900]}}]},
         "Source Name": rich(candidate["Source Name"]),
         "Source URL": {"url": normalize_text(candidate["Source URL"])},
@@ -604,6 +612,9 @@ def notion_candidate_properties(candidate: dict[str, Any]) -> dict[str, Any]:
         "Published": {"checkbox": bool(candidate["Published"])},
         "Notes": rich(notes),
     }
+    if supported_properties and "Source Priority" in supported_properties and normalize_text(candidate.get("Source Priority")):
+        properties["Source Priority"] = {"select": {"name": normalize_text(candidate["Source Priority"])}}
+    return properties
 
 
 def build_candidates(
