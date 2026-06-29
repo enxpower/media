@@ -92,6 +92,10 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
     def test_passes_for_critical_high_quality_complete_safe_summary_signal(self):
         self.assertEqual(self.run_gate(), 0)
 
+    def test_critical_quality_at_least_92_complete_safe_summary_can_pass_gate(self):
+        self.write_manifest(source_priority="Critical", quality_hint=92, attribution_status="Complete", copyright_status="Safe Summary Only")
+        self.assertEqual(self.run_gate(), 0)
+
     def test_fails_when_quality_below_threshold(self):
         self.write_manifest(quality_hint=91)
         self.assertNotEqual(self.run_gate(), 0)

@@ -43,6 +43,7 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
         candidate = result["candidates"][0]
         self.assertEqual(candidate["Signal Title"], "Compute-aware evaluation for autonomous AI agents")
         self.assertEqual(candidate["Category"], "Research")
+        self.assertEqual(candidate["Source Priority"], "Critical")
 
     def test_relative_canonical_path_becomes_absolute_url(self):
         source = collector.SourceRecord(
@@ -286,6 +287,14 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
         self.assertNotIn("Slug", properties)
         self.assertNotIn("Collector Version", properties)
         self.assertEqual(properties["Notes"]["rich_text"][0]["text"]["content"], "Collector Version: source_collector_v1")
+
+    def test_notion_writeback_includes_source_priority_when_schema_supports_it(self):
+        sources = [load_records("source_registry_sample.json")[1]]
+        result = collector.build_candidates(sources, [], fetch=self.fixture_fetch)
+        candidate = result["candidates"][0]
+        properties = collector.notion_candidate_properties(candidate, supported_properties={"Source Priority"})
+
+        self.assertEqual(properties["Source Priority"]["select"]["name"], "Critical")
 
     def test_notion_select_values_match_signal_intake_schema(self):
         sources = load_records("source_registry_sample.json")[:3]

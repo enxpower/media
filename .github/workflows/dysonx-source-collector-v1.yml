@@ -29,7 +29,34 @@ jobs:
           python-version: "3.11"
 
       - name: Run Source Collector V1
-        run: python3 scripts/dysonx_source_collector_v1.py
+        run: python3 scripts/dysonx_source_collector_v1.py --output-candidates tmp/dysonx_source_collector_v1_candidates.json
+
+      - name: Print Source Collector diagnostics
+        if: always()
+        run: |
+          if [ -f tmp/dysonx_source_collector_v1_candidates.json ]; then
+            python3 - <<'PY'
+            import json
+            from pathlib import Path
+
+            data = json.loads(Path("tmp/dysonx_source_collector_v1_candidates.json").read_text(encoding="utf-8"))
+            print("candidate_count:", data.get("candidate_count"))
+            print("duplicates_skipped:", data.get("duplicates_skipped"))
+            print("source_results:")
+            for item in data.get("source_results", []):
+                print(" -", item)
+            PY
+          else
+            echo "[source-collector-v1] candidate artifact was not created"
+          fi
+
+      - name: Upload Source Collector diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dysonx-source-collector-v1-candidates
+          path: tmp/dysonx_source_collector_v1_candidates.json
+          if-no-files-found: warn
 
       - name: Confirm no public static files changed
         run: |

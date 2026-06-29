@@ -123,6 +123,14 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertIs(entry["ready_for_pipeline"], True)
         self.assertIs(entry["published"], True)
 
+    def test_manifest_carries_source_priority_from_priority_fallback(self):
+        record = eligible_record(**{"Quality Hint": 94, "Priority": "Critical"})
+        del record["Source Priority"]
+        manifest = sync.sync_records([record], self.root)
+        entry = next(item for item in manifest["launched"] if item["slug"] == "notion-agent-reliability")
+
+        self.assertEqual(entry["source_priority"], "Critical")
+
 
 if __name__ == "__main__":
     unittest.main()

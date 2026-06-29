@@ -32,6 +32,34 @@ jobs:
       - name: Sync Notion public Signals
         run: python3 scripts/dysonx_notion_public_signals_sync.py --output-root .
 
+      - name: Print public Signals manifest diagnostics
+        if: always()
+        run: |
+          if [ -f signals/public_launch_manifest.json ]; then
+            python3 - <<'PY'
+            import json
+            from pathlib import Path
+
+            data = json.loads(Path("signals/public_launch_manifest.json").read_text(encoding="utf-8"))
+            print("pages_launched:", data.get("pages_launched"))
+            print("pages_blocked:", data.get("pages_blocked"))
+            PY
+          else
+            echo "[notion-public-signals-sync] public launch manifest was not created"
+          fi
+
+      - name: Print public Signals diff stat
+        if: always()
+        run: git diff --stat -- signals
+
+      - name: Upload public Signals manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dysonx-public-signals-manifest
+          path: signals/public_launch_manifest.json
+          if-no-files-found: warn
+
       - name: Run static link integrity check
         run: python3 scripts/dysonx_static_preview_check.py --root .
 
