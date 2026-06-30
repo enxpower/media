@@ -32,7 +32,6 @@ SIGNAL_INTAKE_DATABASE_ENV = "NOTION_SIGNAL_INTAKE_DATABASE_ID"
 NOTION_VERSION = "2022-06-28"
 SUPPORTED_SOURCE_TYPES = {"rss", "atom", "feed", "arxiv", "official website", "website", "government", "policy", "manual"}
 ALLOWED_PRIORITIES = {"Critical", "High", "Medium"}
-AUTO_PUBLISH_PRIORITIES = {"Critical", "High"}
 COPYRIGHT_STATUS = "Safe Summary Only"
 ATTRIBUTION_STATUS = "Complete"
 OPENAI_CALL_PERFORMED = False
@@ -439,14 +438,14 @@ def safe_summary_only(item: SourceItem) -> str:
 
 def can_auto_publish(item: SourceItem, candidate: dict[str, Any]) -> bool:
     return (
-        item.priority in AUTO_PUBLISH_PRIORITIES
+        item.priority == "Critical"
         and item.authority_score >= 85
         and item.attribution_complete
         and bool(absolute_http_url(item.link))
         and len(candidate["Summary"]) <= 260
         and candidate["Copyright Status"] == COPYRIGHT_STATUS
         and candidate["AGI Relevance"] != "Low"
-        and candidate["Quality Hint"] >= 85
+        and candidate["Quality Hint"] >= 92
         and "raw" not in json.dumps(candidate).lower()
     )
 

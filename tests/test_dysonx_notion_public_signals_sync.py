@@ -131,6 +131,85 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
 
         self.assertEqual(entry["source_priority"], "Critical")
 
+    def test_sync_report_includes_blocked_reasons(self):
+        report_path = self.root / "tmp" / "dysonx_public_signals_sync_report.json"
+        sync.sync_records(
+            [
+                eligible_record(),
+                eligible_record(
+                    **{
+                        "Signal Title": "Blocked missing attribution Signal",
+                        "Slug": "blocked-missing-attribution",
+                        "Attribution Status": "Missing",
+                    }
+                ),
+            ],
+            self.root,
+            output_report=report_path,
+        )
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(report["total_notion_rows"], 2)
+        self.assertEqual(report["eligible_public_rows"], 1)
+        self.assertEqual(report["blocked_rows"], 1)
+        self.assertIn("Blocked missing attribution Signal", report["blocked_reasons_by_title"])
+        self.assertIn("attribution_not_complete", report["blocked_reasons_by_title"]["Blocked missing attribution Signal"])
+        self.assertIn("notion-agent-reliability", report["new_slugs"])
+
+    def test_auto_merge_marker_absent_for_changed_non_critical_or_quality_below_92(self):
+        manifest = sync.sync_records(
+            [
+                eligible_record(**{"Source Priority": "High", "Quality Hint": 94}),
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_low_quality",
+                        "Signal Title": "Critical but low quality Signal",
+                        "Slug": "critical-low-quality",
+                        "Quality Hint": 88,
+                    }
+                ),
+            ],
+            self.root,
+        )
+
+        self.assertFalse(sync.auto_merge_marker_eligible(manifest, ["signals/notion-agent-reliability/index.html"]))
+        self.assertFalse(sync.auto_merge_marker_eligible(manifest, ["signals/critical-low-quality/index.html"]))
+
+    def test_auto_merge_marker_present_only_when_all_changed_signals_are_critical_quality_92(self):
+        manifest = sync.sync_records(
+            [
+                eligible_record(**{"Quality Hint": 92}),
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_second_critical",
+                        "Signal Title": "Second Critical Signal",
+                        "Slug": "second-critical-signal",
+                        "Quality Hint": 94,
+                    }
+                ),
+            ],
+            self.root,
+        )
+
+        self.assertTrue(
+            sync.auto_merge_marker_eligible(
+                manifest,
+                [
+                    "signals/notion-agent-reliability/index.html",
+                    "signals/second-critical-signal/index.html",
+                    "signals/index.html",
+                    "signals/public_launch_manifest.json",
+                ],
+            )
+        )
+
+    def test_public_manifest_still_carries_source_priority(self):
+        sync.sync_records([eligible_record(**{"Quality Hint": 94})], self.root)
+        manifest = json.loads((self.root / "signals" / "public_launch_manifest.json").read_text(encoding="utf-8"))
+        entry = next(item for item in manifest["launched"] if item["slug"] == "notion-agent-reliability")
+
+        self.assertEqual(entry["source_priority"], "Critical")
+
 
 if __name__ == "__main__":
     unittest.main()

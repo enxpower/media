@@ -189,7 +189,27 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
         self.assertNotIn("Agent evaluation benchmark improves reliability scoring", titles)
         self.assertGreaterEqual(result["duplicates_skipped"], 1)
 
-    def test_high_authority_ai_relevant_source_can_auto_publish(self):
+    def test_high_priority_quality_88_is_created_but_not_published(self):
+        item = collector.SourceItem(
+            title="AI driving scenario complexity detection via joint embedding predictive architecture",
+            link="https://example.org/zero-label-driving-scenario-complexity",
+            published_date="2026-06-30",
+            summary="A research paper metadata summary about AI driving scenario complexity detection.",
+            source_name="arXiv cs.CV RSS",
+            source_url="https://export.arxiv.org/rss/cs.CV",
+            source_type="arXiv",
+            priority="High",
+            authority_score=88,
+            attribution_complete=True,
+        )
+        candidate = collector.candidate_from_item(item)
+
+        self.assertEqual(candidate["Source Priority"], "High")
+        self.assertEqual(candidate["Quality Hint"], 88)
+        self.assertFalse(candidate["Ready for Pipeline"])
+        self.assertFalse(candidate["Published"])
+
+    def test_critical_quality_at_least_92_is_published_and_ready(self):
         sources = [load_records("source_registry_sample.json")[1]]
         result = collector.build_candidates(sources, [], fetch=self.fixture_fetch)
         candidate = result["candidates"][0]
@@ -197,7 +217,8 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
         self.assertTrue(candidate["Ready for Pipeline"])
         self.assertTrue(candidate["Published"])
         self.assertEqual(candidate["Status"], "Ready for Quality Audit")
-        self.assertGreaterEqual(candidate["Quality Hint"], 85)
+        self.assertEqual(candidate["Source Priority"], "Critical")
+        self.assertGreaterEqual(candidate["Quality Hint"], 92)
 
     def test_generated_candidate_has_safe_summary_only_copyright_status(self):
         sources = [load_records("source_registry_sample.json")[0]]
