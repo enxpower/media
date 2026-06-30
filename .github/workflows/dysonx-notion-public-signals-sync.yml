@@ -3,6 +3,9 @@ name: DysonX Notion Public Signals Sync
 on:
   schedule:
     - cron: "0 */6 * * *"
+  workflow_run:
+    workflows: ["DysonX Source Collector V1"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -14,6 +17,7 @@ jobs:
     name: Sync public Signals from Notion
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
 
     env:
       NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
@@ -30,9 +34,9 @@ jobs:
           python-version: "3.11"
 
       - name: Sync Notion public Signals
-        run: python3 scripts/dysonx_notion_public_signals_sync.py --output-root .
+        run: python3 scripts/dysonx_notion_public_signals_sync.py --output-root . --output-report tmp/dysonx_public_signals_sync_report.json
 
-      - name: Print public Signals manifest diagnostics
+      - name: Print public Signals sync diagnostics
         if: always()
         run: |
           if [ -f signals/public_launch_manifest.json ]; then
@@ -47,17 +51,24 @@ jobs:
           else
             echo "[notion-public-signals-sync] public launch manifest was not created"
           fi
+          if [ -f tmp/dysonx_public_signals_sync_report.json ]; then
+            python3 -m json.tool tmp/dysonx_public_signals_sync_report.json
+          else
+            echo "[notion-public-signals-sync] sync report was not created"
+          fi
 
       - name: Print public Signals diff stat
         if: always()
         run: git diff --stat -- signals
 
-      - name: Upload public Signals manifest
+      - name: Upload public Signals diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dysonx-public-signals-manifest
-          path: signals/public_launch_manifest.json
+          name: dysonx-public-signals-diagnostics
+          path: |
+            signals/public_launch_manifest.json
+            tmp/dysonx_public_signals_sync_report.json
           if-no-files-found: warn
 
       - name: Run static link integrity check
@@ -77,25 +88,20 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
+          import subprocess
           from pathlib import Path
+          import sys
+
+          sys.path.insert(0, "scripts")
+          import dysonx_notion_public_signals_sync as sync
 
           marker = Path("auto_merge_marker.txt")
           manifest_path = Path("signals/public_launch_manifest.json")
-          required = {
-              "source_name",
-              "source_url",
-              "source_priority",
-              "attribution_status",
-              "copyright_status",
-              "quality_hint",
-              "ready_for_pipeline",
-              "published",
-          }
           eligible = False
           if manifest_path.exists():
               data = json.loads(manifest_path.read_text(encoding="utf-8"))
-              launched = data.get("launched", [])
-              eligible = bool(launched) and all(isinstance(item, dict) and required <= set(item) for item in launched)
+              changed_files = subprocess.check_output(["git", "diff", "--name-only", "--", "signals"], text=True).splitlines()
+              eligible = sync.auto_merge_marker_eligible(data, changed_files)
           marker.write_text("AUTO_MERGE_CANDIDATE: dysonx-public-signals-v1\n" if eligible else "", encoding="utf-8")
           print(f"eligible={str(eligible).lower()}")
           PY

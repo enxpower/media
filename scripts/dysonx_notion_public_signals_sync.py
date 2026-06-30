@@ -196,7 +196,7 @@ def source_url(record: dict[str, Any]) -> str:
 
 
 def source_label(record: dict[str, Any]) -> str:
-    return normalize_text(field(record, "Source Label", "Source", "source_label")) or "Source"
+    return normalize_text(field(record, "Source Label", "Source Name", "Source", "source_label", "source_name")) or "Source"
 
 
 def source_priority(record: dict[str, Any]) -> str:
@@ -256,6 +256,68 @@ def eligibility_blockers(record: dict[str, Any]) -> list[str]:
 
 def eligible_record(record: dict[str, Any]) -> bool:
     return not eligibility_blockers(record)
+
+
+def build_sync_report(records: list[dict[str, Any]], existing_slugs: list[str], eligible: list[dict[str, Any]]) -> dict[str, Any]:
+    blocked: list[dict[str, Any]] = []
+    for record in records:
+        reasons = eligibility_blockers(record)
+        if reasons:
+            blocked.append(
+                {
+                    "title": signal_title(record) or "(untitled)",
+                    "slug": signal_slug(record),
+                    "reasons": reasons,
+                    "source_priority": source_priority(record),
+                    "quality_hint": int(quality_hint(record)),
+                    "ready_for_pipeline": field(record, "Ready for Pipeline", "ready_for_pipeline") is True,
+                    "published": field(record, "Published", "published") is True,
+                }
+            )
+    eligible_slugs = sorted({record["slug"] for record in eligible})
+    existing_slug_set = set(existing_slugs)
+    return {
+        "sync_version": SYNC_VERSION,
+        "total_notion_rows": len(records),
+        "eligible_public_rows": len(eligible),
+        "blocked_rows": len(blocked),
+        "blocked_reasons_by_title": {item["title"]: item["reasons"] for item in blocked},
+        "blocked": blocked,
+        "new_slugs": [slug for slug in eligible_slugs if slug not in existing_slug_set],
+        "existing_slugs": sorted(existing_slug_set),
+    }
+
+
+def auto_merge_entry_eligible(entry: dict[str, Any]) -> bool:
+    try:
+        quality = float(entry.get("quality_hint"))
+    except (TypeError, ValueError):
+        quality = 0.0
+    return (
+        entry.get("source_priority") == "Critical"
+        and quality >= 92
+        and entry.get("attribution_status") == "Complete"
+        and entry.get("copyright_status") == "Safe Summary Only"
+        and entry.get("ready_for_pipeline") is True
+        and entry.get("published") is True
+    )
+
+
+def changed_signal_slugs(changed_files: list[str]) -> set[str]:
+    slugs: set[str] = set()
+    for path in changed_files:
+        match = re.fullmatch(r"signals/([^/]+)/index\.html", path)
+        if match and match.group(1) != "index":
+            slugs.add(match.group(1))
+    return slugs
+
+
+def auto_merge_marker_eligible(manifest: dict[str, Any], changed_files: list[str]) -> bool:
+    slugs = changed_signal_slugs(changed_files)
+    if not slugs:
+        return False
+    entries = {entry.get("slug"): entry for entry in manifest.get("launched", []) if isinstance(entry, dict)}
+    return all(slug in entries and auto_merge_entry_eligible(entries[slug]) for slug in slugs)
 
 
 class ExistingSignalParser(HTMLParser):
@@ -505,15 +567,23 @@ def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_
     }
 
 
-def sync_records(records: list[dict[str, Any]], output_root: pathlib.Path = DEFAULT_OUTPUT_ROOT, refreshed_at: str | None = None) -> dict[str, Any]:
+def sync_records(
+    records: list[dict[str, Any]],
+    output_root: pathlib.Path = DEFAULT_OUTPUT_ROOT,
+    refreshed_at: str | None = None,
+    output_report: pathlib.Path | None = None,
+) -> dict[str, Any]:
     refreshed_at = refreshed_at or utc_now()
     output_root = output_root.resolve()
     signals_root = output_root / "signals"
     signals_root.mkdir(parents=True, exist_ok=True)
 
+    existing = existing_public_signals(output_root)
+    existing_slugs = [record["slug"] for record in existing]
     eligible = [record_from_notion(record) for record in records if eligible_record(record)]
     blocked_count = len(records) - len(eligible)
-    by_slug = {record["slug"]: record for record in existing_public_signals(output_root)}
+    report = build_sync_report(records, existing_slugs, eligible)
+    by_slug = {record["slug"]: record for record in existing}
     for record in eligible:
         by_slug[record["slug"]] = record
     merged = sorted(by_slug.values(), key=lambda item: (item.get("existing", False), item["title"].lower()))
@@ -535,6 +605,11 @@ def sync_records(records: list[dict[str, Any]], output_root: pathlib.Path = DEFA
     manifest_text = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     assert_public_safe(manifest_text, "public launch manifest")
     (signals_root / "public_launch_manifest.json").write_text(manifest_text, encoding="utf-8")
+    if output_report:
+        output_report.parent.mkdir(parents=True, exist_ok=True)
+        report_text = json.dumps(report, indent=2, sort_keys=True) + "\n"
+        assert_public_safe(report_text, "public Signals sync report")
+        output_report.write_text(report_text, encoding="utf-8")
     return manifest
 
 
@@ -542,6 +617,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Sync Notion-approved DysonX public Signals into static pages.")
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT), help="Repository/public output root.")
     parser.add_argument("--fixture-json", help="Optional local Notion-shaped fixture JSON for offline validation.")
+    parser.add_argument("--output-report", help="Optional JSON diagnostics report path.")
     return parser.parse_args(argv)
 
 
@@ -567,7 +643,11 @@ def main(argv: list[str] | None = None) -> int:
                 raise NotionPublicSignalsSyncError(f"Missing required environment variables: {', '.join(missing)}")
             assert token is not None and database_id is not None
             records = query_notion_records(token, database_id)
-        manifest = sync_records(records, pathlib.Path(args.output_root))
+        manifest = sync_records(
+            records,
+            pathlib.Path(args.output_root),
+            output_report=pathlib.Path(args.output_report) if args.output_report else None,
+        )
     except (OSError, json.JSONDecodeError, NotionPublicSignalsSyncError) as exc:
         print(f"[notion-public-signals-sync] failed: {exc}", file=sys.stderr)
         return 2
