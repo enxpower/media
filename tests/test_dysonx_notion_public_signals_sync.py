@@ -19,7 +19,7 @@ def eligible_record(**overrides):
         "Slug": "notion-agent-reliability",
         "Summary": "A Notion-approved summary-only Signal about agent reliability evaluation.",
         "Why This Matters": "Agent reliability metrics affect whether agentic systems can be trusted for longer tasks.",
-        "AGI Relevance": "Agents and evaluation",
+        "AGI Relevance": "High",
         "Source URL": "https://example.org/agent-reliability",
         "Source Label": "Example Research Source",
         "Source Priority": "Critical",
@@ -27,7 +27,7 @@ def eligible_record(**overrides):
         "Published": True,
         "Attribution Status": "Complete",
         "Copyright Status": "Safe Summary Only",
-        "Quality Hint": 91,
+        "Quality Hint": 92,
         "Risk Notes": "Summary-only treatment.",
         "Watch Next": "Watch whether this metric appears in standard agent evaluations.",
         "Tags": ["Agents", "Evaluation"],
@@ -131,6 +131,81 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
 
         self.assertEqual(entry["source_priority"], "Critical")
 
+    def test_critical_quality_92_agi_high_safe_fields_is_eligible(self):
+        manifest = sync.sync_records([eligible_record(**{"Quality Hint": 92, "AGI Relevance": "High"})], self.root)
+
+        self.assertTrue((self.root / "signals" / "notion-agent-reliability" / "index.html").exists())
+        self.assertEqual(manifest["pages_blocked"], 0)
+        entry = next(item for item in manifest["launched"] if item["slug"] == "notion-agent-reliability")
+        self.assertEqual(entry["source_priority"], "Critical")
+        self.assertEqual(entry["quality_hint"], 92)
+
+    def test_high_priority_quality_95_is_blocked_from_public_output(self):
+        manifest = sync.sync_records([eligible_record(**{"Source Priority": "High", "Quality Hint": 95})], self.root)
+
+        self.assertFalse((self.root / "signals" / "notion-agent-reliability" / "index.html").exists())
+        self.assertEqual(manifest["pages_blocked"], 1)
+
+    def test_critical_quality_88_is_blocked_from_public_output(self):
+        manifest = sync.sync_records([eligible_record(**{"Quality Hint": 88})], self.root)
+
+        self.assertFalse((self.root / "signals" / "notion-agent-reliability" / "index.html").exists())
+        self.assertEqual(manifest["pages_blocked"], 1)
+
+    def test_critical_quality_95_agi_medium_is_blocked_from_public_output(self):
+        manifest = sync.sync_records([eligible_record(**{"Quality Hint": 95, "AGI Relevance": "Medium"})], self.root)
+
+        self.assertFalse((self.root / "signals" / "notion-agent-reliability" / "index.html").exists())
+        self.assertEqual(manifest["pages_blocked"], 1)
+
+    def test_published_polluted_rows_are_blocked_unless_all_strict_public_rules_pass(self):
+        records = [
+            eligible_record(
+                **{
+                    "Signal ID": "sig_general_science",
+                    "Signal Title": "General science RSS page about oceanography and eclipses",
+                    "Slug": "general-science-oceanography-eclipses",
+                    "Source Priority": "Critical",
+                    "Quality Hint": 95,
+                    "AGI Relevance": "High",
+                    "Category": "General Science",
+                }
+            ),
+            eligible_record(
+                **{
+                    "Signal ID": "sig_robot_vacuum",
+                    "Signal Title": "Robot vacuum product roundup",
+                    "Slug": "robot-vacuum-product-roundup",
+                    "Source Priority": "Critical",
+                    "Quality Hint": 95,
+                    "AGI Relevance": "High",
+                }
+            ),
+            eligible_record(
+                **{
+                    "Signal ID": "sig_valid",
+                    "Signal Title": "Critical AGI agent reliability Signal",
+                    "Slug": "critical-agi-agent-reliability",
+                    "Source Priority": "Critical",
+                    "Quality Hint": 95,
+                    "AGI Relevance": "Critical",
+                }
+            ),
+        ]
+        manifest = sync.sync_records(records, self.root)
+
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        self.assertNotIn("general-science-oceanography-eclipses", launched_slugs)
+        self.assertNotIn("robot-vacuum-product-roundup", launched_slugs)
+        self.assertIn("critical-agi-agent-reliability", launched_slugs)
+        self.assertEqual(manifest["pages_blocked"], 2)
+
+    def test_existing_public_signals_are_not_preserved_without_current_strict_eligible_row(self):
+        manifest = sync.sync_records([], self.root)
+
+        self.assertEqual(manifest["pages_launched"], 0)
+        self.assertEqual(manifest["launched"], [])
+
     def test_source_name_is_used_when_source_label_is_missing(self):
         record = eligible_record(**{"Source Name": "arXiv cs.CV RSS", "Quality Hint": 94})
         del record["Source Label"]
@@ -163,8 +238,36 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertEqual(report["eligible_public_rows"], 1)
         self.assertEqual(report["blocked_rows"], 1)
         self.assertIn("Blocked missing attribution Signal", report["blocked_reasons_by_title"])
-        self.assertIn("attribution_not_complete", report["blocked_reasons_by_title"]["Blocked missing attribution Signal"])
+        self.assertIn("attribution_incomplete", report["blocked_reasons_by_title"]["Blocked missing attribution Signal"])
         self.assertIn("notion-agent-reliability", report["new_slugs"])
+
+    def test_sync_report_includes_strict_public_blocked_reasons(self):
+        report_path = self.root / "tmp" / "dysonx_public_signals_sync_report.json"
+        sync.sync_records(
+            [
+                eligible_record(
+                    **{
+                        "Signal Title": "Blocked loose public Signal",
+                        "Slug": "blocked-loose-public-signal",
+                        "Source Priority": "High",
+                        "Quality Hint": 88,
+                        "AGI Relevance": "Medium",
+                        "Ready for Pipeline": False,
+                        "Published": False,
+                    }
+                )
+            ],
+            self.root,
+            output_report=report_path,
+        )
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        reasons = report["blocked_reasons_by_title"]["Blocked loose public Signal"]
+
+        self.assertIn("source_priority_not_critical", reasons)
+        self.assertIn("quality_hint_below_92", reasons)
+        self.assertIn("agi_relevance_not_high_or_critical", reasons)
+        self.assertIn("not_ready_for_pipeline", reasons)
+        self.assertIn("not_published", reasons)
 
     def test_auto_merge_marker_absent_for_changed_non_critical_or_quality_below_92(self):
         manifest = sync.sync_records(
