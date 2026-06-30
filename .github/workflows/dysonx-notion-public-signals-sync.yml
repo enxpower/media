@@ -40,14 +40,7 @@ jobs:
         if: always()
         run: |
           if [ -f signals/public_launch_manifest.json ]; then
-            python3 - <<'PY'
-            import json
-            from pathlib import Path
-
-            data = json.loads(Path("signals/public_launch_manifest.json").read_text(encoding="utf-8"))
-            print("pages_launched:", data.get("pages_launched"))
-            print("pages_blocked:", data.get("pages_blocked"))
-            PY
+            python3 -c 'import json; from pathlib import Path; data = json.loads(Path("signals/public_launch_manifest.json").read_text(encoding="utf-8")); print("pages_launched:", data.get("pages_launched")); print("pages_blocked:", data.get("pages_blocked"))'
           else
             echo "[notion-public-signals-sync] public launch manifest was not created"
           fi
@@ -86,25 +79,7 @@ jobs:
       - name: Check auto-merge marker eligibility
         id: auto_merge_marker
         run: |
-          python3 - <<'PY'
-          import json
-          import subprocess
-          from pathlib import Path
-          import sys
-
-          sys.path.insert(0, "scripts")
-          import dysonx_notion_public_signals_sync as sync
-
-          marker = Path("auto_merge_marker.txt")
-          manifest_path = Path("signals/public_launch_manifest.json")
-          eligible = False
-          if manifest_path.exists():
-              data = json.loads(manifest_path.read_text(encoding="utf-8"))
-              changed_files = subprocess.check_output(["git", "diff", "--name-only", "--", "signals"], text=True).splitlines()
-              eligible = sync.auto_merge_marker_eligible(data, changed_files)
-          marker.write_text("AUTO_MERGE_CANDIDATE: dysonx-public-signals-v1\n" if eligible else "", encoding="utf-8")
-          print(f"eligible={str(eligible).lower()}")
-          PY
+          python3 -c 'import json, subprocess, sys; from pathlib import Path; sys.path.insert(0, "scripts"); import dysonx_notion_public_signals_sync as sync; marker = Path("auto_merge_marker.txt"); manifest_path = Path("signals/public_launch_manifest.json"); eligible = False; data = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else None; changed_files = subprocess.check_output(["git", "diff", "--name-only", "--", "signals"], text=True).splitlines() if data is not None else []; eligible = sync.auto_merge_marker_eligible(data, changed_files) if data is not None else False; marker.write_text("AUTO_MERGE_CANDIDATE: dysonx-public-signals-v1\n" if eligible else "", encoding="utf-8"); print(f"eligible={str(eligible).lower()}")'
 
       - name: Detect public Signals changes
         id: signals_changes
