@@ -24,6 +24,26 @@ DATABASE_ID_ENV = "NOTION_SIGNAL_INTAKE_DATABASE_ID"
 NOTION_VERSION = "2022-06-28"
 DEFAULT_OUTPUT_ROOT = pathlib.Path(".")
 PUBLIC_SAFE_SOURCE_NOTE = "Source attribution retained in Notion launch metadata; external source URL omitted for this V1 public sample."
+PUBLIC_OUTPUT_MIN_QUALITY = 92
+PUBLIC_OUTPUT_REQUIRED_PRIORITY = "Critical"
+PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE = {"High", "Critical"}
+OFF_TOPIC_PUBLIC_TERMS = (
+    "biology",
+    "biomedical",
+    "cattle",
+    "dairy",
+    "eclipse",
+    "eclipses",
+    "general news",
+    "general science",
+    "methane",
+    "medicine",
+    "oceanography",
+    "poetry",
+    "politics",
+    "robot vacuum",
+    "vacuum cleaner",
+)
 FORBIDDEN_PUBLIC_TERMS = (
     "." "invalid",
     "." "test/",
@@ -211,6 +231,10 @@ def copyright_status(record: dict[str, Any]) -> str:
     return normalize_text(field(record, "Copyright Status", "copyright_status"))
 
 
+def agi_relevance(record: dict[str, Any]) -> str:
+    return normalize_text(field(record, "AGI Relevance", "agi_relevance"))
+
+
 def tags(record: dict[str, Any]) -> list[str]:
     value = field(record, "Tags", "Tag", "Categories", "Category")
     return [normalize_text(item) for item in as_list(value) if normalize_text(item)]
@@ -230,18 +254,35 @@ def is_safe_source_url(url: str) -> bool:
     return not any(term in lowered for term in FORBIDDEN_PUBLIC_TERMS)
 
 
+def off_topic_public_signal(record: dict[str, Any]) -> bool:
+    haystack = " ".join(
+        [
+            signal_title(record),
+            normalize_text(field(record, "Category", "Categories", "Tag", "Tags")),
+            source_label(record),
+        ]
+    ).lower()
+    return any(term in haystack for term in OFF_TOPIC_PUBLIC_TERMS)
+
+
 def eligibility_blockers(record: dict[str, Any]) -> list[str]:
     blockers: list[str] = []
     if field(record, "Ready for Pipeline", "ready_for_pipeline") is not True:
-        blockers.append("ready_for_pipeline_not_checked")
+        blockers.append("not_ready_for_pipeline")
     if field(record, "Published", "published") is not True:
-        blockers.append("published_not_checked")
+        blockers.append("not_published")
+    if source_priority(record) != PUBLIC_OUTPUT_REQUIRED_PRIORITY:
+        blockers.append("source_priority_not_critical")
     if attribution_status(record) != "Complete":
-        blockers.append("attribution_not_complete")
+        blockers.append("attribution_incomplete")
     if copyright_status(record) != "Safe Summary Only":
         blockers.append("copyright_not_safe_summary_only")
-    if quality_hint(record) < 80:
-        blockers.append("quality_hint_below_80")
+    if quality_hint(record) < PUBLIC_OUTPUT_MIN_QUALITY:
+        blockers.append("quality_hint_below_92")
+    if agi_relevance(record) not in PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE:
+        blockers.append("agi_relevance_not_high_or_critical")
+    if off_topic_public_signal(record):
+        blockers.append("off_topic_public_signal")
     if not signal_title(record):
         blockers.append("missing_signal_title")
     if not signal_summary(record):
@@ -583,7 +624,8 @@ def sync_records(
     eligible = [record_from_notion(record) for record in records if eligible_record(record)]
     blocked_count = len(records) - len(eligible)
     report = build_sync_report(records, existing_slugs, eligible)
-    by_slug = {record["slug"]: record for record in existing}
+    eligible_slugs = {record["slug"] for record in eligible}
+    by_slug = {record["slug"]: record for record in existing if record["slug"] in eligible_slugs}
     for record in eligible:
         by_slug[record["slug"]] = record
     merged = sorted(by_slug.values(), key=lambda item: (item.get("existing", False), item["title"].lower()))
