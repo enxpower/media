@@ -196,7 +196,7 @@ def source_url(record: dict[str, Any]) -> str:
 
 
 def source_label(record: dict[str, Any]) -> str:
-    return normalize_text(field(record, "Source Label", "Source", "source_label")) or "Source"
+    return normalize_text(field(record, "Source Label", "Source Name", "Source", "source_label", "source_name")) or "Source"
 
 
 def source_priority(record: dict[str, Any]) -> str:

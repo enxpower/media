@@ -131,6 +131,16 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
 
         self.assertEqual(entry["source_priority"], "Critical")
 
+    def test_source_name_is_used_when_source_label_is_missing(self):
+        record = eligible_record(**{"Source Name": "arXiv cs.CV RSS", "Quality Hint": 94})
+        del record["Source Label"]
+        manifest = sync.sync_records([record], self.root)
+        entry = next(item for item in manifest["launched"] if item["slug"] == "notion-agent-reliability")
+        page = (self.root / "signals" / "notion-agent-reliability" / "index.html").read_text(encoding="utf-8")
+
+        self.assertEqual(entry["source_name"], "arXiv cs.CV RSS")
+        self.assertIn(">arXiv cs.CV RSS</a>", page)
+
     def test_sync_report_includes_blocked_reasons(self):
         report_path = self.root / "tmp" / "dysonx_public_signals_sync_report.json"
         sync.sync_records(
