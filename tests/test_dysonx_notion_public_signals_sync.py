@@ -267,6 +267,114 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
             self.assertNotIn(slug, launched_slugs)
         self.assertEqual(manifest["pages_blocked"], len(polluted))
 
+    def test_new_public_topic_blockers_reject_polluted_rows(self):
+        polluted = [
+            ("child-online-safety", "Child online safety policy update", "Policy"),
+            ("medical-object-segmentation", "Medical object segmentation benchmark", "Medical Imaging"),
+            ("drug-drug-interaction", "Drug-drug interaction prediction model", "Biomedical"),
+            ("prostate-cancer-ultrasound", "Prostate cancer ultrasound detection model", "Clinical"),
+            ("legal-deliberation", "Generic law deliberation with multi-agent debate", "Law"),
+        ]
+        records = [
+            eligible_record(
+                **{
+                    "Signal ID": f"sig_{slug}",
+                    "Signal Title": title,
+                    "Slug": slug,
+                    "Summary": "A summary-only Signal with enough model language but outside DysonX public scope.",
+                    "Category": category,
+                    "Source Priority": "High",
+                    "AGI Relevance": "Medium",
+                    "Quality Hint": 90,
+                }
+            )
+            for slug, title, category in polluted
+        ]
+        manifest = sync.sync_records(records, self.root)
+
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        for slug, _, _ in polluted:
+            self.assertNotIn(slug, launched_slugs)
+        self.assertEqual(manifest["pages_blocked"], len(polluted))
+
+    def test_core_public_topic_examples_pass(self):
+        examples = [
+            ("agentbound", "AgentBound autonomous AI agents benchmark", "AgentBound evaluates autonomous AI agent capability and control."),
+            ("agrefactor", "AgRefactor agentic workflow developer tool", "AgRefactor improves agentic workflow reliability for code agents."),
+            ("ropoll", "RoPoLL LLM judges benchmark", "RoPoLL is a model evaluation benchmark for LLM judges."),
+            ("openlife", "OpenLife autonomous LLM agents", "OpenLife studies autonomous LLM agents and agent coordination."),
+            ("ai-governance", "AI regulation for frontier model governance", "AI governance and AI regulation for frontier model safety."),
+            ("vla-robotics", "VLA robotics foundation model framework", "A vision-language-action robotics foundation model for embodied AI agent capability."),
+        ]
+        records = [
+            eligible_record(
+                **{
+                    "Signal ID": f"sig_{slug}",
+                    "Signal Title": title,
+                    "Slug": slug,
+                    "Summary": summary,
+                    "Source Priority": "High",
+                    "AGI Relevance": "Medium",
+                    "Quality Hint": 80,
+                    "Published": False,
+                    "Ready for Pipeline": False,
+                }
+            )
+            for slug, title, summary in examples
+        ]
+        manifest = sync.sync_records(records, self.root)
+
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        for slug, _, _ in examples:
+            self.assertIn(slug, launched_slugs)
+        self.assertEqual(manifest["pages_blocked"], 0)
+
+    def test_generic_indoor_robotics_without_agent_framing_is_blocked(self):
+        manifest = sync.sync_records(
+            [
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_indoor_robotics",
+                        "Signal Title": "Generic indoor robotics navigation update",
+                        "Slug": "generic-indoor-robotics",
+                        "Summary": "A summary-only Signal about indoor robotics navigation hardware.",
+                        "Category": "Robotics",
+                        "Source Priority": "High",
+                        "AGI Relevance": "Medium",
+                        "Quality Hint": 90,
+                    }
+                )
+            ],
+            self.root,
+        )
+
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        self.assertNotIn("generic-indoor-robotics", launched_slugs)
+        self.assertEqual(manifest["pages_blocked"], 1)
+
+    def test_missing_core_public_topic_is_reported(self):
+        report_path = self.root / "tmp" / "dysonx_public_signals_sync_report.json"
+        sync.sync_records(
+            [
+                eligible_record(
+                    **{
+                        "Signal Title": "Distributed systems scheduling update",
+                        "Slug": "distributed-systems-scheduling",
+                        "Summary": "A summary-only Signal about distributed systems scheduling.",
+                        "Category": "Infrastructure",
+                        "Source Priority": "High",
+                        "AGI Relevance": "Medium",
+                        "Quality Hint": 90,
+                    }
+                )
+            ],
+            self.root,
+            output_report=report_path,
+        )
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+
+        self.assertIn("missing_core_public_topic", report["blocked_reasons_by_title"]["Distributed systems scheduling update"])
+
     def test_missing_attribution_fails(self):
         manifest = sync.sync_records([eligible_record(**{"Attribution Status": "Missing"})], self.root)
 
