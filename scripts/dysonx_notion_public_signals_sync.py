@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import html
 import json
 import os
@@ -590,7 +591,7 @@ def record_from_notion(record: dict[str, Any]) -> dict[str, Any]:
         "published": field(record, "Published", "published") is True,
         "quality_hint": int(quality_hint(record)),
         "timestamp": timestamp_value(record),
-        "risk_notes": text_field(record, "Risk Notes", "Safety Notes", "risk_notes", default="Summary-only public treatment. No raw article body is reproduced."),
+        "risk_notes": text_field(record, "Risk Notes", "Safety Notes", "risk_notes", default="Summary-only; source text not reproduced."),
         "watch_next": text_field(record, "Watch Next", "watch_next", default="Watch for follow-up Signals in the Notion-managed intake."),
         "tags": tags(record),
         "existing": False,
@@ -676,7 +677,7 @@ def render_signal_page(record: dict[str, Any], refreshed_at: str) -> str:
 <h2>Source Attribution</h2>
 <p>{source_html}</p>
 <h2>Risk And Safety Notes</h2>
-<p>{escape(record.get("risk_notes") or "Summary-only public treatment. No raw article body is reproduced.")}</p>
+<p>{escape(record.get("risk_notes") or "Summary-only; source text not reproduced.")}</p>
 <h2>Watch Next</h2>
 <p>{escape(record.get("watch_next") or "Watch for follow-up Signals in the Notion-managed intake.")}</p>
 <p><a href="/">Home</a> · <a href="/signals/">Back to Public Signals</a></p>
@@ -730,7 +731,7 @@ def render_index(records: list[dict[str, Any]], blocked_count: int, refreshed_at
 <div class="grid">
 {''.join(items)}
 </div>
-<p class="meta">Content refreshed at {escape(refreshed_at)}. No raw article bodies are reproduced. OpenAI was not called. Source pages were not scraped.</p>
+<p class="meta">Content refreshed at {escape(refreshed_at)}. Source text is not reproduced. OpenAI was not called. Source pages were not scraped.</p>
 <p><a href="/">Home</a></p>
 </main>
 </body>
@@ -743,6 +744,38 @@ def assert_public_safe(text: str, label: str) -> None:
     matches = [term for term in FORBIDDEN_PUBLIC_TERMS if term in lowered]
     if matches:
         raise NotionPublicSignalsSyncError(f"{label} contains forbidden public terms: {', '.join(matches)}")
+
+
+def material_signature(records: list[dict[str, Any]], blocked_count: int) -> str:
+    material_records = [
+        {
+            "signal_id": record.get("signal_id", ""),
+            "slug": record.get("slug", ""),
+            "title": record.get("title", ""),
+            "summary": record.get("summary", ""),
+            "why_this_matters": record.get("why_this_matters", ""),
+            "agi_relevance": record.get("agi_relevance", ""),
+            "source_label": record.get("source_label", ""),
+            "source_url": record.get("source_url", ""),
+            "source_priority": record.get("source_priority", ""),
+            "attribution_status": record.get("attribution_status", ""),
+            "copyright_status": record.get("copyright_status", ""),
+            "ready_for_pipeline": bool(record.get("ready_for_pipeline")),
+            "published": bool(record.get("published")),
+            "quality_hint": record.get("quality_hint", ""),
+            "risk_notes": record.get("risk_notes", ""),
+            "watch_next": record.get("watch_next", ""),
+            "tags": record.get("tags", []),
+        }
+        for record in records
+    ]
+    material = {
+        "pages_launched": len(records),
+        "pages_blocked": blocked_count,
+        "records": material_records,
+    }
+    payload = json.dumps(material, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_at: str) -> dict[str, Any]:
@@ -773,6 +806,7 @@ def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_
         "pages_launched": len(records),
         "pages_blocked": blocked_count,
         "public_output_root": ".",
+        "material_signature": material_signature(records, blocked_count),
         "launched": launched,
         "openai_call_performed": False,
         "source_scraping_performed": False,
@@ -785,6 +819,33 @@ def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_
         "source_pack_manifest": "notion_signal_intake_public_safe_reference",
         "source_release_guard_report": "static_preview_link_integrity_check",
     }
+
+
+def manifest_material_view(manifest: dict[str, Any]) -> dict[str, Any]:
+    return {key: value for key, value in manifest.items() if key != "content_refreshed_at"}
+
+
+def existing_manifest(signals_root: pathlib.Path) -> dict[str, Any] | None:
+    manifest_path = signals_root / "public_launch_manifest.json"
+    if not manifest_path.exists():
+        return None
+    try:
+        data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def stable_refreshed_at(signals_root: pathlib.Path, candidate_manifest: dict[str, Any], fallback_refreshed_at: str) -> str:
+    previous_manifest = existing_manifest(signals_root)
+    if not previous_manifest:
+        return fallback_refreshed_at
+    previous_refreshed_at = normalize_text(previous_manifest.get("content_refreshed_at"))
+    if not previous_refreshed_at:
+        return fallback_refreshed_at
+    if manifest_material_view(previous_manifest) == manifest_material_view(candidate_manifest):
+        return previous_refreshed_at
+    return fallback_refreshed_at
 
 
 def sync_records(
@@ -818,6 +879,8 @@ def sync_records(
     for record in selected:
         by_slug[record["slug"]] = record
     merged = sorted(by_slug.values(), key=public_signal_sort_key)
+    candidate_manifest = build_manifest(merged, blocked_count, refreshed_at)
+    refreshed_at = stable_refreshed_at(signals_root, candidate_manifest, refreshed_at)
 
     for record in merged:
         if record.get("existing") and not any(item["slug"] == record["slug"] for item in eligible):

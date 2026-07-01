@@ -198,8 +198,31 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
         self.assertNotEqual(self.run_gate(), 0)
 
     def test_fails_when_raw_body_marker_appears(self):
-        (self.signals / self.slug / "index.html").write_text("full article text", encoding="utf-8")
-        self.assertNotEqual(self.run_gate(), 0)
+        markers = [
+            "full article text",
+            "raw source body",
+            "article body:",
+            "raw_body",
+            "Raw Body",
+        ]
+        for marker in markers:
+            with self.subTest(marker=marker):
+                (self.signals / self.slug / "index.html").write_text(marker, encoding="utf-8")
+                self.assertNotEqual(self.run_gate(), 0)
+
+    def test_safe_source_text_disclaimer_passes(self):
+        (self.signals / self.slug / "index.html").write_text(
+            '<h1>Critical AI Agent Evaluation Signal</h1><p>Summary-only; source text not reproduced.</p><a href="/">Home</a> <a href="/signals/">Signals</a> <a href="https://example.org/source">Source</a>',
+            encoding="utf-8",
+        )
+        self.assertEqual(self.run_gate(), 0)
+
+    def test_negative_raw_article_body_disclaimer_does_not_false_positive(self):
+        (self.signals / self.slug / "index.html").write_text(
+            '<h1>Critical AI Agent Evaluation Signal</h1><p>No raw article body copied.</p><a href="/">Home</a> <a href="/signals/">Signals</a> <a href="https://example.org/source">Source</a>',
+            encoding="utf-8",
+        )
+        self.assertEqual(self.run_gate(), 0)
 
     def test_fails_when_script_tag_appears(self):
         (self.signals / self.slug / "index.html").write_text("<script>alert(1)</script>", encoding="utf-8")

@@ -48,6 +48,13 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
     def read_output(self) -> str:
         return "\n".join(path.read_text(encoding="utf-8") for path in sorted((self.root / "signals").rglob("*")) if path.is_file())
 
+    def output_snapshot(self) -> dict[str, str]:
+        return {
+            str(path.relative_to(self.root)): path.read_text(encoding="utf-8")
+            for path in sorted((self.root / "signals").rglob("*"))
+            if path.is_file()
+        }
+
     def test_eligible_row_generates_page(self):
         manifest = sync.sync_records([eligible_record()], self.root, refreshed_at="2026-06-27T00:00:00Z")
 
@@ -58,6 +65,78 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertIn("https://example.org/agent-reliability", html)
         self.assertEqual(manifest["openai_call_performed"], False)
         self.assertEqual(manifest["source_scraping_performed"], False)
+
+    def test_generated_page_uses_safe_source_text_disclaimer(self):
+        sync.sync_records([eligible_record(**{"Risk Notes": ""})], self.root, refreshed_at="2026-06-27T00:00:00Z")
+
+        html = (self.root / "signals" / "notion-agent-reliability" / "index.html").read_text(encoding="utf-8")
+        self.assertIn("Summary-only; source text not reproduced.", html)
+        self.assertNotIn("raw article body", html.lower())
+
+    def test_rerunning_identical_records_does_not_churn_timestamps_or_files(self):
+        shutil.rmtree(self.root / "signals")
+        records = [eligible_record()]
+
+        first_manifest = sync.sync_records(records, self.root, refreshed_at="2026-06-27T00:00:00Z")
+        first_snapshot = self.output_snapshot()
+        second_manifest = sync.sync_records(records, self.root, refreshed_at="2026-06-28T00:00:00Z")
+        second_snapshot = self.output_snapshot()
+
+        self.assertEqual(first_manifest["content_refreshed_at"], "2026-06-27T00:00:00Z")
+        self.assertEqual(second_manifest["content_refreshed_at"], "2026-06-27T00:00:00Z")
+        self.assertEqual(second_snapshot, first_snapshot)
+
+    def test_material_content_change_updates_outputs(self):
+        shutil.rmtree(self.root / "signals")
+        records = [eligible_record()]
+        sync.sync_records(records, self.root, refreshed_at="2026-06-27T00:00:00Z")
+        first_snapshot = self.output_snapshot()
+
+        changed = [eligible_record(**{"Summary": "Updated summary-only Signal about AI agent evaluation."})]
+        manifest = sync.sync_records(changed, self.root, refreshed_at="2026-06-28T00:00:00Z")
+        second_snapshot = self.output_snapshot()
+
+        self.assertEqual(manifest["content_refreshed_at"], "2026-06-28T00:00:00Z")
+        self.assertNotEqual(second_snapshot, first_snapshot)
+        self.assertIn("Updated summary-only Signal about AI agent evaluation.", second_snapshot["signals/notion-agent-reliability/index.html"])
+
+    def test_risk_note_change_updates_outputs(self):
+        shutil.rmtree(self.root / "signals")
+        records = [eligible_record()]
+        sync.sync_records(records, self.root, refreshed_at="2026-06-27T00:00:00Z")
+        first_snapshot = self.output_snapshot()
+
+        changed = [eligible_record(**{"Risk Notes": "Summary-only; updated source text safety note."})]
+        manifest = sync.sync_records(changed, self.root, refreshed_at="2026-06-28T00:00:00Z")
+        second_snapshot = self.output_snapshot()
+
+        self.assertEqual(manifest["content_refreshed_at"], "2026-06-28T00:00:00Z")
+        self.assertNotEqual(second_snapshot, first_snapshot)
+        self.assertIn("updated source text safety note", second_snapshot["signals/notion-agent-reliability/index.html"])
+
+    def test_new_eligible_signal_creates_content_changes(self):
+        shutil.rmtree(self.root / "signals")
+        records = [eligible_record()]
+        sync.sync_records(records, self.root, refreshed_at="2026-06-27T00:00:00Z")
+        first_snapshot = self.output_snapshot()
+
+        records.append(
+            eligible_record(
+                **{
+                    "Signal ID": "sig_second_agent",
+                    "Signal Title": "Second AI agent evaluation Signal",
+                    "Slug": "second-ai-agent-evaluation",
+                    "Summary": "A second summary-only Signal about AI agent evaluation.",
+                    "Quality Hint": 93,
+                }
+            )
+        )
+        manifest = sync.sync_records(records, self.root, refreshed_at="2026-06-28T00:00:00Z")
+        second_snapshot = self.output_snapshot()
+
+        self.assertEqual(manifest["content_refreshed_at"], "2026-06-28T00:00:00Z")
+        self.assertNotEqual(second_snapshot, first_snapshot)
+        self.assertIn("signals/second-ai-agent-evaluation/index.html", second_snapshot)
 
     def test_row_with_missing_attribution_does_not_generate_page(self):
         manifest = sync.sync_records([eligible_record(**{"Attribution Status": "Incomplete"})], self.root)
