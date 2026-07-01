@@ -128,10 +128,15 @@ FORBIDDEN_TERMS = (
     "tmp/" "production_publish_pack",
 )
 RAW_BODY_MARKERS = (
-    "raw article body",
-    "source-page body copied",
+    "article body:",
     "full article text",
-    "verbatim article body",
+    "raw source body",
+    "raw body",
+    "raw_body",
+    "scraped body",
+    "source body:",
+    "source-page body copied",
+    "verbatim source",
 )
 INLINE_EVENT_PATTERN = re.compile(r"\son[a-z]+\s*=", re.IGNORECASE)
 
