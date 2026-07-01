@@ -1,5 +1,5 @@
 {
-  "content_refreshed_at": "2026-07-01T18:34:37Z",
+  "content_refreshed_at": "2026-07-01T19:12:33Z",
   "launch_version": "notion_public_signals_sync_v1",
   "launched": [
     {
@@ -364,6 +364,7 @@
     }
   ],
   "manual_external_deployment_performed": false,
+  "material_signature": "d2e11491b6b4a6ec26759e334e0f9372fec51f75f11a8b4802e651217d83ccf4",
   "network_source_fetch_performed": false,
   "newsletter_distribution_performed": false,
   "openai_call_performed": false,
