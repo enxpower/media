@@ -76,11 +76,6 @@ jobs:
           ! grep -R "\.test/" -n signals scripts tests docs
           ! grep -R "tmp/production_publish_pack" -n signals scripts tests docs
 
-      - name: Check auto-merge marker eligibility
-        id: auto_merge_marker
-        run: |
-          python3 -c 'import json, subprocess, sys; from pathlib import Path; sys.path.insert(0, "scripts"); import dysonx_notion_public_signals_sync as sync; marker = Path("auto_merge_marker.txt"); manifest_path = Path("signals/public_launch_manifest.json"); eligible = False; data = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else None; changed_files = subprocess.check_output(["git", "diff", "--name-only", "--", "signals"], text=True).splitlines() if data is not None else []; eligible = sync.auto_merge_marker_eligible(data, changed_files) if data is not None else False; marker.write_text("AUTO_MERGE_CANDIDATE: dysonx-public-signals-v1\n" if eligible else "", encoding="utf-8"); print(f"eligible={str(eligible).lower()}")'
-
       - name: Detect public Signals changes
         id: signals_changes
         run: |
@@ -91,7 +86,41 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Write public Signals changed files report
+        if: steps.signals_changes.outputs.changed == 'true'
+        run: |
+          mkdir -p tmp
+          git diff --name-only -- signals > tmp/dysonx_public_signals_changed_files.txt
+          python3 -c 'import json; from pathlib import Path; files = Path("tmp/dysonx_public_signals_changed_files.txt").read_text(encoding="utf-8").splitlines(); Path("tmp/dysonx_public_signals_changed_files.json").write_text(json.dumps(files, indent=2) + "\n", encoding="utf-8"); print("changed_files=" + str(len(files)))'
+
+      - name: Run trusted public Signals auto-merge gate
+        id: trusted_auto_merge_gate
+        if: steps.signals_changes.outputs.changed == 'true'
+        continue-on-error: true
+        run: |
+          python3 scripts/dysonx_public_signals_auto_merge_gate.py \
+            --manifest signals/public_launch_manifest.json \
+            --changed-files-json tmp/dysonx_public_signals_changed_files.json \
+            --min-quality 80 \
+            --allowed-priorities High,Critical \
+            --allowed-agi-relevance Medium,High,Critical \
+            --require-attribution-complete \
+            --require-safe-summary-only
+
+      - name: Upload trusted auto-merge diagnostics
+        if: always() && steps.signals_changes.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dysonx-public-signals-trusted-auto-merge
+          path: |
+            signals/public_launch_manifest.json
+            tmp/dysonx_public_signals_sync_report.json
+            tmp/dysonx_public_signals_changed_files.json
+            tmp/dysonx_public_signals_changed_files.txt
+          if-no-files-found: warn
+
       - name: Open content sync PR
+        id: content_pr
         if: steps.signals_changes.outputs.changed == 'true'
         run: |
           BRANCH="automation/dysonx-notion-signals-${GITHUB_RUN_ID}"
@@ -101,8 +130,29 @@ jobs:
           git add signals/
           git commit -m "content: sync DysonX public Signals from Notion"
           git push --set-upstream origin "$BRANCH"
-          gh pr create \
-            --title "content: sync DysonX public Signals from Notion" \
-            --body "$(printf 'Automated Notion public Signals sync. Opens PR only unless the strict DysonX public Signals auto-merge gate passes. No OpenAI call, no scraping, no raw article body copying, no hardcoded deployment domain.\n\n'; cat auto_merge_marker.txt)" \
-            --base main \
-            --head "$BRANCH"
+          PR_BODY="$(printf 'Automated Notion public Signals sync. Opens PR for audit trail. The trusted DysonX Notion Public Signals Sync workflow merges this PR only if the strict public Signals auto-merge gate passes. No OpenAI call, no scraping, no raw article body copying, no hardcoded deployment domain.\n\n')"
+          if [ "${{ steps.trusted_auto_merge_gate.outcome }}" = "success" ]; then
+            PR_BODY="${PR_BODY}AUTO_MERGE_CANDIDATE: dysonx-public-signals-v1"$'\n'
+          else
+            PR_BODY="${PR_BODY}Trusted same-run auto-merge gate did not pass. Manual review required."$'\n'
+          fi
+          PR_URL="$(gh pr list --base main --head "$BRANCH" --json url --jq '.[0].url')"
+          if [ -z "$PR_URL" ]; then
+            PR_URL="$(gh pr create \
+              --title "content: sync DysonX public Signals from Notion" \
+              --body "$PR_BODY" \
+              --base main \
+              --head "$BRANCH")"
+          else
+            gh pr edit "$PR_URL" --body "$PR_BODY"
+          fi
+          echo "url=$PR_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Squash merge trusted public Signals PR
+        if: steps.signals_changes.outputs.changed == 'true' && steps.trusted_auto_merge_gate.outcome == 'success'
+        run: |
+          gh pr merge "${{ steps.content_pr.outputs.url }}" \
+            --squash \
+            --delete-branch \
+            --subject "content: sync DysonX public Signals from Notion" \
+            --body "Auto-merged by the trusted DysonX Notion Public Signals Sync workflow after the strict public Signals auto-merge gate passed."
