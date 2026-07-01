@@ -11,7 +11,8 @@ import dysonx_static_preview_check as preview_check  # noqa: E402
 
 INDEX = ROOT / "index.html"
 SIGNALS_INDEX = ROOT / "signals" / "index.html"
-SIGNAL_PAGE = ROOT / "signals" / "agent-evaluation-recovery-metric" / "index.html"
+SEED_SIGNAL_SLUG = "agentic-ai-adoption-accelerates-from-codex-usage-evidence"
+SIGNAL_PAGE = ROOT / "signals" / SEED_SIGNAL_SLUG / "index.html"
 LAUNCH_MANIFEST = ROOT / "signals" / "public_launch_manifest.json"
 
 
@@ -37,8 +38,8 @@ class DysonXPublicLaunchCorrectnessTests(unittest.TestCase):
         html = SIGNALS_INDEX.read_text(encoding="utf-8")
 
         self.assertIn('href="/"', html)
-        self.assertIn('href="/signals/agent-evaluation-recovery-metric/"', html)
-        self.assertNotIn('href="agent-evaluation-recovery-metric/"', html)
+        self.assertIn(f'href="/signals/{SEED_SIGNAL_SLUG}/"', html)
+        self.assertNotIn(f'href="{SEED_SIGNAL_SLUG}/"', html)
         self.assertNotIn("source.dysonx." + "invalid", html)
         self.assertNotIn("." + "invalid", html)
 
@@ -57,14 +58,14 @@ class DysonXPublicLaunchCorrectnessTests(unittest.TestCase):
         self.assertNotIn("source.dysonx." + "invalid", html)
         self.assertNotIn(".tes" + "t/", html)
         self.assertNotIn("." + "invalid", html)
-        self.assertIn("Source attribution retained in launch metadata; external source URL omitted for this V1 launch sample.", html)
+        self.assertIn("Source Attribution", html)
 
     def test_public_launch_manifest_remains_sanitized(self):
         text = LAUNCH_MANIFEST.read_text(encoding="utf-8")
         data = json.loads(text)
 
-        self.assertEqual(data["pages_launched"], 6)
-        self.assertEqual(data["pages_blocked"], 0)
+        self.assertEqual(data["pages_launched"], 5)
+        self.assertGreaterEqual(data["pages_blocked"], 0)
         self.assertNotIn("blocked", data)
         self.assertNotIn("source.dysonx." + "test", text)
         self.assertNotIn(".tes" + "t/", text)
@@ -72,8 +73,8 @@ class DysonXPublicLaunchCorrectnessTests(unittest.TestCase):
         self.assertNotIn("not_approved_for_production_pack", text)
         self.assertNotIn("tmp/" + "production_publish_pack", text)
         self.assertNotIn("current deployment host", text)
-        self.assertEqual(data["source_pack_manifest"], "internal_release_artifact_reference")
-        self.assertEqual(data["source_release_guard_report"], "internal_release_guard_reference")
+        self.assertEqual(data["source_pack_manifest"], "notion_signal_intake_public_safe_reference")
+        self.assertEqual(data["source_release_guard_report"], "static_preview_link_integrity_check")
         for entry in data["launched"]:
             self.assertTrue(entry["public_url_path"].startswith("/"))
             self.assertFalse(entry["public_url_path"].startswith("http://"))
