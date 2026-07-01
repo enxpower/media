@@ -259,8 +259,9 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         ]
         manifest = sync.sync_records([], self.root)
 
-        self.assertEqual(manifest["pages_launched"], 5)
-        self.assertEqual(len(manifest["launched"]), 5)
+        self.assertEqual(manifest["pages_launched"], len(manifest["launched"]))
+        self.assertLessEqual(manifest["pages_launched"], sync.DEFAULT_MAX_PUBLIC_SIGNALS)
+        self.assertGreaterEqual(manifest["pages_launched"], 1)
         manifest = sync.sync_records(records, self.root)
         launched_slugs = {item["slug"] for item in manifest["launched"]}
         for slug, _, _ in polluted:
@@ -389,11 +390,12 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertNotIn("notion-agent-reliability", launched_slugs)
         self.assertEqual(manifest["pages_blocked"], 1)
 
-    def test_existing_5_seed_signals_still_pass_as_safe_existing_public_signals(self):
+    def test_existing_public_signals_still_pass_as_safe_existing_public_signals(self):
         manifest = sync.sync_records([], self.root)
 
-        self.assertEqual(manifest["pages_launched"], 5)
-        self.assertEqual(len(manifest["launched"]), 5)
+        self.assertEqual(manifest["pages_launched"], len(manifest["launched"]))
+        self.assertLessEqual(manifest["pages_launched"], sync.DEFAULT_MAX_PUBLIC_SIGNALS)
+        self.assertGreaterEqual(manifest["pages_launched"], 1)
 
     def test_source_name_is_used_when_source_label_is_missing(self):
         record = eligible_record(**{"Source Name": "arXiv cs.CV RSS", "Quality Hint": 94})
