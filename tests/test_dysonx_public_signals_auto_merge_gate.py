@@ -28,7 +28,7 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
             encoding="utf-8",
         )
         (self.signals / self.slug / "index.html").write_text(
-            '<h1>Critical Agent Signal</h1><p>Summary-only public Signal.</p><a href="/">Home</a> <a href="/signals/">Signals</a> <a href="https://example.org/source">Source</a>',
+            '<h1>Critical AI Agent Evaluation Signal</h1><p>Summary-only public Signal about AI agent evaluation.</p><a href="/">Home</a> <a href="/signals/">Signals</a> <a href="https://example.org/source">Source</a>',
             encoding="utf-8",
         )
         self.manifest_path = self.signals / "public_launch_manifest.json"
@@ -43,8 +43,8 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
         entry = {
             "signal_id": "sig_critical_agent",
             "slug": self.slug,
-            "title": "Critical Agent Signal",
-            "summary": "Summary-only public Signal.",
+            "title": "Critical AI Agent Evaluation Signal",
+            "summary": "Summary-only public Signal about AI agent evaluation.",
             "public_path": f"signals/{self.slug}/index.html",
             "public_url_path": f"/signals/{self.slug}/",
             "source_name": "Example Source",
@@ -149,6 +149,11 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
     def test_fails_when_off_topic_terms_appear(self):
         polluted = [
             "biology medicine signal",
+            "child online safety policy update",
+            "medical object segmentation benchmark",
+            "drug-drug interaction prediction model",
+            "prostate cancer ultrasound detection model",
+            "generic law deliberation with multi-agent debate",
             "oceanography update",
             "poetry politics roundup",
             "robot vacuum product update",
@@ -158,6 +163,35 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
                 self.write_manifest(title=title)
                 self.assertNotEqual(self.run_gate(), 0)
                 self.write_manifest()
+
+    def test_fails_when_missing_core_public_topic(self):
+        self.write_manifest(title="Distributed systems scheduling update", summary="Summary-only public Signal about scheduling.")
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_core_public_topic_examples_pass(self):
+        examples = [
+            ("AgentBound autonomous AI agents benchmark", "AgentBound evaluates autonomous AI agent capability and control."),
+            ("AgRefactor agentic workflow developer tool", "AgRefactor improves agentic workflow reliability for code agents."),
+            ("RoPoLL LLM judges benchmark", "RoPoLL is a model evaluation benchmark for LLM judges."),
+            ("OpenLife autonomous LLM agents", "OpenLife studies autonomous LLM agents and agent coordination."),
+            ("AI regulation for frontier model governance", "AI governance and AI regulation for frontier model safety."),
+            ("VLA robotics foundation model framework", "A vision-language-action robotics foundation model for embodied AI agent capability."),
+        ]
+        for title, summary in examples:
+            with self.subTest(title=title):
+                self.write_manifest(title=title, summary=summary, source_priority="High", agi_relevance="Medium", quality_hint=80, published=False, ready_for_pipeline=False)
+                self.assertEqual(self.run_gate(), 0)
+                self.write_manifest()
+
+    def test_generic_indoor_robotics_without_agent_framing_fails(self):
+        self.write_manifest(
+            title="Generic indoor robotics navigation update",
+            summary="Summary-only public Signal about indoor robotics navigation hardware.",
+            source_priority="High",
+            agi_relevance="Medium",
+            quality_hint=90,
+        )
+        self.assertNotEqual(self.run_gate(), 0)
 
     def test_fails_when_unknown_changed_file_path_exists(self):
         self.write_changed_files([f"signals/{self.slug}/index.html", "index.html"])

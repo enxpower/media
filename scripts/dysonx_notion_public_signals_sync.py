@@ -31,21 +31,105 @@ PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE = {"Medium", "High", "Critical"}
 SOURCE_PRIORITY_RANK = {"Critical": 0, "High": 1}
 AGI_RELEVANCE_RANK = {"Critical": 0, "High": 1, "Medium": 2}
 OFF_TOPIC_PUBLIC_TERMS = (
+    "agriculture",
     "biology",
     "biomedical",
     "cattle",
+    "cancer",
+    "child online safety",
+    "clinical",
     "dairy",
+    "drug drug interaction",
+    "drug-drug interaction",
     "eclipse",
     "eclipses",
+    "electoral politics",
     "general news",
     "general science",
+    "generic policy news",
+    "healthcare diagnosis",
+    "indoor robotics",
+    "lab agent",
+    "lab agents",
+    "laboratory agent",
+    "laboratory agents",
+    "law",
+    "legal deliberation",
+    "legal domain",
+    "legal-domain",
+    "medical",
+    "medical imaging",
     "methane",
     "medicine",
     "oceanography",
+    "online safety",
     "poetry",
     "politics",
+    "prostate",
     "robot vacuum",
+    "social media ban",
+    "social media bans",
+    "ultrasound",
     "vacuum cleaner",
+)
+OFF_TOPIC_PUBLIC_OVERRIDE_TERMS = (
+    "agi governance",
+    "agi safety",
+    "ai act",
+    "ai governance",
+    "ai regulation",
+    "ai safety",
+    "ai safety evaluation",
+    "frontier ai safety",
+    "frontier model evaluation",
+    "frontier model governance",
+    "frontier model safety",
+    "model evaluation",
+)
+CORE_PUBLIC_TOPIC_TERMS = (
+    "agentic workflow",
+    "agentic workflows",
+    "agi governance",
+    "agi safety",
+    "ai agent",
+    "ai agents",
+    "ai governance",
+    "ai infrastructure",
+    "ai regulation",
+    "ai safety",
+    "autonomous ai agent",
+    "autonomous ai agents",
+    "benchmark",
+    "benchmarks",
+    "code agent",
+    "code agents",
+    "coding agent",
+    "coding agents",
+    "developer tool",
+    "developer tools",
+    "frontier model",
+    "frontier models",
+    "frontier model operations",
+    "llm agent",
+    "llm agents",
+    "llm judge",
+    "llm judges",
+    "model evaluation",
+    "model evaluations",
+)
+MULTI_AGENT_TERMS = ("multi-agent", "multi agent")
+MULTI_AGENT_CONTEXT_TERMS = ("ai", "agent", "capability", "safety", "evaluation", "governance", "coordination")
+AGENT_CONTEXT_TERMS = ("capability", "control", "evaluation", "governance", "reliability", "safety", "workflow")
+AUTONOMY_TERMS = ("autonomy", "autonomous systems")
+AUTONOMY_CONTEXT_TERMS = ("ai", "agent", "capability", "safety", "evaluation", "control")
+VLA_TERMS = ("vla", "vision-language-action", "vision language action")
+VLA_CONTEXT_TERMS = (
+    "agent capability",
+    "embodied agent",
+    "embodied ai",
+    "foundation model",
+    "robotics agent",
+    "robotics foundation model",
 )
 FORBIDDEN_PUBLIC_TERMS = (
     "." "invalid",
@@ -277,11 +361,37 @@ def off_topic_public_signal(record: dict[str, Any]) -> bool:
     haystack = " ".join(
         [
             signal_title(record),
+            signal_summary(record),
             normalize_text(field(record, "Category", "Categories", "Tag", "Tags")),
             source_label(record),
         ]
     ).lower()
-    return any(term in haystack for term in OFF_TOPIC_PUBLIC_TERMS)
+    if not any(term in haystack for term in OFF_TOPIC_PUBLIC_TERMS):
+        return False
+    return not any(term in haystack for term in OFF_TOPIC_PUBLIC_OVERRIDE_TERMS)
+
+
+def has_core_public_topic(record: dict[str, Any]) -> bool:
+    haystack = " ".join(
+        [
+            signal_title(record),
+            signal_summary(record),
+            normalize_text(field(record, "Category", "Categories", "Tag", "Tags")),
+            source_label(record),
+            agi_relevance(record),
+        ]
+    ).lower()
+    if any(term in haystack for term in CORE_PUBLIC_TOPIC_TERMS):
+        return True
+    if "agent" in haystack and any(term in haystack for term in AGENT_CONTEXT_TERMS):
+        return True
+    if any(term in haystack for term in MULTI_AGENT_TERMS) and any(term in haystack for term in MULTI_AGENT_CONTEXT_TERMS):
+        return True
+    if any(term in haystack for term in AUTONOMY_TERMS) and any(term in haystack for term in AUTONOMY_CONTEXT_TERMS):
+        return True
+    if any(term in haystack for term in VLA_TERMS) and any(term in haystack for term in VLA_CONTEXT_TERMS):
+        return True
+    return False
 
 
 def eligibility_blockers(record: dict[str, Any]) -> list[str]:
@@ -298,6 +408,8 @@ def eligibility_blockers(record: dict[str, Any]) -> list[str]:
         blockers.append("agi_relevance_below_medium")
     if off_topic_public_signal(record):
         blockers.append("off_topic_public_signal")
+    if not has_core_public_topic(record):
+        blockers.append("missing_core_public_topic")
     if not signal_title(record):
         blockers.append("missing_signal_title")
     if not signal_summary(record):
@@ -360,6 +472,7 @@ def auto_merge_entry_eligible(entry: dict[str, Any]) -> bool:
         and bool(entry.get("summary"))
         and is_safe_source_url(str(entry.get("source_url") or ""))
         and not off_topic_public_signal(entry)
+        and has_core_public_topic(entry)
     )
 
 
