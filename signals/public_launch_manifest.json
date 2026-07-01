@@ -1,5 +1,5 @@
 {
-  "content_refreshed_at": "2026-07-01T06:45:00Z",
+  "content_refreshed_at": "2026-07-01T07:23:41Z",
   "launch_version": "notion_public_signals_sync_v1",
   "launched": [
     {
@@ -87,7 +87,7 @@
   "network_source_fetch_performed": false,
   "newsletter_distribution_performed": false,
   "openai_call_performed": false,
-  "pages_blocked": 214,
+  "pages_blocked": 274,
   "pages_launched": 5,
   "public_output_root": ".",
   "raw_article_body_copied": false,
