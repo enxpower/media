@@ -24,9 +24,12 @@ DATABASE_ID_ENV = "NOTION_SIGNAL_INTAKE_DATABASE_ID"
 NOTION_VERSION = "2022-06-28"
 DEFAULT_OUTPUT_ROOT = pathlib.Path(".")
 PUBLIC_SAFE_SOURCE_NOTE = "Source attribution retained in Notion launch metadata; external source URL omitted for this V1 public sample."
-PUBLIC_OUTPUT_MIN_QUALITY = 92
-PUBLIC_OUTPUT_REQUIRED_PRIORITY = "Critical"
-PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE = {"High", "Critical"}
+DEFAULT_MAX_PUBLIC_SIGNALS = 30
+PUBLIC_OUTPUT_MIN_QUALITY = 80
+PUBLIC_OUTPUT_ALLOWED_PRIORITIES = {"High", "Critical"}
+PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE = {"Medium", "High", "Critical"}
+SOURCE_PRIORITY_RANK = {"Critical": 0, "High": 1}
+AGI_RELEVANCE_RANK = {"Critical": 0, "High": 1, "Medium": 2}
 OFF_TOPIC_PUBLIC_TERMS = (
     "biology",
     "biomedical",
@@ -235,6 +238,22 @@ def agi_relevance(record: dict[str, Any]) -> str:
     return normalize_text(field(record, "AGI Relevance", "agi_relevance"))
 
 
+def timestamp_value(record: dict[str, Any]) -> str:
+    return normalize_text(
+        field(
+            record,
+            "Published Date",
+            "Updated Time",
+            "Created Time",
+            "Last Edited Time",
+            "published_date",
+            "updated_time",
+            "created_time",
+            "timestamp",
+        )
+    )
+
+
 def tags(record: dict[str, Any]) -> list[str]:
     value = field(record, "Tags", "Tag", "Categories", "Category")
     return [normalize_text(item) for item in as_list(value) if normalize_text(item)]
@@ -267,28 +286,24 @@ def off_topic_public_signal(record: dict[str, Any]) -> bool:
 
 def eligibility_blockers(record: dict[str, Any]) -> list[str]:
     blockers: list[str] = []
-    if field(record, "Ready for Pipeline", "ready_for_pipeline") is not True:
-        blockers.append("not_ready_for_pipeline")
-    if field(record, "Published", "published") is not True:
-        blockers.append("not_published")
-    if source_priority(record) != PUBLIC_OUTPUT_REQUIRED_PRIORITY:
-        blockers.append("source_priority_not_critical")
+    if source_priority(record) not in PUBLIC_OUTPUT_ALLOWED_PRIORITIES:
+        blockers.append("source_priority_below_high")
     if attribution_status(record) != "Complete":
         blockers.append("attribution_incomplete")
     if copyright_status(record) != "Safe Summary Only":
         blockers.append("copyright_not_safe_summary_only")
     if quality_hint(record) < PUBLIC_OUTPUT_MIN_QUALITY:
-        blockers.append("quality_hint_below_92")
+        blockers.append("quality_hint_below_80")
     if agi_relevance(record) not in PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE:
-        blockers.append("agi_relevance_not_high_or_critical")
+        blockers.append("agi_relevance_below_medium")
     if off_topic_public_signal(record):
         blockers.append("off_topic_public_signal")
     if not signal_title(record):
         blockers.append("missing_signal_title")
     if not signal_summary(record):
         blockers.append("missing_summary")
-    if not is_safe_source_url(source_url(record)):
-        blockers.append("missing_or_unsafe_source_url")
+    if not source_url(record) or not is_safe_source_url(source_url(record)):
+        blockers.append("missing_source_url")
     raw_body_status = normalize_text(field(record, "Raw Body Status", "raw_body_status", "Raw Body")).lower()
     if "blocked" in raw_body_status or "raw article" in raw_body_status:
         blockers.append("raw_body_blocked")
@@ -311,6 +326,7 @@ def build_sync_report(records: list[dict[str, Any]], existing_slugs: list[str], 
                     "reasons": reasons,
                     "source_priority": source_priority(record),
                     "quality_hint": int(quality_hint(record)),
+                    "agi_relevance": agi_relevance(record),
                     "ready_for_pipeline": field(record, "Ready for Pipeline", "ready_for_pipeline") is True,
                     "published": field(record, "Published", "published") is True,
                 }
@@ -335,12 +351,15 @@ def auto_merge_entry_eligible(entry: dict[str, Any]) -> bool:
     except (TypeError, ValueError):
         quality = 0.0
     return (
-        entry.get("source_priority") == "Critical"
-        and quality >= 92
+        entry.get("source_priority") in PUBLIC_OUTPUT_ALLOWED_PRIORITIES
+        and entry.get("agi_relevance") in PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE
+        and quality >= PUBLIC_OUTPUT_MIN_QUALITY
         and entry.get("attribution_status") == "Complete"
         and entry.get("copyright_status") == "Safe Summary Only"
-        and entry.get("ready_for_pipeline") is True
-        and entry.get("published") is True
+        and bool(entry.get("title"))
+        and bool(entry.get("summary"))
+        and is_safe_source_url(str(entry.get("source_url") or ""))
+        and not off_topic_public_signal(entry)
     )
 
 
@@ -394,9 +413,25 @@ def existing_public_signals(output_root: pathlib.Path) -> list[dict[str, Any]]:
     signals_root = output_root / "signals"
     if not signals_root.exists():
         return []
+    manifest_slugs: set[str] | None = None
+    manifest_path = signals_root / "public_launch_manifest.json"
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            launched = manifest.get("launched")
+            if isinstance(launched, list):
+                manifest_slugs = {
+                    normalize_text(item.get("slug"))
+                    for item in launched
+                    if isinstance(item, dict) and normalize_text(item.get("slug"))
+                }
+        except (OSError, json.JSONDecodeError):
+            manifest_slugs = None
     records: list[dict[str, Any]] = []
     for page in sorted(signals_root.glob("*/index.html")):
         slug = page.parent.name
+        if manifest_slugs is not None and slug not in manifest_slugs:
+            continue
         html_text = page.read_text(encoding="utf-8", errors="ignore")
         parser = ExistingSignalParser()
         parser.feed(html_text)
@@ -416,6 +451,7 @@ def existing_public_signals(output_root: pathlib.Path) -> list[dict[str, Any]]:
                 "published": True,
                 "agi_relevance": "Retained",
                 "quality_hint": "",
+                "timestamp": "",
                 "tags": [],
                 "existing": True,
                 "page_path": page,
@@ -440,11 +476,39 @@ def record_from_notion(record: dict[str, Any]) -> dict[str, Any]:
         "ready_for_pipeline": field(record, "Ready for Pipeline", "ready_for_pipeline") is True,
         "published": field(record, "Published", "published") is True,
         "quality_hint": int(quality_hint(record)),
+        "timestamp": timestamp_value(record),
         "risk_notes": text_field(record, "Risk Notes", "Safety Notes", "risk_notes", default="Summary-only public treatment. No raw article body is reproduced."),
         "watch_next": text_field(record, "Watch Next", "watch_next", default="Watch for follow-up Signals in the Notion-managed intake."),
         "tags": tags(record),
         "existing": False,
     }
+
+
+def existing_record_safe(record: dict[str, Any]) -> bool:
+    return bool(record.get("title")) and bool(record.get("summary"))
+
+
+def timestamp_rank(value: Any) -> float:
+    text = normalize_text(value)
+    if not text:
+        return 0.0
+    normalized = text.replace("Z", "+00:00")
+    try:
+        return dt.datetime.fromisoformat(normalized).timestamp()
+    except ValueError:
+        return 0.0
+
+
+def public_signal_sort_key(record: dict[str, Any]) -> tuple[int, int, float, int, int, float, str]:
+    priority = SOURCE_PRIORITY_RANK.get(str(record.get("source_priority") or ""), 99)
+    relevance = AGI_RELEVANCE_RANK.get(str(record.get("agi_relevance") or ""), 99)
+    try:
+        quality = float(record.get("quality_hint") or 0)
+    except (TypeError, ValueError):
+        quality = 0.0
+    published_rank = 0 if record.get("published") is True else 1
+    ready_rank = 0 if record.get("ready_for_pipeline") is True else 1
+    return (priority, relevance, -quality, published_rank, ready_rank, -timestamp_rank(record.get("timestamp")), str(record.get("title") or "").lower())
 
 
 def render_layout(title: str, body: str) -> str:
@@ -574,12 +638,14 @@ def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_
             "signal_id": record["signal_id"],
             "slug": record["slug"],
             "title": record["title"],
+            "summary": record.get("summary", ""),
             "public_path": f"signals/{record['slug']}/index.html",
             "public_url_path": f"/signals/{record['slug']}/",
             "published": True,
             "source_name": record.get("source_label", ""),
             "source_url": record.get("source_url", ""),
             "source_priority": record.get("source_priority", ""),
+            "agi_relevance": record.get("agi_relevance", ""),
             "attribution_status": record.get("attribution_status", ""),
             "copyright_status": record.get("copyright_status", ""),
             "quality_hint": record.get("quality_hint", ""),
@@ -613,6 +679,7 @@ def sync_records(
     output_root: pathlib.Path = DEFAULT_OUTPUT_ROOT,
     refreshed_at: str | None = None,
     output_report: pathlib.Path | None = None,
+    max_public_signals: int = DEFAULT_MAX_PUBLIC_SIGNALS,
 ) -> dict[str, Any]:
     refreshed_at = refreshed_at or utc_now()
     output_root = output_root.resolve()
@@ -624,11 +691,20 @@ def sync_records(
     eligible = [record_from_notion(record) for record in records if eligible_record(record)]
     blocked_count = len(records) - len(eligible)
     report = build_sync_report(records, existing_slugs, eligible)
-    eligible_slugs = {record["slug"] for record in eligible}
-    by_slug = {record["slug"]: record for record in existing if record["slug"] in eligible_slugs}
-    for record in eligible:
+    eligible_by_slug = {record["slug"]: record for record in eligible}
+    ranked_eligible = sorted(eligible_by_slug.values(), key=public_signal_sort_key)
+    selected = ranked_eligible[:max_public_signals]
+    selected_slugs = {record["slug"] for record in selected}
+    remaining_slots = max(0, max_public_signals - len(selected))
+    preserved_existing = [
+        record
+        for record in existing
+        if record["slug"] not in selected_slugs and existing_record_safe(record)
+    ][:remaining_slots]
+    by_slug = {record["slug"]: record for record in preserved_existing}
+    for record in selected:
         by_slug[record["slug"]] = record
-    merged = sorted(by_slug.values(), key=lambda item: (item.get("existing", False), item["title"].lower()))
+    merged = sorted(by_slug.values(), key=public_signal_sort_key)
 
     for record in merged:
         if record.get("existing") and not any(item["slug"] == record["slug"] for item in eligible):
@@ -660,6 +736,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT), help="Repository/public output root.")
     parser.add_argument("--fixture-json", help="Optional local Notion-shaped fixture JSON for offline validation.")
     parser.add_argument("--output-report", help="Optional JSON diagnostics report path.")
+    parser.add_argument("--max-public-signals", type=int, default=DEFAULT_MAX_PUBLIC_SIGNALS, help="Maximum public Signals to include.")
     return parser.parse_args(argv)
 
 
@@ -689,6 +766,7 @@ def main(argv: list[str] | None = None) -> int:
             records,
             pathlib.Path(args.output_root),
             output_report=pathlib.Path(args.output_report) if args.output_report else None,
+            max_public_signals=args.max_public_signals,
         )
     except (OSError, json.JSONDecodeError, NotionPublicSignalsSyncError) as exc:
         print(f"[notion-public-signals-sync] failed: {exc}", file=sys.stderr)

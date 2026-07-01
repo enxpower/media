@@ -119,6 +119,8 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertEqual(entry["source_priority"], "Critical")
         self.assertEqual(entry["attribution_status"], "Complete")
         self.assertEqual(entry["copyright_status"], "Safe Summary Only")
+        self.assertEqual(entry["agi_relevance"], "High")
+        self.assertEqual(entry["summary"], "A Notion-approved summary-only Signal about agent reliability evaluation.")
         self.assertEqual(entry["quality_hint"], 94)
         self.assertIs(entry["ready_for_pipeline"], True)
         self.assertIs(entry["published"], True)
@@ -131,31 +133,65 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
 
         self.assertEqual(entry["source_priority"], "Critical")
 
-    def test_critical_quality_92_agi_high_safe_fields_is_eligible(self):
-        manifest = sync.sync_records([eligible_record(**{"Quality Hint": 92, "AGI Relevance": "High"})], self.root)
+    def test_high_priority_medium_agi_quality_80_is_eligible(self):
+        manifest = sync.sync_records(
+            [
+                eligible_record(
+                    **{
+                        "Source Priority": "High",
+                        "Quality Hint": 80,
+                        "AGI Relevance": "Medium",
+                    }
+                )
+            ],
+            self.root,
+        )
 
         self.assertTrue((self.root / "signals" / "notion-agent-reliability" / "index.html").exists())
         self.assertEqual(manifest["pages_blocked"], 0)
         entry = next(item for item in manifest["launched"] if item["slug"] == "notion-agent-reliability")
-        self.assertEqual(entry["source_priority"], "Critical")
-        self.assertEqual(entry["quality_hint"], 92)
+        self.assertEqual(entry["source_priority"], "High")
+        self.assertEqual(entry["quality_hint"], 80)
 
-    def test_high_priority_quality_95_is_blocked_from_public_output(self):
-        manifest = sync.sync_records([eligible_record(**{"Source Priority": "High", "Quality Hint": 95})], self.root)
+    def test_critical_priority_high_agi_quality_92_is_eligible(self):
+        manifest = sync.sync_records([eligible_record(**{"Source Priority": "Critical", "Quality Hint": 92, "AGI Relevance": "High"})], self.root)
 
-        self.assertFalse((self.root / "signals" / "notion-agent-reliability" / "index.html").exists())
+        self.assertTrue((self.root / "signals" / "notion-agent-reliability" / "index.html").exists())
+        self.assertEqual(manifest["pages_blocked"], 0)
+
+    def test_published_false_can_still_pass_when_other_fields_are_safe(self):
+        manifest = sync.sync_records([eligible_record(**{"Published": False})], self.root)
+
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        self.assertIn("notion-agent-reliability", launched_slugs)
+        self.assertEqual(manifest["pages_blocked"], 0)
+
+    def test_ready_false_can_still_pass_when_other_fields_are_safe(self):
+        manifest = sync.sync_records([eligible_record(**{"Ready for Pipeline": False})], self.root)
+
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        self.assertIn("notion-agent-reliability", launched_slugs)
+        self.assertEqual(manifest["pages_blocked"], 0)
+
+    def test_quality_79_is_blocked_from_public_output(self):
+        manifest = sync.sync_records([eligible_record(**{"Quality Hint": 79})], self.root)
+
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        self.assertNotIn("notion-agent-reliability", launched_slugs)
         self.assertEqual(manifest["pages_blocked"], 1)
 
-    def test_critical_quality_88_is_blocked_from_public_output(self):
-        manifest = sync.sync_records([eligible_record(**{"Quality Hint": 88})], self.root)
+    def test_source_priority_medium_is_blocked_from_public_output(self):
+        manifest = sync.sync_records([eligible_record(**{"Source Priority": "Medium", "Quality Hint": 95})], self.root)
 
-        self.assertFalse((self.root / "signals" / "notion-agent-reliability" / "index.html").exists())
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        self.assertNotIn("notion-agent-reliability", launched_slugs)
         self.assertEqual(manifest["pages_blocked"], 1)
 
-    def test_critical_quality_95_agi_medium_is_blocked_from_public_output(self):
-        manifest = sync.sync_records([eligible_record(**{"Quality Hint": 95, "AGI Relevance": "Medium"})], self.root)
+    def test_agi_relevance_low_is_blocked_from_public_output(self):
+        manifest = sync.sync_records([eligible_record(**{"Quality Hint": 95, "AGI Relevance": "Low"})], self.root)
 
-        self.assertFalse((self.root / "signals" / "notion-agent-reliability" / "index.html").exists())
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        self.assertNotIn("notion-agent-reliability", launched_slugs)
         self.assertEqual(manifest["pages_blocked"], 1)
 
     def test_published_polluted_rows_are_blocked_unless_all_strict_public_rules_pass(self):
@@ -200,11 +236,56 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertIn("critical-agi-agent-reliability", launched_slugs)
         self.assertEqual(manifest["pages_blocked"], 2)
 
-    def test_existing_public_signals_are_not_preserved_without_current_strict_eligible_row(self):
+    def test_off_topic_rows_are_blocked(self):
+        polluted = [
+            ("biology-medicine", "Biology medicine update", "Biology"),
+            ("oceanography", "Oceanography research update", "Science"),
+            ("poetry-politics", "Poetry and politics roundup", "General News"),
+            ("robot-vacuum", "Robot vacuum product roundup", "Hardware"),
+        ]
+        records = [
+            eligible_record(
+                **{
+                    "Signal ID": f"sig_{slug}",
+                    "Signal Title": title,
+                    "Slug": slug,
+                    "Category": category,
+                    "Source Priority": "Critical",
+                    "Quality Hint": 95,
+                    "AGI Relevance": "High",
+                }
+            )
+            for slug, title, category in polluted
+        ]
         manifest = sync.sync_records([], self.root)
 
-        self.assertEqual(manifest["pages_launched"], 0)
-        self.assertEqual(manifest["launched"], [])
+        self.assertEqual(manifest["pages_launched"], 5)
+        self.assertEqual(len(manifest["launched"]), 5)
+        manifest = sync.sync_records(records, self.root)
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        for slug, _, _ in polluted:
+            self.assertNotIn(slug, launched_slugs)
+        self.assertEqual(manifest["pages_blocked"], len(polluted))
+
+    def test_missing_attribution_fails(self):
+        manifest = sync.sync_records([eligible_record(**{"Attribution Status": "Missing"})], self.root)
+
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        self.assertNotIn("notion-agent-reliability", launched_slugs)
+        self.assertEqual(manifest["pages_blocked"], 1)
+
+    def test_unsafe_copyright_fails(self):
+        manifest = sync.sync_records([eligible_record(**{"Copyright Status": "Unsafe"})], self.root)
+
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        self.assertNotIn("notion-agent-reliability", launched_slugs)
+        self.assertEqual(manifest["pages_blocked"], 1)
+
+    def test_existing_5_seed_signals_still_pass_as_safe_existing_public_signals(self):
+        manifest = sync.sync_records([], self.root)
+
+        self.assertEqual(manifest["pages_launched"], 5)
+        self.assertEqual(len(manifest["launched"]), 5)
 
     def test_source_name_is_used_when_source_label_is_missing(self):
         record = eligible_record(**{"Source Name": "arXiv cs.CV RSS", "Quality Hint": 94})
@@ -249,9 +330,9 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
                     **{
                         "Signal Title": "Blocked loose public Signal",
                         "Slug": "blocked-loose-public-signal",
-                        "Source Priority": "High",
-                        "Quality Hint": 88,
-                        "AGI Relevance": "Medium",
+                        "Source Priority": "Medium",
+                        "Quality Hint": 79,
+                        "AGI Relevance": "Low",
                         "Ready for Pipeline": False,
                         "Published": False,
                     }
@@ -263,41 +344,106 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         report = json.loads(report_path.read_text(encoding="utf-8"))
         reasons = report["blocked_reasons_by_title"]["Blocked loose public Signal"]
 
-        self.assertIn("source_priority_not_critical", reasons)
-        self.assertIn("quality_hint_below_92", reasons)
-        self.assertIn("agi_relevance_not_high_or_critical", reasons)
-        self.assertIn("not_ready_for_pipeline", reasons)
-        self.assertIn("not_published", reasons)
+        self.assertIn("source_priority_below_high", reasons)
+        self.assertIn("quality_hint_below_80", reasons)
+        self.assertIn("agi_relevance_below_medium", reasons)
 
-    def test_auto_merge_marker_absent_for_changed_non_critical_or_quality_below_92(self):
+    def test_ranking_caps_output_to_30_and_sorts_critical_high_quality_first(self):
+        records = []
+        for index in range(35):
+            records.append(
+                eligible_record(
+                    **{
+                        "Signal ID": f"sig_rank_{index}",
+                        "Signal Title": f"Ranked public Signal {index:02d}",
+                        "Slug": f"ranked-public-signal-{index:02d}",
+                        "Source Priority": "High",
+                        "AGI Relevance": "Medium",
+                        "Quality Hint": 80 + (index % 10),
+                        "Published": False,
+                        "Ready for Pipeline": False,
+                        "Published Date": f"2026-06-{(index % 28) + 1:02d}T00:00:00Z",
+                    }
+                )
+            )
+        records.extend(
+            [
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_top_critical",
+                        "Signal Title": "Top Critical Infrastructure Signal",
+                        "Slug": "top-critical-infrastructure-signal",
+                        "Source Priority": "Critical",
+                        "AGI Relevance": "Critical",
+                        "Quality Hint": 95,
+                        "Published": True,
+                        "Ready for Pipeline": True,
+                        "Published Date": "2026-07-01T00:00:00Z",
+                    }
+                ),
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_second_critical",
+                        "Signal Title": "Second Critical Evaluation Signal",
+                        "Slug": "second-critical-evaluation-signal",
+                        "Source Priority": "Critical",
+                        "AGI Relevance": "High",
+                        "Quality Hint": 92,
+                        "Published": True,
+                        "Ready for Pipeline": True,
+                        "Published Date": "2026-06-30T00:00:00Z",
+                    }
+                ),
+            ]
+        )
+
+        manifest = sync.sync_records(records, self.root)
+        launched_slugs = [item["slug"] for item in manifest["launched"]]
+
+        self.assertEqual(manifest["pages_launched"], 30)
+        self.assertEqual(launched_slugs[:2], ["top-critical-infrastructure-signal", "second-critical-evaluation-signal"])
+        self.assertLessEqual(len(launched_slugs), 30)
+
+    def test_auto_merge_marker_absent_for_changed_below_relaxed_public_policy(self):
         manifest = sync.sync_records(
             [
-                eligible_record(**{"Source Priority": "High", "Quality Hint": 94}),
+                eligible_record(**{"Source Priority": "Medium", "Quality Hint": 94}),
                 eligible_record(
                     **{
                         "Signal ID": "sig_low_quality",
                         "Signal Title": "Critical but low quality Signal",
                         "Slug": "critical-low-quality",
-                        "Quality Hint": 88,
+                        "Quality Hint": 79,
                     }
                 ),
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_low_relevance",
+                        "Signal Title": "Low relevance Signal",
+                        "Slug": "low-relevance-signal",
+                        "AGI Relevance": "Low",
+                        "Quality Hint": 94,
+                    }
+                )
             ],
             self.root,
         )
 
         self.assertFalse(sync.auto_merge_marker_eligible(manifest, ["signals/notion-agent-reliability/index.html"]))
         self.assertFalse(sync.auto_merge_marker_eligible(manifest, ["signals/critical-low-quality/index.html"]))
+        self.assertFalse(sync.auto_merge_marker_eligible(manifest, ["signals/low-relevance-signal/index.html"]))
 
-    def test_auto_merge_marker_present_only_when_all_changed_signals_are_critical_quality_92(self):
+    def test_auto_merge_marker_present_when_all_changed_signals_satisfy_relaxed_public_policy(self):
         manifest = sync.sync_records(
             [
-                eligible_record(**{"Quality Hint": 92}),
+                eligible_record(**{"Source Priority": "High", "AGI Relevance": "Medium", "Quality Hint": 80, "Published": False}),
                 eligible_record(
                     **{
                         "Signal ID": "sig_second_critical",
                         "Signal Title": "Second Critical Signal",
                         "Slug": "second-critical-signal",
                         "Quality Hint": 94,
+                        "Ready for Pipeline": False,
                     }
                 ),
             ],
@@ -315,6 +461,27 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
                 ],
             )
         )
+
+    def test_auto_merge_marker_absent_for_off_topic_manifest_entry(self):
+        manifest = sync.sync_records(
+            [
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_robot_vacuum",
+                        "Signal Title": "AI agent benchmark Signal",
+                        "Slug": "robot-vacuum-signal",
+                        "Source Priority": "High",
+                        "AGI Relevance": "Medium",
+                        "Quality Hint": 90,
+                    }
+                )
+            ],
+            self.root,
+        )
+        entry = next(item for item in manifest["launched"] if item["slug"] == "robot-vacuum-signal")
+        entry["title"] = "Robot vacuum roundup"
+
+        self.assertFalse(sync.auto_merge_marker_eligible(manifest, ["signals/robot-vacuum-signal/index.html"]))
 
     def test_public_manifest_still_carries_source_priority(self):
         sync.sync_records([eligible_record(**{"Quality Hint": 94})], self.root)
