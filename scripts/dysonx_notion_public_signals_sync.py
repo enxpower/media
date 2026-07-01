@@ -351,12 +351,15 @@ def auto_merge_entry_eligible(entry: dict[str, Any]) -> bool:
     except (TypeError, ValueError):
         quality = 0.0
     return (
-        entry.get("source_priority") == "Critical"
-        and quality >= 92
+        entry.get("source_priority") in PUBLIC_OUTPUT_ALLOWED_PRIORITIES
+        and entry.get("agi_relevance") in PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE
+        and quality >= PUBLIC_OUTPUT_MIN_QUALITY
         and entry.get("attribution_status") == "Complete"
         and entry.get("copyright_status") == "Safe Summary Only"
-        and entry.get("ready_for_pipeline") is True
-        and entry.get("published") is True
+        and bool(entry.get("title"))
+        and bool(entry.get("summary"))
+        and is_safe_source_url(str(entry.get("source_url") or ""))
+        and not off_topic_public_signal(entry)
     )
 
 
@@ -635,12 +638,14 @@ def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_
             "signal_id": record["signal_id"],
             "slug": record["slug"],
             "title": record["title"],
+            "summary": record.get("summary", ""),
             "public_path": f"signals/{record['slug']}/index.html",
             "public_url_path": f"/signals/{record['slug']}/",
             "published": True,
             "source_name": record.get("source_label", ""),
             "source_url": record.get("source_url", ""),
             "source_priority": record.get("source_priority", ""),
+            "agi_relevance": record.get("agi_relevance", ""),
             "attribution_status": record.get("attribution_status", ""),
             "copyright_status": record.get("copyright_status", ""),
             "quality_hint": record.get("quality_hint", ""),

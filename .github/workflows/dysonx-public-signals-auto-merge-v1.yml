@@ -103,8 +103,9 @@ jobs:
           python3 scripts/dysonx_public_signals_auto_merge_gate.py \
             --manifest signals/public_launch_manifest.json \
             --changed-files-json changed_files.json \
-            --min-quality 92 \
-            --required-priority Critical \
+            --min-quality 80 \
+            --allowed-priorities High,Critical \
+            --allowed-agi-relevance Medium,High,Critical \
             --require-attribution-complete \
             --require-safe-summary-only
 

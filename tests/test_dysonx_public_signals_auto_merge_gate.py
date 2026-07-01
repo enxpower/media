@@ -44,11 +44,13 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
             "signal_id": "sig_critical_agent",
             "slug": self.slug,
             "title": "Critical Agent Signal",
+            "summary": "Summary-only public Signal.",
             "public_path": f"signals/{self.slug}/index.html",
             "public_url_path": f"/signals/{self.slug}/",
             "source_name": "Example Source",
             "source_url": "https://example.org/source",
             "source_priority": "Critical",
+            "agi_relevance": "High",
             "attribution_status": "Complete",
             "copyright_status": "Safe Summary Only",
             "quality_hint": 94,
@@ -81,27 +83,42 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
                 "--changed-files-json",
                 str(self.changed_files_path),
                 "--min-quality",
-                "92",
-                "--required-priority",
-                "Critical",
+                "80",
+                "--allowed-priorities",
+                "High,Critical",
+                "--allowed-agi-relevance",
+                "Medium,High,Critical",
                 "--require-attribution-complete",
                 "--require-safe-summary-only",
             ]
         )
 
-    def test_passes_for_critical_high_quality_complete_safe_summary_signal(self):
+    def test_high_priority_medium_agi_quality_80_passes(self):
+        self.write_manifest(source_priority="High", agi_relevance="Medium", quality_hint=80)
         self.assertEqual(self.run_gate(), 0)
 
-    def test_critical_quality_at_least_92_complete_safe_summary_can_pass_gate(self):
-        self.write_manifest(source_priority="Critical", quality_hint=92, attribution_status="Complete", copyright_status="Safe Summary Only")
+    def test_critical_priority_high_agi_quality_92_passes(self):
+        self.write_manifest(source_priority="Critical", agi_relevance="High", quality_hint=92, attribution_status="Complete", copyright_status="Safe Summary Only")
+        self.assertEqual(self.run_gate(), 0)
+
+    def test_published_false_can_pass_when_safety_fields_are_valid(self):
+        self.write_manifest(published=False)
+        self.assertEqual(self.run_gate(), 0)
+
+    def test_ready_for_pipeline_false_can_pass_when_safety_fields_are_valid(self):
+        self.write_manifest(ready_for_pipeline=False)
         self.assertEqual(self.run_gate(), 0)
 
     def test_fails_when_quality_below_threshold(self):
-        self.write_manifest(quality_hint=91)
+        self.write_manifest(quality_hint=79)
         self.assertNotEqual(self.run_gate(), 0)
 
-    def test_fails_when_source_priority_is_high_instead_of_critical(self):
-        self.write_manifest(source_priority="High")
+    def test_fails_when_source_priority_is_medium(self):
+        self.write_manifest(source_priority="Medium")
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_fails_when_agi_relevance_is_low(self):
+        self.write_manifest(agi_relevance="Low")
         self.assertNotEqual(self.run_gate(), 0)
 
     def test_fails_when_attribution_is_partial_or_missing(self):
@@ -113,6 +130,34 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
     def test_fails_when_copyright_status_is_not_safe_summary_only(self):
         self.write_manifest(copyright_status="Unsafe")
         self.assertNotEqual(self.run_gate(), 0)
+
+    def test_fails_when_source_url_is_missing_or_invalid(self):
+        for source_url in ("", "ftp://example.org/source", "not-a-url"):
+            with self.subTest(source_url=source_url):
+                self.write_manifest(source_url=source_url)
+                self.assertNotEqual(self.run_gate(), 0)
+                self.write_manifest()
+
+    def test_fails_when_summary_is_missing(self):
+        self.write_manifest(summary="")
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_fails_when_title_is_missing(self):
+        self.write_manifest(title="")
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_fails_when_off_topic_terms_appear(self):
+        polluted = [
+            "biology medicine signal",
+            "oceanography update",
+            "poetry politics roundup",
+            "robot vacuum product update",
+        ]
+        for title in polluted:
+            with self.subTest(title=title):
+                self.write_manifest(title=title)
+                self.assertNotEqual(self.run_gate(), 0)
+                self.write_manifest()
 
     def test_fails_when_unknown_changed_file_path_exists(self):
         self.write_changed_files([f"signals/{self.slug}/index.html", "index.html"])

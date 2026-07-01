@@ -15,6 +15,26 @@ from urllib.parse import urlsplit
 
 GATE_VERSION = "dysonx_public_signals_auto_merge_gate_v1"
 ALLOWED_STATIC_FILES = {"signals/index.html", "signals/public_launch_manifest.json"}
+MIN_PUBLIC_QUALITY = 80
+ALLOWED_SOURCE_PRIORITIES = {"High", "Critical"}
+ALLOWED_AGI_RELEVANCE = {"Medium", "High", "Critical"}
+OFF_TOPIC_PUBLIC_TERMS = (
+    "biology",
+    "biomedical",
+    "cattle",
+    "dairy",
+    "eclipse",
+    "eclipses",
+    "general news",
+    "general science",
+    "methane",
+    "medicine",
+    "oceanography",
+    "poetry",
+    "politics",
+    "robot vacuum",
+    "vacuum cleaner",
+)
 FORBIDDEN_TERMS = (
     "https://dysonx." "ai",
     "media." "energizeos.com",
@@ -175,16 +195,30 @@ def check_manifest_flags(manifest: dict[str, Any]) -> None:
             raise AutoMergeGateError(f"manifest {key} must be {expected}")
 
 
-def check_entry(entry: dict[str, Any], *, min_quality: float, required_priority: str, require_attribution_complete: bool, require_safe_summary_only: bool) -> None:
+def off_topic_public_signal(entry: dict[str, Any]) -> bool:
+    haystack = " ".join(
+        str(entry.get(key) or "")
+        for key in ("title", "summary", "source_name", "source_priority", "agi_relevance")
+    ).lower()
+    return any(term in haystack for term in OFF_TOPIC_PUBLIC_TERMS)
+
+
+def check_entry(entry: dict[str, Any], *, min_quality: float, allowed_priorities: set[str], allowed_agi_relevance: set[str], require_attribution_complete: bool, require_safe_summary_only: bool) -> None:
     slug = str(entry.get("slug") or "<missing-slug>")
+    if not str(entry.get("title") or "").strip():
+        raise AutoMergeGateError(f"{slug} title is missing")
+    if not str(entry.get("summary") or "").strip():
+        raise AutoMergeGateError(f"{slug} summary is missing")
     try:
         quality = float(entry.get("quality_hint"))
     except (TypeError, ValueError):
         raise AutoMergeGateError(f"{slug} quality_hint is missing or non-numeric") from None
     if quality < min_quality:
         raise AutoMergeGateError(f"{slug} quality_hint {quality:g} is below {min_quality:g}")
-    if str(entry.get("source_priority") or "") != required_priority:
-        raise AutoMergeGateError(f"{slug} source_priority must be {required_priority}")
+    if str(entry.get("source_priority") or "") not in allowed_priorities:
+        raise AutoMergeGateError(f"{slug} source_priority must be High or Critical")
+    if str(entry.get("agi_relevance") or "") not in allowed_agi_relevance:
+        raise AutoMergeGateError(f"{slug} agi_relevance must be Medium, High, or Critical")
     if require_attribution_complete and str(entry.get("attribution_status") or "") != "Complete":
         raise AutoMergeGateError(f"{slug} attribution_status must be Complete")
     if require_safe_summary_only and str(entry.get("copyright_status") or "") != "Safe Summary Only":
@@ -193,10 +227,8 @@ def check_entry(entry: dict[str, Any], *, min_quality: float, required_priority:
     parsed = urlsplit(source_url)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
         raise AutoMergeGateError(f"{slug} source_url must be absolute http/https")
-    if entry.get("ready_for_pipeline") is not True:
-        raise AutoMergeGateError(f"{slug} ready_for_pipeline must be true")
-    if entry.get("published") is not True:
-        raise AutoMergeGateError(f"{slug} published must be true")
+    if off_topic_public_signal(entry):
+        raise AutoMergeGateError(f"{slug} is off-topic for public Signals")
 
 
 def run_gate(args: argparse.Namespace) -> None:
@@ -226,7 +258,8 @@ def run_gate(args: argparse.Namespace) -> None:
         check_entry(
             entry,
             min_quality=args.min_quality,
-            required_priority=args.required_priority,
+            allowed_priorities=set(args.allowed_priorities.split(",")),
+            allowed_agi_relevance=set(args.allowed_agi_relevance.split(",")),
             require_attribution_complete=args.require_attribution_complete,
             require_safe_summary_only=args.require_safe_summary_only,
         )
@@ -242,8 +275,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Gate DysonX public Signals auto-merge candidates.")
     parser.add_argument("--manifest", required=True, help="Path to signals/public_launch_manifest.json.")
     parser.add_argument("--changed-files-json", help="Optional JSON list of changed files.")
-    parser.add_argument("--min-quality", type=float, default=92)
-    parser.add_argument("--required-priority", default="Critical")
+    parser.add_argument("--min-quality", type=float, default=MIN_PUBLIC_QUALITY)
+    parser.add_argument("--allowed-priorities", default="High,Critical")
+    parser.add_argument("--allowed-agi-relevance", default="Medium,High,Critical")
     parser.add_argument("--require-attribution-complete", action="store_true")
     parser.add_argument("--require-safe-summary-only", action="store_true")
     return parser.parse_args(argv)

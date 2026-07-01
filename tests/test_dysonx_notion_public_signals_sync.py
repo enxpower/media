@@ -119,6 +119,8 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertEqual(entry["source_priority"], "Critical")
         self.assertEqual(entry["attribution_status"], "Complete")
         self.assertEqual(entry["copyright_status"], "Safe Summary Only")
+        self.assertEqual(entry["agi_relevance"], "High")
+        self.assertEqual(entry["summary"], "A Notion-approved summary-only Signal about agent reliability evaluation.")
         self.assertEqual(entry["quality_hint"], 94)
         self.assertIs(entry["ready_for_pipeline"], True)
         self.assertIs(entry["published"], True)
@@ -402,35 +404,46 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertEqual(launched_slugs[:2], ["top-critical-infrastructure-signal", "second-critical-evaluation-signal"])
         self.assertLessEqual(len(launched_slugs), 30)
 
-    def test_auto_merge_marker_absent_for_changed_non_critical_or_quality_below_92(self):
+    def test_auto_merge_marker_absent_for_changed_below_relaxed_public_policy(self):
         manifest = sync.sync_records(
             [
-                eligible_record(**{"Source Priority": "High", "Quality Hint": 94}),
+                eligible_record(**{"Source Priority": "Medium", "Quality Hint": 94}),
                 eligible_record(
                     **{
                         "Signal ID": "sig_low_quality",
                         "Signal Title": "Critical but low quality Signal",
                         "Slug": "critical-low-quality",
-                        "Quality Hint": 88,
+                        "Quality Hint": 79,
                     }
                 ),
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_low_relevance",
+                        "Signal Title": "Low relevance Signal",
+                        "Slug": "low-relevance-signal",
+                        "AGI Relevance": "Low",
+                        "Quality Hint": 94,
+                    }
+                )
             ],
             self.root,
         )
 
         self.assertFalse(sync.auto_merge_marker_eligible(manifest, ["signals/notion-agent-reliability/index.html"]))
         self.assertFalse(sync.auto_merge_marker_eligible(manifest, ["signals/critical-low-quality/index.html"]))
+        self.assertFalse(sync.auto_merge_marker_eligible(manifest, ["signals/low-relevance-signal/index.html"]))
 
-    def test_auto_merge_marker_present_only_when_all_changed_signals_are_critical_quality_92(self):
+    def test_auto_merge_marker_present_when_all_changed_signals_satisfy_relaxed_public_policy(self):
         manifest = sync.sync_records(
             [
-                eligible_record(**{"Quality Hint": 92}),
+                eligible_record(**{"Source Priority": "High", "AGI Relevance": "Medium", "Quality Hint": 80, "Published": False}),
                 eligible_record(
                     **{
                         "Signal ID": "sig_second_critical",
                         "Signal Title": "Second Critical Signal",
                         "Slug": "second-critical-signal",
                         "Quality Hint": 94,
+                        "Ready for Pipeline": False,
                     }
                 ),
             ],
@@ -448,6 +461,27 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
                 ],
             )
         )
+
+    def test_auto_merge_marker_absent_for_off_topic_manifest_entry(self):
+        manifest = sync.sync_records(
+            [
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_robot_vacuum",
+                        "Signal Title": "AI agent benchmark Signal",
+                        "Slug": "robot-vacuum-signal",
+                        "Source Priority": "High",
+                        "AGI Relevance": "Medium",
+                        "Quality Hint": 90,
+                    }
+                )
+            ],
+            self.root,
+        )
+        entry = next(item for item in manifest["launched"] if item["slug"] == "robot-vacuum-signal")
+        entry["title"] = "Robot vacuum roundup"
+
+        self.assertFalse(sync.auto_merge_marker_eligible(manifest, ["signals/robot-vacuum-signal/index.html"]))
 
     def test_public_manifest_still_carries_source_priority(self):
         sync.sync_records([eligible_record(**{"Quality Hint": 94})], self.root)
