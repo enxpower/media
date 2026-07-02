@@ -2,244 +2,244 @@
 <rss version="2.0">
   <channel>
     <title>DysonX Public Signals</title>
-    <link>https://media.energizeos.com/signals/</link>
+    <link>https://dysonx.com/signals/</link>
     <description>Source-attributed public Signals tracking AI and AGI intelligence.</description>
     <item>
       <title>Agentic AI adoption accelerates from Codex usage evidence</title>
-      <link>https://media.energizeos.com/signals/agentic-ai-adoption-accelerates-from-codex-usage-evidence/</link>
-      <guid>https://media.energizeos.com/signals/agentic-ai-adoption-accelerates-from-codex-usage-evidence/</guid>
+      <link>https://dysonx.com/signals/agentic-ai-adoption-accelerates-from-codex-usage-evidence/</link>
+      <guid>https://dysonx.com/signals/agentic-ai-adoption-accelerates-from-codex-usage-evidence/</guid>
       <description>A June 2026 research paper uses Codex usage data as evidence that agentic AI is moving from developer tooling toward broader organizational workflows.</description>
       <source url="https://arxiv.org/abs/2606.26959">arXiv</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>AI Agent Index highlights transparency gaps in deployed agents</title>
-      <link>https://media.energizeos.com/signals/ai-agent-index-highlights-transparency-gaps-in-deployed-agents/</link>
-      <guid>https://media.energizeos.com/signals/ai-agent-index-highlights-transparency-gaps-in-deployed-agents/</guid>
+      <link>https://dysonx.com/signals/ai-agent-index-highlights-transparency-gaps-in-deployed-agents/</link>
+      <guid>https://dysonx.com/signals/ai-agent-index-highlights-transparency-gaps-in-deployed-agents/</guid>
       <description>The 2025 AI Agent Index documents technical and safety features across deployed agentic AI systems and flags uneven transparency among developers.</description>
       <source url="https://arxiv.org/abs/2602.17753">arXiv / AI Agent Index</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>EU AI Office becomes the GPAI governance surface to watch</title>
-      <link>https://media.energizeos.com/signals/eu-ai-office-becomes-the-gpai-governance-surface-to-watch/</link>
-      <guid>https://media.energizeos.com/signals/eu-ai-office-becomes-the-gpai-governance-surface-to-watch/</guid>
+      <link>https://dysonx.com/signals/eu-ai-office-becomes-the-gpai-governance-surface-to-watch/</link>
+      <guid>https://dysonx.com/signals/eu-ai-office-becomes-the-gpai-governance-surface-to-watch/</guid>
       <description>The European AI Office supports AI Act implementation, especially general-purpose AI rules, evaluations, guidance, and enforcement workflows.</description>
       <source url="https://digital-strategy.ec.europa.eu/en/policies/ai-office">European Commission AI Office</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>METR time-horizon work reframes autonomous capability tracking</title>
-      <link>https://media.energizeos.com/signals/metr-time-horizon-work-reframes-autonomous-capability-tracking/</link>
-      <guid>https://media.energizeos.com/signals/metr-time-horizon-work-reframes-autonomous-capability-tracking/</guid>
+      <link>https://dysonx.com/signals/metr-time-horizon-work-reframes-autonomous-capability-tracking/</link>
+      <guid>https://dysonx.com/signals/metr-time-horizon-work-reframes-autonomous-capability-tracking/</guid>
       <description>METR tracks frontier AI progress through task-completion time horizons, measuring the length of tasks AI agents can complete at defined success rates.</description>
       <source url="https://metr.org/">METR</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>NIST AI governance is anchored in standards</title>
-      <link>https://media.energizeos.com/signals/nist-ai-governance-is-anchored-in-standards/</link>
-      <guid>https://media.energizeos.com/signals/nist-ai-governance-is-anchored-in-standards/</guid>
+      <link>https://dysonx.com/signals/nist-ai-governance-is-anchored-in-standards/</link>
+      <guid>https://dysonx.com/signals/nist-ai-governance-is-anchored-in-standards/</guid>
       <description>NIST frames AI governance around measurement, risk management, standards, guidelines, benchmarks, and evaluations.</description>
       <source url="https://www.nist.gov/artificial-intelligence">NIST AI</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>A Contextual-Bandit Oversight Game with Two-Sided Informational Asymmetry</title>
-      <link>https://media.energizeos.com/signals/a-contextual-bandit-oversight-game-with-two-sided-informational-asymmetry/</link>
-      <guid>https://media.energizeos.com/signals/a-contextual-bandit-oversight-game-with-two-sided-informational-asymmetry/</guid>
+      <link>https://dysonx.com/signals/a-contextual-bandit-oversight-game-with-two-sided-informational-asymmetry/</link>
+      <guid>https://dysonx.com/signals/a-contextual-bandit-oversight-game-with-two-sided-informational-asymmetry/</guid>
       <description>arXiv:2607.00155v1 Announce Type: new Abstract: We study runtime human oversight of an AI agent when private information runs in both directions: the human privately knows her reward function, while the AI privately knows the quality of...</description>
       <source url="https://arxiv.org/abs/2607.00155">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>AGI Maze as a Benchmark Framework for World-Modeling Agents</title>
-      <link>https://media.energizeos.com/signals/agi-maze-as-a-benchmark-framework-for-world-modeling-agents/</link>
-      <guid>https://media.energizeos.com/signals/agi-maze-as-a-benchmark-framework-for-world-modeling-agents/</guid>
+      <link>https://dysonx.com/signals/agi-maze-as-a-benchmark-framework-for-world-modeling-agents/</link>
+      <guid>https://dysonx.com/signals/agi-maze-as-a-benchmark-framework-for-world-modeling-agents/</guid>
       <description>arXiv:2607.00627v1 Announce Type: new Abstract: Large language models (LLMs) are powerful pattern-completion systems, but their default operating mode - predicting the next token from a static context - does not reliably produce persiste...</description>
       <source url="https://arxiv.org/abs/2607.00627">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Dual-Informed Vertical Expansion for Multi-Objective Node Selection in Anytime Conflict-Based Search</title>
-      <link>https://media.energizeos.com/signals/dual-informed-vertical-expansion-for-multi-objective-node-selection-in-anytime-conflict-based-search/</link>
-      <guid>https://media.energizeos.com/signals/dual-informed-vertical-expansion-for-multi-objective-node-selection-in-anytime-conflict-based-search/</guid>
+      <link>https://dysonx.com/signals/dual-informed-vertical-expansion-for-multi-objective-node-selection-in-anytime-conflict-based-search/</link>
+      <guid>https://dysonx.com/signals/dual-informed-vertical-expansion-for-multi-objective-node-selection-in-anytime-conflict-based-search/</guid>
       <description>arXiv:2607.00156v1 Announce Type: new Abstract: Conflict-Based Search (CBS) is a leading exact algorithm for Multi-Agent Path Finding (MAPF), but its high-level node-selection rule is usually treated as a fixed implementation detail. Sta...</description>
       <source url="https://arxiv.org/abs/2607.00156">arXiv cs.RO RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>EgoSafetyBench: A Diagnostic Egocentric Video Benchmark for Evaluating Embodied VLMs as Runtime Safety Guards</title>
-      <link>https://media.energizeos.com/signals/egosafetybench-a-diagnostic-egocentric-video-benchmark-for-evaluating-embodied-vlms-as-runtime-safety-guards/</link>
-      <guid>https://media.energizeos.com/signals/egosafetybench-a-diagnostic-egocentric-video-benchmark-for-evaluating-embodied-vlms-as-runtime-safety-guards/</guid>
+      <link>https://dysonx.com/signals/egosafetybench-a-diagnostic-egocentric-video-benchmark-for-evaluating-embodied-vlms-as-runtime-safety-guards/</link>
+      <guid>https://dysonx.com/signals/egosafetybench-a-diagnostic-egocentric-video-benchmark-for-evaluating-embodied-vlms-as-runtime-safety-guards/</guid>
       <description>arXiv:2607.00218v1 Announce Type: new Abstract: Vision-language models (VLMs) are now proposed as runtime safety guards for embodied agents in homes and factories. A deployable guard must catch genuinely unsafe situations while avoiding...</description>
       <source url="https://arxiv.org/abs/2607.00218">arXiv cs.CV RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>From Signals to Structure: How Memory Architecture Drives Language Emergence in LLM Agents</title>
-      <link>https://media.energizeos.com/signals/from-signals-to-structure-how-memory-architecture-drives-language-emergence-in-llm-agents/</link>
-      <guid>https://media.energizeos.com/signals/from-signals-to-structure-how-memory-architecture-drives-language-emergence-in-llm-agents/</guid>
+      <link>https://dysonx.com/signals/from-signals-to-structure-how-memory-architecture-drives-language-emergence-in-llm-agents/</link>
+      <guid>https://dysonx.com/signals/from-signals-to-structure-how-memory-architecture-drives-language-emergence-in-llm-agents/</guid>
       <description>arXiv:2607.00233v1 Announce Type: new Abstract: How do two agents invent a shared language from scratch? In a Lewis signaling game, a sender and receiver must coordinate on a code using only their interaction history. We study five memor...</description>
       <source url="https://arxiv.org/abs/2607.00233">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Managed Autonomy at Runtime: Gear-Based Safety and Governance for Single- and Multi-Agent Cyber-Physical Systems</title>
-      <link>https://media.energizeos.com/signals/managed-autonomy-at-runtime-gear-based-safety-and-governance-for-single-and-multi-agent-cyber-physical-systems/</link>
-      <guid>https://media.energizeos.com/signals/managed-autonomy-at-runtime-gear-based-safety-and-governance-for-single-and-multi-agent-cyber-physical-systems/</guid>
+      <link>https://dysonx.com/signals/managed-autonomy-at-runtime-gear-based-safety-and-governance-for-single-and-multi-agent-cyber-physical-systems/</link>
+      <guid>https://dysonx.com/signals/managed-autonomy-at-runtime-gear-based-safety-and-governance-for-single-and-multi-agent-cyber-physical-systems/</guid>
       <description>arXiv:2607.00334v1 Announce Type: new Abstract: Autonomous agents, whether LLM-driven software agents or robotic physical agents, face a common class of failure modes when operating without continuous human oversight: safety violations f...</description>
       <source url="https://arxiv.org/abs/2607.00334">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Mnemosyne: Agentic Transaction Processing for Validating and Repairing AI-generated Workflows</title>
-      <link>https://media.energizeos.com/signals/mnemosyne-agentic-transaction-processing-for-validating-and-repairing-ai-generated-workflows/</link>
-      <guid>https://media.energizeos.com/signals/mnemosyne-agentic-transaction-processing-for-validating-and-repairing-ai-generated-workflows/</guid>
+      <link>https://dysonx.com/signals/mnemosyne-agentic-transaction-processing-for-validating-and-repairing-ai-generated-workflows/</link>
+      <guid>https://dysonx.com/signals/mnemosyne-agentic-transaction-processing-for-validating-and-repairing-ai-generated-workflows/</guid>
       <description>arXiv:2607.00269v1 Announce Type: new Abstract: LLMs, solvers, and agent teams increasingly generate workflow actions, repairs, and plans, but a generated action may be syntactically valid yet stale, infeasible, conflicting, or destructi...</description>
       <source url="https://arxiv.org/abs/2607.00269">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Personalization as Inverse Planning: Learning Latent Design Intents for Agentic Slide Generation via Structural Denoising</title>
-      <link>https://media.energizeos.com/signals/personalization-as-inverse-planning-learning-latent-design-intents-for-agentic-slide-generation-via-structural-denoising/</link>
-      <guid>https://media.energizeos.com/signals/personalization-as-inverse-planning-learning-latent-design-intents-for-agentic-slide-generation-via-structural-denoising/</guid>
+      <link>https://dysonx.com/signals/personalization-as-inverse-planning-learning-latent-design-intents-for-agentic-slide-generation-via-structural-denoising/</link>
+      <guid>https://dysonx.com/signals/personalization-as-inverse-planning-learning-latent-design-intents-for-agentic-slide-generation-via-structural-denoising/</guid>
       <description>arXiv:2607.00407v1 Announce Type: new Abstract: Slide design requires personalizing both deck themes and page layouts. Yet, current AI agent-based methods struggle with fine-grained, page-level design. Solely relying on prespecified temp...</description>
       <source url="https://arxiv.org/abs/2607.00407">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>PHREEQC-MCQ-200: A Diagnostic Benchmark for Tool-Augmented Scientific Simulator Agents</title>
-      <link>https://media.energizeos.com/signals/phreeqc-mcq-200-a-diagnostic-benchmark-for-tool-augmented-scientific-simulator-agents/</link>
-      <guid>https://media.energizeos.com/signals/phreeqc-mcq-200-a-diagnostic-benchmark-for-tool-augmented-scientific-simulator-agents/</guid>
+      <link>https://dysonx.com/signals/phreeqc-mcq-200-a-diagnostic-benchmark-for-tool-augmented-scientific-simulator-agents/</link>
+      <guid>https://dysonx.com/signals/phreeqc-mcq-200-a-diagnostic-benchmark-for-tool-augmented-scientific-simulator-agents/</guid>
       <description>arXiv:2607.00436v1 Announce Type: new Abstract: Large language model agents are increasingly connected to scientific software, yet it remains unclear when tool access makes scientific computation more reliable rather than merely more com...</description>
       <source url="https://arxiv.org/abs/2607.00436">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Urban Deceleration Behavior Modes Under Scene Context: An Early-Kinematic Classifier from Argoverse 2 Multi-Agent Trajectories</title>
-      <link>https://media.energizeos.com/signals/urban-deceleration-behavior-modes-under-scene-context-an-early-kinematic-classifier-from-argoverse-2-multi-agent-trajectories/</link>
-      <guid>https://media.energizeos.com/signals/urban-deceleration-behavior-modes-under-scene-context-an-early-kinematic-classifier-from-argoverse-2-multi-agent-trajectories/</guid>
+      <link>https://dysonx.com/signals/urban-deceleration-behavior-modes-under-scene-context-an-early-kinematic-classifier-from-argoverse-2-multi-agent-trajectories/</link>
+      <guid>https://dysonx.com/signals/urban-deceleration-behavior-modes-under-scene-context-an-early-kinematic-classifier-from-argoverse-2-multi-agent-trajectories/</guid>
       <description>arXiv:2607.00027v1 Announce Type: new Abstract: Urban deceleration is one of the most empirically studied yet least taxonomically organized behaviors in car-following research. Recent perception-equipped autonomous-vehicle datasets enabl...</description>
       <source url="https://arxiv.org/abs/2607.00027">arXiv cs.RO RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>AgentBound: Verifiable Behavioral Governance for Autonomous AI Agents</title>
-      <link>https://media.energizeos.com/signals/agentbound-verifiable-behavioral-governance-for-autonomous-ai-agents/</link>
-      <guid>https://media.energizeos.com/signals/agentbound-verifiable-behavioral-governance-for-autonomous-ai-agents/</guid>
+      <link>https://dysonx.com/signals/agentbound-verifiable-behavioral-governance-for-autonomous-ai-agents/</link>
+      <guid>https://dysonx.com/signals/agentbound-verifiable-behavioral-governance-for-autonomous-ai-agents/</guid>
       <description>arXiv:2606.30970v1 Announce Type: new Abstract: Autonomous AI agents increasingly perform consequential actions on behalf of human principals, including financial transactions, external communications, and enterprise workflows. Existing...</description>
       <source url="https://arxiv.org/abs/2606.30970">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>AgRefactor: Self-Evolving Agentic Workflow for HLS Compatibility and Performance</title>
-      <link>https://media.energizeos.com/signals/agrefactor-self-evolving-agentic-workflow-for-hls-compatibility-and-performance/</link>
-      <guid>https://media.energizeos.com/signals/agrefactor-self-evolving-agentic-workflow-for-hls-compatibility-and-performance/</guid>
+      <link>https://dysonx.com/signals/agrefactor-self-evolving-agentic-workflow-for-hls-compatibility-and-performance/</link>
+      <guid>https://dysonx.com/signals/agrefactor-self-evolving-agentic-workflow-for-hls-compatibility-and-performance/</guid>
       <description>arXiv:2606.30949v1 Announce Type: new Abstract: High-Level Synthesis (HLS) provides a fast path from concepts to silicon, but converting real-world software into synthesizable HLS code remains challenging due to restrictive language supp...</description>
       <source url="https://arxiv.org/abs/2606.30949">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Auditing Generalization in AI-Generated Video Detection: A Six-Control Protocol and the VidAudit Toolkit</title>
-      <link>https://media.energizeos.com/signals/auditing-generalization-in-ai-generated-video-detection-a-six-control-protocol-and-the-vidaudit-toolkit/</link>
-      <guid>https://media.energizeos.com/signals/auditing-generalization-in-ai-generated-video-detection-a-six-control-protocol-and-the-vidaudit-toolkit/</guid>
+      <link>https://dysonx.com/signals/auditing-generalization-in-ai-generated-video-detection-a-six-control-protocol-and-the-vidaudit-toolkit/</link>
+      <guid>https://dysonx.com/signals/auditing-generalization-in-ai-generated-video-detection-a-six-control-protocol-and-the-vidaudit-toolkit/</guid>
       <description>arXiv:2606.31004v1 Announce Type: new Abstract: AI-generated video detection benchmarks such as GenVidBench and AIGVDBench are the de facto leaderboards, yet most evaluation protocols leave uncontrolled confounds that can inflate reporte...</description>
       <source url="https://arxiv.org/abs/2606.31004">arXiv cs.CV RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Contrastive Reflection for Iterative Prompt Optimization</title>
-      <link>https://media.energizeos.com/signals/contrastive-reflection-for-iterative-prompt-optimization/</link>
-      <guid>https://media.energizeos.com/signals/contrastive-reflection-for-iterative-prompt-optimization/</guid>
+      <link>https://dysonx.com/signals/contrastive-reflection-for-iterative-prompt-optimization/</link>
+      <guid>https://dysonx.com/signals/contrastive-reflection-for-iterative-prompt-optimization/</guid>
       <description>arXiv:2606.30840v1 Announce Type: new Abstract: LLM agents are becoming central to information retrieval: they issue retrieval queries, synthesize answers, and increasingly serve as judges for IR evaluation. Improving the prompts that co...</description>
       <source url="https://arxiv.org/abs/2606.30840">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>DSIP: A Dynamic Coordination Planner for Signal-Free Intersections using Diffusion-Model-Based Multi-Agent Motion Planning</title>
-      <link>https://media.energizeos.com/signals/dsip-a-dynamic-coordination-planner-for-signal-free-intersections-using-diffusion-model-based-multi-agent-motion-planning/</link>
-      <guid>https://media.energizeos.com/signals/dsip-a-dynamic-coordination-planner-for-signal-free-intersections-using-diffusion-model-based-multi-agent-motion-planning/</guid>
+      <link>https://dysonx.com/signals/dsip-a-dynamic-coordination-planner-for-signal-free-intersections-using-diffusion-model-based-multi-agent-motion-planning/</link>
+      <guid>https://dysonx.com/signals/dsip-a-dynamic-coordination-planner-for-signal-free-intersections-using-diffusion-model-based-multi-agent-motion-planning/</guid>
       <description>arXiv:2606.30694v1 Announce Type: new Abstract: Traffic signal control at urban intersections inherently introduces stop-and-go behavior, resulting in increased delays and reduced traffic efficiency, especially under high traffic demand....</description>
       <source url="https://arxiv.org/abs/2606.30694">arXiv cs.RO RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>HyPOLE: Hyperproperty-Guided Multi-Agent Reinforcement Learning under Partial Observation</title>
-      <link>https://media.energizeos.com/signals/hypole-hyperproperty-guided-multi-agent-reinforcement-learning-under-partial-observation/</link>
-      <guid>https://media.energizeos.com/signals/hypole-hyperproperty-guided-multi-agent-reinforcement-learning-under-partial-observation/</guid>
+      <link>https://dysonx.com/signals/hypole-hyperproperty-guided-multi-agent-reinforcement-learning-under-partial-observation/</link>
+      <guid>https://dysonx.com/signals/hypole-hyperproperty-guided-multi-agent-reinforcement-learning-under-partial-observation/</guid>
       <description>arXiv:2606.30966v1 Announce Type: new Abstract: Formal specification is a powerful tool to guide the learning process and provides significant advantages over reward shaping: (1) mathematical rigor; (2) expressiveness to specify objectiv...</description>
       <source url="https://arxiv.org/abs/2606.30966">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>OpenLife: Toward Open-World Artificial Life with Autonomous LLM Agents</title>
-      <link>https://media.energizeos.com/signals/openlife-toward-open-world-artificial-life-with-autonomous-llm-agents/</link>
-      <guid>https://media.energizeos.com/signals/openlife-toward-open-world-artificial-life-with-autonomous-llm-agents/</guid>
+      <link>https://dysonx.com/signals/openlife-toward-open-world-artificial-life-with-autonomous-llm-agents/</link>
+      <guid>https://dysonx.com/signals/openlife-toward-open-world-artificial-life-with-autonomous-llm-agents/</guid>
       <description>arXiv:2606.31046v1 Announce Type: new Abstract: Artificial life has explored life-like behavior on many computational substrates, but mostly in researcher-designed closed worlds. We argue that large language model (LLM) agents, with pers...</description>
       <source url="https://arxiv.org/abs/2606.31046">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>RoPoLL: Robust Panel of LLM Judges</title>
-      <link>https://media.energizeos.com/signals/ropoll-robust-panel-of-llm-judges/</link>
-      <guid>https://media.energizeos.com/signals/ropoll-robust-panel-of-llm-judges/</guid>
+      <link>https://dysonx.com/signals/ropoll-robust-panel-of-llm-judges/</link>
+      <guid>https://dysonx.com/signals/ropoll-robust-panel-of-llm-judges/</guid>
       <description>arXiv:2606.30931v1 Announce Type: new Abstract: The LLM Jury, a Panel of LLM Evaluators (PoLL) reporting consensus scores, has become a practical alternative to single-judge LLM evaluation, yet its statistical behavior remains poorly und...</description>
       <source url="https://arxiv.org/abs/2606.30931">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Sampling-Based Coordination-Informed Multi-Objective Multi-Robot Reinforcement Learning</title>
-      <link>https://media.energizeos.com/signals/sampling-based-coordination-informed-multi-objective-multi-robot-reinforcement-learning/</link>
-      <guid>https://media.energizeos.com/signals/sampling-based-coordination-informed-multi-objective-multi-robot-reinforcement-learning/</guid>
+      <link>https://dysonx.com/signals/sampling-based-coordination-informed-multi-objective-multi-robot-reinforcement-learning/</link>
+      <guid>https://dysonx.com/signals/sampling-based-coordination-informed-multi-objective-multi-robot-reinforcement-learning/</guid>
       <description>arXiv:2606.30893v1 Announce Type: new Abstract: Multi-robot systems must simultaneously optimize competing objectives while maintaining coordinated behavior. Existing multi-agent reinforcement learning approaches often rely on fixed or c...</description>
       <source url="https://arxiv.org/abs/2606.30893">arXiv cs.RO RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>When Regulation Has Memory: Hysteresis and Control Burden in Artificial Agency</title>
-      <link>https://media.energizeos.com/signals/when-regulation-has-memory-hysteresis-and-control-burden-in-artificial-agency/</link>
-      <guid>https://media.energizeos.com/signals/when-regulation-has-memory-hysteresis-and-control-burden-in-artificial-agency/</guid>
+      <link>https://dysonx.com/signals/when-regulation-has-memory-hysteresis-and-control-burden-in-artificial-agency/</link>
+      <guid>https://dysonx.com/signals/when-regulation-has-memory-hysteresis-and-control-burden-in-artificial-agency/</guid>
       <description>arXiv:2606.30975v1 Announce Type: new Abstract: Adaptive agents are usually judged by what they do, but an agent can appear stable while the internal effort required to keep it stable is increasing. This hidden regulatory burden matters...</description>
       <source url="https://arxiv.org/abs/2606.30975">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Why Solve It Twice? Hierarchical Accumulation of Skills for Transfer-Efficient ML Engineering</title>
-      <link>https://media.energizeos.com/signals/why-solve-it-twice-hierarchical-accumulation-of-skills-for-transfer-efficient-ml-engineering/</link>
-      <guid>https://media.energizeos.com/signals/why-solve-it-twice-hierarchical-accumulation-of-skills-for-transfer-efficient-ml-engineering/</guid>
+      <link>https://dysonx.com/signals/why-solve-it-twice-hierarchical-accumulation-of-skills-for-transfer-efficient-ml-engineering/</link>
+      <guid>https://dysonx.com/signals/why-solve-it-twice-hierarchical-accumulation-of-skills-for-transfer-efficient-ml-engineering/</guid>
       <description>arXiv:2606.30911v1 Announce Type: new Abstract: ML engineering agents waste compute rediscovering known techniques because every competition is a cold start. We present HASTE, a hierarchical multi-agent system that organizes cross-compet...</description>
       <source url="https://arxiv.org/abs/2606.30911">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>EmbodimentSemantic: A Spatial Scene-Graph Dataset and Benchmark for Vision-Language Models on Embodied Manipulation Trajectories</title>
-      <link>https://media.energizeos.com/signals/embodimentsemantic-a-spatial-scene-graph-dataset-and-benchmark-for-vision-language-models-on-embodied-manipulation-trajectories/</link>
-      <guid>https://media.energizeos.com/signals/embodimentsemantic-a-spatial-scene-graph-dataset-and-benchmark-for-vision-language-models-on-embodied-manipulation-trajectories/</guid>
+      <link>https://dysonx.com/signals/embodimentsemantic-a-spatial-scene-graph-dataset-and-benchmark-for-vision-language-models-on-embodied-manipulation-trajectories/</link>
+      <guid>https://dysonx.com/signals/embodimentsemantic-a-spatial-scene-graph-dataset-and-benchmark-for-vision-language-models-on-embodied-manipulation-trajectories/</guid>
       <description>arXiv:2607.00020v1 Announce Type: new Abstract: Spatial grounding remains a key limitation of vision-language-action (VLA) systems for robotic manipulation. While current models can recognize objects and follow language instructions, the...</description>
       <source url="https://arxiv.org/abs/2607.00020">arXiv cs.RO RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Beyond Compilation: Evaluating Faithful Natural-Language-to-Lean Statement Formalization</title>
-      <link>https://media.energizeos.com/signals/beyond-compilation-evaluating-faithful-natural-language-to-lean-statement-formalization/</link>
-      <guid>https://media.energizeos.com/signals/beyond-compilation-evaluating-faithful-natural-language-to-lean-statement-formalization/</guid>
+      <link>https://dysonx.com/signals/beyond-compilation-evaluating-faithful-natural-language-to-lean-statement-formalization/</link>
+      <guid>https://dysonx.com/signals/beyond-compilation-evaluating-faithful-natural-language-to-lean-statement-formalization/</guid>
       <description>arXiv:2606.31002v1 Announce Type: new Abstract: Theorem-proving benchmarks evaluate proof search against fixed formal statements, but natural-language-to-Lean formalization must generate the formal statement itself. In this setting, comp...</description>
       <source url="https://arxiv.org/abs/2606.31002">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>Labimus: A Simulation and Benchmark for Humanoid Dexterous Manipulation in Chemical Laboratory</title>
-      <link>https://media.energizeos.com/signals/labimus-a-simulation-and-benchmark-for-humanoid-dexterous-manipulation-in-chemical-laboratory/</link>
-      <guid>https://media.energizeos.com/signals/labimus-a-simulation-and-benchmark-for-humanoid-dexterous-manipulation-in-chemical-laboratory/</guid>
+      <link>https://dysonx.com/signals/labimus-a-simulation-and-benchmark-for-humanoid-dexterous-manipulation-in-chemical-laboratory/</link>
+      <guid>https://dysonx.com/signals/labimus-a-simulation-and-benchmark-for-humanoid-dexterous-manipulation-in-chemical-laboratory/</guid>
       <description>arXiv:2606.31037v1 Announce Type: new Abstract: Laboratory automation has made remarkable progress through robotic platforms and AI-driven scientific reasoning. However, many laboratory operations (e.g., solid--solid transfer) remain inh...</description>
       <source url="https://arxiv.org/abs/2606.31037">arXiv cs.RO RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
     </item>
     <item>
       <title>MultiUAV-Plat: An LLM-Oriented Platform, Benchmark and Framework for Multi-UAV Collaborative Task Planning</title>
-      <link>https://media.energizeos.com/signals/multiuav-plat-an-llm-oriented-platform-benchmark-and-framework-for-multi-uav-collaborative-task-planning/</link>
-      <guid>https://media.energizeos.com/signals/multiuav-plat-an-llm-oriented-platform-benchmark-and-framework-for-multi-uav-collaborative-task-planning/</guid>
+      <link>https://dysonx.com/signals/multiuav-plat-an-llm-oriented-platform-benchmark-and-framework-for-multi-uav-collaborative-task-planning/</link>
+      <guid>https://dysonx.com/signals/multiuav-plat-an-llm-oriented-platform-benchmark-and-framework-for-multi-uav-collaborative-task-planning/</guid>
       <description>arXiv:2606.31073v1 Announce Type: new Abstract: Large language models (LLMs) provide a promising interface for high-level robotic task planning, but their use in multi-UAV collaboration remains difficult to evaluate systematically. Exist...</description>
       <source url="https://arxiv.org/abs/2606.31073">arXiv cs.AI RSS</source>
       <pubDate>2026-07-02T19:07:48Z</pubDate>
