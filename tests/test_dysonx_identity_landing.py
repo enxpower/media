@@ -93,11 +93,11 @@ class DysonXIdentityLandingTests(unittest.TestCase):
         for phrase in forbidden_phrases:
             self.assertNotIn(phrase, html)
 
-    def test_robots_no_longer_points_to_removed_legacy_sitemap(self):
+    def test_robots_points_to_public_signals_sitemap(self):
         text = read_lower(ROBOTS)
 
-        self.assertNotIn("sitemap.xml", text)
-        self.assertNotIn("energizeos", text)
+        self.assertIn("sitemap: https://media.energizeos.com/sitemap.xml", text)
+        self.assertNotIn("posts/", text)
 
 
 if __name__ == "__main__":

@@ -22,7 +22,6 @@ FORBIDDEN_HREF_TOKENS = (
     "." "test",
     "source.dysonx." "invalid",
     "source.dysonx." "test",
-    "media." "energizeos.com",
     "https://dysonx." "ai",
     "tmp/",
     "javascript:",
@@ -33,7 +32,6 @@ REMOVED_PUBLIC_ARTIFACTS = (
     "posts/page2.html",
     "posts/page3.html",
     "posts/page4.html",
-    "sitemap.xml",
 )
 
 DELETED_LEGACY_SCRIPT_TOKENS = (
@@ -234,8 +232,8 @@ def check_deleted_artifact_references(html: str) -> None:
     for artifact in REMOVED_PUBLIC_ARTIFACTS:
         if artifact.lower() in lower_html:
             fail(f"index.html references deleted artifact: {artifact}")
-    if "sitemap.xml" in lower_robots:
-        fail("robots.txt references deleted sitemap.xml")
+    if "sitemap.xml" in lower_robots and "https://media.energizeos.com/sitemap.xml" not in lower_robots:
+        fail("robots.txt references an unexpected sitemap.xml")
 
 
 def check_active_workflows() -> None:

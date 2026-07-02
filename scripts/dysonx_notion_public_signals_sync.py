@@ -16,7 +16,7 @@ import urllib.error
 import urllib.request
 from html.parser import HTMLParser
 from typing import Any, Callable
-from urllib.parse import urlsplit
+from urllib.parse import urljoin, urlsplit
 
 
 SYNC_VERSION = "notion_public_signals_sync_v1"
@@ -24,6 +24,7 @@ TOKEN_ENV = "NOTION_TOKEN"
 DATABASE_ID_ENV = "NOTION_SIGNAL_INTAKE_DATABASE_ID"
 NOTION_VERSION = "2022-06-28"
 DEFAULT_OUTPUT_ROOT = pathlib.Path(".")
+PUBLIC_SEO_BASE_URL = "https://media.energizeos.com"
 PUBLIC_SAFE_SOURCE_NOTE = "Source attribution retained in Notion launch metadata; external source URL omitted for this V1 public sample."
 DEFAULT_MAX_PUBLIC_SIGNALS = 30
 PUBLIC_OUTPUT_MIN_QUALITY = 80
@@ -138,7 +139,6 @@ FORBIDDEN_PUBLIC_TERMS = (
     "source.dysonx." "invalid",
     "source.dysonx." "test",
     "tmp/" "production_publish_pack",
-    "media." "energizeos.com",
     "https://dysonx." "ai",
 )
 
@@ -625,13 +625,30 @@ def public_signal_sort_key(record: dict[str, Any]) -> tuple[int, int, float, int
     return (priority, relevance, -quality, published_rank, ready_rank, -timestamp_rank(record.get("timestamp")), str(record.get("title") or "").lower())
 
 
-def render_layout(title: str, body: str) -> str:
+def public_absolute_url(path: str) -> str:
+    return urljoin(f"{PUBLIC_SEO_BASE_URL}/", path.lstrip("/"))
+
+
+def seo_description(record: dict[str, Any]) -> str:
+    summary = normalize_text(record.get("summary"))
+    if len(summary) <= 155:
+        return summary
+    return summary[:152].rstrip() + "..."
+
+
+def json_ld_script(data: dict[str, Any]) -> str:
+    payload = json.dumps(data, ensure_ascii=False, sort_keys=True)
+    return f'<script type="application/ld+json">{html.escape(payload, quote=False)}</script>'
+
+
+def render_layout(title: str, body: str, head_extra: str = "") -> str:
     return f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{escape(title)} | DysonX Public Signal</title>
+{head_extra}
   <style>
     body {{ margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #17202a; line-height: 1.6; background: #ffffff; }}
     main {{ max-width: 860px; margin: 0 auto; padding: 32px 20px 56px; }}
@@ -652,6 +669,40 @@ def render_layout(title: str, body: str) -> str:
 </body>
 </html>
 """
+
+
+def signal_seo_head(record: dict[str, Any], refreshed_at: str) -> str:
+    title = f"{normalize_text(record['title'])} | DysonX Public Signal"
+    description = seo_description(record)
+    canonical = public_absolute_url(f"/signals/{record['slug']}/")
+    json_ld = {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": normalize_text(record["title"]),
+        "description": description,
+        "url": canonical,
+        "dateModified": refreshed_at,
+        "isAccessibleForFree": True,
+        "publisher": {
+            "@type": "Organization",
+            "name": "EnergizeOS Media",
+            "url": PUBLIC_SEO_BASE_URL,
+        },
+        "mainEntityOfPage": canonical,
+    }
+    if record.get("source_url"):
+        json_ld["citation"] = normalize_text(record["source_url"])
+    return f"""
+  <meta name="description" content="{escape(description, quote=True)}">
+  <link rel="canonical" href="{escape(canonical, quote=True)}">
+  <meta property="og:title" content="{escape(title, quote=True)}">
+  <meta property="og:description" content="{escape(description, quote=True)}">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="{escape(canonical, quote=True)}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{escape(title, quote=True)}">
+  <meta name="twitter:description" content="{escape(description, quote=True)}">
+  {json_ld_script(json_ld)}"""
 
 
 def render_signal_page(record: dict[str, Any], refreshed_at: str) -> str:
@@ -683,7 +734,19 @@ def render_signal_page(record: dict[str, Any], refreshed_at: str) -> str:
 <p><a href="/">Home</a> · <a href="/signals/">Back to Public Signals</a></p>
 <p class="muted">Content refreshed at {escape(refreshed_at)}. OpenAI was not called. Source pages were not scraped.</p>
 """
-    return render_layout(record["title"], body)
+    return render_layout(record["title"], body, signal_seo_head(record, refreshed_at))
+
+
+def organization_json_ld() -> str:
+    return json_ld_script(
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "EnergizeOS Media",
+            "url": PUBLIC_SEO_BASE_URL,
+            "publishingPrinciples": public_absolute_url("/signals/"),
+        }
+    )
 
 
 def render_index(records: list[dict[str, Any]], blocked_count: int, refreshed_at: str) -> str:
@@ -707,6 +770,18 @@ def render_index(records: list[dict[str, Any]], blocked_count: int, refreshed_at
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DysonX Public Signals</title>
+  <meta name="description" content="DysonX Public Signals track source-attributed AI and AGI intelligence from the Notion-managed content layer.">
+  <link rel="canonical" href="{escape(public_absolute_url('/signals/'), quote=True)}">
+  <link rel="alternate" type="application/rss+xml" title="DysonX Public Signals RSS" href="{escape(public_absolute_url('/rss.xml'), quote=True)}">
+  <link rel="alternate" type="application/feed+json" title="DysonX Public Signals JSON Feed" href="{escape(public_absolute_url('/feed.json'), quote=True)}">
+  <meta property="og:title" content="DysonX Public Signals">
+  <meta property="og:description" content="Source-attributed public Signals tracking AI and AGI intelligence.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{escape(public_absolute_url('/signals/'), quote=True)}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="DysonX Public Signals">
+  <meta name="twitter:description" content="Source-attributed public Signals tracking AI and AGI intelligence.">
+  {organization_json_ld()}
   <style>
     body {{ margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #17202a; line-height: 1.55; }}
     main {{ max-width: 1040px; margin: 0 auto; padding: 28px 20px 56px; }}
@@ -821,6 +896,86 @@ def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_
     }
 
 
+def stable_lastmod(refreshed_at: str) -> str:
+    text = normalize_text(refreshed_at)
+    return text[:10] if len(text) >= 10 else text
+
+
+def render_robots() -> str:
+    return f"""User-agent: *
+Allow: /
+Sitemap: {PUBLIC_SEO_BASE_URL}/sitemap.xml
+"""
+
+
+def render_sitemap(records: list[dict[str, Any]], refreshed_at: str) -> str:
+    lastmod = stable_lastmod(refreshed_at)
+    urls = ["/", "/signals/", *[f"/signals/{record['slug']}/" for record in records]]
+    items = "\n".join(
+        f"""  <url>
+    <loc>{escape(public_absolute_url(path))}</loc>
+    <lastmod>{escape(lastmod)}</lastmod>
+  </url>"""
+        for path in urls
+    )
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{items}
+</urlset>
+"""
+
+
+def render_rss(records: list[dict[str, Any]], refreshed_at: str) -> str:
+    items = []
+    for record in records[:DEFAULT_MAX_PUBLIC_SIGNALS]:
+        public_url = public_absolute_url(f"/signals/{record['slug']}/")
+        source = record.get("source_url") or public_url
+        items.append(
+            f"""    <item>
+      <title>{escape(record['title'])}</title>
+      <link>{escape(public_url)}</link>
+      <guid>{escape(public_url)}</guid>
+      <description>{escape(record.get('summary', ''))}</description>
+      <source url="{escape(source, quote=True)}">{escape(record.get('source_label') or 'Source')}</source>
+      <pubDate>{escape(refreshed_at)}</pubDate>
+    </item>"""
+        )
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>DysonX Public Signals</title>
+    <link>{PUBLIC_SEO_BASE_URL}/signals/</link>
+    <description>Source-attributed public Signals tracking AI and AGI intelligence.</description>
+{chr(10).join(items)}
+  </channel>
+</rss>
+"""
+
+
+def render_json_feed(records: list[dict[str, Any]], refreshed_at: str) -> str:
+    feed = {
+        "version": "https://jsonfeed.org/version/1.1",
+        "title": "DysonX Public Signals",
+        "home_page_url": public_absolute_url("/signals/"),
+        "feed_url": public_absolute_url("/feed.json"),
+        "description": "Source-attributed public Signals tracking AI and AGI intelligence.",
+        "items": [
+            {
+                "id": public_absolute_url(f"/signals/{record['slug']}/"),
+                "url": public_absolute_url(f"/signals/{record['slug']}/"),
+                "title": normalize_text(record["title"]),
+                "summary": normalize_text(record.get("summary", "")),
+                "content_text": normalize_text(record.get("summary", "")),
+                "date_modified": refreshed_at,
+                "external_url": normalize_text(record.get("source_url", "")),
+                "authors": [{"name": normalize_text(record.get("source_label") or "Source")}],
+            }
+            for record in records[:DEFAULT_MAX_PUBLIC_SIGNALS]
+        ],
+    }
+    return json.dumps(feed, indent=2, sort_keys=True) + "\n"
+
+
 def manifest_material_view(manifest: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in manifest.items() if key != "content_refreshed_at"}
 
@@ -899,6 +1054,15 @@ def sync_records(
     manifest_text = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     assert_public_safe(manifest_text, "public launch manifest")
     (signals_root / "public_launch_manifest.json").write_text(manifest_text, encoding="utf-8")
+    seo_outputs = {
+        "robots.txt": render_robots(),
+        "sitemap.xml": render_sitemap(merged, refreshed_at),
+        "rss.xml": render_rss(merged, refreshed_at),
+        "feed.json": render_json_feed(merged, refreshed_at),
+    }
+    for relative_path, text in seo_outputs.items():
+        assert_public_safe(text, relative_path)
+        (output_root / relative_path).write_text(text, encoding="utf-8")
     if output_report:
         output_report.parent.mkdir(parents=True, exist_ok=True)
         report_text = json.dumps(report, indent=2, sort_keys=True) + "\n"

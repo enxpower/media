@@ -14,7 +14,14 @@ from urllib.parse import urlsplit
 
 
 GATE_VERSION = "dysonx_public_signals_auto_merge_gate_v1"
-ALLOWED_STATIC_FILES = {"signals/index.html", "signals/public_launch_manifest.json"}
+ALLOWED_STATIC_FILES = {
+    "feed.json",
+    "robots.txt",
+    "rss.xml",
+    "sitemap.xml",
+    "signals/index.html",
+    "signals/public_launch_manifest.json",
+}
 MIN_PUBLIC_QUALITY = 80
 ALLOWED_SOURCE_PRIORITIES = {"High", "Critical"}
 ALLOWED_AGI_RELEVANCE = {"Medium", "High", "Critical"}
@@ -121,7 +128,6 @@ VLA_CONTEXT_TERMS = (
 )
 FORBIDDEN_TERMS = (
     "https://dysonx." "ai",
-    "media." "energizeos.com",
     "source.dysonx." "invalid",
     "." "invalid",
     "." "test/",
