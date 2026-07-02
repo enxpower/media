@@ -129,6 +129,14 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
             "generated_from_public_signal_manifest": True,
             "public_launch_manifest_path": "signals/public_launch_manifest.json",
             "public_launch_manifest_material_signature": "test-material",
+            "forbidden_content_classes": [
+                "raw_body",
+                "source_body",
+                "verbatim_article",
+                "unsafe_script",
+                "unsafe_external_resource",
+                "off_topic",
+            ],
             "artifacts": [build_artifact_entry(path, "test-material") for path in paths],
         }
 
@@ -380,6 +388,51 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
         data["artifacts"][0]["path"] = "signals/index.html"
         data["artifacts"][0]["artifact_class"] = "rss_xml"
         self.write_artifact_manifest(data=data)
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_artifact_manifest_policy_vocabulary_raw_body_passes(self):
+        self.write_changed_files(["signals/public_artifact_manifest.json"])
+        data = self.artifact_manifest()
+        data["forbidden_content_classes"] = ["raw_body", "source_body", "verbatim_article"]
+        self.write_artifact_manifest(data=data)
+        self.assertEqual(self.run_gate(), 0)
+
+    def test_artifact_manifest_raw_body_in_path_fails(self):
+        self.write_changed_files(["signals/public_artifact_manifest.json"])
+        data = self.artifact_manifest()
+        data["artifacts"][0]["path"] = "signals/raw_body/index.html"
+        self.write_artifact_manifest(data=data)
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_artifact_manifest_raw_body_in_slug_fails(self):
+        self.write_changed_files(["signals/public_artifact_manifest.json"])
+        data = self.artifact_manifest()
+        data["artifacts"][-1]["slug"] = "raw_body"
+        self.write_artifact_manifest(data=data)
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_artifact_manifest_raw_body_in_material_signature_fails(self):
+        self.write_changed_files(["signals/public_artifact_manifest.json"])
+        data = self.artifact_manifest()
+        data["artifacts"][0]["material_signature"] = "raw_body"
+        self.write_artifact_manifest(data=data)
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_artifact_manifest_raw_body_in_unexpected_free_text_fails(self):
+        self.write_changed_files(["signals/public_artifact_manifest.json"])
+        data = self.artifact_manifest()
+        data["unexpected_note"] = "raw_body"
+        self.write_artifact_manifest(data=data)
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_public_launch_manifest_raw_body_in_summary_still_fails(self):
+        self.write_manifest(summary="raw_body")
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_public_launch_manifest_raw_body_in_risk_notes_still_fails(self):
+        data = self.manifest()
+        data["launched"][0]["risk_notes"] = "raw source body"
+        self.manifest_path.write_text(json.dumps(data), encoding="utf-8")
         self.assertNotEqual(self.run_gate(), 0)
 
     def test_sitemap_with_blocked_signal_url_fails(self):

@@ -60,6 +60,17 @@ RAW_BODY_MARKERS = (
     "verbatim source",
 )
 INLINE_EVENT_PATTERN = re.compile(r"\son[a-z]+\s*=", re.IGNORECASE)
+ARTIFACT_MANIFEST_ALLOWED_TOP_LEVEL_RAW_VOCABULARY_FIELDS = {"forbidden_content_classes"}
+ARTIFACT_MANIFEST_ALLOWED_ENTRY_FIELDS = {
+    "allowed_embeds",
+    "artifact_class",
+    "contract_version",
+    "generated_from_public_signal_manifest",
+    "material_signature",
+    "path",
+    "policy_version",
+    "slug",
+}
 
 
 class AutoMergeGateError(RuntimeError):
@@ -117,19 +128,41 @@ def load_changed_files(path: str | None) -> list[str]:
     return [normalize_public_path(item) for item in data]
 
 
-def fail_if_forbidden_text(text: str, label: str) -> None:
+def fail_if_forbidden_terms(text: str, label: str) -> None:
     lowered = text.lower()
     for term in FORBIDDEN_TERMS:
         if term in lowered:
             raise AutoMergeGateError(f"{label} contains forbidden term: {term}")
+
+
+def fail_if_raw_body_markers(text: str, label: str) -> None:
+    lowered = text.lower()
     for marker in RAW_BODY_MARKERS:
         if marker in lowered:
             raise AutoMergeGateError(f"{label} contains raw/source body marker: {marker}")
 
 
-def load_json_object(path: pathlib.Path, label: str) -> dict[str, Any]:
+def fail_if_forbidden_text(text: str, label: str) -> None:
+    fail_if_forbidden_terms(text, label)
+    fail_if_raw_body_markers(text, label)
+
+
+def fail_if_raw_body_markers_in_values(value: Any, label: str) -> None:
+    if isinstance(value, str):
+        fail_if_raw_body_markers(value, label)
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            fail_if_raw_body_markers_in_values(item, f"{label}[{index}]")
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            fail_if_raw_body_markers_in_values(item, f"{label}.{key}")
+
+
+def load_json_object(path: pathlib.Path, label: str, *, scan_raw_body: bool = True) -> dict[str, Any]:
     text = path.read_text(encoding="utf-8")
-    fail_if_forbidden_text(text, label)
+    fail_if_forbidden_terms(text, label)
+    if scan_raw_body:
+        fail_if_raw_body_markers(text, label)
     data = json.loads(text)
     if not isinstance(data, dict):
         raise AutoMergeGateError(f"{label} must be a JSON object")
@@ -307,6 +340,10 @@ def launched_by_slug(manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return result
 
 
+def validate_public_launch_manifest_raw_body_fields(manifest: dict[str, Any]) -> None:
+    fail_if_raw_body_markers_in_values(manifest.get("launched", []), "public_launch_manifest.launched")
+
+
 def changed_signal_slugs(changed_files: list[str], manifest: dict[str, Any]) -> set[str]:
     slugs = {slug for path in changed_files if (slug := signal_slug_from_path(path))}
     if not changed_files or not slugs:
@@ -367,13 +404,33 @@ def load_artifact_manifest(root: pathlib.Path) -> dict[str, Any]:
     path = root / "signals" / "public_artifact_manifest.json"
     if not path.exists():
         raise AutoMergeGateError("signals/public_artifact_manifest.json is missing")
-    data = load_json_object(path, "public artifact manifest")
+    data = load_json_object(path, "public artifact manifest", scan_raw_body=False)
     if data.get("contract_version") != PUBLIC_SIGNAL_CONTRACT_VERSION:
         raise AutoMergeGateError("public artifact manifest has unsupported contract_version")
     artifacts = data.get("artifacts")
     if not isinstance(artifacts, list):
         raise AutoMergeGateError("public artifact manifest artifacts must be a list")
+    validate_artifact_manifest_raw_body_fields(data)
     return data
+
+
+def validate_artifact_manifest_raw_body_fields(artifact_manifest: dict[str, Any]) -> None:
+    for key, value in artifact_manifest.items():
+        if key in ARTIFACT_MANIFEST_ALLOWED_TOP_LEVEL_RAW_VOCABULARY_FIELDS or key == "artifacts":
+            continue
+        fail_if_raw_body_markers_in_values(value, f"public_artifact_manifest.{key}")
+    artifacts = artifact_manifest.get("artifacts", [])
+    if not isinstance(artifacts, list):
+        return
+    for index, item in enumerate(artifacts):
+        if not isinstance(item, dict):
+            continue
+        for key, value in item.items():
+            if key not in ARTIFACT_MANIFEST_ALLOWED_ENTRY_FIELDS:
+                fail_if_raw_body_markers_in_values(value, f"public_artifact_manifest.artifacts[{index}].{key}")
+                continue
+            if key in {"path", "slug", "material_signature"}:
+                fail_if_raw_body_markers_in_values(value, f"public_artifact_manifest.artifacts[{index}].{key}")
 
 
 def artifact_entries_by_path(artifact_manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -423,8 +480,12 @@ def validate_public_artifact(path: str, root: pathlib.Path, artifact_class: str,
         validate_rss(full_path, entries)
     elif artifact_class == ARTIFACT_JSON_FEED:
         validate_json_feed(full_path, entries)
-    elif artifact_class in {ARTIFACT_PUBLIC_LAUNCH_MANIFEST, ARTIFACT_PUBLIC_ARTIFACT_MANIFEST}:
-        fail_if_forbidden_text(full_path.read_text(encoding="utf-8"), path)
+    elif artifact_class == ARTIFACT_PUBLIC_LAUNCH_MANIFEST:
+        manifest = load_json_object(full_path, path, scan_raw_body=False)
+        validate_public_launch_manifest_raw_body_fields(manifest)
+    elif artifact_class == ARTIFACT_PUBLIC_ARTIFACT_MANIFEST:
+        artifact_manifest = load_json_object(full_path, path, scan_raw_body=False)
+        validate_artifact_manifest_raw_body_fields(artifact_manifest)
     else:
         raise AutoMergeGateError(f"unsupported artifact class: {artifact_class}")
 
@@ -432,7 +493,8 @@ def validate_public_artifact(path: str, root: pathlib.Path, artifact_class: str,
 def run_gate(args: argparse.Namespace) -> None:
     manifest_path = pathlib.Path(args.manifest)
     root = manifest_path.parent.parent
-    manifest = load_json_object(manifest_path, str(manifest_path))
+    manifest = load_json_object(manifest_path, str(manifest_path), scan_raw_body=False)
+    validate_public_launch_manifest_raw_body_fields(manifest)
     check_manifest_flags(manifest)
     artifact_manifest = load_artifact_manifest(root)
     artifact_entries = artifact_entries_by_path(artifact_manifest)
