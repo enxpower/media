@@ -92,7 +92,6 @@ jobs:
       - name: Run forbidden public output grep guards
         run: |
           ! grep -R "https://dysonx.ai" -n signals scripts tests docs
-          ! grep -R "media.energizeos.com" -n signals scripts tests docs
           ! grep -R "source.dysonx.invalid" -n signals scripts tests docs
           ! grep -R "\.invalid" -n signals scripts tests docs
           ! grep -R "\.test/" -n signals scripts tests docs

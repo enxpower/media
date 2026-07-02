@@ -41,7 +41,7 @@ class DysonXStaticPreviewCheckTests(unittest.TestCase):
 
     def test_removed_artifact_tokens_are_explicit(self):
         self.assertIn("posts/page1.html", preview_check.REMOVED_PUBLIC_ARTIFACTS)
-        self.assertIn("sitemap.xml", preview_check.REMOVED_PUBLIC_ARTIFACTS)
+        self.assertNotIn("sitemap.xml", preview_check.REMOVED_PUBLIC_ARTIFACTS)
         self.assertIn("scripts/aggregator.py", preview_check.DELETED_LEGACY_SCRIPT_TOKENS)
         self.assertIn("scripts/generate_sitemap.py", preview_check.DELETED_LEGACY_SCRIPT_TOKENS)
 

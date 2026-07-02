@@ -49,11 +49,16 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         return "\n".join(path.read_text(encoding="utf-8") for path in sorted((self.root / "signals").rglob("*")) if path.is_file())
 
     def output_snapshot(self) -> dict[str, str]:
-        return {
+        files = {
             str(path.relative_to(self.root)): path.read_text(encoding="utf-8")
             for path in sorted((self.root / "signals").rglob("*"))
             if path.is_file()
         }
+        for name in ("robots.txt", "sitemap.xml", "rss.xml", "feed.json"):
+            path = self.root / name
+            if path.exists():
+                files[name] = path.read_text(encoding="utf-8")
+        return files
 
     def test_eligible_row_generates_page(self):
         manifest = sync.sync_records([eligible_record()], self.root, refreshed_at="2026-06-27T00:00:00Z")
@@ -99,6 +104,9 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertEqual(manifest["content_refreshed_at"], "2026-06-28T00:00:00Z")
         self.assertNotEqual(second_snapshot, first_snapshot)
         self.assertIn("Updated summary-only Signal about AI agent evaluation.", second_snapshot["signals/notion-agent-reliability/index.html"])
+        self.assertIn("Updated summary-only Signal about AI agent evaluation.", second_snapshot["rss.xml"])
+        self.assertIn("Updated summary-only Signal about AI agent evaluation.", second_snapshot["feed.json"])
+        self.assertIn("<lastmod>2026-06-28</lastmod>", second_snapshot["sitemap.xml"])
 
     def test_risk_note_change_updates_outputs(self):
         shutil.rmtree(self.root / "signals")
@@ -169,11 +177,81 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
             "." + "test/",
             "." + "invalid",
             "tmp/" + "production_publish_pack",
-            "media." + "energizeos.com",
             "https://dysonx." + "ai",
         ]
         for term in forbidden:
             self.assertNotIn(term, text)
+
+    def test_generates_robots_sitemap_and_feeds(self):
+        manifest = sync.sync_records([eligible_record()], self.root, refreshed_at="2026-06-27T00:00:00Z")
+
+        robots = (self.root / "robots.txt").read_text(encoding="utf-8")
+        sitemap = (self.root / "sitemap.xml").read_text(encoding="utf-8")
+        rss = (self.root / "rss.xml").read_text(encoding="utf-8")
+        feed = json.loads((self.root / "feed.json").read_text(encoding="utf-8"))
+        launched_urls = {
+            f"https://media.energizeos.com{entry['public_url_path']}"
+            for entry in manifest["launched"]
+        }
+
+        self.assertEqual(robots, "User-agent: *\nAllow: /\nSitemap: https://media.energizeos.com/sitemap.xml\n")
+        self.assertIn("https://media.energizeos.com/", sitemap)
+        self.assertIn("https://media.energizeos.com/signals/", sitemap)
+        for url in launched_urls:
+            self.assertIn(url, sitemap)
+            self.assertIn(url, rss)
+        self.assertEqual(feed["feed_url"], "https://media.energizeos.com/feed.json")
+        self.assertLessEqual(len(feed["items"]), 30)
+
+    def test_sitemap_excludes_blocked_signals(self):
+        sync.sync_records(
+            [
+                eligible_record(),
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_blocked",
+                        "Signal Title": "Blocked biology medicine Signal",
+                        "Slug": "blocked-biology-medicine",
+                        "Category": "Biology",
+                    }
+                ),
+            ],
+            self.root,
+        )
+
+        sitemap = (self.root / "sitemap.xml").read_text(encoding="utf-8")
+        self.assertIn("https://media.energizeos.com/signals/notion-agent-reliability/", sitemap)
+        self.assertNotIn("blocked-biology-medicine", sitemap)
+
+    def test_rss_and_json_feed_do_not_contain_raw_body_markers(self):
+        sync.sync_records([eligible_record()], self.root, refreshed_at="2026-06-27T00:00:00Z")
+        text = (self.root / "rss.xml").read_text(encoding="utf-8") + (self.root / "feed.json").read_text(encoding="utf-8")
+
+        for marker in ("full article text", "raw source body", "article body:", "raw_body", "Raw Body"):
+            self.assertNotIn(marker, text)
+        self.assertIn("https://example.org/agent-reliability", text)
+
+    def test_signal_page_has_seo_head_and_absolute_canonical(self):
+        sync.sync_records([eligible_record()], self.root, refreshed_at="2026-06-27T00:00:00Z")
+
+        html = (self.root / "signals" / "notion-agent-reliability" / "index.html").read_text(encoding="utf-8")
+        self.assertIn('<meta name="description"', html)
+        self.assertIn('<link rel="canonical" href="https://media.energizeos.com/signals/notion-agent-reliability/">', html)
+        self.assertIn('property="og:title"', html)
+        self.assertIn('property="og:description"', html)
+        self.assertIn('property="og:type" content="article"', html)
+        self.assertIn('property="og:url" content="https://media.energizeos.com/signals/notion-agent-reliability/"', html)
+        self.assertIn('name="twitter:card"', html)
+        self.assertIn('type="application/ld+json"', html)
+        self.assertIn('"@type": "TechArticle"', html)
+
+    def test_signals_index_has_organization_json_ld(self):
+        sync.sync_records([eligible_record()], self.root, refreshed_at="2026-06-27T00:00:00Z")
+
+        html = (self.root / "signals" / "index.html").read_text(encoding="utf-8")
+        self.assertIn('"@type": "Organization"', html)
+        self.assertIn('"name": "EnergizeOS Media"', html)
+        self.assertIn('<link rel="alternate" type="application/rss+xml"', html)
 
     def test_unsafe_source_url_is_blocked(self):
         manifest = sync.sync_records([eligible_record(**{"Source URL": "https://source.dysonx." + "invalid/research"})], self.root)

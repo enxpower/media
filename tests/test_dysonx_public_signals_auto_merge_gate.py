@@ -232,7 +232,6 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
         forbidden = [
             "." + "invalid",
             "." + "test/",
-            "media." + "energizeos.com",
             forbidden_domain(),
             "tmp/" + "production_publish_pack",
         ]
@@ -262,6 +261,10 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
 
     def test_passes_only_for_allowed_signals_paths(self):
         allowed = [
+            "feed.json",
+            "robots.txt",
+            "rss.xml",
+            "sitemap.xml",
             "signals/index.html",
             "signals/public_launch_manifest.json",
             f"signals/{self.slug}/index.html",
