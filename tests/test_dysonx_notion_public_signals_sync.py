@@ -203,6 +203,22 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertEqual(feed["feed_url"], "https://media.energizeos.com/feed.json")
         self.assertLessEqual(len(feed["items"]), 30)
 
+    def test_generates_public_artifact_manifest_for_every_public_artifact(self):
+        sync.sync_records([eligible_record()], self.root, refreshed_at="2026-06-27T00:00:00Z")
+
+        artifact_manifest = json.loads((self.root / "signals" / "public_artifact_manifest.json").read_text(encoding="utf-8"))
+        artifact_paths = {item["path"] for item in artifact_manifest["artifacts"]}
+
+        self.assertEqual(artifact_manifest["contract_version"], "dysonx_public_signal_contract_v1")
+        self.assertIn("signals/public_artifact_manifest.json", artifact_paths)
+        self.assertIn("robots.txt", artifact_paths)
+        self.assertIn("sitemap.xml", artifact_paths)
+        self.assertIn("rss.xml", artifact_paths)
+        self.assertIn("feed.json", artifact_paths)
+        signal_artifact = next(item for item in artifact_manifest["artifacts"] if item["path"] == "signals/notion-agent-reliability/index.html")
+        self.assertEqual(signal_artifact["artifact_class"], "signal_html")
+        self.assertEqual(signal_artifact["allowed_embeds"], ["json_ld_article"])
+
     def test_sitemap_excludes_blocked_signals(self):
         sync.sync_records(
             [
@@ -429,9 +445,11 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         polluted = [
             ("child-online-safety", "Child online safety policy update", "Policy"),
             ("medical-object-segmentation", "Medical object segmentation benchmark", "Medical Imaging"),
+            ("surgical-laparoscopic", "Surgical laparoscopic clinical model", "Clinical"),
             ("drug-drug-interaction", "Drug-drug interaction prediction model", "Biomedical"),
             ("prostate-cancer-ultrasound", "Prostate cancer ultrasound detection model", "Clinical"),
             ("legal-deliberation", "Generic law deliberation with multi-agent debate", "Law"),
+            ("agricultural-dairy", "Agricultural dairy methane forecasting model", "Agriculture"),
         ]
         records = [
             eligible_record(
@@ -463,6 +481,7 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
             ("openlife", "OpenLife autonomous LLM agents", "OpenLife studies autonomous LLM agents and agent coordination."),
             ("ai-governance", "AI regulation for frontier model governance", "AI governance and AI regulation for frontier model safety."),
             ("vla-robotics", "VLA robotics foundation model framework", "A vision-language-action robotics foundation model for embodied AI agent capability."),
+            ("uav-agents", "UAV multi-agent planning benchmark", "A multi-agent planning benchmark for autonomous AI agent capability evaluation."),
         ]
         records = [
             eligible_record(
@@ -510,6 +529,28 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertNotIn("generic-indoor-robotics", launched_slugs)
         self.assertEqual(manifest["pages_blocked"], 1)
 
+    def test_domain_risk_can_pass_with_explicit_ai_safety_evaluation_framing(self):
+        manifest = sync.sync_records(
+            [
+                eligible_record(
+                    **{
+                        "Signal ID": "sig_medical_eval",
+                        "Signal Title": "Medical AI agent safety evaluation benchmark",
+                        "Slug": "medical-ai-agent-safety-evaluation",
+                        "Summary": "A summary-only Signal about AI safety evaluation for agent behavior in a domain-risk setting.",
+                        "Category": "AI Safety",
+                        "Source Priority": "High",
+                        "AGI Relevance": "Medium",
+                        "Quality Hint": 84,
+                    }
+                )
+            ],
+            self.root,
+        )
+
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+        self.assertIn("medical-ai-agent-safety-evaluation", launched_slugs)
+
     def test_missing_core_public_topic_is_reported(self):
         report_path = self.root / "tmp" / "dysonx_public_signals_sync_report.json"
         sync.sync_records(
@@ -519,6 +560,8 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
                         "Signal Title": "Distributed systems scheduling update",
                         "Slug": "distributed-systems-scheduling",
                         "Summary": "A summary-only Signal about distributed systems scheduling.",
+                        "Why This Matters": "Scheduling metrics affect distributed infrastructure operations.",
+                        "Watch Next": "Watch whether scheduling behavior changes in future releases.",
                         "Category": "Infrastructure",
                         "Source Priority": "High",
                         "AGI Relevance": "Medium",

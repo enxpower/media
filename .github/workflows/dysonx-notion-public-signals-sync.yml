@@ -52,7 +52,7 @@ jobs:
 
       - name: Print public Signals diff stat
         if: always()
-        run: git diff --stat -- signals
+        run: git diff --stat -- signals robots.txt sitemap.xml rss.xml feed.json
 
       - name: Upload public Signals diagnostics
         if: always()
@@ -61,6 +61,11 @@ jobs:
           name: dysonx-public-signals-diagnostics
           path: |
             signals/public_launch_manifest.json
+            signals/public_artifact_manifest.json
+            robots.txt
+            sitemap.xml
+            rss.xml
+            feed.json
             tmp/dysonx_public_signals_sync_report.json
           if-no-files-found: warn
 
@@ -78,7 +83,7 @@ jobs:
       - name: Detect public Signals changes
         id: signals_changes
         run: |
-          if git diff --quiet -- signals; then
+          if git diff --quiet -- signals robots.txt sitemap.xml rss.xml feed.json; then
             echo "[notion-public-signals-sync] no signals changes"
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
@@ -89,7 +94,7 @@ jobs:
         if: steps.signals_changes.outputs.changed == 'true'
         run: |
           mkdir -p tmp
-          git diff --name-only -- signals > tmp/dysonx_public_signals_changed_files.txt
+          git diff --name-only -- signals robots.txt sitemap.xml rss.xml feed.json > tmp/dysonx_public_signals_changed_files.txt
           python3 -c 'import json; from pathlib import Path; files = Path("tmp/dysonx_public_signals_changed_files.txt").read_text(encoding="utf-8").splitlines(); Path("tmp/dysonx_public_signals_changed_files.json").write_text(json.dumps(files, indent=2) + "\n", encoding="utf-8"); print("changed_files=" + str(len(files)))'
 
       - name: Run trusted public Signals auto-merge gate
@@ -113,6 +118,11 @@ jobs:
           name: dysonx-public-signals-trusted-auto-merge
           path: |
             signals/public_launch_manifest.json
+            signals/public_artifact_manifest.json
+            robots.txt
+            sitemap.xml
+            rss.xml
+            feed.json
             tmp/dysonx_public_signals_sync_report.json
             tmp/dysonx_public_signals_changed_files.json
             tmp/dysonx_public_signals_changed_files.txt
@@ -127,6 +137,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
           git add signals/
+          git add robots.txt sitemap.xml rss.xml feed.json
           git commit -m "content: sync DysonX public Signals from Notion"
           git push --set-upstream origin "$BRANCH"
           PR_BODY="$(printf 'Automated Notion public Signals sync. Opens PR for audit trail. The trusted DysonX Notion Public Signals Sync workflow merges this PR only if the strict public Signals auto-merge gate passes. No OpenAI call, no scraping, no raw article body copying, no hardcoded deployment domain.\n\n')"

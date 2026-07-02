@@ -4,128 +4,43 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import pathlib
 import re
 import sys
+import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from typing import Any
 from urllib.parse import urlsplit
 
+from dysonx_public_signals_contract import (
+    ALLOWED_ARTIFACT_CLASSES,
+    ARTIFACT_JSON_FEED,
+    ARTIFACT_PUBLIC_ARTIFACT_MANIFEST,
+    ARTIFACT_PUBLIC_LAUNCH_MANIFEST,
+    ARTIFACT_ROBOTS_TXT,
+    ARTIFACT_RSS_XML,
+    ARTIFACT_SIGNAL_HTML,
+    ARTIFACT_SIGNALS_INDEX_HTML,
+    ARTIFACT_SITEMAP_XML,
+    PUBLIC_SEO_BASE_URL,
+    PUBLIC_SIGNAL_CONTRACT_VERSION,
+    artifact_class_for_path,
+    allowed_embeds_for_artifact_class,
+    is_allowed_public_artifact_path,
+    normalize_public_path,
+    signal_slug_from_public_path,
+)
+from dysonx_public_signals_topic_policy import (
+    has_core_public_topic as topic_has_core_public_topic,
+    off_topic_public_signal as topic_off_topic_public_signal,
+)
 
 GATE_VERSION = "dysonx_public_signals_auto_merge_gate_v1"
-ALLOWED_STATIC_FILES = {
-    "feed.json",
-    "robots.txt",
-    "rss.xml",
-    "sitemap.xml",
-    "signals/index.html",
-    "signals/public_launch_manifest.json",
-}
 MIN_PUBLIC_QUALITY = 80
 ALLOWED_SOURCE_PRIORITIES = {"High", "Critical"}
 ALLOWED_AGI_RELEVANCE = {"Medium", "High", "Critical"}
-OFF_TOPIC_PUBLIC_TERMS = (
-    "agriculture",
-    "biology",
-    "biomedical",
-    "cattle",
-    "cancer",
-    "child online safety",
-    "clinical",
-    "dairy",
-    "drug drug interaction",
-    "drug-drug interaction",
-    "eclipse",
-    "eclipses",
-    "electoral politics",
-    "general news",
-    "general science",
-    "generic policy news",
-    "healthcare diagnosis",
-    "indoor robotics",
-    "lab agent",
-    "lab agents",
-    "laboratory agent",
-    "laboratory agents",
-    "law",
-    "legal deliberation",
-    "legal domain",
-    "legal-domain",
-    "medical",
-    "medical imaging",
-    "methane",
-    "medicine",
-    "oceanography",
-    "online safety",
-    "poetry",
-    "politics",
-    "prostate",
-    "robot vacuum",
-    "social media ban",
-    "social media bans",
-    "ultrasound",
-    "vacuum cleaner",
-)
-OFF_TOPIC_PUBLIC_OVERRIDE_TERMS = (
-    "agi governance",
-    "agi safety",
-    "ai act",
-    "ai governance",
-    "ai regulation",
-    "ai safety",
-    "ai safety evaluation",
-    "frontier ai safety",
-    "frontier model evaluation",
-    "frontier model governance",
-    "frontier model safety",
-    "model evaluation",
-)
-CORE_PUBLIC_TOPIC_TERMS = (
-    "agentic workflow",
-    "agentic workflows",
-    "agi governance",
-    "agi safety",
-    "ai agent",
-    "ai agents",
-    "ai governance",
-    "ai infrastructure",
-    "ai regulation",
-    "ai safety",
-    "autonomous ai agent",
-    "autonomous ai agents",
-    "benchmark",
-    "benchmarks",
-    "code agent",
-    "code agents",
-    "coding agent",
-    "coding agents",
-    "developer tool",
-    "developer tools",
-    "frontier model",
-    "frontier models",
-    "frontier model operations",
-    "llm agent",
-    "llm agents",
-    "llm judge",
-    "llm judges",
-    "model evaluation",
-    "model evaluations",
-)
-MULTI_AGENT_TERMS = ("multi-agent", "multi agent")
-MULTI_AGENT_CONTEXT_TERMS = ("ai", "agent", "capability", "safety", "evaluation", "governance", "coordination")
-AGENT_CONTEXT_TERMS = ("capability", "control", "evaluation", "governance", "reliability", "safety", "workflow")
-AUTONOMY_TERMS = ("autonomy", "autonomous systems")
-AUTONOMY_CONTEXT_TERMS = ("ai", "agent", "capability", "safety", "evaluation", "control")
-VLA_TERMS = ("vla", "vision-language-action", "vision language action")
-VLA_CONTEXT_TERMS = (
-    "agent capability",
-    "embodied agent",
-    "embodied ai",
-    "foundation model",
-    "robotics agent",
-    "robotics foundation model",
-)
 FORBIDDEN_TERMS = (
     "https://dysonx." "ai",
     "source.dysonx." "invalid",
@@ -151,19 +66,23 @@ class AutoMergeGateError(RuntimeError):
     """Raised when the public Signals auto-merge gate must block."""
 
 
-class HrefParser(HTMLParser):
+class PublicHtmlParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
         self.hrefs: list[str] = []
         self.ids: set[str] = set()
-        self.script_tags = 0
+        self.scripts: list[dict[str, Any]] = []
+        self._script_stack: list[dict[str, Any]] = []
         self.iframe_tags = 0
         self.inline_event_handlers: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        tag = tag.lower()
         attr_map = {key.lower(): value or "" for key, value in attrs}
         if tag == "script":
-            self.script_tags += 1
+            script = {"attrs": attr_map, "content": ""}
+            self.scripts.append(script)
+            self._script_stack.append(script)
         if tag == "iframe":
             self.iframe_tags += 1
         if "id" in attr_map and attr_map["id"]:
@@ -172,23 +91,21 @@ class HrefParser(HTMLParser):
             self.hrefs.append(attr_map["href"])
         self.inline_event_handlers.extend(key for key in attr_map if key.startswith("on"))
 
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() == "script" and self._script_stack:
+            self._script_stack.pop()
 
-def normalize_path(value: str) -> str:
-    return value.strip().lstrip("./")
+    def handle_data(self, data: str) -> None:
+        if self._script_stack:
+            self._script_stack[-1]["content"] += data
 
 
 def signal_slug_from_path(path: str) -> str | None:
-    parts = pathlib.PurePosixPath(normalize_path(path)).parts
-    if len(parts) == 3 and parts[0] == "signals" and parts[2] == "index.html":
-        return parts[1]
-    return None
+    return signal_slug_from_public_path(path)
 
 
 def is_allowed_changed_file(path: str) -> bool:
-    normalized = normalize_path(path)
-    if normalized in ALLOWED_STATIC_FILES:
-        return True
-    return signal_slug_from_path(normalized) is not None
+    return is_allowed_public_artifact_path(path)
 
 
 def load_changed_files(path: str | None) -> list[str]:
@@ -197,7 +114,7 @@ def load_changed_files(path: str | None) -> list[str]:
     data = json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
     if not isinstance(data, list) or not all(isinstance(item, str) for item in data):
         raise AutoMergeGateError("changed files JSON must be a list of strings")
-    return [normalize_path(item) for item in data]
+    return [normalize_public_path(item) for item in data]
 
 
 def fail_if_forbidden_text(text: str, label: str) -> None:
@@ -210,6 +127,15 @@ def fail_if_forbidden_text(text: str, label: str) -> None:
             raise AutoMergeGateError(f"{label} contains raw/source body marker: {marker}")
 
 
+def load_json_object(path: pathlib.Path, label: str) -> dict[str, Any]:
+    text = path.read_text(encoding="utf-8")
+    fail_if_forbidden_text(text, label)
+    data = json.loads(text)
+    if not isinstance(data, dict):
+        raise AutoMergeGateError(f"{label} must be a JSON object")
+    return data
+
+
 def public_path_exists(root: pathlib.Path, href: str) -> bool:
     path = urlsplit(href).path
     if path == "/":
@@ -220,21 +146,59 @@ def public_path_exists(root: pathlib.Path, href: str) -> bool:
     return (root / relative).exists()
 
 
-def check_html_file(path: pathlib.Path, root: pathlib.Path) -> None:
+def validate_json_ld_script(script: dict[str, Any], artifact_class: str, label: str) -> None:
+    attrs = script["attrs"]
+    if attrs.get("src"):
+        raise AutoMergeGateError(f"{label} contains external script src")
+    if attrs.get("type") != "application/ld+json":
+        raise AutoMergeGateError(f"{label} contains non-JSON-LD script tag")
+    content = html.unescape(str(script.get("content") or "")).strip()
+    fail_if_forbidden_text(content, f"{label} JSON-LD")
+    if INLINE_EVENT_PATTERN.search(content) or "javascript:" in content.lower():
+        raise AutoMergeGateError(f"{label} JSON-LD contains unsafe script-like text")
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError as exc:
+        raise AutoMergeGateError(f"{label} contains malformed JSON-LD") from exc
+    nodes = data if isinstance(data, list) else [data]
+    allowed_types = {
+        ARTIFACT_SIGNAL_HTML: {"TechArticle", "Article"},
+        ARTIFACT_SIGNALS_INDEX_HTML: {"Organization"},
+    }.get(artifact_class, set())
+    if not allowed_types:
+        raise AutoMergeGateError(f"{label} is not allowed to contain JSON-LD")
+    for node in nodes:
+        if not isinstance(node, dict):
+            raise AutoMergeGateError(f"{label} JSON-LD nodes must be objects")
+        raw_type = node.get("@type")
+        node_types = set(raw_type if isinstance(raw_type, list) else [raw_type])
+        if not node_types.intersection(allowed_types):
+            raise AutoMergeGateError(f"{label} JSON-LD type must be one of {sorted(allowed_types)}")
+        payload = json.dumps(node, sort_keys=True)
+        if "javascript:" in payload.lower() or INLINE_EVENT_PATTERN.search(payload):
+            raise AutoMergeGateError(f"{label} JSON-LD contains unsafe script-like text")
+        if PUBLIC_SEO_BASE_URL in payload:
+            continue
+        if any(str(value).startswith("http") for value in node.values() if isinstance(value, str)):
+            # External source citations are allowed, but public page URLs must remain canonical.
+            continue
+
+
+def check_html_file(path: pathlib.Path, root: pathlib.Path, artifact_class: str) -> None:
     if not path.exists():
         raise AutoMergeGateError(f"changed public HTML file is missing: {path}")
     text = path.read_text(encoding="utf-8", errors="ignore")
     fail_if_forbidden_text(text, str(path))
     if INLINE_EVENT_PATTERN.search(text):
         raise AutoMergeGateError(f"{path} contains inline event handler")
-    parser = HrefParser()
+    parser = PublicHtmlParser()
     parser.feed(text)
-    if parser.script_tags:
-        raise AutoMergeGateError(f"{path} contains script tag")
     if parser.iframe_tags:
         raise AutoMergeGateError(f"{path} contains iframe tag")
     if parser.inline_event_handlers:
         raise AutoMergeGateError(f"{path} contains inline event handler attribute")
+    for script in parser.scripts:
+        validate_json_ld_script(script, artifact_class, str(path))
     for href in parser.hrefs:
         lowered = href.lower()
         if not href or href == "#":
@@ -255,6 +219,77 @@ def check_html_file(path: pathlib.Path, root: pathlib.Path) -> None:
                 raise AutoMergeGateError(f"{path} contains invalid external source link: {href}")
             continue
         raise AutoMergeGateError(f"{path} contains non-relative unsupported href: {href}")
+
+
+def validate_robots(path: pathlib.Path) -> None:
+    text = path.read_text(encoding="utf-8")
+    expected = f"User-agent: *\nAllow: /\nSitemap: {PUBLIC_SEO_BASE_URL}/sitemap.xml\n"
+    fail_if_forbidden_text(text, str(path))
+    if text != expected:
+        raise AutoMergeGateError("robots.txt must only allow crawling and point to the production sitemap")
+
+
+def validate_sitemap(path: pathlib.Path, launched_slugs: set[str]) -> None:
+    text = path.read_text(encoding="utf-8")
+    fail_if_forbidden_text(text, str(path))
+    root = ET.fromstring(text)
+    namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+    allowed_urls = {f"{PUBLIC_SEO_BASE_URL}/", f"{PUBLIC_SEO_BASE_URL}/signals/"}
+    allowed_urls.update(f"{PUBLIC_SEO_BASE_URL}/signals/{slug}/" for slug in launched_slugs)
+    found_urls: set[str] = set()
+    for url_node in root.findall("sm:url", namespace):
+        loc = (url_node.findtext("sm:loc", default="", namespaces=namespace) or "").strip()
+        lastmod = (url_node.findtext("sm:lastmod", default="", namespaces=namespace) or "").strip()
+        if loc not in allowed_urls:
+            raise AutoMergeGateError(f"sitemap contains non-canonical or blocked URL: {loc}")
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", lastmod):
+            raise AutoMergeGateError(f"sitemap lastmod must be stable YYYY-MM-DD: {lastmod}")
+        found_urls.add(loc)
+    required = {f"{PUBLIC_SEO_BASE_URL}/", f"{PUBLIC_SEO_BASE_URL}/signals/"}
+    if not required.issubset(found_urls):
+        raise AutoMergeGateError("sitemap must include homepage and /signals/")
+
+
+def validate_rss(path: pathlib.Path, entries: dict[str, dict[str, Any]]) -> None:
+    text = path.read_text(encoding="utf-8")
+    fail_if_forbidden_text(text, str(path))
+    root = ET.fromstring(text)
+    items = root.findall("./channel/item")
+    if len(items) > 30:
+        raise AutoMergeGateError("rss.xml must not include more than 30 items")
+    summaries = {entry.get("summary", "") for entry in entries.values()}
+    for item in items:
+        link = (item.findtext("link") or "").strip()
+        description = (item.findtext("description") or "").strip()
+        source = item.find("source")
+        if not link.startswith(f"{PUBLIC_SEO_BASE_URL}/signals/"):
+            raise AutoMergeGateError(f"rss.xml item link must be canonical public URL: {link}")
+        if description not in summaries:
+            raise AutoMergeGateError("rss.xml item description must match summary-only manifest content")
+        if source is None or not (source.attrib.get("url") or "").startswith(("http://", "https://")):
+            raise AutoMergeGateError("rss.xml item source attribution URL is missing")
+
+
+def validate_json_feed(path: pathlib.Path, entries: dict[str, dict[str, Any]]) -> None:
+    data = load_json_object(path, "feed.json")
+    items = data.get("items")
+    if not isinstance(items, list):
+        raise AutoMergeGateError("feed.json items must be a list")
+    if len(items) > 30:
+        raise AutoMergeGateError("feed.json must not include more than 30 items")
+    summaries = {entry.get("summary", "") for entry in entries.values()}
+    for item in items:
+        if not isinstance(item, dict):
+            raise AutoMergeGateError("feed.json items must be objects")
+        url = str(item.get("url") or "")
+        content_text = str(item.get("content_text") or "")
+        if not url.startswith(f"{PUBLIC_SEO_BASE_URL}/signals/"):
+            raise AutoMergeGateError(f"feed.json item URL must be canonical public URL: {url}")
+        if content_text not in summaries:
+            raise AutoMergeGateError("feed.json content_text must match summary-only manifest content")
+        external_url = str(item.get("external_url") or "")
+        if external_url and not external_url.startswith(("http://", "https://")):
+            raise AutoMergeGateError("feed.json external_url must be absolute http/https when present")
 
 
 def launched_by_slug(manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -291,31 +326,11 @@ def check_manifest_flags(manifest: dict[str, Any]) -> None:
 
 
 def off_topic_public_signal(entry: dict[str, Any]) -> bool:
-    haystack = " ".join(
-        str(entry.get(key) or "")
-        for key in ("title", "summary", "source_name", "source_priority", "agi_relevance")
-    ).lower()
-    if not any(term in haystack for term in OFF_TOPIC_PUBLIC_TERMS):
-        return False
-    return not any(term in haystack for term in OFF_TOPIC_PUBLIC_OVERRIDE_TERMS)
+    return topic_off_topic_public_signal(entry)
 
 
 def has_core_public_topic(entry: dict[str, Any]) -> bool:
-    haystack = " ".join(
-        str(entry.get(key) or "")
-        for key in ("title", "summary", "source_name", "source_priority", "agi_relevance")
-    ).lower()
-    if any(term in haystack for term in CORE_PUBLIC_TOPIC_TERMS):
-        return True
-    if "agent" in haystack and any(term in haystack for term in AGENT_CONTEXT_TERMS):
-        return True
-    if any(term in haystack for term in MULTI_AGENT_TERMS) and any(term in haystack for term in MULTI_AGENT_CONTEXT_TERMS):
-        return True
-    if any(term in haystack for term in AUTONOMY_TERMS) and any(term in haystack for term in AUTONOMY_CONTEXT_TERMS):
-        return True
-    if any(term in haystack for term in VLA_TERMS) and any(term in haystack for term in VLA_CONTEXT_TERMS):
-        return True
-    return False
+    return topic_has_core_public_topic(entry)
 
 
 def check_entry(entry: dict[str, Any], *, min_quality: float, allowed_priorities: set[str], allowed_agi_relevance: set[str], require_attribution_complete: bool, require_safe_summary_only: bool) -> None:
@@ -348,20 +363,82 @@ def check_entry(entry: dict[str, Any], *, min_quality: float, allowed_priorities
         raise AutoMergeGateError(f"{slug} is missing a core DysonX public topic")
 
 
-def run_gate(args: argparse.Namespace) -> None:
-    manifest_path = pathlib.Path(args.manifest)
-    root = manifest_path.parent.parent
-    manifest_text = manifest_path.read_text(encoding="utf-8")
-    fail_if_forbidden_text(manifest_text, str(manifest_path))
-    manifest = json.loads(manifest_text)
-    if not isinstance(manifest, dict):
-        raise AutoMergeGateError("manifest must be a JSON object")
-    check_manifest_flags(manifest)
+def load_artifact_manifest(root: pathlib.Path) -> dict[str, Any]:
+    path = root / "signals" / "public_artifact_manifest.json"
+    if not path.exists():
+        raise AutoMergeGateError("signals/public_artifact_manifest.json is missing")
+    data = load_json_object(path, "public artifact manifest")
+    if data.get("contract_version") != PUBLIC_SIGNAL_CONTRACT_VERSION:
+        raise AutoMergeGateError("public artifact manifest has unsupported contract_version")
+    artifacts = data.get("artifacts")
+    if not isinstance(artifacts, list):
+        raise AutoMergeGateError("public artifact manifest artifacts must be a list")
+    return data
 
-    changed_files = load_changed_files(args.changed_files_json)
+
+def artifact_entries_by_path(artifact_manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    entries: dict[str, dict[str, Any]] = {}
+    for item in artifact_manifest.get("artifacts", []):
+        if not isinstance(item, dict):
+            raise AutoMergeGateError("artifact manifest entries must be objects")
+        path = normalize_public_path(str(item.get("path") or ""))
+        artifact_class = str(item.get("artifact_class") or "")
+        if not path:
+            raise AutoMergeGateError("artifact manifest entry missing path")
+        if path in entries:
+            raise AutoMergeGateError(f"artifact manifest declares duplicate path: {path}")
+        if artifact_class not in ALLOWED_ARTIFACT_CLASSES:
+            raise AutoMergeGateError(f"artifact manifest declares unknown artifact_class: {artifact_class}")
+        expected_class = artifact_class_for_path(path)
+        if expected_class != artifact_class:
+            raise AutoMergeGateError(f"artifact manifest class/path mismatch for {path}: {artifact_class}")
+        if item.get("contract_version") != PUBLIC_SIGNAL_CONTRACT_VERSION:
+            raise AutoMergeGateError(f"artifact manifest entry has unsupported contract_version: {path}")
+        declared_embeds = item.get("allowed_embeds")
+        if declared_embeds != allowed_embeds_for_artifact_class(artifact_class):
+            raise AutoMergeGateError(f"artifact manifest entry has wrong allowed_embeds: {path}")
+        entries[path] = item
+    return entries
+
+
+def validate_changed_files_declared(changed_files: list[str], artifact_entries: dict[str, dict[str, Any]]) -> None:
     for changed_file in changed_files:
         if not is_allowed_changed_file(changed_file):
             raise AutoMergeGateError(f"changed file is outside allowed public Signals paths: {changed_file}")
+        if changed_file not in artifact_entries:
+            raise AutoMergeGateError(f"changed public artifact is not declared: {changed_file}")
+
+
+def validate_public_artifact(path: str, root: pathlib.Path, artifact_class: str, entries: dict[str, dict[str, Any]]) -> None:
+    full_path = root / path
+    if not full_path.exists():
+        raise AutoMergeGateError(f"changed public artifact is missing: {path}")
+    if artifact_class in {ARTIFACT_SIGNAL_HTML, ARTIFACT_SIGNALS_INDEX_HTML}:
+        check_html_file(full_path, root, artifact_class)
+    elif artifact_class == ARTIFACT_ROBOTS_TXT:
+        validate_robots(full_path)
+    elif artifact_class == ARTIFACT_SITEMAP_XML:
+        validate_sitemap(full_path, set(entries))
+    elif artifact_class == ARTIFACT_RSS_XML:
+        validate_rss(full_path, entries)
+    elif artifact_class == ARTIFACT_JSON_FEED:
+        validate_json_feed(full_path, entries)
+    elif artifact_class in {ARTIFACT_PUBLIC_LAUNCH_MANIFEST, ARTIFACT_PUBLIC_ARTIFACT_MANIFEST}:
+        fail_if_forbidden_text(full_path.read_text(encoding="utf-8"), path)
+    else:
+        raise AutoMergeGateError(f"unsupported artifact class: {artifact_class}")
+
+
+def run_gate(args: argparse.Namespace) -> None:
+    manifest_path = pathlib.Path(args.manifest)
+    root = manifest_path.parent.parent
+    manifest = load_json_object(manifest_path, str(manifest_path))
+    check_manifest_flags(manifest)
+    artifact_manifest = load_artifact_manifest(root)
+    artifact_entries = artifact_entries_by_path(artifact_manifest)
+
+    changed_files = load_changed_files(args.changed_files_json)
+    validate_changed_files_declared(changed_files, artifact_entries)
 
     entries = launched_by_slug(manifest)
     slugs_to_check = changed_signal_slugs(changed_files, manifest)
@@ -381,11 +458,23 @@ def run_gate(args: argparse.Namespace) -> None:
             require_safe_summary_only=args.require_safe_summary_only,
         )
 
-    paths_to_check = {path for path in changed_files if path.endswith(".html")}
+    paths_to_check = set(changed_files)
     if not changed_files:
-        paths_to_check = {"signals/index.html", *[f"signals/{slug}/index.html" for slug in slugs_to_check]}
+        paths_to_check = {
+            "signals/index.html",
+            "signals/public_launch_manifest.json",
+            "signals/public_artifact_manifest.json",
+            "robots.txt",
+            "sitemap.xml",
+            "rss.xml",
+            "feed.json",
+            *[f"signals/{slug}/index.html" for slug in slugs_to_check],
+        }
     for relative_path in sorted(paths_to_check):
-        check_html_file(root / relative_path, root)
+        artifact = artifact_entries.get(relative_path)
+        if not artifact:
+            raise AutoMergeGateError(f"public artifact is not declared: {relative_path}")
+        validate_public_artifact(relative_path, root, str(artifact["artifact_class"]), entries)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
