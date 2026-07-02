@@ -16,6 +16,11 @@ from dysonx_public_signals_contract import (  # noqa: E402
 )
 
 
+FIXTURE_DOMAIN = "example.com"
+FIXTURE_BASE_URL = f"https://{FIXTURE_DOMAIN}"
+OLD_DOMAIN_BASE_URL = "https://old.example"
+
+
 def forbidden_domain() -> str:
     return "https://dysonx." + "ai"
 
@@ -26,23 +31,24 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
         self.root = pathlib.Path(self.temp_dir.name)
         self.signals = self.root / "signals"
         self.slug = "critical-agent-signal"
+        (self.root / "CNAME").write_text(f"{FIXTURE_DOMAIN}\n", encoding="utf-8")
         (self.signals / self.slug).mkdir(parents=True)
         (self.root / "index.html").write_text('<a href="/signals/">Signals</a>', encoding="utf-8")
         (self.signals / "index.html").write_text(
-            f'<h1>Signals</h1><a href="/signals/{self.slug}/">Signal</a><script type="application/ld+json">{{"@context":"https://schema.org","@type":"Organization","name":"EnergizeOS Media","url":"https://media.energizeos.com"}}</script>',
+            f'<h1>Signals</h1><a href="/signals/{self.slug}/">Signal</a><script type="application/ld+json">{{"@context":"https://schema.org","@type":"Organization","name":"EnergizeOS Media","url":"{FIXTURE_BASE_URL}"}}</script>',
             encoding="utf-8",
         )
         (self.signals / self.slug / "index.html").write_text(
-            '<h1>Critical AI Agent Evaluation Signal</h1><p>Summary-only public Signal about AI agent evaluation.</p><a href="/">Home</a> <a href="/signals/">Signals</a> <a href="https://example.org/source">Source</a><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Critical AI Agent Evaluation Signal","description":"Summary-only public Signal about AI agent evaluation.","url":"https://media.energizeos.com/signals/critical-agent-signal/"}</script>',
+            f'<h1>Critical AI Agent Evaluation Signal</h1><p>Summary-only public Signal about AI agent evaluation.</p><a href="/">Home</a> <a href="/signals/">Signals</a> <a href="https://example.org/source">Source</a><script type="application/ld+json">{{"@context":"https://schema.org","@type":"TechArticle","headline":"Critical AI Agent Evaluation Signal","description":"Summary-only public Signal about AI agent evaluation.","url":"{FIXTURE_BASE_URL}/signals/critical-agent-signal/"}}</script>',
             encoding="utf-8",
         )
-        (self.root / "robots.txt").write_text("User-agent: *\nAllow: /\nSitemap: https://media.energizeos.com/sitemap.xml\n", encoding="utf-8")
+        (self.root / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {FIXTURE_BASE_URL}/sitemap.xml\n", encoding="utf-8")
         (self.root / "sitemap.xml").write_text(
-            '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>https://media.energizeos.com/</loc>\n    <lastmod>2026-06-27</lastmod>\n  </url>\n  <url>\n    <loc>https://media.energizeos.com/signals/</loc>\n    <lastmod>2026-06-27</lastmod>\n  </url>\n  <url>\n    <loc>https://media.energizeos.com/signals/critical-agent-signal/</loc>\n    <lastmod>2026-06-27</lastmod>\n  </url>\n</urlset>\n',
+            f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>{FIXTURE_BASE_URL}/</loc>\n    <lastmod>2026-06-27</lastmod>\n  </url>\n  <url>\n    <loc>{FIXTURE_BASE_URL}/signals/</loc>\n    <lastmod>2026-06-27</lastmod>\n  </url>\n  <url>\n    <loc>{FIXTURE_BASE_URL}/signals/critical-agent-signal/</loc>\n    <lastmod>2026-06-27</lastmod>\n  </url>\n</urlset>\n',
             encoding="utf-8",
         )
         (self.root / "rss.xml").write_text(
-            '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>DysonX Public Signals</title><link>https://media.energizeos.com/signals/</link><description>Source-attributed public Signals tracking AI and AGI intelligence.</description><item><title>Critical AI Agent Evaluation Signal</title><link>https://media.energizeos.com/signals/critical-agent-signal/</link><guid>https://media.energizeos.com/signals/critical-agent-signal/</guid><description>Summary-only public Signal about AI agent evaluation.</description><source url="https://example.org/source">Example Source</source><pubDate>2026-06-27T00:00:00Z</pubDate></item></channel></rss>\n',
+            f'<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>DysonX Public Signals</title><link>{FIXTURE_BASE_URL}/signals/</link><description>Source-attributed public Signals tracking AI and AGI intelligence.</description><item><title>Critical AI Agent Evaluation Signal</title><link>{FIXTURE_BASE_URL}/signals/critical-agent-signal/</link><guid>{FIXTURE_BASE_URL}/signals/critical-agent-signal/</guid><description>Summary-only public Signal about AI agent evaluation.</description><source url="https://example.org/source">Example Source</source><pubDate>2026-06-27T00:00:00Z</pubDate></item></channel></rss>\n',
             encoding="utf-8",
         )
         (self.root / "feed.json").write_text(
@@ -50,12 +56,12 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
                 {
                     "version": "https://jsonfeed.org/version/1.1",
                     "title": "DysonX Public Signals",
-                    "home_page_url": "https://media.energizeos.com/signals/",
-                    "feed_url": "https://media.energizeos.com/feed.json",
+                    "home_page_url": f"{FIXTURE_BASE_URL}/signals/",
+                    "feed_url": f"{FIXTURE_BASE_URL}/feed.json",
                     "items": [
                         {
-                            "id": "https://media.energizeos.com/signals/critical-agent-signal/",
-                            "url": "https://media.energizeos.com/signals/critical-agent-signal/",
+                            "id": f"{FIXTURE_BASE_URL}/signals/critical-agent-signal/",
+                            "url": f"{FIXTURE_BASE_URL}/signals/critical-agent-signal/",
                             "title": "Critical AI Agent Evaluation Signal",
                             "content_text": "Summary-only public Signal about AI agent evaluation.",
                             "summary": "Summary-only public Signal about AI agent evaluation.",
@@ -438,7 +444,15 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
     def test_sitemap_with_blocked_signal_url_fails(self):
         self.write_changed_files(["sitemap.xml"])
         (self.root / "sitemap.xml").write_text(
-            '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://media.energizeos.com/signals/blocked-medical-signal/</loc><lastmod>2026-06-27</lastmod></url></urlset>',
+            f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{FIXTURE_BASE_URL}/signals/blocked-medical-signal/</loc><lastmod>2026-06-27</lastmod></url></urlset>',
+            encoding="utf-8",
+        )
+        self.assertNotEqual(self.run_gate(), 0)
+
+    def test_gate_rejects_old_absolute_domain_when_cname_is_different(self):
+        self.write_changed_files(["sitemap.xml"])
+        (self.root / "sitemap.xml").write_text(
+            f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{OLD_DOMAIN_BASE_URL}/</loc><lastmod>2026-06-27</lastmod></url><url><loc>{OLD_DOMAIN_BASE_URL}/signals/</loc><lastmod>2026-06-27</lastmod></url><url><loc>{OLD_DOMAIN_BASE_URL}/signals/critical-agent-signal/</loc><lastmod>2026-06-27</lastmod></url></urlset>',
             encoding="utf-8",
         )
         self.assertNotEqual(self.run_gate(), 0)
@@ -450,7 +464,7 @@ class DysonXPublicSignalsAutoMergeGateTests(unittest.TestCase):
 
     def test_json_feed_raw_body_leakage_fails(self):
         self.write_changed_files(["feed.json"])
-        (self.root / "feed.json").write_text(json.dumps({"items": [{"url": "https://media.energizeos.com/signals/critical-agent-signal/", "content_text": "raw source body"}]}), encoding="utf-8")
+        (self.root / "feed.json").write_text(json.dumps({"items": [{"url": f"{FIXTURE_BASE_URL}/signals/critical-agent-signal/", "content_text": "raw source body"}]}), encoding="utf-8")
         self.assertNotEqual(self.run_gate(), 0)
 
 

@@ -14,6 +14,7 @@ from urllib.parse import urlsplit
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 ROBOTS = ROOT / "robots.txt"
+CNAME = ROOT / "CNAME"
 WORKFLOWS = ROOT / ".github" / "workflows"
 RAW_FIXTURE = ROOT / "tests" / "fixtures" / "raw_items_v1.json"
 PIPELINE_OUTPUT_DIR = ROOT / "tmp" / "dysonx_static_preview_check" / "v1_pipeline"
@@ -112,6 +113,16 @@ def fail(message: str) -> None:
 
 def read(path: pathlib.Path) -> str:
     return path.read_text(encoding="utf-8", errors="ignore")
+
+
+def public_seo_base_url() -> str:
+    try:
+        domain = CNAME.read_text(encoding="utf-8").strip().splitlines()[0].strip()
+    except (OSError, IndexError):
+        fail("CNAME must contain the public SEO domain")
+    if not domain or "://" in domain or "/" in domain or any(char.isspace() for char in domain):
+        fail("CNAME must contain a single public SEO domain")
+    return f"https://{domain}"
 
 
 def parse_index() -> tuple[str, IndexMetadataParser]:
@@ -232,7 +243,8 @@ def check_deleted_artifact_references(html: str) -> None:
     for artifact in REMOVED_PUBLIC_ARTIFACTS:
         if artifact.lower() in lower_html:
             fail(f"index.html references deleted artifact: {artifact}")
-    if "sitemap.xml" in lower_robots and "https://media.energizeos.com/sitemap.xml" not in lower_robots:
+    expected_sitemap = f"{public_seo_base_url()}/sitemap.xml".lower()
+    if "sitemap.xml" in lower_robots and expected_sitemap not in lower_robots:
         fail("robots.txt references an unexpected sitemap.xml")
 
 

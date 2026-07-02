@@ -6,10 +6,15 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 README = ROOT / "README.md"
 INDEX = ROOT / "index.html"
 ROBOTS = ROOT / "robots.txt"
+CNAME = ROOT / "CNAME"
 
 
 def read_lower(path: pathlib.Path) -> str:
     return path.read_text(encoding="utf-8").lower()
+
+
+def public_seo_base_url() -> str:
+    return f"https://{CNAME.read_text(encoding='utf-8').strip().splitlines()[0].strip()}"
 
 
 class DysonXIdentityLandingTests(unittest.TestCase):
@@ -96,7 +101,7 @@ class DysonXIdentityLandingTests(unittest.TestCase):
     def test_robots_points_to_public_signals_sitemap(self):
         text = read_lower(ROBOTS)
 
-        self.assertIn("sitemap: https://media.energizeos.com/sitemap.xml", text)
+        self.assertIn(f"sitemap: {public_seo_base_url()}/sitemap.xml", text)
         self.assertNotIn("posts/", text)
 
 

@@ -24,12 +24,12 @@ from dysonx_public_signals_contract import (
     ARTIFACT_SIGNAL_HTML,
     ARTIFACT_SIGNALS_INDEX_HTML,
     ARTIFACT_SITEMAP_XML,
-    PUBLIC_SEO_BASE_URL,
     PUBLIC_SIGNAL_CONTRACT_VERSION,
     artifact_class_for_path,
     allowed_embeds_for_artifact_class,
     is_allowed_public_artifact_path,
     normalize_public_path,
+    public_seo_base_url,
     signal_slug_from_public_path,
 )
 from dysonx_public_signals_topic_policy import (
@@ -179,7 +179,7 @@ def public_path_exists(root: pathlib.Path, href: str) -> bool:
     return (root / relative).exists()
 
 
-def validate_json_ld_script(script: dict[str, Any], artifact_class: str, label: str) -> None:
+def validate_json_ld_script(script: dict[str, Any], artifact_class: str, label: str, seo_base_url: str) -> None:
     attrs = script["attrs"]
     if attrs.get("src"):
         raise AutoMergeGateError(f"{label} contains external script src")
@@ -210,14 +210,14 @@ def validate_json_ld_script(script: dict[str, Any], artifact_class: str, label: 
         payload = json.dumps(node, sort_keys=True)
         if "javascript:" in payload.lower() or INLINE_EVENT_PATTERN.search(payload):
             raise AutoMergeGateError(f"{label} JSON-LD contains unsafe script-like text")
-        if PUBLIC_SEO_BASE_URL in payload:
+        if seo_base_url in payload:
             continue
         if any(str(value).startswith("http") for value in node.values() if isinstance(value, str)):
             # External source citations are allowed, but public page URLs must remain canonical.
             continue
 
 
-def check_html_file(path: pathlib.Path, root: pathlib.Path, artifact_class: str) -> None:
+def check_html_file(path: pathlib.Path, root: pathlib.Path, artifact_class: str, seo_base_url: str) -> None:
     if not path.exists():
         raise AutoMergeGateError(f"changed public HTML file is missing: {path}")
     text = path.read_text(encoding="utf-8", errors="ignore")
@@ -231,7 +231,7 @@ def check_html_file(path: pathlib.Path, root: pathlib.Path, artifact_class: str)
     if parser.inline_event_handlers:
         raise AutoMergeGateError(f"{path} contains inline event handler attribute")
     for script in parser.scripts:
-        validate_json_ld_script(script, artifact_class, str(path))
+        validate_json_ld_script(script, artifact_class, str(path), seo_base_url)
     for href in parser.hrefs:
         lowered = href.lower()
         if not href or href == "#":
@@ -254,21 +254,21 @@ def check_html_file(path: pathlib.Path, root: pathlib.Path, artifact_class: str)
         raise AutoMergeGateError(f"{path} contains non-relative unsupported href: {href}")
 
 
-def validate_robots(path: pathlib.Path) -> None:
+def validate_robots(path: pathlib.Path, seo_base_url: str) -> None:
     text = path.read_text(encoding="utf-8")
-    expected = f"User-agent: *\nAllow: /\nSitemap: {PUBLIC_SEO_BASE_URL}/sitemap.xml\n"
+    expected = f"User-agent: *\nAllow: /\nSitemap: {seo_base_url}/sitemap.xml\n"
     fail_if_forbidden_text(text, str(path))
     if text != expected:
         raise AutoMergeGateError("robots.txt must only allow crawling and point to the production sitemap")
 
 
-def validate_sitemap(path: pathlib.Path, launched_slugs: set[str]) -> None:
+def validate_sitemap(path: pathlib.Path, launched_slugs: set[str], seo_base_url: str) -> None:
     text = path.read_text(encoding="utf-8")
     fail_if_forbidden_text(text, str(path))
     root = ET.fromstring(text)
     namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-    allowed_urls = {f"{PUBLIC_SEO_BASE_URL}/", f"{PUBLIC_SEO_BASE_URL}/signals/"}
-    allowed_urls.update(f"{PUBLIC_SEO_BASE_URL}/signals/{slug}/" for slug in launched_slugs)
+    allowed_urls = {f"{seo_base_url}/", f"{seo_base_url}/signals/"}
+    allowed_urls.update(f"{seo_base_url}/signals/{slug}/" for slug in launched_slugs)
     found_urls: set[str] = set()
     for url_node in root.findall("sm:url", namespace):
         loc = (url_node.findtext("sm:loc", default="", namespaces=namespace) or "").strip()
@@ -278,12 +278,12 @@ def validate_sitemap(path: pathlib.Path, launched_slugs: set[str]) -> None:
         if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", lastmod):
             raise AutoMergeGateError(f"sitemap lastmod must be stable YYYY-MM-DD: {lastmod}")
         found_urls.add(loc)
-    required = {f"{PUBLIC_SEO_BASE_URL}/", f"{PUBLIC_SEO_BASE_URL}/signals/"}
+    required = {f"{seo_base_url}/", f"{seo_base_url}/signals/"}
     if not required.issubset(found_urls):
         raise AutoMergeGateError("sitemap must include homepage and /signals/")
 
 
-def validate_rss(path: pathlib.Path, entries: dict[str, dict[str, Any]]) -> None:
+def validate_rss(path: pathlib.Path, entries: dict[str, dict[str, Any]], seo_base_url: str) -> None:
     text = path.read_text(encoding="utf-8")
     fail_if_forbidden_text(text, str(path))
     root = ET.fromstring(text)
@@ -295,7 +295,7 @@ def validate_rss(path: pathlib.Path, entries: dict[str, dict[str, Any]]) -> None
         link = (item.findtext("link") or "").strip()
         description = (item.findtext("description") or "").strip()
         source = item.find("source")
-        if not link.startswith(f"{PUBLIC_SEO_BASE_URL}/signals/"):
+        if not link.startswith(f"{seo_base_url}/signals/"):
             raise AutoMergeGateError(f"rss.xml item link must be canonical public URL: {link}")
         if description not in summaries:
             raise AutoMergeGateError("rss.xml item description must match summary-only manifest content")
@@ -303,7 +303,7 @@ def validate_rss(path: pathlib.Path, entries: dict[str, dict[str, Any]]) -> None
             raise AutoMergeGateError("rss.xml item source attribution URL is missing")
 
 
-def validate_json_feed(path: pathlib.Path, entries: dict[str, dict[str, Any]]) -> None:
+def validate_json_feed(path: pathlib.Path, entries: dict[str, dict[str, Any]], seo_base_url: str) -> None:
     data = load_json_object(path, "feed.json")
     items = data.get("items")
     if not isinstance(items, list):
@@ -316,7 +316,7 @@ def validate_json_feed(path: pathlib.Path, entries: dict[str, dict[str, Any]]) -
             raise AutoMergeGateError("feed.json items must be objects")
         url = str(item.get("url") or "")
         content_text = str(item.get("content_text") or "")
-        if not url.startswith(f"{PUBLIC_SEO_BASE_URL}/signals/"):
+        if not url.startswith(f"{seo_base_url}/signals/"):
             raise AutoMergeGateError(f"feed.json item URL must be canonical public URL: {url}")
         if content_text not in summaries:
             raise AutoMergeGateError("feed.json content_text must match summary-only manifest content")
@@ -466,20 +466,20 @@ def validate_changed_files_declared(changed_files: list[str], artifact_entries: 
             raise AutoMergeGateError(f"changed public artifact is not declared: {changed_file}")
 
 
-def validate_public_artifact(path: str, root: pathlib.Path, artifact_class: str, entries: dict[str, dict[str, Any]]) -> None:
+def validate_public_artifact(path: str, root: pathlib.Path, artifact_class: str, entries: dict[str, dict[str, Any]], seo_base_url: str) -> None:
     full_path = root / path
     if not full_path.exists():
         raise AutoMergeGateError(f"changed public artifact is missing: {path}")
     if artifact_class in {ARTIFACT_SIGNAL_HTML, ARTIFACT_SIGNALS_INDEX_HTML}:
-        check_html_file(full_path, root, artifact_class)
+        check_html_file(full_path, root, artifact_class, seo_base_url)
     elif artifact_class == ARTIFACT_ROBOTS_TXT:
-        validate_robots(full_path)
+        validate_robots(full_path, seo_base_url)
     elif artifact_class == ARTIFACT_SITEMAP_XML:
-        validate_sitemap(full_path, set(entries))
+        validate_sitemap(full_path, set(entries), seo_base_url)
     elif artifact_class == ARTIFACT_RSS_XML:
-        validate_rss(full_path, entries)
+        validate_rss(full_path, entries, seo_base_url)
     elif artifact_class == ARTIFACT_JSON_FEED:
-        validate_json_feed(full_path, entries)
+        validate_json_feed(full_path, entries, seo_base_url)
     elif artifact_class == ARTIFACT_PUBLIC_LAUNCH_MANIFEST:
         manifest = load_json_object(full_path, path, scan_raw_body=False)
         validate_public_launch_manifest_raw_body_fields(manifest)
@@ -493,6 +493,7 @@ def validate_public_artifact(path: str, root: pathlib.Path, artifact_class: str,
 def run_gate(args: argparse.Namespace) -> None:
     manifest_path = pathlib.Path(args.manifest)
     root = manifest_path.parent.parent
+    seo_base_url = public_seo_base_url(root)
     manifest = load_json_object(manifest_path, str(manifest_path), scan_raw_body=False)
     validate_public_launch_manifest_raw_body_fields(manifest)
     check_manifest_flags(manifest)
@@ -536,7 +537,7 @@ def run_gate(args: argparse.Namespace) -> None:
         artifact = artifact_entries.get(relative_path)
         if not artifact:
             raise AutoMergeGateError(f"public artifact is not declared: {relative_path}")
-        validate_public_artifact(relative_path, root, str(artifact["artifact_class"]), entries)
+        validate_public_artifact(relative_path, root, str(artifact["artifact_class"]), entries, seo_base_url)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

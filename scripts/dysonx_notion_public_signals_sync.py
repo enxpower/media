@@ -22,10 +22,10 @@ from dysonx_public_signals_contract import (
     ALLOWED_ARTIFACT_CLASSES,
     ALLOWED_SAFE_EMBEDS,
     FORBIDDEN_CONTENT_CLASSES,
-    PUBLIC_SEO_BASE_URL,
     PUBLIC_SIGNAL_CONTRACT_VERSION,
     PUBLIC_SIGNAL_POLICY_VERSION,
     build_artifact_entry,
+    public_seo_base_url,
 )
 from dysonx_public_signals_topic_policy import (
     has_core_public_topic as topic_has_core_public_topic,
@@ -512,8 +512,8 @@ def public_signal_sort_key(record: dict[str, Any]) -> tuple[int, int, float, int
     return (priority, relevance, -quality, published_rank, ready_rank, -timestamp_rank(record.get("timestamp")), str(record.get("title") or "").lower())
 
 
-def public_absolute_url(path: str) -> str:
-    return urljoin(f"{PUBLIC_SEO_BASE_URL}/", path.lstrip("/"))
+def public_absolute_url(path: str, seo_base_url: str) -> str:
+    return urljoin(f"{seo_base_url}/", path.lstrip("/"))
 
 
 def seo_description(record: dict[str, Any]) -> str:
@@ -558,10 +558,10 @@ def render_layout(title: str, body: str, head_extra: str = "") -> str:
 """
 
 
-def signal_seo_head(record: dict[str, Any], refreshed_at: str) -> str:
+def signal_seo_head(record: dict[str, Any], refreshed_at: str, seo_base_url: str) -> str:
     title = f"{normalize_text(record['title'])} | DysonX Public Signal"
     description = seo_description(record)
-    canonical = public_absolute_url(f"/signals/{record['slug']}/")
+    canonical = public_absolute_url(f"/signals/{record['slug']}/", seo_base_url)
     json_ld = {
         "@context": "https://schema.org",
         "@type": "TechArticle",
@@ -573,7 +573,7 @@ def signal_seo_head(record: dict[str, Any], refreshed_at: str) -> str:
         "publisher": {
             "@type": "Organization",
             "name": "EnergizeOS Media",
-            "url": PUBLIC_SEO_BASE_URL,
+            "url": seo_base_url,
         },
         "mainEntityOfPage": canonical,
     }
@@ -592,7 +592,7 @@ def signal_seo_head(record: dict[str, Any], refreshed_at: str) -> str:
   {json_ld_script(json_ld)}"""
 
 
-def render_signal_page(record: dict[str, Any], refreshed_at: str) -> str:
+def render_signal_page(record: dict[str, Any], refreshed_at: str, seo_base_url: str) -> str:
     source_html = PUBLIC_SAFE_SOURCE_NOTE
     if record.get("source_url") and is_safe_source_url(str(record["source_url"])):
         source_html = f'<a href="{escape(record["source_url"], quote=True)}" rel="nofollow noopener">{escape(record["source_label"])}</a>'
@@ -621,22 +621,22 @@ def render_signal_page(record: dict[str, Any], refreshed_at: str) -> str:
 <p><a href="/">Home</a> · <a href="/signals/">Back to Public Signals</a></p>
 <p class="muted">Content refreshed at {escape(refreshed_at)}. OpenAI was not called. Source pages were not scraped.</p>
 """
-    return render_layout(record["title"], body, signal_seo_head(record, refreshed_at))
+    return render_layout(record["title"], body, signal_seo_head(record, refreshed_at, seo_base_url))
 
 
-def organization_json_ld() -> str:
+def organization_json_ld(seo_base_url: str) -> str:
     return json_ld_script(
         {
             "@context": "https://schema.org",
             "@type": "Organization",
             "name": "EnergizeOS Media",
-            "url": PUBLIC_SEO_BASE_URL,
-            "publishingPrinciples": public_absolute_url("/signals/"),
+            "url": seo_base_url,
+            "publishingPrinciples": public_absolute_url("/signals/", seo_base_url),
         }
     )
 
 
-def render_index(records: list[dict[str, Any]], blocked_count: int, refreshed_at: str) -> str:
+def render_index(records: list[dict[str, Any]], blocked_count: int, refreshed_at: str, seo_base_url: str) -> str:
     items = []
     for record in records:
         tag_html = "".join(f'<span class="tag">{escape(tag)}</span>' for tag in record.get("tags", []))
@@ -658,17 +658,17 @@ def render_index(records: list[dict[str, Any]], blocked_count: int, refreshed_at
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DysonX Public Signals</title>
   <meta name="description" content="DysonX Public Signals track source-attributed AI and AGI intelligence from the Notion-managed content layer.">
-  <link rel="canonical" href="{escape(public_absolute_url('/signals/'), quote=True)}">
-  <link rel="alternate" type="application/rss+xml" title="DysonX Public Signals RSS" href="{escape(public_absolute_url('/rss.xml'), quote=True)}">
-  <link rel="alternate" type="application/feed+json" title="DysonX Public Signals JSON Feed" href="{escape(public_absolute_url('/feed.json'), quote=True)}">
+  <link rel="canonical" href="{escape(public_absolute_url('/signals/', seo_base_url), quote=True)}">
+  <link rel="alternate" type="application/rss+xml" title="DysonX Public Signals RSS" href="{escape(public_absolute_url('/rss.xml', seo_base_url), quote=True)}">
+  <link rel="alternate" type="application/feed+json" title="DysonX Public Signals JSON Feed" href="{escape(public_absolute_url('/feed.json', seo_base_url), quote=True)}">
   <meta property="og:title" content="DysonX Public Signals">
   <meta property="og:description" content="Source-attributed public Signals tracking AI and AGI intelligence.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="{escape(public_absolute_url('/signals/'), quote=True)}">
+  <meta property="og:url" content="{escape(public_absolute_url('/signals/', seo_base_url), quote=True)}">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="DysonX Public Signals">
   <meta name="twitter:description" content="Source-attributed public Signals tracking AI and AGI intelligence.">
-  {organization_json_ld()}
+  {organization_json_ld(seo_base_url)}
   <style>
     body {{ margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #17202a; line-height: 1.55; }}
     main {{ max-width: 1040px; margin: 0 auto; padding: 28px 20px 56px; }}
@@ -815,19 +815,19 @@ def stable_lastmod(refreshed_at: str) -> str:
     return text[:10] if len(text) >= 10 else text
 
 
-def render_robots() -> str:
+def render_robots(seo_base_url: str) -> str:
     return f"""User-agent: *
 Allow: /
-Sitemap: {PUBLIC_SEO_BASE_URL}/sitemap.xml
+Sitemap: {seo_base_url}/sitemap.xml
 """
 
 
-def render_sitemap(records: list[dict[str, Any]], refreshed_at: str) -> str:
+def render_sitemap(records: list[dict[str, Any]], refreshed_at: str, seo_base_url: str) -> str:
     lastmod = stable_lastmod(refreshed_at)
     urls = ["/", "/signals/", *[f"/signals/{record['slug']}/" for record in records]]
     items = "\n".join(
         f"""  <url>
-    <loc>{escape(public_absolute_url(path))}</loc>
+    <loc>{escape(public_absolute_url(path, seo_base_url))}</loc>
     <lastmod>{escape(lastmod)}</lastmod>
   </url>"""
         for path in urls
@@ -839,10 +839,10 @@ def render_sitemap(records: list[dict[str, Any]], refreshed_at: str) -> str:
 """
 
 
-def render_rss(records: list[dict[str, Any]], refreshed_at: str) -> str:
+def render_rss(records: list[dict[str, Any]], refreshed_at: str, seo_base_url: str) -> str:
     items = []
     for record in records[:DEFAULT_MAX_PUBLIC_SIGNALS]:
-        public_url = public_absolute_url(f"/signals/{record['slug']}/")
+        public_url = public_absolute_url(f"/signals/{record['slug']}/", seo_base_url)
         source = record.get("source_url") or public_url
         items.append(
             f"""    <item>
@@ -858,7 +858,7 @@ def render_rss(records: list[dict[str, Any]], refreshed_at: str) -> str:
 <rss version="2.0">
   <channel>
     <title>DysonX Public Signals</title>
-    <link>{PUBLIC_SEO_BASE_URL}/signals/</link>
+    <link>{seo_base_url}/signals/</link>
     <description>Source-attributed public Signals tracking AI and AGI intelligence.</description>
 {chr(10).join(items)}
   </channel>
@@ -866,17 +866,17 @@ def render_rss(records: list[dict[str, Any]], refreshed_at: str) -> str:
 """
 
 
-def render_json_feed(records: list[dict[str, Any]], refreshed_at: str) -> str:
+def render_json_feed(records: list[dict[str, Any]], refreshed_at: str, seo_base_url: str) -> str:
     feed = {
         "version": "https://jsonfeed.org/version/1.1",
         "title": "DysonX Public Signals",
-        "home_page_url": public_absolute_url("/signals/"),
-        "feed_url": public_absolute_url("/feed.json"),
+        "home_page_url": public_absolute_url("/signals/", seo_base_url),
+        "feed_url": public_absolute_url("/feed.json", seo_base_url),
         "description": "Source-attributed public Signals tracking AI and AGI intelligence.",
         "items": [
             {
-                "id": public_absolute_url(f"/signals/{record['slug']}/"),
-                "url": public_absolute_url(f"/signals/{record['slug']}/"),
+                "id": public_absolute_url(f"/signals/{record['slug']}/", seo_base_url),
+                "url": public_absolute_url(f"/signals/{record['slug']}/", seo_base_url),
                 "title": normalize_text(record["title"]),
                 "summary": normalize_text(record.get("summary", "")),
                 "content_text": normalize_text(record.get("summary", "")),
@@ -926,6 +926,7 @@ def sync_records(
 ) -> dict[str, Any]:
     refreshed_at = refreshed_at or utc_now()
     output_root = output_root.resolve()
+    seo_base_url = public_seo_base_url(output_root)
     signals_root = output_root / "signals"
     signals_root.mkdir(parents=True, exist_ok=True)
 
@@ -954,13 +955,13 @@ def sync_records(
     for record in merged:
         if record.get("existing") and not any(item["slug"] == record["slug"] for item in eligible):
             continue
-        page_html = render_signal_page(record, refreshed_at)
+        page_html = render_signal_page(record, refreshed_at, seo_base_url)
         assert_public_safe(page_html, f"Signal page {record['slug']}")
         page_dir = signals_root / record["slug"]
         page_dir.mkdir(parents=True, exist_ok=True)
         (page_dir / "index.html").write_text(page_html, encoding="utf-8")
 
-    index_html = render_index(merged, blocked_count, refreshed_at)
+    index_html = render_index(merged, blocked_count, refreshed_at, seo_base_url)
     assert_public_safe(index_html, "Signals index")
     (signals_root / "index.html").write_text(index_html, encoding="utf-8")
 
@@ -973,10 +974,10 @@ def sync_records(
     assert_public_safe(artifact_manifest_text, "public artifact manifest")
     (signals_root / "public_artifact_manifest.json").write_text(artifact_manifest_text, encoding="utf-8")
     seo_outputs = {
-        "robots.txt": render_robots(),
-        "sitemap.xml": render_sitemap(merged, refreshed_at),
-        "rss.xml": render_rss(merged, refreshed_at),
-        "feed.json": render_json_feed(merged, refreshed_at),
+        "robots.txt": render_robots(seo_base_url),
+        "sitemap.xml": render_sitemap(merged, refreshed_at, seo_base_url),
+        "rss.xml": render_rss(merged, refreshed_at, seo_base_url),
+        "feed.json": render_json_feed(merged, refreshed_at, seo_base_url),
     }
     for relative_path, text in seo_outputs.items():
         assert_public_safe(text, relative_path)

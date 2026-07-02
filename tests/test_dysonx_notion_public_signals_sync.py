@@ -12,6 +12,10 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import dysonx_notion_public_signals_sync as sync  # noqa: E402
 
 
+FIXTURE_DOMAIN = "example.com"
+FIXTURE_BASE_URL = f"https://{FIXTURE_DOMAIN}"
+
+
 def eligible_record(**overrides):
     record = {
         "Signal ID": "sig_notion_agent_eval",
@@ -41,6 +45,7 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.temp_dir = tempfile.TemporaryDirectory()
         self.root = pathlib.Path(self.temp_dir.name)
         shutil.copytree(ROOT / "signals", self.root / "signals")
+        (self.root / "CNAME").write_text(f"{FIXTURE_DOMAIN}\n", encoding="utf-8")
 
     def tearDown(self):
         self.temp_dir.cleanup()
@@ -190,17 +195,17 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         rss = (self.root / "rss.xml").read_text(encoding="utf-8")
         feed = json.loads((self.root / "feed.json").read_text(encoding="utf-8"))
         launched_urls = {
-            f"https://media.energizeos.com{entry['public_url_path']}"
+            f"{FIXTURE_BASE_URL}{entry['public_url_path']}"
             for entry in manifest["launched"]
         }
 
-        self.assertEqual(robots, "User-agent: *\nAllow: /\nSitemap: https://media.energizeos.com/sitemap.xml\n")
-        self.assertIn("https://media.energizeos.com/", sitemap)
-        self.assertIn("https://media.energizeos.com/signals/", sitemap)
+        self.assertEqual(robots, f"User-agent: *\nAllow: /\nSitemap: {FIXTURE_BASE_URL}/sitemap.xml\n")
+        self.assertIn(f"{FIXTURE_BASE_URL}/", sitemap)
+        self.assertIn(f"{FIXTURE_BASE_URL}/signals/", sitemap)
         for url in launched_urls:
             self.assertIn(url, sitemap)
             self.assertIn(url, rss)
-        self.assertEqual(feed["feed_url"], "https://media.energizeos.com/feed.json")
+        self.assertEqual(feed["feed_url"], f"{FIXTURE_BASE_URL}/feed.json")
         self.assertLessEqual(len(feed["items"]), 30)
 
     def test_generates_public_artifact_manifest_for_every_public_artifact(self):
@@ -236,7 +241,7 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         )
 
         sitemap = (self.root / "sitemap.xml").read_text(encoding="utf-8")
-        self.assertIn("https://media.energizeos.com/signals/notion-agent-reliability/", sitemap)
+        self.assertIn(f"{FIXTURE_BASE_URL}/signals/notion-agent-reliability/", sitemap)
         self.assertNotIn("blocked-biology-medicine", sitemap)
 
     def test_rss_and_json_feed_do_not_contain_raw_body_markers(self):
@@ -252,11 +257,11 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
 
         html = (self.root / "signals" / "notion-agent-reliability" / "index.html").read_text(encoding="utf-8")
         self.assertIn('<meta name="description"', html)
-        self.assertIn('<link rel="canonical" href="https://media.energizeos.com/signals/notion-agent-reliability/">', html)
+        self.assertIn(f'<link rel="canonical" href="{FIXTURE_BASE_URL}/signals/notion-agent-reliability/">', html)
         self.assertIn('property="og:title"', html)
         self.assertIn('property="og:description"', html)
         self.assertIn('property="og:type" content="article"', html)
-        self.assertIn('property="og:url" content="https://media.energizeos.com/signals/notion-agent-reliability/"', html)
+        self.assertIn(f'property="og:url" content="{FIXTURE_BASE_URL}/signals/notion-agent-reliability/"', html)
         self.assertIn('name="twitter:card"', html)
         self.assertIn('type="application/ld+json"', html)
         self.assertIn('"@type": "TechArticle"', html)
