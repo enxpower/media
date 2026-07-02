@@ -9,7 +9,7 @@ from typing import Any
 
 PUBLIC_SIGNAL_CONTRACT_VERSION = "dysonx_public_signal_contract_v1"
 PUBLIC_SIGNAL_POLICY_VERSION = "dysonx_public_signal_policy_v2"
-PUBLIC_SEO_BASE_URL = "https://media.energizeos.com"
+CNAME_FILE = "CNAME"
 
 ARTIFACT_SIGNAL_HTML = "signal_html"
 ARTIFACT_SIGNALS_INDEX_HTML = "signals_index_html"
@@ -63,6 +63,21 @@ SIGNALS_ARTIFACT_CLASSES = {
 
 def normalize_public_path(value: str | pathlib.PurePath) -> str:
     return str(value).strip().replace("\\", "/").lstrip("./")
+
+
+def public_domain_from_cname(root: pathlib.Path | str = ".") -> str:
+    cname_path = pathlib.Path(root) / CNAME_FILE
+    try:
+        domain = cname_path.read_text(encoding="utf-8").strip().splitlines()[0].strip()
+    except (OSError, IndexError):
+        domain = ""
+    if not domain or "://" in domain or "/" in domain or any(char.isspace() for char in domain):
+        raise ValueError(f"{CNAME_FILE} must contain a single public domain")
+    return domain
+
+
+def public_seo_base_url(root: pathlib.Path | str = ".") -> str:
+    return f"https://{public_domain_from_cname(root)}"
 
 
 def signal_slug_from_public_path(path: str | pathlib.PurePath) -> str | None:

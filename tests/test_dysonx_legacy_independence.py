@@ -18,7 +18,6 @@ REMOVED_GENERATED_CONTENT_PATHS = (
     ROOT / "posts" / "page2.html",
     ROOT / "posts" / "page3.html",
     ROOT / "posts" / "page4.html",
-    ROOT / "sitemap.xml",
 )
 
 
