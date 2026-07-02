@@ -78,7 +78,7 @@ jobs:
           import re
           from pathlib import Path
 
-          allowed = re.compile(r"^(signals/index\.html|signals/public_launch_manifest\.json|signals/[^/]+/index\.html)$")
+          allowed = re.compile(r"^(robots\.txt|sitemap\.xml|rss\.xml|feed\.json|signals/index\.html|signals/public_launch_manifest\.json|signals/public_artifact_manifest\.json|signals/[^/]+/index\.html)$")
           files = json.loads(Path("changed_files.json").read_text(encoding="utf-8"))
           bad = [path for path in files if not allowed.match(path)]
           if bad:

@@ -18,13 +18,27 @@ from html.parser import HTMLParser
 from typing import Any, Callable
 from urllib.parse import urljoin, urlsplit
 
+from dysonx_public_signals_contract import (
+    ALLOWED_ARTIFACT_CLASSES,
+    ALLOWED_SAFE_EMBEDS,
+    FORBIDDEN_CONTENT_CLASSES,
+    PUBLIC_SEO_BASE_URL,
+    PUBLIC_SIGNAL_CONTRACT_VERSION,
+    PUBLIC_SIGNAL_POLICY_VERSION,
+    build_artifact_entry,
+)
+from dysonx_public_signals_topic_policy import (
+    has_core_public_topic as topic_has_core_public_topic,
+    off_topic_public_signal as topic_off_topic_public_signal,
+    public_topic_decision,
+)
+
 
 SYNC_VERSION = "notion_public_signals_sync_v1"
 TOKEN_ENV = "NOTION_TOKEN"
 DATABASE_ID_ENV = "NOTION_SIGNAL_INTAKE_DATABASE_ID"
 NOTION_VERSION = "2022-06-28"
 DEFAULT_OUTPUT_ROOT = pathlib.Path(".")
-PUBLIC_SEO_BASE_URL = "https://media.energizeos.com"
 PUBLIC_SAFE_SOURCE_NOTE = "Source attribution retained in Notion launch metadata; external source URL omitted for this V1 public sample."
 DEFAULT_MAX_PUBLIC_SIGNALS = 30
 PUBLIC_OUTPUT_MIN_QUALITY = 80
@@ -32,107 +46,6 @@ PUBLIC_OUTPUT_ALLOWED_PRIORITIES = {"High", "Critical"}
 PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE = {"Medium", "High", "Critical"}
 SOURCE_PRIORITY_RANK = {"Critical": 0, "High": 1}
 AGI_RELEVANCE_RANK = {"Critical": 0, "High": 1, "Medium": 2}
-OFF_TOPIC_PUBLIC_TERMS = (
-    "agriculture",
-    "biology",
-    "biomedical",
-    "cattle",
-    "cancer",
-    "child online safety",
-    "clinical",
-    "dairy",
-    "drug drug interaction",
-    "drug-drug interaction",
-    "eclipse",
-    "eclipses",
-    "electoral politics",
-    "general news",
-    "general science",
-    "generic policy news",
-    "healthcare diagnosis",
-    "indoor robotics",
-    "lab agent",
-    "lab agents",
-    "laboratory agent",
-    "laboratory agents",
-    "law",
-    "legal deliberation",
-    "legal domain",
-    "legal-domain",
-    "medical",
-    "medical imaging",
-    "methane",
-    "medicine",
-    "oceanography",
-    "online safety",
-    "poetry",
-    "politics",
-    "prostate",
-    "robot vacuum",
-    "social media ban",
-    "social media bans",
-    "ultrasound",
-    "vacuum cleaner",
-)
-OFF_TOPIC_PUBLIC_OVERRIDE_TERMS = (
-    "agi governance",
-    "agi safety",
-    "ai act",
-    "ai governance",
-    "ai regulation",
-    "ai safety",
-    "ai safety evaluation",
-    "frontier ai safety",
-    "frontier model evaluation",
-    "frontier model governance",
-    "frontier model safety",
-    "model evaluation",
-)
-CORE_PUBLIC_TOPIC_TERMS = (
-    "agentic workflow",
-    "agentic workflows",
-    "agi governance",
-    "agi safety",
-    "ai agent",
-    "ai agents",
-    "ai governance",
-    "ai infrastructure",
-    "ai regulation",
-    "ai safety",
-    "autonomous ai agent",
-    "autonomous ai agents",
-    "benchmark",
-    "benchmarks",
-    "code agent",
-    "code agents",
-    "coding agent",
-    "coding agents",
-    "developer tool",
-    "developer tools",
-    "frontier model",
-    "frontier models",
-    "frontier model operations",
-    "llm agent",
-    "llm agents",
-    "llm judge",
-    "llm judges",
-    "model evaluation",
-    "model evaluations",
-)
-MULTI_AGENT_TERMS = ("multi-agent", "multi agent")
-MULTI_AGENT_CONTEXT_TERMS = ("ai", "agent", "capability", "safety", "evaluation", "governance", "coordination")
-AGENT_CONTEXT_TERMS = ("capability", "control", "evaluation", "governance", "reliability", "safety", "workflow")
-AUTONOMY_TERMS = ("autonomy", "autonomous systems")
-AUTONOMY_CONTEXT_TERMS = ("ai", "agent", "capability", "safety", "evaluation", "control")
-VLA_TERMS = ("vla", "vision-language-action", "vision language action")
-VLA_CONTEXT_TERMS = (
-    "agent capability",
-    "embodied agent",
-    "embodied ai",
-    "foundation model",
-    "robotics agent",
-    "robotics foundation model",
-)
 FORBIDDEN_PUBLIC_TERMS = (
     "." "invalid",
     "." "test/",
@@ -359,44 +272,16 @@ def is_safe_source_url(url: str) -> bool:
 
 
 def off_topic_public_signal(record: dict[str, Any]) -> bool:
-    haystack = " ".join(
-        [
-            signal_title(record),
-            signal_summary(record),
-            normalize_text(field(record, "Category", "Categories", "Tag", "Tags")),
-            source_label(record),
-        ]
-    ).lower()
-    if not any(term in haystack for term in OFF_TOPIC_PUBLIC_TERMS):
-        return False
-    return not any(term in haystack for term in OFF_TOPIC_PUBLIC_OVERRIDE_TERMS)
+    return topic_off_topic_public_signal(record)
 
 
 def has_core_public_topic(record: dict[str, Any]) -> bool:
-    haystack = " ".join(
-        [
-            signal_title(record),
-            signal_summary(record),
-            normalize_text(field(record, "Category", "Categories", "Tag", "Tags")),
-            source_label(record),
-            agi_relevance(record),
-        ]
-    ).lower()
-    if any(term in haystack for term in CORE_PUBLIC_TOPIC_TERMS):
-        return True
-    if "agent" in haystack and any(term in haystack for term in AGENT_CONTEXT_TERMS):
-        return True
-    if any(term in haystack for term in MULTI_AGENT_TERMS) and any(term in haystack for term in MULTI_AGENT_CONTEXT_TERMS):
-        return True
-    if any(term in haystack for term in AUTONOMY_TERMS) and any(term in haystack for term in AUTONOMY_CONTEXT_TERMS):
-        return True
-    if any(term in haystack for term in VLA_TERMS) and any(term in haystack for term in VLA_CONTEXT_TERMS):
-        return True
-    return False
+    return topic_has_core_public_topic(record)
 
 
 def eligibility_blockers(record: dict[str, Any]) -> list[str]:
     blockers: list[str] = []
+    topic_decision = public_topic_decision(record)
     if source_priority(record) not in PUBLIC_OUTPUT_ALLOWED_PRIORITIES:
         blockers.append("source_priority_below_high")
     if attribution_status(record) != "Complete":
@@ -407,9 +292,9 @@ def eligibility_blockers(record: dict[str, Any]) -> list[str]:
         blockers.append("quality_hint_below_80")
     if agi_relevance(record) not in PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE:
         blockers.append("agi_relevance_below_medium")
-    if off_topic_public_signal(record):
+    if topic_decision["off_topic_public_signal"]:
         blockers.append("off_topic_public_signal")
-    if not has_core_public_topic(record):
+    if not topic_decision["has_core_public_topic"]:
         blockers.append("missing_core_public_topic")
     if not signal_title(record):
         blockers.append("missing_signal_title")
@@ -575,6 +460,7 @@ def existing_public_signals(output_root: pathlib.Path) -> list[dict[str, Any]]:
 
 
 def record_from_notion(record: dict[str, Any]) -> dict[str, Any]:
+    decision = public_topic_decision(record)
     return {
         "signal_id": normalize_text(field(record, "Signal ID", "signal_id", "_notion_page_id")) or f"notion_{signal_slug(record)}",
         "slug": signal_slug(record),
@@ -594,6 +480,7 @@ def record_from_notion(record: dict[str, Any]) -> dict[str, Any]:
         "risk_notes": text_field(record, "Risk Notes", "Safety Notes", "risk_notes", default="Summary-only; source text not reproduced."),
         "watch_next": text_field(record, "Watch Next", "watch_next", default="Watch for follow-up Signals in the Notion-managed intake."),
         "tags": tags(record),
+        "topic_decision": decision,
         "existing": False,
     }
 
@@ -871,6 +758,7 @@ def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_
             "copyright_status": record.get("copyright_status", ""),
             "quality_hint": record.get("quality_hint", ""),
             "ready_for_pipeline": bool(record.get("ready_for_pipeline")),
+            "topic_decision": record.get("topic_decision") or public_topic_decision(record),
             "production_publish_performed": True,
         }
         for record in records
@@ -893,6 +781,32 @@ def build_manifest(records: list[dict[str, Any]], blocked_count: int, refreshed_
         "newsletter_distribution_performed": False,
         "source_pack_manifest": "notion_signal_intake_public_safe_reference",
         "source_release_guard_report": "static_preview_link_integrity_check",
+    }
+
+
+def build_artifact_manifest(records: list[dict[str, Any]], public_manifest: dict[str, Any]) -> dict[str, Any]:
+    material = normalize_text(public_manifest.get("material_signature"))
+    artifact_paths = [
+        "signals/index.html",
+        "signals/public_launch_manifest.json",
+        "signals/public_artifact_manifest.json",
+        "robots.txt",
+        "sitemap.xml",
+        "rss.xml",
+        "feed.json",
+        *[f"signals/{record['slug']}/index.html" for record in records],
+    ]
+    artifacts = [build_artifact_entry(path, material) for path in sorted(set(artifact_paths))]
+    return {
+        "contract_version": PUBLIC_SIGNAL_CONTRACT_VERSION,
+        "policy_version": PUBLIC_SIGNAL_POLICY_VERSION,
+        "generated_from_public_signal_manifest": True,
+        "public_launch_manifest_path": "signals/public_launch_manifest.json",
+        "public_launch_manifest_material_signature": material,
+        "allowed_artifact_classes": sorted(ALLOWED_ARTIFACT_CLASSES),
+        "allowed_safe_embeds": sorted(ALLOWED_SAFE_EMBEDS),
+        "forbidden_content_classes": sorted(FORBIDDEN_CONTENT_CLASSES),
+        "artifacts": artifacts,
     }
 
 
@@ -1054,6 +968,10 @@ def sync_records(
     manifest_text = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     assert_public_safe(manifest_text, "public launch manifest")
     (signals_root / "public_launch_manifest.json").write_text(manifest_text, encoding="utf-8")
+    artifact_manifest = build_artifact_manifest(merged, manifest)
+    artifact_manifest_text = json.dumps(artifact_manifest, indent=2, sort_keys=True) + "\n"
+    assert_public_safe(artifact_manifest_text, "public artifact manifest")
+    (signals_root / "public_artifact_manifest.json").write_text(artifact_manifest_text, encoding="utf-8")
     seo_outputs = {
         "robots.txt": render_robots(),
         "sitemap.xml": render_sitemap(merged, refreshed_at),
