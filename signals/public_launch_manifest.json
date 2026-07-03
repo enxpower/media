@@ -1,5 +1,5 @@
 {
-  "content_refreshed_at": "2026-07-03T01:51:27Z",
+  "content_refreshed_at": "2026-07-03T08:46:48Z",
   "launch_version": "notion_public_signals_sync_v1",
   "launched": [
     {
@@ -159,6 +159,159 @@
         "matched_domain_risk_framing": [
           "ai governance"
         ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases/index.html",
+      "public_url_path": "/signals/agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39295c29-2b0e-8122-9ea8-cd2567f4f1bc",
+      "slug": "agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.01425",
+      "summary": "arXiv:2607.01425v1 Announce Type: new Abstract: Understanding large, complex codebases, especially those with obfuscated structures and incomplete documentation, remains a significant challenge. Existing code summarization solutions ofte...",
+      "title": "Agent4cs: A Multi-agent System for Code Summarization in Large Hierarchical Codebases",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows/index.html",
+      "public_url_path": "/signals/beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39295c29-2b0e-8156-8a47-fe82a359ae0a",
+      "slug": "beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.01465",
+      "summary": "arXiv:2607.01465v1 Announce Type: new Abstract: Large language models are trained to predict the next token, not to act inside a specific API. In niche enterprise SaaS workflows -- where success means hitting the right endpoint with the...",
+      "title": "Beyond Next-Token Prediction: An RLVR Proof of Concept for Tool-Use Agents on Atlassian Workflows",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/janus-a-playground-for-user-involved-agentic-permission-management/index.html",
+      "public_url_path": "/signals/janus-a-playground-for-user-involved-agentic-permission-management/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39295c29-2b0e-81f1-89de-cdac711f75de",
+      "slug": "janus-a-playground-for-user-involved-agentic-permission-management",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.01510",
+      "summary": "arXiv:2607.01510v1 Announce Type: new Abstract: AI agents that autonomously execute tool calls on a user's behalf raise pressing questions about permission management: what role could users play, and what role should they play? Despite m...",
+      "title": "Janus: a Playground for User-Involved Agentic Permission Management",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent",
+          "ai agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/vla-corrector-lightweight-detect-and-correct-inference-for-adaptive-action-horizon/index.html",
+      "public_url_path": "/signals/vla-corrector-lightweight-detect-and-correct-inference-for-adaptive-action-horizon/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39295c29-2b0e-8100-812b-f738b3a1034b",
+      "slug": "vla-corrector-lightweight-detect-and-correct-inference-for-adaptive-action-horizon",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.01804",
+      "summary": "arXiv:2607.01804v1 Announce Type: new Abstract: Vision-Language-Action (VLA) foundation models have recently achieved strong progress in embodied intelligence. To reduce policy-call frequency while preserving temporal coherence, most gen...",
+      "title": "VLA-Corrector: Lightweight Detect-and-Correct Inference for Adaptive Action Horizon",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "vla_context"
+        ],
+        "matched_domain_risk_framing": [
+          "foundation model"
+        ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/when-should-service-agents-reconsider-difficulty-routed-control-in-customer-service-operations/index.html",
+      "public_url_path": "/signals/when-should-service-agents-reconsider-difficulty-routed-control-in-customer-service-operations/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39295c29-2b0e-8115-9651-f847b6c6b9a8",
+      "slug": "when-should-service-agents-reconsider-difficulty-routed-control-in-customer-service-operations",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.01426",
+      "summary": "arXiv:2607.01426v1 Announce Type: new Abstract: Autonomous customer-service agents are shifting from conversational interfaces toward operational execution roles: they retrieve firm records, apply service policies, and execute backend wr...",
+      "title": "When Should Service Agents Reconsider? Difficulty-Routed Control in Customer-Service Operations",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
         "matched_domain_risks": {},
         "off_topic_public_signal": false,
         "reasons": []
@@ -778,165 +931,14 @@
         "off_topic_public_signal": false,
         "reasons": []
       }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/why-solve-it-twice-hierarchical-accumulation-of-skills-for-transfer-efficient-ml-engineering/index.html",
-      "public_url_path": "/signals/why-solve-it-twice-hierarchical-accumulation-of-skills-for-transfer-efficient-ml-engineering/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39095c29-2b0e-81a3-a133-c46c6bdad93a",
-      "slug": "why-solve-it-twice-hierarchical-accumulation-of-skills-for-transfer-efficient-ml-engineering",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2606.30911",
-      "summary": "arXiv:2606.30911v1 Announce Type: new Abstract: ML engineering agents waste compute rediscovering known techniques because every competition is a cold start. We present HASTE, a hierarchical multi-agent system that organizes cross-compet...",
-      "title": "Why Solve It Twice? Hierarchical Accumulation of Skills for Transfer-Efficient ML Engineering",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "multi_agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "Medium",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/embodimentsemantic-a-spatial-scene-graph-dataset-and-benchmark-for-vision-language-models-on-embodied-manipulation-trajectories/index.html",
-      "public_url_path": "/signals/embodimentsemantic-a-spatial-scene-graph-dataset-and-benchmark-for-vision-language-models-on-embodied-manipulation-trajectories/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39195c29-2b0e-8110-8178-f2a224b294ee",
-      "slug": "embodimentsemantic-a-spatial-scene-graph-dataset-and-benchmark-for-vision-language-models-on-embodied-manipulation-trajectories",
-      "source_name": "arXiv cs.RO RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.00020",
-      "summary": "arXiv:2607.00020v1 Announce Type: new Abstract: Spatial grounding remains a key limitation of vision-language-action (VLA) systems for robotic manipulation. While current models can recognize objects and follow language instructions, the...",
-      "title": "EmbodimentSemantic: A Spatial Scene-Graph Dataset and Benchmark for Vision-Language Models on Embodied Manipulation Trajectories",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "benchmark"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "Medium",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/beyond-compilation-evaluating-faithful-natural-language-to-lean-statement-formalization/index.html",
-      "public_url_path": "/signals/beyond-compilation-evaluating-faithful-natural-language-to-lean-statement-formalization/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39095c29-2b0e-81dc-bca3-edc12eadca0e",
-      "slug": "beyond-compilation-evaluating-faithful-natural-language-to-lean-statement-formalization",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2606.31002",
-      "summary": "arXiv:2606.31002v1 Announce Type: new Abstract: Theorem-proving benchmarks evaluate proof search against fixed formal statements, but natural-language-to-Lean formalization must generate the formal statement itself. In this setting, comp...",
-      "title": "Beyond Compilation: Evaluating Faithful Natural-Language-to-Lean Statement Formalization",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "benchmark",
-          "benchmarks"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "Medium",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/labimus-a-simulation-and-benchmark-for-humanoid-dexterous-manipulation-in-chemical-laboratory/index.html",
-      "public_url_path": "/signals/labimus-a-simulation-and-benchmark-for-humanoid-dexterous-manipulation-in-chemical-laboratory/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39095c29-2b0e-811f-950e-cebadb13e445",
-      "slug": "labimus-a-simulation-and-benchmark-for-humanoid-dexterous-manipulation-in-chemical-laboratory",
-      "source_name": "arXiv cs.RO RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2606.31037",
-      "summary": "arXiv:2606.31037v1 Announce Type: new Abstract: Laboratory automation has made remarkable progress through robotic platforms and AI-driven scientific reasoning. However, many laboratory operations (e.g., solid--solid transfer) remain inh...",
-      "title": "Labimus: A Simulation and Benchmark for Humanoid Dexterous Manipulation in Chemical Laboratory",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "benchmark"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "Medium",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/multiuav-plat-an-llm-oriented-platform-benchmark-and-framework-for-multi-uav-collaborative-task-planning/index.html",
-      "public_url_path": "/signals/multiuav-plat-an-llm-oriented-platform-benchmark-and-framework-for-multi-uav-collaborative-task-planning/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39095c29-2b0e-81cb-aa47-ed5900a11b14",
-      "slug": "multiuav-plat-an-llm-oriented-platform-benchmark-and-framework-for-multi-uav-collaborative-task-planning",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2606.31073",
-      "summary": "arXiv:2606.31073v1 Announce Type: new Abstract: Large language models (LLMs) provide a promising interface for high-level robotic task planning, but their use in multi-UAV collaboration remains difficult to evaluate systematically. Exist...",
-      "title": "MultiUAV-Plat: An LLM-Oriented Platform, Benchmark and Framework for Multi-UAV Collaborative Task Planning",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "benchmark"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
     }
   ],
   "manual_external_deployment_performed": false,
-  "material_signature": "ef0d2a6b015c613017fdcfdf2e57a1c17645fc0071db15f54d49099238b13819",
+  "material_signature": "52ed65e89c2dc7b77dc1668c53e2f681f990aeca2c9e98841a214a31373cd5d3",
   "network_source_fetch_performed": false,
   "newsletter_distribution_performed": false,
   "openai_call_performed": false,
-  "pages_blocked": 374,
+  "pages_blocked": 410,
   "pages_launched": 30,
   "public_output_root": ".",
   "raw_article_body_copied": false,
