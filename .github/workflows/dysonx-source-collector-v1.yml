@@ -41,10 +41,20 @@ jobs:
 
           data = json.loads(Path("tmp/dysonx_source_collector_v1_candidates.json").read_text(encoding="utf-8"))
           print("candidate_count:", data.get("candidate_count"))
+          print("new_candidates_created:", data.get("new_candidates_created"))
+          print("raw_items_seen:", data.get("raw_items_seen"))
           print("duplicates_skipped:", data.get("duplicates_skipped"))
+          print("skipped_by_reason:", data.get("skipped_by_reason"))
+          print("sources_fetched:", data.get("sources_fetched"))
+          print("sources_failed:", data.get("sources_failed"))
           print("source_results:")
           for item in data.get("source_results", []):
               print(" -", item)
+          print("skipped_candidates:")
+          for item in data.get("skipped_candidates", [])[:50]:
+              print(" -", item)
+          if len(data.get("skipped_candidates", [])) > 50:
+              print(" - ...", len(data.get("skipped_candidates", [])) - 50, "more skipped candidates")
           PY
           else
             echo "[source-collector-v1] candidate artifact was not created"

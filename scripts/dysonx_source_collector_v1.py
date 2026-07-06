@@ -69,6 +69,14 @@ FetchTransport = Callable[[str], str]
 
 
 @dataclass(frozen=True)
+class CollectedSourceItems:
+    items: list[SourceItem]
+    fetched_url: str
+    fallback_used: bool = False
+    fallback_reason: str = ""
+
+
+@dataclass(frozen=True)
 class SourceRecord:
     notion_page_id: str
     name: str
@@ -306,12 +314,34 @@ class MetadataHTMLParser(HTMLParser):
 
 
 def fetch_url(url: str) -> str:
-    request = urllib.request.Request(url, headers={"User-Agent": "DysonXSourceCollectorV1/1.0"})
+    request = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "DysonXSourceCollectorV1/1.0 (+https://github.com/enxpower/media)",
+            "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, text/html;q=0.8, */*;q=0.5",
+        },
+    )
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
             return response.read(2_000_000).decode("utf-8", errors="ignore")
     except urllib.error.URLError as exc:
         raise SourceCollectorError(f"source fetch failed: {exc}") from exc
+
+
+def official_metadata_fallback_urls(source: SourceRecord) -> list[str]:
+    """Return same-owner metadata endpoints for stale or bot-blocked source URLs."""
+    parsed = urllib.parse.urlparse(source.url)
+    host = parsed.netloc.lower()
+    path = parsed.path.lower()
+    name = source.name.lower()
+    fallbacks: list[str] = []
+    if host == "openai.com" or host.endswith(".openai.com"):
+        fallbacks.append("https://openai.com/news/rss.xml")
+    if host in {"developer.nvidia.com", "developer-blogs.nvidia.com"} or "nvidia developer" in name:
+        fallbacks.append("https://developer.nvidia.com/blog/feed/")
+    if "nvidia" in host and "blog" in path:
+        fallbacks.append("https://developer.nvidia.com/blog/feed/")
+    return [url for index, url in enumerate(fallbacks) if url and url not in fallbacks[:index] and url != source.url]
 
 
 def xml_text(element: ET.Element, names: tuple[str, ...]) -> str:
@@ -386,12 +416,44 @@ def parse_page_metadata(page_html: str, source: SourceRecord) -> list[SourceItem
     ]
 
 
-def collect_source_items(source: SourceRecord, fetch: FetchTransport = fetch_url) -> list[SourceItem]:
-    content = fetch(source.url)
+def collect_source_items_from_url(source: SourceRecord, url: str, fetch: FetchTransport = fetch_url) -> list[SourceItem]:
+    content = fetch(url)
+    source = SourceRecord(
+        notion_page_id=source.notion_page_id,
+        name=source.name,
+        url=url,
+        source_type=source.source_type,
+        platform=source.platform,
+        priority=source.priority,
+        authority_score=source.authority_score,
+        enabled=source.enabled,
+        fetch_frequency=source.fetch_frequency,
+        last_fetched_at=source.last_fetched_at,
+    )
     source_kind = f"{source.source_type} {source.platform}".lower()
     if "<rss" in content[:500].lower() or "<feed" in content[:500].lower() or any(token in source_kind for token in ("rss", "atom", "feed", "arxiv")):
         return parse_feed_items(content, source)
     return parse_page_metadata(content, source)
+
+
+def collect_source_items(source: SourceRecord, fetch: FetchTransport = fetch_url) -> CollectedSourceItems:
+    try:
+        return CollectedSourceItems(items=collect_source_items_from_url(source, source.url, fetch=fetch), fetched_url=source.url)
+    except SourceCollectorError as primary_error:
+        fallback_errors: list[str] = []
+        for fallback_url in official_metadata_fallback_urls(source):
+            try:
+                return CollectedSourceItems(
+                    items=collect_source_items_from_url(source, fallback_url, fetch=fetch),
+                    fetched_url=fallback_url,
+                    fallback_used=True,
+                    fallback_reason=f"{primary_error}; retried official metadata endpoint",
+                )
+            except SourceCollectorError as fallback_error:
+                fallback_errors.append(f"{fallback_url}: {fallback_error}")
+        if fallback_errors:
+            raise SourceCollectorError(f"{primary_error}; fallback fetch failed: {'; '.join(fallback_errors)}") from primary_error
+        raise
 
 
 def ai_relevance_text(item: SourceItem) -> str:
@@ -496,20 +558,50 @@ def existing_keys(records: list[dict[str, Any]]) -> set[str]:
     return keys
 
 
-def dedupe_candidates(candidates: list[dict[str, Any]], existing_records: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:
+def skip_source_reason(source: SourceRecord) -> str:
+    if not source.enabled:
+        return "source_disabled"
+    if source.priority not in ALLOWED_PRIORITIES:
+        return "priority_not_allowed"
+    if not source.url:
+        return "missing_url"
+    if not supported_source(source):
+        return "unsupported_source_type"
+    if not frequency_due(source):
+        return "fetch_frequency_not_due"
+    return "not_eligible"
+
+
+def dedupe_candidates(
+    candidates: list[dict[str, Any]], existing_records: list[dict[str, Any]]
+) -> tuple[list[dict[str, Any]], int, list[dict[str, Any]], dict[str, int]]:
     keys = existing_keys(existing_records)
     emitted: list[dict[str, Any]] = []
+    skipped_candidates: list[dict[str, Any]] = []
+    skipped_by_reason = {"duplicate_source_url": 0, "duplicate_title": 0}
     skipped = 0
     for candidate in candidates:
         url_key = f"url:{normalize_text(candidate.get('Source URL')).lower()}"
         title_key = f"title:{normalized_title(normalize_text(candidate.get('Signal Title')))}"
-        if url_key in keys or title_key in keys:
+        matched_keys = [key for key in (url_key, title_key) if key in keys]
+        if matched_keys:
             skipped += 1
+            reason = "duplicate_source_url" if url_key in matched_keys else "duplicate_title"
+            skipped_by_reason[reason] += 1
+            skipped_candidates.append(
+                {
+                    "source": normalize_text(candidate.get("Source Name")),
+                    "title": normalize_text(candidate.get("Signal Title")),
+                    "source_url": normalize_text(candidate.get("Source URL")),
+                    "reason": reason,
+                    "matched_keys": matched_keys,
+                }
+            )
             continue
         keys.add(url_key)
         keys.add(title_key)
         emitted.append(candidate)
-    return emitted, skipped
+    return emitted, skipped, skipped_candidates, skipped_by_reason
 
 
 def urllib_notion_transport(url: str, headers: dict[str, str], payload: dict[str, Any] | None, method: str) -> dict[str, Any]:
@@ -626,22 +718,59 @@ def build_candidates(
     source_results: list[dict[str, Any]] = []
     for source in sources:
         if not eligible_source(source):
-            source_results.append({"source": source.name, "status": "skipped"})
+            source_results.append(
+                {
+                    "source": source.name,
+                    "source_url": source.url,
+                    "status": "skipped",
+                    "reason": skip_source_reason(source),
+                    "raw_items_seen": 0,
+                    "candidates_built": 0,
+                }
+            )
             continue
         try:
-            items = collect_source_items(source, fetch=fetch)
-            candidates = [candidate_from_item(item) for item in items]
+            collected = collect_source_items(source, fetch=fetch)
+            candidates = [candidate_from_item(item) for item in collected.items]
             collected_candidates.extend(candidates)
-            source_results.append({"source": source.name, "status": "collected", "items": len(items)})
+            result = {
+                "source": source.name,
+                "source_url": source.url,
+                "status": "collected",
+                "fetched_url": collected.fetched_url,
+                "raw_items_seen": len(collected.items),
+                "items": len(collected.items),
+                "candidates_built": len(candidates),
+            }
+            if collected.fallback_used:
+                result["fallback_used"] = True
+                result["fallback_reason"] = collected.fallback_reason
+                result["recommended_source_url"] = collected.fetched_url
+            source_results.append(result)
         except SourceCollectorError as exc:
-            source_results.append({"source": source.name, "status": "error", "error": str(exc)})
-    deduped, duplicates_skipped = dedupe_candidates(collected_candidates, existing_signal_intake)
+            source_results.append(
+                {
+                    "source": source.name,
+                    "source_url": source.url,
+                    "status": "error",
+                    "error": str(exc),
+                    "raw_items_seen": 0,
+                    "candidates_built": 0,
+                }
+            )
+    deduped, duplicates_skipped, skipped_candidates, skipped_by_reason = dedupe_candidates(collected_candidates, existing_signal_intake)
     return {
         "collector_version": "source_collector_v1",
         "candidates": deduped,
         "candidate_count": len(deduped),
         "duplicates_skipped": duplicates_skipped,
+        "raw_items_seen": len(collected_candidates),
+        "new_candidates_created": len(deduped),
+        "skipped_candidates": skipped_candidates,
+        "skipped_by_reason": skipped_by_reason,
         "sources_seen": len(source_records),
+        "sources_fetched": sum(1 for item in source_results if item.get("status") == "collected"),
+        "sources_failed": sum(1 for item in source_results if item.get("status") == "error"),
         "source_results": source_results,
         "openai_call_performed": OPENAI_CALL_PERFORMED,
         "source_page_body_scraping_performed": SOURCE_PAGE_BODY_SCRAPING_PERFORMED,
@@ -716,6 +845,8 @@ def main(argv: list[str] | None = None) -> int:
         print(
             "[source-collector-v1] PASS "
             f"candidates={result['candidate_count']} duplicates_skipped={result['duplicates_skipped']} "
+            f"raw_items_seen={result['raw_items_seen']} sources_fetched={result['sources_fetched']} "
+            f"sources_failed={result['sources_failed']} "
             "openai_call_performed=False public_static_files_written=False"
         )
         return 0
