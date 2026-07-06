@@ -11,6 +11,7 @@ import argparse
 import datetime as dt
 import email.utils
 import hashlib
+import http.client
 import html
 import json
 import os
@@ -324,7 +325,7 @@ def fetch_url(url: str) -> str:
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
             return response.read(2_000_000).decode("utf-8", errors="ignore")
-    except urllib.error.URLError as exc:
+    except (urllib.error.URLError, http.client.HTTPException, OSError, TimeoutError) as exc:
         raise SourceCollectorError(f"source fetch failed: {exc}") from exc
 
 
@@ -417,7 +418,10 @@ def parse_page_metadata(page_html: str, source: SourceRecord) -> list[SourceItem
 
 
 def collect_source_items_from_url(source: SourceRecord, url: str, fetch: FetchTransport = fetch_url) -> list[SourceItem]:
-    content = fetch(url)
+    try:
+        content = fetch(url)
+    except (urllib.error.URLError, http.client.HTTPException, OSError, TimeoutError) as exc:
+        raise SourceCollectorError(f"source fetch failed: {exc}") from exc
     source = SourceRecord(
         notion_page_id=source.notion_page_id,
         name=source.name,

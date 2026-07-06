@@ -194,6 +194,28 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
         self.assertEqual(result["source_results"][0]["fetched_url"], "https://developer.nvidia.com/blog/feed/")
         self.assertTrue(result["source_results"][0]["fallback_used"])
 
+    def test_source_disconnect_is_reported_without_aborting_collection(self):
+        source = collector.SourceRecord(
+            notion_page_id="disconnect-source",
+            name="Disconnecting AI Source",
+            url="https://example.org/disconnect",
+            source_type="Official Website",
+            platform="Website",
+            priority="High",
+            authority_score=90,
+            enabled=True,
+        )
+
+        def fetch(url: str) -> str:
+            raise OSError("Remote end closed connection without response")
+
+        result = collector.build_candidates([collector.asdict(source)], [], fetch=fetch)
+
+        self.assertEqual(result["candidate_count"], 0)
+        self.assertEqual(result["sources_failed"], 1)
+        self.assertEqual(result["source_results"][0]["status"], "error")
+        self.assertIn("Remote end closed connection", result["source_results"][0]["error"])
+
     def test_low_authority_source_does_not_auto_publish(self):
         sources = [load_records("source_registry_sample.json")[2]]
         result = collector.build_candidates(sources, [], fetch=self.fixture_fetch)
