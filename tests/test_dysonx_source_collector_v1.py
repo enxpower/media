@@ -121,6 +121,78 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
 
         self.assertEqual(result["candidate_count"], 0)
         self.assertEqual(result["source_results"][0]["status"], "skipped")
+        self.assertEqual(result["source_results"][0]["reason"], "missing_url")
+
+    def test_openai_blocked_url_uses_official_rss_fallback(self):
+        source = collector.SourceRecord(
+            notion_page_id="openai-source",
+            name="OpenAI Blog",
+            url="https://openai.com/blog",
+            source_type="Official Website",
+            platform="Website",
+            priority="Critical",
+            authority_score=95,
+            enabled=True,
+        )
+        feed = """
+        <rss><channel>
+          <item>
+            <title>How agents are transforming work</title>
+            <link>https://openai.com/index/how-agents-are-transforming-work</link>
+            <description>OpenAI metadata summary about AI agents transforming work.</description>
+            <pubDate>Thu, 25 Jun 2026 02:00:00 GMT</pubDate>
+          </item>
+        </channel></rss>
+        """
+
+        def fetch(url: str) -> str:
+            if url == "https://openai.com/blog":
+                raise collector.SourceCollectorError("source fetch failed: HTTP Error 403: Forbidden")
+            if url == "https://openai.com/news/rss.xml":
+                return feed
+            raise collector.SourceCollectorError(f"unexpected fetch URL: {url}")
+
+        result = collector.build_candidates([collector.asdict(source)], [], fetch=fetch)
+
+        self.assertEqual(result["candidate_count"], 1)
+        self.assertEqual(result["source_results"][0]["status"], "collected")
+        self.assertTrue(result["source_results"][0]["fallback_used"])
+        self.assertEqual(result["source_results"][0]["fetched_url"], "https://openai.com/news/rss.xml")
+        self.assertEqual(result["candidates"][0]["Source URL"], "https://openai.com/index/how-agents-are-transforming-work")
+
+    def test_nvidia_developer_blog_uses_official_blog_feed_fallback(self):
+        source = collector.SourceRecord(
+            notion_page_id="nvidia-source",
+            name="NVIDIA Developer Blog AI",
+            url="https://developer.nvidia.com/blog/category/ai/",
+            source_type="RSS",
+            platform="RSS",
+            priority="High",
+            authority_score=90,
+            enabled=True,
+        )
+        feed = """
+        <rss><channel>
+          <item>
+            <title>NVIDIA AI inference update for robotics agents</title>
+            <link>https://developer.nvidia.com/blog/inference-robotics-agents</link>
+            <description>NVIDIA metadata summary about AI inference for robotics agents.</description>
+          </item>
+        </channel></rss>
+        """
+
+        def fetch(url: str) -> str:
+            if url == "https://developer.nvidia.com/blog/category/ai/":
+                raise collector.SourceCollectorError("source fetch failed: HTTP Error 404: Not Found")
+            if url == "https://developer.nvidia.com/blog/feed/":
+                return feed
+            raise collector.SourceCollectorError(f"unexpected fetch URL: {url}")
+
+        result = collector.build_candidates([collector.asdict(source)], [], fetch=fetch)
+
+        self.assertEqual(result["candidate_count"], 1)
+        self.assertEqual(result["source_results"][0]["fetched_url"], "https://developer.nvidia.com/blog/feed/")
+        self.assertTrue(result["source_results"][0]["fallback_used"])
 
     def test_low_authority_source_does_not_auto_publish(self):
         sources = [load_records("source_registry_sample.json")[2]]
@@ -188,6 +260,9 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
         titles = [item["Signal Title"] for item in result["candidates"]]
         self.assertNotIn("Agent evaluation benchmark improves reliability scoring", titles)
         self.assertGreaterEqual(result["duplicates_skipped"], 1)
+        self.assertGreaterEqual(result["skipped_by_reason"]["duplicate_source_url"], 1)
+        self.assertEqual(result["skipped_candidates"][0]["reason"], "duplicate_source_url")
+        self.assertIn("matched_keys", result["skipped_candidates"][0])
 
     def test_high_priority_quality_88_is_created_but_not_published(self):
         item = collector.SourceItem(
