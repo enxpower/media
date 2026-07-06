@@ -1,5 +1,5 @@
 {
-  "content_refreshed_at": "2026-07-03T13:39:44Z",
+  "content_refreshed_at": "2026-07-06T00:41:19Z",
   "launch_version": "notion_public_signals_sync_v1",
   "launched": [
     {
@@ -159,6 +159,37 @@
         "matched_domain_risk_framing": [
           "ai governance"
         ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/how-agents-are-transforming-work/index.html",
+      "public_url_path": "/signals/how-agents-are-transforming-work/",
+      "published": true,
+      "quality_hint": 98,
+      "ready_for_pipeline": true,
+      "signal_id": "39595c29-2b0e-81be-a301-da4597ee075c",
+      "slug": "how-agents-are-transforming-work",
+      "source_name": "OpenAI Research Index",
+      "source_priority": "Critical",
+      "source_url": "https://openai.com/index/how-agents-are-transforming-work",
+      "summary": "A new OpenAI research paper shows how AI agents are transforming work, enabling longer, more complex tasks and expanding productivity across roles.",
+      "title": "How agents are transforming work",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent",
+          "ai agents"
+        ],
+        "matched_domain_risk_framing": [],
         "matched_domain_risks": {},
         "off_topic_public_signal": false,
         "reasons": []
@@ -626,6 +657,36 @@
       "attribution_status": "Complete",
       "copyright_status": "Safe Summary Only",
       "production_publish_performed": true,
+      "public_path": "signals/mastering-agentic-techniques-ai-agent-reinforcement-learning/index.html",
+      "public_url_path": "/signals/mastering-agentic-techniques-ai-agent-reinforcement-learning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-819c-af06-ff673b5d9e15",
+      "slug": "mastering-agentic-techniques-ai-agent-reinforcement-learning",
+      "source_name": "NVIDIA Developer Blog AI",
+      "source_priority": "High",
+      "source_url": "https://developer.nvidia.com/blog/mastering-agentic-techniques-ai-agent-reinforcement-learning/",
+      "summary": "Reinforcement learning (RL) is central to aligning language models, from reinforcement learning with human feedback (RLHF) within AI assistants to newer...",
+      "title": "Mastering Agentic Techniques: AI Agent Reinforcement Learning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
       "public_path": "signals/agentbound-verifiable-behavioral-governance-for-autonomous-ai-agents/index.html",
       "public_url_path": "/signals/agentbound-verifiable-behavioral-governance-for-autonomous-ai-agents/",
       "published": true,
@@ -871,74 +932,14 @@
         "off_topic_public_signal": false,
         "reasons": []
       }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/sampling-based-coordination-informed-multi-objective-multi-robot-reinforcement-learning/index.html",
-      "public_url_path": "/signals/sampling-based-coordination-informed-multi-objective-multi-robot-reinforcement-learning/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39095c29-2b0e-8174-ad48-f7d44d3fb822",
-      "slug": "sampling-based-coordination-informed-multi-objective-multi-robot-reinforcement-learning",
-      "source_name": "arXiv cs.RO RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2606.30893",
-      "summary": "arXiv:2606.30893v1 Announce Type: new Abstract: Multi-robot systems must simultaneously optimize competing objectives while maintaining coordinated behavior. Existing multi-agent reinforcement learning approaches often rely on fixed or c...",
-      "title": "Sampling-Based Coordination-Informed Multi-Objective Multi-Robot Reinforcement Learning",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "multi_agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/when-regulation-has-memory-hysteresis-and-control-burden-in-artificial-agency/index.html",
-      "public_url_path": "/signals/when-regulation-has-memory-hysteresis-and-control-burden-in-artificial-agency/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39095c29-2b0e-812b-8267-c2d1f235108e",
-      "slug": "when-regulation-has-memory-hysteresis-and-control-burden-in-artificial-agency",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2606.30975",
-      "summary": "arXiv:2606.30975v1 Announce Type: new Abstract: Adaptive agents are usually judged by what they do, but an agent can appear stable while the internal effort required to keep it stable is increasing. This hidden regulatory burden matters...",
-      "title": "When Regulation Has Memory: Hysteresis and Control Burden in Artificial Agency",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
     }
   ],
   "manual_external_deployment_performed": false,
-  "material_signature": "b6976bcf56981a107f3fb7f3618a54e2852155fce0ea52d9989c6ad610c01025",
+  "material_signature": "1f7fa2e3285133126d6a4330d731cb091e76b71a597d883e9fbc101bf6be1cda",
   "network_source_fetch_performed": false,
   "newsletter_distribution_performed": false,
   "openai_call_performed": false,
-  "pages_blocked": 412,
+  "pages_blocked": 445,
   "pages_launched": 30,
   "public_output_root": ".",
   "raw_article_body_copied": false,
