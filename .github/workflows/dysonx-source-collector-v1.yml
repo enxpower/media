@@ -36,16 +36,16 @@ jobs:
         run: |
           if [ -f tmp/dysonx_source_collector_v1_candidates.json ]; then
             python3 - <<'PY'
-            import json
-            from pathlib import Path
+import json
+from pathlib import Path
 
-            data = json.loads(Path("tmp/dysonx_source_collector_v1_candidates.json").read_text(encoding="utf-8"))
-            print("candidate_count:", data.get("candidate_count"))
-            print("duplicates_skipped:", data.get("duplicates_skipped"))
-            print("source_results:")
-            for item in data.get("source_results", []):
-                print(" -", item)
-            PY
+data = json.loads(Path("tmp/dysonx_source_collector_v1_candidates.json").read_text(encoding="utf-8"))
+print("candidate_count:", data.get("candidate_count"))
+print("duplicates_skipped:", data.get("duplicates_skipped"))
+print("source_results:")
+for item in data.get("source_results", []):
+    print(" -", item)
+PY
           else
             echo "[source-collector-v1] candidate artifact was not created"
           fi
