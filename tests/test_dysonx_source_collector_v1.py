@@ -264,6 +264,22 @@ class DysonXSourceCollectorV1Tests(unittest.TestCase):
         self.assertEqual(result["skipped_candidates"][0]["reason"], "duplicate_source_url")
         self.assertIn("matched_keys", result["skipped_candidates"][0])
 
+    def test_all_duplicates_reports_no_fresh_source_items(self):
+        sources = [load_records("source_registry_sample.json")[0]]
+        existing = [
+            {"Source URL": "https://example.org/research/agent-evaluation-benchmark"},
+            {"Source URL": "https://example.org/company/operations-update"},
+        ]
+        result = collector.build_candidates(sources, existing, fetch=self.fixture_fetch)
+
+        self.assertEqual(result["raw_items_seen"], 2)
+        self.assertEqual(result["new_candidates_created"], 0)
+        self.assertEqual(result["duplicates_skipped"], 2)
+        self.assertEqual(
+            result["freshness_diagnostic"],
+            "no fresh source items found; all fetched items matched existing Signal Intake rows",
+        )
+
     def test_high_priority_quality_88_is_created_but_not_published(self):
         item = collector.SourceItem(
             title="AI driving scenario complexity detection via joint embedding predictive architecture",

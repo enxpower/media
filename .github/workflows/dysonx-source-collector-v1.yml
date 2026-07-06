@@ -42,6 +42,7 @@ jobs:
           data = json.loads(Path("tmp/dysonx_source_collector_v1_candidates.json").read_text(encoding="utf-8"))
           print("candidate_count:", data.get("candidate_count"))
           print("new_candidates_created:", data.get("new_candidates_created"))
+          print("freshness_diagnostic:", data.get("freshness_diagnostic"))
           print("raw_items_seen:", data.get("raw_items_seen"))
           print("duplicates_skipped:", data.get("duplicates_skipped"))
           print("skipped_by_reason:", data.get("skipped_by_reason"))

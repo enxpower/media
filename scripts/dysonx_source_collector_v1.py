@@ -604,6 +604,16 @@ def dedupe_candidates(
     return emitted, skipped, skipped_candidates, skipped_by_reason
 
 
+def freshness_diagnostic(raw_items_seen: int, new_candidates_created: int, duplicates_skipped: int) -> str:
+    if raw_items_seen > 0 and new_candidates_created == 0 and duplicates_skipped == raw_items_seen:
+        return "no fresh source items found; all fetched items matched existing Signal Intake rows"
+    if raw_items_seen == 0:
+        return "no source items fetched"
+    if new_candidates_created > 0:
+        return "fresh source items found"
+    return "no new candidates created"
+
+
 def urllib_notion_transport(url: str, headers: dict[str, str], payload: dict[str, Any] | None, method: str) -> dict[str, Any]:
     data = json.dumps(payload or {}).encode("utf-8") if payload is not None else None
     request = urllib.request.Request(url, data=data, headers=headers, method=method)
@@ -759,13 +769,16 @@ def build_candidates(
                 }
             )
     deduped, duplicates_skipped, skipped_candidates, skipped_by_reason = dedupe_candidates(collected_candidates, existing_signal_intake)
+    raw_items_seen = len(collected_candidates)
+    new_candidates_created = len(deduped)
     return {
         "collector_version": "source_collector_v1",
         "candidates": deduped,
-        "candidate_count": len(deduped),
+        "candidate_count": new_candidates_created,
         "duplicates_skipped": duplicates_skipped,
-        "raw_items_seen": len(collected_candidates),
-        "new_candidates_created": len(deduped),
+        "raw_items_seen": raw_items_seen,
+        "new_candidates_created": new_candidates_created,
+        "freshness_diagnostic": freshness_diagnostic(raw_items_seen, new_candidates_created, duplicates_skipped),
         "skipped_candidates": skipped_candidates,
         "skipped_by_reason": skipped_by_reason,
         "sources_seen": len(source_records),
