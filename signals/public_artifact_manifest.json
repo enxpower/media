@@ -19,7 +19,7 @@
       "artifact_class": "json_feed",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "feed.json",
       "policy_version": "dysonx_public_signal_policy_v2"
     },
@@ -28,7 +28,7 @@
       "artifact_class": "robots_txt",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "robots.txt",
       "policy_version": "dysonx_public_signal_policy_v2"
     },
@@ -37,7 +37,7 @@
       "artifact_class": "rss_xml",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "rss.xml",
       "policy_version": "dysonx_public_signal_policy_v2"
     },
@@ -48,19 +48,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
-      "path": "signals/a-contextual-bandit-oversight-game-with-two-sided-informational-asymmetry/index.html",
-      "policy_version": "dysonx_public_signal_policy_v2",
-      "slug": "a-contextual-bandit-oversight-game-with-two-sided-informational-asymmetry"
-    },
-    {
-      "allowed_embeds": [
-        "json_ld_article"
-      ],
-      "artifact_class": "signal_html",
-      "contract_version": "dysonx_public_signal_contract_v1",
-      "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases"
@@ -72,7 +60,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/agentic-ai-adoption-accelerates-from-codex-usage-evidence/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "agentic-ai-adoption-accelerates-from-codex-usage-evidence"
@@ -84,19 +72,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
-      "path": "signals/agi-maze-as-a-benchmark-framework-for-world-modeling-agents/index.html",
-      "policy_version": "dysonx_public_signal_policy_v2",
-      "slug": "agi-maze-as-a-benchmark-framework-for-world-modeling-agents"
-    },
-    {
-      "allowed_embeds": [
-        "json_ld_article"
-      ],
-      "artifact_class": "signal_html",
-      "contract_version": "dysonx_public_signal_contract_v1",
-      "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/ai-agent-index-highlights-transparency-gaps-in-deployed-agents/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "ai-agent-index-highlights-transparency-gaps-in-deployed-agents"
@@ -108,7 +84,19 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+      "path": "signals/akashic-a-low-overhead-llm-inference-service-with-memattention/index.html",
+      "policy_version": "dysonx_public_signal_policy_v2",
+      "slug": "akashic-a-low-overhead-llm-inference-service-with-memattention"
+    },
+    {
+      "allowed_embeds": [
+        "json_ld_article"
+      ],
+      "artifact_class": "signal_html",
+      "contract_version": "dysonx_public_signal_contract_v1",
+      "generated_from_public_signal_manifest": true,
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/apeb-benchmarking-personalization-ability-of-large-language-model-agents/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "apeb-benchmarking-personalization-ability-of-large-language-model-agents"
@@ -120,7 +108,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/auditing-the-audit-five-failure-modes-in-benchmark-validity-audits/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "auditing-the-audit-five-failure-modes-in-benchmark-validity-audits"
@@ -132,7 +120,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/beyond-forecasting-the-belief-to-trade-layer-in-prediction-market-agents/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "beyond-forecasting-the-belief-to-trade-layer-in-prediction-market-agents"
@@ -144,7 +132,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows"
@@ -156,7 +144,19 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+      "path": "signals/beyond-static-evaluation-building-simulation-environments-for-scalable-agentic-reinforcement-learning/index.html",
+      "policy_version": "dysonx_public_signal_policy_v2",
+      "slug": "beyond-static-evaluation-building-simulation-environments-for-scalable-agentic-reinforcement-learning"
+    },
+    {
+      "allowed_embeds": [
+        "json_ld_article"
+      ],
+      "artifact_class": "signal_html",
+      "contract_version": "dysonx_public_signal_contract_v1",
+      "generated_from_public_signal_manifest": true,
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron"
@@ -168,10 +168,10 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
-      "path": "signals/dual-informed-vertical-expansion-for-multi-objective-node-selection-in-anytime-conflict-based-search/index.html",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+      "path": "signals/delay-aware-active-triangulation-with-uncertainty-driven-multi-agent-reinforcement-learning-for-counter-uas/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
-      "slug": "dual-informed-vertical-expansion-for-multi-objective-node-selection-in-anytime-conflict-based-search"
+      "slug": "delay-aware-active-triangulation-with-uncertainty-driven-multi-agent-reinforcement-learning-for-counter-uas"
     },
     {
       "allowed_embeds": [
@@ -180,19 +180,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
-      "path": "signals/egosafetybench-a-diagnostic-egocentric-video-benchmark-for-evaluating-embodied-vlms-as-runtime-safety-guards/index.html",
-      "policy_version": "dysonx_public_signal_policy_v2",
-      "slug": "egosafetybench-a-diagnostic-egocentric-video-benchmark-for-evaluating-embodied-vlms-as-runtime-safety-guards"
-    },
-    {
-      "allowed_embeds": [
-        "json_ld_article"
-      ],
-      "artifact_class": "signal_html",
-      "contract_version": "dysonx_public_signal_contract_v1",
-      "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/embodied-operators-and-benchmarking-toward-reusable-and-deployable-embodied-intelligence-systems/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "embodied-operators-and-benchmarking-toward-reusable-and-deployable-embodied-intelligence-systems"
@@ -204,7 +192,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/eu-ai-office-becomes-the-gpai-governance-surface-to-watch/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "eu-ai-office-becomes-the-gpai-governance-surface-to-watch"
@@ -216,7 +204,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/evaluating-generative-agents-with-actions-grounded-in-socially-distributed-task-environments-using-incognita/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "evaluating-generative-agents-with-actions-grounded-in-socially-distributed-task-environments-using-incognita"
@@ -228,10 +216,10 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
-      "path": "signals/from-signals-to-structure-how-memory-architecture-drives-language-emergence-in-llm-agents/index.html",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+      "path": "signals/firstresearch-auditable-question-formation-for-llm-scientific-discovery-agents/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
-      "slug": "from-signals-to-structure-how-memory-architecture-drives-language-emergence-in-llm-agents"
+      "slug": "firstresearch-auditable-question-formation-for-llm-scientific-discovery-agents"
     },
     {
       "allowed_embeds": [
@@ -240,7 +228,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/gigaworld-1-a-roadmap-to-build-world-models-for-robot-policy-evaluation/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "gigaworld-1-a-roadmap-to-build-world-models-for-robot-policy-evaluation"
@@ -252,7 +240,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/how-agents-are-transforming-work/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "how-agents-are-transforming-work"
@@ -264,10 +252,22 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/iflytek-embodied-omni-technical-report/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "iflytek-embodied-omni-technical-report"
+    },
+    {
+      "allowed_embeds": [
+        "json_ld_article"
+      ],
+      "artifact_class": "signal_html",
+      "contract_version": "dysonx_public_signal_contract_v1",
+      "generated_from_public_signal_manifest": true,
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+      "path": "signals/imr-iterative-mode-world-weighted-regression-for-multi-agent-trajectory-prediction/index.html",
+      "policy_version": "dysonx_public_signal_policy_v2",
+      "slug": "imr-iterative-mode-world-weighted-regression-for-multi-agent-trajectory-prediction"
     },
     {
       "allowed_embeds": [
@@ -276,7 +276,7 @@
       "artifact_class": "signals_index_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/index.html",
       "policy_version": "dysonx_public_signal_policy_v2"
     },
@@ -287,7 +287,19 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+      "path": "signals/intercepting-an-agile-target-with-net-carrying-drones-using-competitive-multi-agent-reinforcement-learning/index.html",
+      "policy_version": "dysonx_public_signal_policy_v2",
+      "slug": "intercepting-an-agile-target-with-net-carrying-drones-using-competitive-multi-agent-reinforcement-learning"
+    },
+    {
+      "allowed_embeds": [
+        "json_ld_article"
+      ],
+      "artifact_class": "signal_html",
+      "contract_version": "dysonx_public_signal_contract_v1",
+      "generated_from_public_signal_manifest": true,
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/janus-a-playground-for-user-involved-agentic-permission-management/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "janus-a-playground-for-user-involved-agentic-permission-management"
@@ -299,10 +311,10 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
-      "path": "signals/managed-autonomy-at-runtime-gear-based-safety-and-governance-for-single-and-multi-agent-cyber-physical-systems/index.html",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+      "path": "signals/learning-to-control-llm-agent-harnesses-with-offline-reinforcement-learning/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
-      "slug": "managed-autonomy-at-runtime-gear-based-safety-and-governance-for-single-and-multi-agent-cyber-physical-systems"
+      "slug": "learning-to-control-llm-agent-harnesses-with-offline-reinforcement-learning"
     },
     {
       "allowed_embeds": [
@@ -311,7 +323,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/metr-time-horizon-work-reframes-autonomous-capability-tracking/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "metr-time-horizon-work-reframes-autonomous-capability-tracking"
@@ -323,19 +335,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
-      "path": "signals/mnemosyne-agentic-transaction-processing-for-validating-and-repairing-ai-generated-workflows/index.html",
-      "policy_version": "dysonx_public_signal_policy_v2",
-      "slug": "mnemosyne-agentic-transaction-processing-for-validating-and-repairing-ai-generated-workflows"
-    },
-    {
-      "allowed_embeds": [
-        "json_ld_article"
-      ],
-      "artifact_class": "signal_html",
-      "contract_version": "dysonx_public_signal_contract_v1",
-      "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/nist-ai-governance-is-anchored-in-standards/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "nist-ai-governance-is-anchored-in-standards"
@@ -347,7 +347,7 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads"
@@ -359,17 +359,29 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
-      "path": "signals/personalization-as-inverse-planning-learning-latent-design-intents-for-agentic-slide-generation-via-structural-denoising/index.html",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+      "path": "signals/onnes-a-physics-grounded-multi-agent-llm-simulator-for-cryogenic-fault-diagnosis-in-quantum-computing-infrastructure/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
-      "slug": "personalization-as-inverse-planning-learning-latent-design-intents-for-agentic-slide-generation-via-structural-denoising"
+      "slug": "onnes-a-physics-grounded-multi-agent-llm-simulator-for-cryogenic-fault-diagnosis-in-quantum-computing-infrastructure"
+    },
+    {
+      "allowed_embeds": [
+        "json_ld_article"
+      ],
+      "artifact_class": "signal_html",
+      "contract_version": "dysonx_public_signal_contract_v1",
+      "generated_from_public_signal_manifest": true,
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+      "path": "signals/patchoptic-for-shared-state-llm-workflows-with-projected-views-and-verified-structured-updates/index.html",
+      "policy_version": "dysonx_public_signal_policy_v2",
+      "slug": "patchoptic-for-shared-state-llm-workflows-with-projected-views-and-verified-structured-updates"
     },
     {
       "allowed_embeds": [],
       "artifact_class": "public_artifact_manifest",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/public_artifact_manifest.json",
       "policy_version": "dysonx_public_signal_policy_v2"
     },
@@ -378,7 +390,7 @@
       "artifact_class": "public_launch_manifest",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/public_launch_manifest.json",
       "policy_version": "dysonx_public_signal_policy_v2"
     },
@@ -389,7 +401,19 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+      "path": "signals/statefuse-deterministic-conflict-preserving-memory-for-multi-agent-systems/index.html",
+      "policy_version": "dysonx_public_signal_policy_v2",
+      "slug": "statefuse-deterministic-conflict-preserving-memory-for-multi-agent-systems"
+    },
+    {
+      "allowed_embeds": [
+        "json_ld_article"
+      ],
+      "artifact_class": "signal_html",
+      "contract_version": "dysonx_public_signal_contract_v1",
+      "generated_from_public_signal_manifest": true,
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/swarmresearch-orchestrating-coding-agents-for-open-ended-discovery/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "swarmresearch-orchestrating-coding-agents-for-open-ended-discovery"
@@ -401,41 +425,17 @@
       "artifact_class": "signal_html",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
-      "path": "signals/vla-corrector-lightweight-detect-and-correct-inference-for-adaptive-action-horizon/index.html",
-      "policy_version": "dysonx_public_signal_policy_v2",
-      "slug": "vla-corrector-lightweight-detect-and-correct-inference-for-adaptive-action-horizon"
-    },
-    {
-      "allowed_embeds": [
-        "json_ld_article"
-      ],
-      "artifact_class": "signal_html",
-      "contract_version": "dysonx_public_signal_contract_v1",
-      "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "signals/when-aggregate-alignment-misleads-auditing-policy-repair-without-per-state-expert-actions/index.html",
       "policy_version": "dysonx_public_signal_policy_v2",
       "slug": "when-aggregate-alignment-misleads-auditing-policy-repair-without-per-state-expert-actions"
-    },
-    {
-      "allowed_embeds": [
-        "json_ld_article"
-      ],
-      "artifact_class": "signal_html",
-      "contract_version": "dysonx_public_signal_contract_v1",
-      "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
-      "path": "signals/when-should-service-agents-reconsider-difficulty-routed-control-in-customer-service-operations/index.html",
-      "policy_version": "dysonx_public_signal_policy_v2",
-      "slug": "when-should-service-agents-reconsider-difficulty-routed-control-in-customer-service-operations"
     },
     {
       "allowed_embeds": [],
       "artifact_class": "sitemap_xml",
       "contract_version": "dysonx_public_signal_contract_v1",
       "generated_from_public_signal_manifest": true,
-      "material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+      "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
       "path": "sitemap.xml",
       "policy_version": "dysonx_public_signal_policy_v2"
     }
@@ -451,6 +451,6 @@
   ],
   "generated_from_public_signal_manifest": true,
   "policy_version": "dysonx_public_signal_policy_v2",
-  "public_launch_manifest_material_signature": "795e249b35750acd0d7d2511cc67ab9d7bd94c186bb86c26a452b6bb2a621a4b",
+  "public_launch_manifest_material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
   "public_launch_manifest_path": "signals/public_launch_manifest.json"
 }
