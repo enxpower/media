@@ -1,5 +1,5 @@
 {
-  "content_refreshed_at": "2026-07-08T08:05:25Z",
+  "content_refreshed_at": "2026-07-08T13:21:34Z",
   "launch_version": "notion_public_signals_sync_v1",
   "launched": [
     {
@@ -927,11 +927,11 @@
     }
   ],
   "manual_external_deployment_performed": false,
-  "material_signature": "f0a180b78047b75db4c399114b31cc799721bab3ea1b5a1f41508cdfaca0b8a4",
+  "material_signature": "a27f57a0abdf92187c3a5e2c27e8970b5f6033b34b67f145b35193d0f895926c",
   "network_source_fetch_performed": false,
   "newsletter_distribution_performed": false,
   "openai_call_performed": false,
-  "pages_blocked": 829,
+  "pages_blocked": 833,
   "pages_launched": 30,
   "public_output_root": ".",
   "raw_article_body_copied": false,
