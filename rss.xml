@@ -10,7 +10,7 @@
       <guid>https://dysonx.com/signals/agentic-ai-adoption-accelerates-from-codex-usage-evidence/</guid>
       <description>A June 2026 research paper uses Codex usage data as evidence that agentic AI is moving from developer tooling toward broader organizational workflows.</description>
       <source url="https://arxiv.org/abs/2606.26959">arXiv</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>AI Agent Index highlights transparency gaps in deployed agents</title>
@@ -18,7 +18,7 @@
       <guid>https://dysonx.com/signals/ai-agent-index-highlights-transparency-gaps-in-deployed-agents/</guid>
       <description>The 2025 AI Agent Index documents technical and safety features across deployed agentic AI systems and flags uneven transparency among developers.</description>
       <source url="https://arxiv.org/abs/2602.17753">arXiv / AI Agent Index</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>EU AI Office becomes the GPAI governance surface to watch</title>
@@ -26,7 +26,7 @@
       <guid>https://dysonx.com/signals/eu-ai-office-becomes-the-gpai-governance-surface-to-watch/</guid>
       <description>The European AI Office supports AI Act implementation, especially general-purpose AI rules, evaluations, guidance, and enforcement workflows.</description>
       <source url="https://digital-strategy.ec.europa.eu/en/policies/ai-office">European Commission AI Office</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>METR time-horizon work reframes autonomous capability tracking</title>
@@ -34,7 +34,7 @@
       <guid>https://dysonx.com/signals/metr-time-horizon-work-reframes-autonomous-capability-tracking/</guid>
       <description>METR tracks frontier AI progress through task-completion time horizons, measuring the length of tasks AI agents can complete at defined success rates.</description>
       <source url="https://metr.org/">METR</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>NIST AI governance is anchored in standards</title>
@@ -42,7 +42,7 @@
       <guid>https://dysonx.com/signals/nist-ai-governance-is-anchored-in-standards/</guid>
       <description>NIST frames AI governance around measurement, risk management, standards, guidelines, benchmarks, and evaluations.</description>
       <source url="https://www.nist.gov/artificial-intelligence">NIST AI</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>How agents are transforming work</title>
@@ -50,7 +50,7 @@
       <guid>https://dysonx.com/signals/how-agents-are-transforming-work/</guid>
       <description>A new OpenAI research paper shows how AI agents are transforming work, enabling longer, more complex tasks and expanding productivity across roles.</description>
       <source url="https://openai.com/index/how-agents-are-transforming-work">OpenAI Research Index</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Building an Analysis AI Agent for Industrial Alarm Management with NVIDIA Nemotron</title>
@@ -58,7 +58,7 @@
       <guid>https://dysonx.com/signals/building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron/</guid>
       <description>Industrial machinery generates more alarms than technicians can triage. For each important alarm requiring follow-up, the technician pulls historical context,...</description>
       <source url="https://developer.nvidia.com/blog/building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron/">NVIDIA Developer Blog AI</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>NVIDIA Vera CPU Boosts AI Factory Throughput to Accelerate Agentic Workloads</title>
@@ -66,7 +66,7 @@
       <guid>https://dysonx.com/signals/nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads/</guid>
       <description>Agentic systems turn model reasoning into action through multi-step workflows that combine inference, tool use, code execution, retrieval, orchestration, and...</description>
       <source url="https://developer.nvidia.com/blog/nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads/">NVIDIA Developer Blog AI</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>APeB: Benchmarking Personalization Ability of Large Language Model Agents</title>
@@ -74,7 +74,7 @@
       <guid>https://dysonx.com/signals/apeb-benchmarking-personalization-ability-of-large-language-model-agents/</guid>
       <description>arXiv:2607.03162v1 Announce Type: new Abstract: LLM-powered agents struggle with personalization when users issue raw, underspecified queries. In this setting, agents must infer latent intent, extract preferences from noisy interaction h...</description>
       <source url="https://arxiv.org/abs/2607.03162">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Auditing the Audit: Five Failure Modes in Benchmark-Validity Audits</title>
@@ -82,7 +82,7 @@
       <guid>https://dysonx.com/signals/auditing-the-audit-five-failure-modes-in-benchmark-validity-audits/</guid>
       <description>arXiv:2607.02586v1 Announce Type: new Abstract: Governance frameworks ask AI providers and auditors for documented evaluation evidence, and perturbation-based construct-validity audits are a common form of that evidence. We argue the aud...</description>
       <source url="https://arxiv.org/abs/2607.02586">arXiv cs.LG RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Beyond Forecasting: The Belief-to-Trade Layer in Prediction-Market Agents</title>
@@ -90,7 +90,7 @@
       <guid>https://dysonx.com/signals/beyond-forecasting-the-belief-to-trade-layer-in-prediction-market-agents/</guid>
       <description>arXiv:2607.03015v1 Announce Type: new Abstract: Forecasting future events has attracted growing attention as a testbed for general-purpose AI. A natural way to ground this evaluation is let the models trade in the prediction markets. Tra...</description>
       <source url="https://arxiv.org/abs/2607.03015">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Embodied Operators and Benchmarking: Toward Reusable and Deployable Embodied Intelligence Systems</title>
@@ -98,7 +98,7 @@
       <guid>https://dysonx.com/signals/embodied-operators-and-benchmarking-toward-reusable-and-deployable-embodied-intelligence-systems/</guid>
       <description>arXiv:2607.03283v1 Announce Type: new Abstract: Embodied intelligence systems require not only end-to-end policy models, but also reusable functional modules that transform multimodal observations, robot states, human demonstrations, and...</description>
       <source url="https://arxiv.org/abs/2607.03283">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Evaluating Generative Agents with Actions Grounded in Socially Distributed Task Environments using Incognita</title>
@@ -106,7 +106,7 @@
       <guid>https://dysonx.com/signals/evaluating-generative-agents-with-actions-grounded-in-socially-distributed-task-environments-using-incognita/</guid>
       <description>arXiv:2607.02975v1 Announce Type: new Abstract: Effective agency in social environments depends on when an agent seeks knowledge, when it acts, and whether its actions are justified by acquired information. Existing grounded benchmarks p...</description>
       <source url="https://arxiv.org/abs/2607.02975">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>GigaWorld-1: A Roadmap to Build World Models for Robot Policy Evaluation</title>
@@ -114,7 +114,7 @@
       <guid>https://dysonx.com/signals/gigaworld-1-a-roadmap-to-build-world-models-for-robot-policy-evaluation/</guid>
       <description>arXiv:2607.02642v1 Announce Type: new Abstract: Evaluating embodied robot foundation models remains a critical bottleneck; unlike large language models efficiently assessed via digital benchmarks, robotic policies require slow, costly re...</description>
       <source url="https://arxiv.org/abs/2607.02642">arXiv cs.RO RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>iFLYTEK-Embodied-Omni Technical Report</title>
@@ -122,7 +122,7 @@
       <guid>https://dysonx.com/signals/iflytek-embodied-omni-technical-report/</guid>
       <description>arXiv:2607.02542v1 Announce Type: new Abstract: General-purpose embodied agents must understand multimodal instructions, anticipate how their environment will evolve, and produce precise control actions over extended horizons. Existing a...</description>
       <source url="https://arxiv.org/abs/2607.02542">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>SwarmResearch: Orchestrating Coding Agents for Open-Ended Discovery</title>
@@ -130,7 +130,7 @@
       <guid>https://dysonx.com/signals/swarmresearch-orchestrating-coding-agents-for-open-ended-discovery/</guid>
       <description>arXiv:2607.02807v1 Announce Type: new Abstract: Long-running coding agents such as autoresearch can persistently discover optimizations for open-ended problems. However, they tend to converge onto a single high-level approach, then proce...</description>
       <source url="https://arxiv.org/abs/2607.02807">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>When Aggregate Alignment Misleads: Auditing Policy Repair Without Per-State Expert Actions</title>
@@ -138,7 +138,7 @@
       <guid>https://dysonx.com/signals/when-aggregate-alignment-misleads-auditing-policy-repair-without-per-state-expert-actions/</guid>
       <description>arXiv:2607.03386v1 Announce Type: new Abstract: Agentic AI systems are increasingly used to edit, refine, and repair decision policies, but evaluating these edits is difficult when per-state expert action labels are unavailable. We study...</description>
       <source url="https://arxiv.org/abs/2607.03386">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Agent4cs: A Multi-agent System for Code Summarization in Large Hierarchical Codebases</title>
@@ -146,7 +146,7 @@
       <guid>https://dysonx.com/signals/agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases/</guid>
       <description>arXiv:2607.01425v1 Announce Type: new Abstract: Understanding large, complex codebases, especially those with obfuscated structures and incomplete documentation, remains a significant challenge. Existing code summarization solutions ofte...</description>
       <source url="https://arxiv.org/abs/2607.01425">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Beyond Next-Token Prediction: An RLVR Proof of Concept for Tool-Use Agents on Atlassian Workflows</title>
@@ -154,7 +154,7 @@
       <guid>https://dysonx.com/signals/beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows/</guid>
       <description>arXiv:2607.01465v1 Announce Type: new Abstract: Large language models are trained to predict the next token, not to act inside a specific API. In niche enterprise SaaS workflows -- where success means hitting the right endpoint with the...</description>
       <source url="https://arxiv.org/abs/2607.01465">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Janus: a Playground for User-Involved Agentic Permission Management</title>
@@ -162,7 +162,7 @@
       <guid>https://dysonx.com/signals/janus-a-playground-for-user-involved-agentic-permission-management/</guid>
       <description>arXiv:2607.01510v1 Announce Type: new Abstract: AI agents that autonomously execute tool calls on a user's behalf raise pressing questions about permission management: what role could users play, and what role should they play? Despite m...</description>
       <source url="https://arxiv.org/abs/2607.01510">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>VLA-Corrector: Lightweight Detect-and-Correct Inference for Adaptive Action Horizon</title>
@@ -170,7 +170,7 @@
       <guid>https://dysonx.com/signals/vla-corrector-lightweight-detect-and-correct-inference-for-adaptive-action-horizon/</guid>
       <description>arXiv:2607.01804v1 Announce Type: new Abstract: Vision-Language-Action (VLA) foundation models have recently achieved strong progress in embodied intelligence. To reduce policy-call frequency while preserving temporal coherence, most gen...</description>
       <source url="https://arxiv.org/abs/2607.01804">arXiv cs.RO RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>When Should Service Agents Reconsider? Difficulty-Routed Control in Customer-Service Operations</title>
@@ -178,7 +178,7 @@
       <guid>https://dysonx.com/signals/when-should-service-agents-reconsider-difficulty-routed-control-in-customer-service-operations/</guid>
       <description>arXiv:2607.01426v1 Announce Type: new Abstract: Autonomous customer-service agents are shifting from conversational interfaces toward operational execution roles: they retrieve firm records, apply service policies, and execute backend wr...</description>
       <source url="https://arxiv.org/abs/2607.01426">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>A Contextual-Bandit Oversight Game with Two-Sided Informational Asymmetry</title>
@@ -186,7 +186,7 @@
       <guid>https://dysonx.com/signals/a-contextual-bandit-oversight-game-with-two-sided-informational-asymmetry/</guid>
       <description>arXiv:2607.00155v1 Announce Type: new Abstract: We study runtime human oversight of an AI agent when private information runs in both directions: the human privately knows her reward function, while the AI privately knows the quality of...</description>
       <source url="https://arxiv.org/abs/2607.00155">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>AGI Maze as a Benchmark Framework for World-Modeling Agents</title>
@@ -194,7 +194,7 @@
       <guid>https://dysonx.com/signals/agi-maze-as-a-benchmark-framework-for-world-modeling-agents/</guid>
       <description>arXiv:2607.00627v1 Announce Type: new Abstract: Large language models (LLMs) are powerful pattern-completion systems, but their default operating mode - predicting the next token from a static context - does not reliably produce persiste...</description>
       <source url="https://arxiv.org/abs/2607.00627">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Dual-Informed Vertical Expansion for Multi-Objective Node Selection in Anytime Conflict-Based Search</title>
@@ -202,7 +202,7 @@
       <guid>https://dysonx.com/signals/dual-informed-vertical-expansion-for-multi-objective-node-selection-in-anytime-conflict-based-search/</guid>
       <description>arXiv:2607.00156v1 Announce Type: new Abstract: Conflict-Based Search (CBS) is a leading exact algorithm for Multi-Agent Path Finding (MAPF), but its high-level node-selection rule is usually treated as a fixed implementation detail. Sta...</description>
       <source url="https://arxiv.org/abs/2607.00156">arXiv cs.RO RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>EgoSafetyBench: A Diagnostic Egocentric Video Benchmark for Evaluating Embodied VLMs as Runtime Safety Guards</title>
@@ -210,7 +210,7 @@
       <guid>https://dysonx.com/signals/egosafetybench-a-diagnostic-egocentric-video-benchmark-for-evaluating-embodied-vlms-as-runtime-safety-guards/</guid>
       <description>arXiv:2607.00218v1 Announce Type: new Abstract: Vision-language models (VLMs) are now proposed as runtime safety guards for embodied agents in homes and factories. A deployable guard must catch genuinely unsafe situations while avoiding...</description>
       <source url="https://arxiv.org/abs/2607.00218">arXiv cs.CV RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>From Signals to Structure: How Memory Architecture Drives Language Emergence in LLM Agents</title>
@@ -218,7 +218,7 @@
       <guid>https://dysonx.com/signals/from-signals-to-structure-how-memory-architecture-drives-language-emergence-in-llm-agents/</guid>
       <description>arXiv:2607.00233v1 Announce Type: new Abstract: How do two agents invent a shared language from scratch? In a Lewis signaling game, a sender and receiver must coordinate on a code using only their interaction history. We study five memor...</description>
       <source url="https://arxiv.org/abs/2607.00233">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Managed Autonomy at Runtime: Gear-Based Safety and Governance for Single- and Multi-Agent Cyber-Physical Systems</title>
@@ -226,7 +226,7 @@
       <guid>https://dysonx.com/signals/managed-autonomy-at-runtime-gear-based-safety-and-governance-for-single-and-multi-agent-cyber-physical-systems/</guid>
       <description>arXiv:2607.00334v1 Announce Type: new Abstract: Autonomous agents, whether LLM-driven software agents or robotic physical agents, face a common class of failure modes when operating without continuous human oversight: safety violations f...</description>
       <source url="https://arxiv.org/abs/2607.00334">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Mnemosyne: Agentic Transaction Processing for Validating and Repairing AI-generated Workflows</title>
@@ -234,7 +234,7 @@
       <guid>https://dysonx.com/signals/mnemosyne-agentic-transaction-processing-for-validating-and-repairing-ai-generated-workflows/</guid>
       <description>arXiv:2607.00269v1 Announce Type: new Abstract: LLMs, solvers, and agent teams increasingly generate workflow actions, repairs, and plans, but a generated action may be syntactically valid yet stale, infeasible, conflicting, or destructi...</description>
       <source url="https://arxiv.org/abs/2607.00269">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
     <item>
       <title>Personalization as Inverse Planning: Learning Latent Design Intents for Agentic Slide Generation via Structural Denoising</title>
@@ -242,7 +242,7 @@
       <guid>https://dysonx.com/signals/personalization-as-inverse-planning-learning-latent-design-intents-for-agentic-slide-generation-via-structural-denoising/</guid>
       <description>arXiv:2607.00407v1 Announce Type: new Abstract: Slide design requires personalizing both deck themes and page layouts. Yet, current AI agent-based methods struggle with fine-grained, page-level design. Solely relying on prespecified temp...</description>
       <source url="https://arxiv.org/abs/2607.00407">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-07T19:29:59Z</pubDate>
+      <pubDate>2026-07-08T01:16:42Z</pubDate>
     </item>
   </channel>
 </rss>
