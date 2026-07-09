@@ -1,5 +1,5 @@
 {
-  "content_refreshed_at": "2026-07-08T19:02:30Z",
+  "content_refreshed_at": "2026-07-09T01:24:12Z",
   "launch_version": "notion_public_signals_sync_v1",
   "launched": [
     {
@@ -159,6 +159,36 @@
         "matched_domain_risk_framing": [
           "ai governance"
         ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/separating-signal-from-noise-in-coding-evaluations/index.html",
+      "public_url_path": "/signals/separating-signal-from-noise-in-coding-evaluations/",
+      "published": true,
+      "quality_hint": 98,
+      "ready_for_pipeline": true,
+      "signal_id": "39895c29-2b0e-8155-96f5-d5282b13b996",
+      "slug": "separating-signal-from-noise-in-coding-evaluations",
+      "source_name": "OpenAI Research Index",
+      "source_priority": "Critical",
+      "source_url": "https://openai.com/index/separating-signal-from-noise-coding-evaluations",
+      "summary": "A new analysis from OpenAI reveals issues in SWE-Bench Pro, a popular coding benchmark, raising concerns about reliability and accuracy in evaluating AI models.",
+      "title": "Separating signal from noise in coding evaluations",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
         "matched_domain_risks": {},
         "off_topic_public_signal": false,
         "reasons": []
@@ -894,44 +924,14 @@
         "off_topic_public_signal": false,
         "reasons": []
       }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows/index.html",
-      "public_url_path": "/signals/beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39295c29-2b0e-8156-8a47-fe82a359ae0a",
-      "slug": "beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.01465",
-      "summary": "arXiv:2607.01465v1 Announce Type: new Abstract: Large language models are trained to predict the next token, not to act inside a specific API. In niche enterprise SaaS workflows -- where success means hitting the right endpoint with the...",
-      "title": "Beyond Next-Token Prediction: An RLVR Proof of Concept for Tool-Use Agents on Atlassian Workflows",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
     }
   ],
   "manual_external_deployment_performed": false,
-  "material_signature": "3a372b891ff6118fed7c07f65d81a721537a76e86d24e525552d6376bcffa787",
+  "material_signature": "b0bc831a7ff3a735377276cdef89f5e53037b941e9fd44b5708bb50461a0ee13",
   "network_source_fetch_performed": false,
   "newsletter_distribution_performed": false,
   "openai_call_performed": false,
-  "pages_blocked": 858,
+  "pages_blocked": 861,
   "pages_launched": 30,
   "public_output_root": ".",
   "raw_article_body_copied": false,
