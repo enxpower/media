@@ -37,6 +37,66 @@
     <lastmod>2026-07-09</lastmod>
   </url>
   <url>
+    <loc>https://dysonx.com/signals/a-closed-loop-multi-agent-framework-for-robust-multi-robot-manipulation/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/agentlens-production-assessed-trajectory-reviews-for-coding-agent-evaluation/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/cilc-cryptographically-secure-inter-agent-loop-closure-candidate-detection-for-multi-agent-collaborative-slam/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/cost-effective-agent-harnesses-for-abstract-reasoning-and-generalization-on-arc-agi-1/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/does-ai-understand-imaging-a-systematic-benchmark-of-agentic-ai-for-computational-imaging-tasks/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/evaluating-sagemath-augmented-llm-agents-for-computational-and-experimental-mathematics/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/flow-erd-agent-type-aware-flow-matching-with-entropy-regularized-distillation-for-diverse-traffic-simulation/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/from-atomic-actions-to-standard-operating-procedures-iterative-tool-optimization-for-self-evolving-llm-agents/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/llm-powered-reasoning-in-agent-based-modeling/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/operational-reframing-and-approval-framed-delegation-in-multi-agent-llm-safety/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/physics-audited-agentic-discovery-in-scientific-machine-learning/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/reason-less-verify-more-deterministic-gates-recover-a-silent-policy-violation-failure-mode-in-tool-using-llm-agents/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/reasoning-consistency-scanning-a-framework-for-auditing-chain-of-thought-validity-in-ai-safety-evaluations/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/the-harness-effect-how-orchestration-design-sets-the-token-economics-of-enterprise-agentic-ai/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://dysonx.com/signals/think-big-search-small-where-capacity-matters-in-hierarchical-search-agents/</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
     <loc>https://dysonx.com/signals/create-a-langchain-deep-agents-harness-profile-for-nvidia-nemotron-3-ultra-to-improve-performance/</loc>
     <lastmod>2026-07-09</lastmod>
   </url>
@@ -66,66 +126,6 @@
   </url>
   <url>
     <loc>https://dysonx.com/signals/learning-to-control-llm-agent-harnesses-with-offline-reinforcement-learning/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/onnes-a-physics-grounded-multi-agent-llm-simulator-for-cryogenic-fault-diagnosis-in-quantum-computing-infrastructure/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/patchoptic-for-shared-state-llm-workflows-with-projected-views-and-verified-structured-updates/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/statefuse-deterministic-conflict-preserving-memory-for-multi-agent-systems/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/apeb-benchmarking-personalization-ability-of-large-language-model-agents/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/auditing-the-audit-five-failure-modes-in-benchmark-validity-audits/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/beyond-forecasting-the-belief-to-trade-layer-in-prediction-market-agents/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/embodied-operators-and-benchmarking-toward-reusable-and-deployable-embodied-intelligence-systems/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/evaluating-generative-agents-with-actions-grounded-in-socially-distributed-task-environments-using-incognita/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/gigaworld-1-a-roadmap-to-build-world-models-for-robot-policy-evaluation/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/iflytek-embodied-omni-technical-report/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/swarmresearch-orchestrating-coding-agents-for-open-ended-discovery/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/when-aggregate-alignment-misleads-auditing-policy-repair-without-per-state-expert-actions/</loc>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://dysonx.com/signals/agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases/</loc>
     <lastmod>2026-07-09</lastmod>
   </url>
 </urlset>

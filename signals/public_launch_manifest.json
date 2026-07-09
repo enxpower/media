@@ -1,5 +1,5 @@
 {
-  "content_refreshed_at": "2026-07-09T01:24:12Z",
+  "content_refreshed_at": "2026-07-09T14:23:29Z",
   "launch_version": "notion_public_signals_sync_v1",
   "launched": [
     {
@@ -218,6 +218,471 @@
         "matched_core_topics": [
           "ai agent",
           "ai agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/a-closed-loop-multi-agent-framework-for-robust-multi-robot-manipulation/index.html",
+      "public_url_path": "/signals/a-closed-loop-multi-agent-framework-for-robust-multi-robot-manipulation/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8194-bf68-dc6f08860186",
+      "slug": "a-closed-loop-multi-agent-framework-for-robust-multi-robot-manipulation",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06990",
+      "summary": "arXiv:2607.06990v1 Announce Type: new Abstract: Multi-robot systems provide the parallelism and redundancy necessary for long-horizon tasks, while Large Language Models (LLMs) offer the reasoning capabilities to decompose these objective...",
+      "title": "A Closed-Loop Multi-Agent Framework for Robust Multi-Robot Manipulation",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/agentlens-production-assessed-trajectory-reviews-for-coding-agent-evaluation/index.html",
+      "public_url_path": "/signals/agentlens-production-assessed-trajectory-reviews-for-coding-agent-evaluation/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-81f1-8ff4-c8dbc5bcda82",
+      "slug": "agentlens-production-assessed-trajectory-reviews-for-coding-agent-evaluation",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06624",
+      "summary": "arXiv:2607.06624v1 Announce Type: new Abstract: We present AgentLens, a production-assessed benchmark for interactive code agents. Most code-agent benchmarks reduce a run to a single bit -- did the task pass? -- but the people who actual...",
+      "title": "AgentLens: Production-Assessed Trajectory Reviews for Coding Agent Evaluation",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "benchmark",
+          "benchmarks",
+          "code agent",
+          "code agents",
+          "coding agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/cilc-cryptographically-secure-inter-agent-loop-closure-candidate-detection-for-multi-agent-collaborative-slam/index.html",
+      "public_url_path": "/signals/cilc-cryptographically-secure-inter-agent-loop-closure-candidate-detection-for-multi-agent-collaborative-slam/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-81b3-9bce-c513b76b1539",
+      "slug": "cilc-cryptographically-secure-inter-agent-loop-closure-candidate-detection-for-multi-agent-collaborative-slam",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06700",
+      "summary": "arXiv:2607.06700v1 Announce Type: new Abstract: Multi-agent Simultaneous Localization and Mapping (SLAM) and collaborative SLAM (CSLAM) require robots to continuously exchange global descriptors (GDs) to detect inter-agent loop closures...",
+      "title": "CILC: Cryptographically-secure Inter-agent Loop Closure Candidate Detection for Multi-Agent Collaborative SLAM",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/cost-effective-agent-harnesses-for-abstract-reasoning-and-generalization-on-arc-agi-1/index.html",
+      "public_url_path": "/signals/cost-effective-agent-harnesses-for-abstract-reasoning-and-generalization-on-arc-agi-1/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-818f-9253-c1609f1b588d",
+      "slug": "cost-effective-agent-harnesses-for-abstract-reasoning-and-generalization-on-arc-agi-1",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06764",
+      "summary": "arXiv:2607.06764v1 Announce Type: new Abstract: Recent progress on ARC-AGI-1 from disclosed architectures has come broadly from two regimes: heavy test-time compute over frontier models (evolutionary search, exhaustive sampling, extended...",
+      "title": "Cost-Effective Agent Harnesses for Abstract Reasoning and Generalization on ARC-AGI-1",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "frontier model",
+          "frontier models"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/does-ai-understand-imaging-a-systematic-benchmark-of-agentic-ai-for-computational-imaging-tasks/index.html",
+      "public_url_path": "/signals/does-ai-understand-imaging-a-systematic-benchmark-of-agentic-ai-for-computational-imaging-tasks/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-813d-9446-dd5f353aa625",
+      "slug": "does-ai-understand-imaging-a-systematic-benchmark-of-agentic-ai-for-computational-imaging-tasks",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07189",
+      "summary": "arXiv:2607.07189v1 Announce Type: new Abstract: Vision-language models (VLMs) and agentic AI have shown strong performance on semantic visual tasks, but it remains unclear whether they can handle the physics and inverse problems that und...",
+      "title": "Does AI Understand Imaging? A Systematic Benchmark of Agentic AI for Computational Imaging Tasks",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/evaluating-sagemath-augmented-llm-agents-for-computational-and-experimental-mathematics/index.html",
+      "public_url_path": "/signals/evaluating-sagemath-augmented-llm-agents-for-computational-and-experimental-mathematics/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8150-8db9-c051ddc49ce8",
+      "slug": "evaluating-sagemath-augmented-llm-agents-for-computational-and-experimental-mathematics",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06820",
+      "summary": "arXiv:2607.06820v1 Announce Type: new Abstract: Recent advances in AI for Mathematics have focused largely on autoformalization and theorem proving, leaving the role of Computer Algebra Systems (CAS) in agentic LLM workflows underexplore...",
+      "title": "Evaluating SageMath-Augmented LLM Agents for Computational and Experimental Mathematics",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "llm agent",
+          "llm agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/flow-erd-agent-type-aware-flow-matching-with-entropy-regularized-distillation-for-diverse-traffic-simulation/index.html",
+      "public_url_path": "/signals/flow-erd-agent-type-aware-flow-matching-with-entropy-regularized-distillation-for-diverse-traffic-simulation/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8145-b358-f25c5cb3071d",
+      "slug": "flow-erd-agent-type-aware-flow-matching-with-entropy-regularized-distillation-for-diverse-traffic-simulation",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06957",
+      "summary": "arXiv:2607.06957v1 Announce Type: new Abstract: Realistic and diverse traffic simulation is essential to autonomous driving development. Yet prevailing benchmarks predominantly reward realism, and recent methods have optimized accordingl...",
+      "title": "Flow-ERD: Agent-type Aware Flow Matching with Entropy-Regularized Distillation for Diverse Traffic Simulation",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/from-atomic-actions-to-standard-operating-procedures-iterative-tool-optimization-for-self-evolving-llm-agents/index.html",
+      "public_url_path": "/signals/from-atomic-actions-to-standard-operating-procedures-iterative-tool-optimization-for-self-evolving-llm-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8127-9569-db27941c7d0c",
+      "slug": "from-atomic-actions-to-standard-operating-procedures-iterative-tool-optimization-for-self-evolving-llm-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07321",
+      "summary": "arXiv:2607.07321v1 Announce Type: new Abstract: Tool utilization enables Large Language Model (LLM) agents to interact with the real world and resolve complex tasks. However, existing agent frameworks predominantly rely on static toolset...",
+      "title": "From Atomic Actions to Standard Operating Procedures: Iterative Tool Optimization for Self-Evolving LLM Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "llm agent",
+          "llm agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/llm-powered-reasoning-in-agent-based-modeling/index.html",
+      "public_url_path": "/signals/llm-powered-reasoning-in-agent-based-modeling/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-81d3-a419-c99831786d06",
+      "slug": "llm-powered-reasoning-in-agent-based-modeling",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06757",
+      "summary": "arXiv:2607.06757v1 Announce Type: new Abstract: Agent-based modeling (ABM) has the capability to model millions of individuals and their interactions, which is useful for policy making. However, ABMs have traditionally relied on static p...",
+      "title": "LLM-powered reasoning in agent-based modeling",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/operational-reframing-and-approval-framed-delegation-in-multi-agent-llm-safety/index.html",
+      "public_url_path": "/signals/operational-reframing-and-approval-framed-delegation-in-multi-agent-llm-safety/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-81e7-b961-fec18c41b059",
+      "slug": "operational-reframing-and-approval-framed-delegation-in-multi-agent-llm-safety",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07097",
+      "summary": "arXiv:2607.07097v1 Announce Type: new Abstract: Safety evaluations of multi-agent LLM systems often compare a direct prompt with a planner-executor pipeline and report the difference as a single \"pipeline effect.\" We argue that this aggr...",
+      "title": "Operational Reframing and Approval-Framed Delegation in Multi-Agent LLM Safety",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/physics-audited-agentic-discovery-in-scientific-machine-learning/index.html",
+      "public_url_path": "/signals/physics-audited-agentic-discovery-in-scientific-machine-learning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8198-8a89-ee477b53c172",
+      "slug": "physics-audited-agentic-discovery-in-scientific-machine-learning",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07379",
+      "summary": "arXiv:2607.07379v1 Announce Type: new Abstract: In agentic scientific machine learning (SciML), large language model (LLM) agents can discover surrogate models and select one by an automated score, typically an error metric. A low error,...",
+      "title": "Physics-Audited Agentic Discovery in Scientific Machine Learning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/reason-less-verify-more-deterministic-gates-recover-a-silent-policy-violation-failure-mode-in-tool-using-llm-agents/index.html",
+      "public_url_path": "/signals/reason-less-verify-more-deterministic-gates-recover-a-silent-policy-violation-failure-mode-in-tool-using-llm-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8118-9a1a-c68b2f973075",
+      "slug": "reason-less-verify-more-deterministic-gates-recover-a-silent-policy-violation-failure-mode-in-tool-using-llm-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07405",
+      "summary": "arXiv:2607.07405v1 Announce Type: new Abstract: Tool-using LLM agents can violate the very policies they are deployed to enforce while appearing to complete the task successfully. In policy-permissive environments, a tool may execute any...",
+      "title": "Reason Less, Verify More: Deterministic Gates Recover a Silent Policy-Violation Failure Mode in Tool-Using LLM Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "llm agent",
+          "llm agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/reasoning-consistency-scanning-a-framework-for-auditing-chain-of-thought-validity-in-ai-safety-evaluations/index.html",
+      "public_url_path": "/signals/reasoning-consistency-scanning-a-framework-for-auditing-chain-of-thought-validity-in-ai-safety-evaluations/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8138-9c0c-c096f245dbb7",
+      "slug": "reasoning-consistency-scanning-a-framework-for-auditing-chain-of-thought-validity-in-ai-safety-evaluations",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07229",
+      "summary": "arXiv:2607.07229v1 Announce Type: new Abstract: Prior work has shown that chain-of-thought (CoT) reasoning is often unfaithful: a model's stated reasoning does not reliably reflect the process that produced its output. Detecting unfaithf...",
+      "title": "Reasoning Consistency Scanning: A Framework for Auditing Chain-of-Thought Validity in AI Safety Evaluations",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai safety"
+        ],
+        "matched_domain_risk_framing": [
+          "ai safety",
+          "ai safety evaluation"
+        ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/the-harness-effect-how-orchestration-design-sets-the-token-economics-of-enterprise-agentic-ai/index.html",
+      "public_url_path": "/signals/the-harness-effect-how-orchestration-design-sets-the-token-economics-of-enterprise-agentic-ai/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8191-a6e8-d43917106300",
+      "slug": "the-harness-effect-how-orchestration-design-sets-the-token-economics-of-enterprise-agentic-ai",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06906",
+      "summary": "arXiv:2607.06906v1 Announce Type: new Abstract: Agentic AI development today runs on token maxing: buying capability with tokens -- longer reasoning traces, more turns, wider tool payloads, bigger replayed contexts -- so tokens per task...",
+      "title": "The Harness Effect: How Orchestration Design Sets the Token Economics of Enterprise Agentic AI",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/think-big-search-small-where-capacity-matters-in-hierarchical-search-agents/index.html",
+      "public_url_path": "/signals/think-big-search-small-where-capacity-matters-in-hierarchical-search-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-810a-a58b-d1ed131dc5ec",
+      "slug": "think-big-search-small-where-capacity-matters-in-hierarchical-search-agents",
+      "source_name": "arXiv cs.CL RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07548",
+      "summary": "arXiv:2607.07548v1 Announce Type: new Abstract: Large language model based search agents increasingly adopt multi-agent architectures in which a main agent decomposes a complex question into sub-queries and dispatches them to parallel su...",
+      "title": "Think Big, Search Small: Where Capacity Matters in Hierarchical Search Agents?",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
         ],
         "matched_domain_risk_framing": [],
         "matched_domain_risks": {},
@@ -467,471 +932,14 @@
         "off_topic_public_signal": false,
         "reasons": []
       }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/onnes-a-physics-grounded-multi-agent-llm-simulator-for-cryogenic-fault-diagnosis-in-quantum-computing-infrastructure/index.html",
-      "public_url_path": "/signals/onnes-a-physics-grounded-multi-agent-llm-simulator-for-cryogenic-fault-diagnosis-in-quantum-computing-infrastructure/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39795c29-2b0e-8174-83cf-ea16e6696b97",
-      "slug": "onnes-a-physics-grounded-multi-agent-llm-simulator-for-cryogenic-fault-diagnosis-in-quantum-computing-infrastructure",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.05805",
-      "summary": "arXiv:2607.05805v1 Announce Type: new Abstract: Dilution refrigerators are the enabling infrastructure of superconducting quantum computers, yet their fault diagnosis is still dominated by threshold alarms that report that something is w...",
-      "title": "Onnes: A Physics-Grounded Multi-Agent LLM Simulator for Cryogenic Fault Diagnosis in Quantum Computing Infrastructure",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "multi_agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/patchoptic-for-shared-state-llm-workflows-with-projected-views-and-verified-structured-updates/index.html",
-      "public_url_path": "/signals/patchoptic-for-shared-state-llm-workflows-with-projected-views-and-verified-structured-updates/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39795c29-2b0e-8112-924f-d80ed6832c6a",
-      "slug": "patchoptic-for-shared-state-llm-workflows-with-projected-views-and-verified-structured-updates",
-      "source_name": "arXiv cs.LG RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.05483",
-      "summary": "arXiv:2607.05483v1 Announce Type: new Abstract: Agentic workflows often operate over shared, structured state. Because LLM context windows are limited, each model invocation is typically shown only the state fragment needed for the curre...",
-      "title": "PatchOptic for Shared-State LLM Workflows with Projected Views and Verified Structured Updates",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context",
-          "agentic workflow",
-          "agentic workflows"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/statefuse-deterministic-conflict-preserving-memory-for-multi-agent-systems/index.html",
-      "public_url_path": "/signals/statefuse-deterministic-conflict-preserving-memory-for-multi-agent-systems/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39795c29-2b0e-818a-bff1-ca2a68d781aa",
-      "slug": "statefuse-deterministic-conflict-preserving-memory-for-multi-agent-systems",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.05844",
-      "summary": "arXiv:2607.05844v1 Announce Type: new Abstract: Agent systems accumulate conflicting observations across branches, retries, and replicas, yet many practical memory layers still collapse disagreement behind overwrite rules that are diffic...",
-      "title": "StateFuse: Deterministic Conflict-Preserving Memory for Multi-Agent Systems",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "multi_agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron/index.html",
-      "public_url_path": "/signals/building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-8146-940f-e85abb9fe33d",
-      "slug": "building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron",
-      "source_name": "NVIDIA Developer Blog AI",
-      "source_priority": "High",
-      "source_url": "https://developer.nvidia.com/blog/building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron/",
-      "summary": "Industrial machinery generates more alarms than technicians can triage. For each important alarm requiring follow-up, the technician pulls historical context,...",
-      "title": "Building an Analysis AI Agent for Industrial Alarm Management with NVIDIA Nemotron",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "ai agent"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads/index.html",
-      "public_url_path": "/signals/nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-8188-8767-f9734651a994",
-      "slug": "nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads",
-      "source_name": "NVIDIA Developer Blog AI",
-      "source_priority": "High",
-      "source_url": "https://developer.nvidia.com/blog/nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads/",
-      "summary": "Agentic systems turn model reasoning into action through multi-step workflows that combine inference, tool use, code execution, retrieval, orchestration, and...",
-      "title": "NVIDIA Vera CPU Boosts AI Factory Throughput to Accelerate Agentic Workloads",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/apeb-benchmarking-personalization-ability-of-large-language-model-agents/index.html",
-      "public_url_path": "/signals/apeb-benchmarking-personalization-ability-of-large-language-model-agents/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-8166-83f8-f869c9aeb0b3",
-      "slug": "apeb-benchmarking-personalization-ability-of-large-language-model-agents",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.03162",
-      "summary": "arXiv:2607.03162v1 Announce Type: new Abstract: LLM-powered agents struggle with personalization when users issue raw, underspecified queries. In this setting, agents must infer latent intent, extract preferences from noisy interaction h...",
-      "title": "APeB: Benchmarking Personalization Ability of Large Language Model Agents",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "benchmark"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/auditing-the-audit-five-failure-modes-in-benchmark-validity-audits/index.html",
-      "public_url_path": "/signals/auditing-the-audit-five-failure-modes-in-benchmark-validity-audits/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-81d6-ab0c-f04668f33964",
-      "slug": "auditing-the-audit-five-failure-modes-in-benchmark-validity-audits",
-      "source_name": "arXiv cs.LG RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.02586",
-      "summary": "arXiv:2607.02586v1 Announce Type: new Abstract: Governance frameworks ask AI providers and auditors for documented evaluation evidence, and perturbation-based construct-validity audits are a common form of that evidence. We argue the aud...",
-      "title": "Auditing the Audit: Five Failure Modes in Benchmark-Validity Audits",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "benchmark"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/beyond-forecasting-the-belief-to-trade-layer-in-prediction-market-agents/index.html",
-      "public_url_path": "/signals/beyond-forecasting-the-belief-to-trade-layer-in-prediction-market-agents/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-81b4-9b81-d735e6aaaf24",
-      "slug": "beyond-forecasting-the-belief-to-trade-layer-in-prediction-market-agents",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.03015",
-      "summary": "arXiv:2607.03015v1 Announce Type: new Abstract: Forecasting future events has attracted growing attention as a testbed for general-purpose AI. A natural way to ground this evaluation is let the models trade in the prediction markets. Tra...",
-      "title": "Beyond Forecasting: The Belief-to-Trade Layer in Prediction-Market Agents",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/embodied-operators-and-benchmarking-toward-reusable-and-deployable-embodied-intelligence-systems/index.html",
-      "public_url_path": "/signals/embodied-operators-and-benchmarking-toward-reusable-and-deployable-embodied-intelligence-systems/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-81be-a107-d59897a30d1d",
-      "slug": "embodied-operators-and-benchmarking-toward-reusable-and-deployable-embodied-intelligence-systems",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.03283",
-      "summary": "arXiv:2607.03283v1 Announce Type: new Abstract: Embodied intelligence systems require not only end-to-end policy models, but also reusable functional modules that transform multimodal observations, robot states, human demonstrations, and...",
-      "title": "Embodied Operators and Benchmarking: Toward Reusable and Deployable Embodied Intelligence Systems",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "benchmark"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/evaluating-generative-agents-with-actions-grounded-in-socially-distributed-task-environments-using-incognita/index.html",
-      "public_url_path": "/signals/evaluating-generative-agents-with-actions-grounded-in-socially-distributed-task-environments-using-incognita/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-81ad-8db6-d0b755f91460",
-      "slug": "evaluating-generative-agents-with-actions-grounded-in-socially-distributed-task-environments-using-incognita",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.02975",
-      "summary": "arXiv:2607.02975v1 Announce Type: new Abstract: Effective agency in social environments depends on when an agent seeks knowledge, when it acts, and whether its actions are justified by acquired information. Existing grounded benchmarks p...",
-      "title": "Evaluating Generative Agents with Actions Grounded in Socially Distributed Task Environments using Incognita",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "benchmark",
-          "benchmarks"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/gigaworld-1-a-roadmap-to-build-world-models-for-robot-policy-evaluation/index.html",
-      "public_url_path": "/signals/gigaworld-1-a-roadmap-to-build-world-models-for-robot-policy-evaluation/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-8174-b846-d8e3134a82a7",
-      "slug": "gigaworld-1-a-roadmap-to-build-world-models-for-robot-policy-evaluation",
-      "source_name": "arXiv cs.RO RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.02642",
-      "summary": "arXiv:2607.02642v1 Announce Type: new Abstract: Evaluating embodied robot foundation models remains a critical bottleneck; unlike large language models efficiently assessed via digital benchmarks, robotic policies require slow, costly re...",
-      "title": "GigaWorld-1: A Roadmap to Build World Models for Robot Policy Evaluation",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "benchmark",
-          "benchmarks"
-        ],
-        "matched_domain_risk_framing": [
-          "foundation model"
-        ],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/iflytek-embodied-omni-technical-report/index.html",
-      "public_url_path": "/signals/iflytek-embodied-omni-technical-report/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-8102-a758-e88e6d80ca00",
-      "slug": "iflytek-embodied-omni-technical-report",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.02542",
-      "summary": "arXiv:2607.02542v1 Announce Type: new Abstract: General-purpose embodied agents must understand multimodal instructions, anticipate how their environment will evolve, and produce precise control actions over extended horizons. Existing a...",
-      "title": "iFLYTEK-Embodied-Omni Technical Report",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/swarmresearch-orchestrating-coding-agents-for-open-ended-discovery/index.html",
-      "public_url_path": "/signals/swarmresearch-orchestrating-coding-agents-for-open-ended-discovery/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-8111-a01a-cb59704b7c1c",
-      "slug": "swarmresearch-orchestrating-coding-agents-for-open-ended-discovery",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.02807",
-      "summary": "arXiv:2607.02807v1 Announce Type: new Abstract: Long-running coding agents such as autoresearch can persistently discover optimizations for open-ended problems. However, they tend to converge onto a single high-level approach, then proce...",
-      "title": "SwarmResearch: Orchestrating Coding Agents for Open-Ended Discovery",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "coding agent",
-          "coding agents"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/when-aggregate-alignment-misleads-auditing-policy-repair-without-per-state-expert-actions/index.html",
-      "public_url_path": "/signals/when-aggregate-alignment-misleads-auditing-policy-repair-without-per-state-expert-actions/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39695c29-2b0e-8192-a958-e7362b605ec3",
-      "slug": "when-aggregate-alignment-misleads-auditing-policy-repair-without-per-state-expert-actions",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.03386",
-      "summary": "arXiv:2607.03386v1 Announce Type: new Abstract: Agentic AI systems are increasingly used to edit, refine, and repair decision policies, but evaluating these edits is difficult when per-state expert action labels are unavailable. We study...",
-      "title": "When Aggregate Alignment Misleads: Auditing Policy Repair Without Per-State Expert Actions",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases/index.html",
-      "public_url_path": "/signals/agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39295c29-2b0e-8122-9ea8-cd2567f4f1bc",
-      "slug": "agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.01425",
-      "summary": "arXiv:2607.01425v1 Announce Type: new Abstract: Understanding large, complex codebases, especially those with obfuscated structures and incomplete documentation, remains a significant challenge. Existing code summarization solutions ofte...",
-      "title": "Agent4cs: A Multi-agent System for Code Summarization in Large Hierarchical Codebases",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "multi_agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
     }
   ],
   "manual_external_deployment_performed": false,
-  "material_signature": "b0bc831a7ff3a735377276cdef89f5e53037b941e9fd44b5708bb50461a0ee13",
+  "material_signature": "206ecddf1a24236ea887f6f03e9437e43e230900f87ce8c0de3c581810b1b4a2",
   "network_source_fetch_performed": false,
   "newsletter_distribution_performed": false,
   "openai_call_performed": false,
-  "pages_blocked": 861,
+  "pages_blocked": 983,
   "pages_launched": 30,
   "public_output_root": ".",
   "raw_article_body_copied": false,
