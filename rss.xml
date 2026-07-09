@@ -10,7 +10,7 @@
       <guid>https://dysonx.com/signals/agentic-ai-adoption-accelerates-from-codex-usage-evidence/</guid>
       <description>A June 2026 research paper uses Codex usage data as evidence that agentic AI is moving from developer tooling toward broader organizational workflows.</description>
       <source url="https://arxiv.org/abs/2606.26959">arXiv</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>AI Agent Index highlights transparency gaps in deployed agents</title>
@@ -18,7 +18,7 @@
       <guid>https://dysonx.com/signals/ai-agent-index-highlights-transparency-gaps-in-deployed-agents/</guid>
       <description>The 2025 AI Agent Index documents technical and safety features across deployed agentic AI systems and flags uneven transparency among developers.</description>
       <source url="https://arxiv.org/abs/2602.17753">arXiv / AI Agent Index</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>EU AI Office becomes the GPAI governance surface to watch</title>
@@ -26,7 +26,7 @@
       <guid>https://dysonx.com/signals/eu-ai-office-becomes-the-gpai-governance-surface-to-watch/</guid>
       <description>The European AI Office supports AI Act implementation, especially general-purpose AI rules, evaluations, guidance, and enforcement workflows.</description>
       <source url="https://digital-strategy.ec.europa.eu/en/policies/ai-office">European Commission AI Office</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>METR time-horizon work reframes autonomous capability tracking</title>
@@ -34,7 +34,7 @@
       <guid>https://dysonx.com/signals/metr-time-horizon-work-reframes-autonomous-capability-tracking/</guid>
       <description>METR tracks frontier AI progress through task-completion time horizons, measuring the length of tasks AI agents can complete at defined success rates.</description>
       <source url="https://metr.org/">METR</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>NIST AI governance is anchored in standards</title>
@@ -42,7 +42,7 @@
       <guid>https://dysonx.com/signals/nist-ai-governance-is-anchored-in-standards/</guid>
       <description>NIST frames AI governance around measurement, risk management, standards, guidelines, benchmarks, and evaluations.</description>
       <source url="https://www.nist.gov/artificial-intelligence">NIST AI</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Separating signal from noise in coding evaluations</title>
@@ -50,7 +50,7 @@
       <guid>https://dysonx.com/signals/separating-signal-from-noise-in-coding-evaluations/</guid>
       <description>A new analysis from OpenAI reveals issues in SWE-Bench Pro, a popular coding benchmark, raising concerns about reliability and accuracy in evaluating AI models.</description>
       <source url="https://openai.com/index/separating-signal-from-noise-coding-evaluations">OpenAI Research Index</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>How agents are transforming work</title>
@@ -58,7 +58,7 @@
       <guid>https://dysonx.com/signals/how-agents-are-transforming-work/</guid>
       <description>A new OpenAI research paper shows how AI agents are transforming work, enabling longer, more complex tasks and expanding productivity across roles.</description>
       <source url="https://openai.com/index/how-agents-are-transforming-work">OpenAI Research Index</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>A Closed-Loop Multi-Agent Framework for Robust Multi-Robot Manipulation</title>
@@ -66,7 +66,7 @@
       <guid>https://dysonx.com/signals/a-closed-loop-multi-agent-framework-for-robust-multi-robot-manipulation/</guid>
       <description>arXiv:2607.06990v1 Announce Type: new Abstract: Multi-robot systems provide the parallelism and redundancy necessary for long-horizon tasks, while Large Language Models (LLMs) offer the reasoning capabilities to decompose these objective...</description>
       <source url="https://arxiv.org/abs/2607.06990">arXiv cs.RO RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>AgentLens: Production-Assessed Trajectory Reviews for Coding Agent Evaluation</title>
@@ -74,7 +74,7 @@
       <guid>https://dysonx.com/signals/agentlens-production-assessed-trajectory-reviews-for-coding-agent-evaluation/</guid>
       <description>arXiv:2607.06624v1 Announce Type: new Abstract: We present AgentLens, a production-assessed benchmark for interactive code agents. Most code-agent benchmarks reduce a run to a single bit -- did the task pass? -- but the people who actual...</description>
       <source url="https://arxiv.org/abs/2607.06624">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>CILC: Cryptographically-secure Inter-agent Loop Closure Candidate Detection for Multi-Agent Collaborative SLAM</title>
@@ -82,7 +82,7 @@
       <guid>https://dysonx.com/signals/cilc-cryptographically-secure-inter-agent-loop-closure-candidate-detection-for-multi-agent-collaborative-slam/</guid>
       <description>arXiv:2607.06700v1 Announce Type: new Abstract: Multi-agent Simultaneous Localization and Mapping (SLAM) and collaborative SLAM (CSLAM) require robots to continuously exchange global descriptors (GDs) to detect inter-agent loop closures...</description>
       <source url="https://arxiv.org/abs/2607.06700">arXiv cs.RO RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Cost-Effective Agent Harnesses for Abstract Reasoning and Generalization on ARC-AGI-1</title>
@@ -90,7 +90,7 @@
       <guid>https://dysonx.com/signals/cost-effective-agent-harnesses-for-abstract-reasoning-and-generalization-on-arc-agi-1/</guid>
       <description>arXiv:2607.06764v1 Announce Type: new Abstract: Recent progress on ARC-AGI-1 from disclosed architectures has come broadly from two regimes: heavy test-time compute over frontier models (evolutionary search, exhaustive sampling, extended...</description>
       <source url="https://arxiv.org/abs/2607.06764">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Does AI Understand Imaging? A Systematic Benchmark of Agentic AI for Computational Imaging Tasks</title>
@@ -98,7 +98,7 @@
       <guid>https://dysonx.com/signals/does-ai-understand-imaging-a-systematic-benchmark-of-agentic-ai-for-computational-imaging-tasks/</guid>
       <description>arXiv:2607.07189v1 Announce Type: new Abstract: Vision-language models (VLMs) and agentic AI have shown strong performance on semantic visual tasks, but it remains unclear whether they can handle the physics and inverse problems that und...</description>
       <source url="https://arxiv.org/abs/2607.07189">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Evaluating SageMath-Augmented LLM Agents for Computational and Experimental Mathematics</title>
@@ -106,7 +106,7 @@
       <guid>https://dysonx.com/signals/evaluating-sagemath-augmented-llm-agents-for-computational-and-experimental-mathematics/</guid>
       <description>arXiv:2607.06820v1 Announce Type: new Abstract: Recent advances in AI for Mathematics have focused largely on autoformalization and theorem proving, leaving the role of Computer Algebra Systems (CAS) in agentic LLM workflows underexplore...</description>
       <source url="https://arxiv.org/abs/2607.06820">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Flow-ERD: Agent-type Aware Flow Matching with Entropy-Regularized Distillation for Diverse Traffic Simulation</title>
@@ -114,7 +114,7 @@
       <guid>https://dysonx.com/signals/flow-erd-agent-type-aware-flow-matching-with-entropy-regularized-distillation-for-diverse-traffic-simulation/</guid>
       <description>arXiv:2607.06957v1 Announce Type: new Abstract: Realistic and diverse traffic simulation is essential to autonomous driving development. Yet prevailing benchmarks predominantly reward realism, and recent methods have optimized accordingl...</description>
       <source url="https://arxiv.org/abs/2607.06957">arXiv cs.RO RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>From Atomic Actions to Standard Operating Procedures: Iterative Tool Optimization for Self-Evolving LLM Agents</title>
@@ -122,7 +122,7 @@
       <guid>https://dysonx.com/signals/from-atomic-actions-to-standard-operating-procedures-iterative-tool-optimization-for-self-evolving-llm-agents/</guid>
       <description>arXiv:2607.07321v1 Announce Type: new Abstract: Tool utilization enables Large Language Model (LLM) agents to interact with the real world and resolve complex tasks. However, existing agent frameworks predominantly rely on static toolset...</description>
       <source url="https://arxiv.org/abs/2607.07321">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>LLM-powered reasoning in agent-based modeling</title>
@@ -130,7 +130,7 @@
       <guid>https://dysonx.com/signals/llm-powered-reasoning-in-agent-based-modeling/</guid>
       <description>arXiv:2607.06757v1 Announce Type: new Abstract: Agent-based modeling (ABM) has the capability to model millions of individuals and their interactions, which is useful for policy making. However, ABMs have traditionally relied on static p...</description>
       <source url="https://arxiv.org/abs/2607.06757">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Operational Reframing and Approval-Framed Delegation in Multi-Agent LLM Safety</title>
@@ -138,7 +138,7 @@
       <guid>https://dysonx.com/signals/operational-reframing-and-approval-framed-delegation-in-multi-agent-llm-safety/</guid>
       <description>arXiv:2607.07097v1 Announce Type: new Abstract: Safety evaluations of multi-agent LLM systems often compare a direct prompt with a planner-executor pipeline and report the difference as a single "pipeline effect." We argue that this aggr...</description>
       <source url="https://arxiv.org/abs/2607.07097">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Physics-Audited Agentic Discovery in Scientific Machine Learning</title>
@@ -146,7 +146,7 @@
       <guid>https://dysonx.com/signals/physics-audited-agentic-discovery-in-scientific-machine-learning/</guid>
       <description>arXiv:2607.07379v1 Announce Type: new Abstract: In agentic scientific machine learning (SciML), large language model (LLM) agents can discover surrogate models and select one by an automated score, typically an error metric. A low error,...</description>
       <source url="https://arxiv.org/abs/2607.07379">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Reason Less, Verify More: Deterministic Gates Recover a Silent Policy-Violation Failure Mode in Tool-Using LLM Agents</title>
@@ -154,7 +154,7 @@
       <guid>https://dysonx.com/signals/reason-less-verify-more-deterministic-gates-recover-a-silent-policy-violation-failure-mode-in-tool-using-llm-agents/</guid>
       <description>arXiv:2607.07405v1 Announce Type: new Abstract: Tool-using LLM agents can violate the very policies they are deployed to enforce while appearing to complete the task successfully. In policy-permissive environments, a tool may execute any...</description>
       <source url="https://arxiv.org/abs/2607.07405">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Reasoning Consistency Scanning: A Framework for Auditing Chain-of-Thought Validity in AI Safety Evaluations</title>
@@ -162,7 +162,7 @@
       <guid>https://dysonx.com/signals/reasoning-consistency-scanning-a-framework-for-auditing-chain-of-thought-validity-in-ai-safety-evaluations/</guid>
       <description>arXiv:2607.07229v1 Announce Type: new Abstract: Prior work has shown that chain-of-thought (CoT) reasoning is often unfaithful: a model's stated reasoning does not reliably reflect the process that produced its output. Detecting unfaithf...</description>
       <source url="https://arxiv.org/abs/2607.07229">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>The Harness Effect: How Orchestration Design Sets the Token Economics of Enterprise Agentic AI</title>
@@ -170,7 +170,7 @@
       <guid>https://dysonx.com/signals/the-harness-effect-how-orchestration-design-sets-the-token-economics-of-enterprise-agentic-ai/</guid>
       <description>arXiv:2607.06906v1 Announce Type: new Abstract: Agentic AI development today runs on token maxing: buying capability with tokens -- longer reasoning traces, more turns, wider tool payloads, bigger replayed contexts -- so tokens per task...</description>
       <source url="https://arxiv.org/abs/2607.06906">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Think Big, Search Small: Where Capacity Matters in Hierarchical Search Agents?</title>
@@ -178,7 +178,7 @@
       <guid>https://dysonx.com/signals/think-big-search-small-where-capacity-matters-in-hierarchical-search-agents/</guid>
       <description>arXiv:2607.07548v1 Announce Type: new Abstract: Large language model based search agents increasingly adopt multi-agent architectures in which a main agent decomposes a complex question into sub-queries and dispatches them to parallel su...</description>
       <source url="https://arxiv.org/abs/2607.07548">arXiv cs.CL RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Create a LangChain Deep Agents Harness Profile for NVIDIA Nemotron 3 Ultra to Improve Performance</title>
@@ -186,7 +186,7 @@
       <guid>https://dysonx.com/signals/create-a-langchain-deep-agents-harness-profile-for-nvidia-nemotron-3-ultra-to-improve-performance/</guid>
       <description>Agentic systems often face a trade-off between accuracy and cost. The highest-performing proprietary frontier models and harnesses provide top accuracy but are...</description>
       <source url="https://developer.nvidia.com/blog/create-a-langchain-deep-agents-harness-profile-for-nvidia-nemotron-3-ultra-to-improve-performance/">NVIDIA Developer Blog AI</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Akashic: A Low-Overhead LLM Inference Service with MemAttention</title>
@@ -194,7 +194,7 @@
       <guid>https://dysonx.com/signals/akashic-a-low-overhead-llm-inference-service-with-memattention/</guid>
       <description>arXiv:2607.05708v1 Announce Type: new Abstract: Recent LLM-based agent systems continuously accumulate context across multi-turn interactions, tool invocations, and cross-session workflows. Replaying the full history for every request qu...</description>
       <source url="https://arxiv.org/abs/2607.05708">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Beyond Static Evaluation: Building Simulation Environments for Scalable Agentic Reinforcement Learning</title>
@@ -202,7 +202,7 @@
       <guid>https://dysonx.com/signals/beyond-static-evaluation-building-simulation-environments-for-scalable-agentic-reinforcement-learning/</guid>
       <description>arXiv:2607.05773v1 Announce Type: new Abstract: As Large Language Models (LLMs) evolve into autonomous agents, traditional static evaluation fails to capture multi-step decision-making. We introduce AgenticAI-Supervisor, an API and UI-dr...</description>
       <source url="https://arxiv.org/abs/2607.05773">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Delay-Aware Active Triangulation with Uncertainty-Driven Multi-Agent Reinforcement Learning for Counter-UAS</title>
@@ -210,7 +210,7 @@
       <guid>https://dysonx.com/signals/delay-aware-active-triangulation-with-uncertainty-driven-multi-agent-reinforcement-learning-for-counter-uas/</guid>
       <description>arXiv:2607.05957v1 Announce Type: new Abstract: Multi-agent active visual triangulation enables precise 3D localization of aerial targets by coordinating mobile observers with controllable cameras. However, existing methods assume instan...</description>
       <source url="https://arxiv.org/abs/2607.05957">arXiv cs.RO RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>FirstResearch: Auditable Question Formation for LLM Scientific Discovery Agents</title>
@@ -218,7 +218,7 @@
       <guid>https://dysonx.com/signals/firstresearch-auditable-question-formation-for-llm-scientific-discovery-agents/</guid>
       <description>arXiv:2607.05682v1 Announce Type: new Abstract: LLM systems for scientific discovery increasingly assist with ideation, literature synthesis, experiment planning, and report generation, but the first research question they propose can re...</description>
       <source url="https://arxiv.org/abs/2607.05682">arXiv cs.AI RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>IMR: Iterative Mode-World Weighted Regression for Multi-Agent Trajectory Prediction</title>
@@ -226,7 +226,7 @@
       <guid>https://dysonx.com/signals/imr-iterative-mode-world-weighted-regression-for-multi-agent-trajectory-prediction/</guid>
       <description>arXiv:2607.05705v1 Announce Type: new Abstract: Multi-agent motion prediction is essential for automated vehicles to understand the intentions of surrounding vehicles. However, previous prediction-based and anchor-based methods have limi...</description>
       <source url="https://arxiv.org/abs/2607.05705">arXiv cs.RO RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Intercepting an Agile Target with Net-Carrying Drones using Competitive Multi-Agent Reinforcement Learning</title>
@@ -234,7 +234,7 @@
       <guid>https://dysonx.com/signals/intercepting-an-agile-target-with-net-carrying-drones-using-competitive-multi-agent-reinforcement-learning/</guid>
       <description>arXiv:2607.05939v1 Announce Type: new Abstract: This article presents a solution to intercept an agile drone by a team of agile drone carrying catching nets. We formulate the problem as a competitive Multi-Agent Reinforcement Learning (M...</description>
       <source url="https://arxiv.org/abs/2607.05939">arXiv cs.RO RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
     <item>
       <title>Learning to Control LLM Agent Harnesses with Offline Reinforcement Learning</title>
@@ -242,7 +242,7 @@
       <guid>https://dysonx.com/signals/learning-to-control-llm-agent-harnesses-with-offline-reinforcement-learning/</guid>
       <description>arXiv:2607.05458v1 Announce Type: new Abstract: Large language model (LLM) agents are usually improved by changing prompts, models, or hand-written workflows, while the execution harness around the model is treated as fixed infrastructur...</description>
       <source url="https://arxiv.org/abs/2607.05458">arXiv cs.LG RSS</source>
-      <pubDate>2026-07-09T14:23:29Z</pubDate>
+      <pubDate>2026-07-09T19:17:51Z</pubDate>
     </item>
   </channel>
 </rss>
