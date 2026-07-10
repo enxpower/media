@@ -1,5 +1,5 @@
 {
-  "content_refreshed_at": "2026-07-10T01:21:38Z",
+  "content_refreshed_at": "2026-07-10T08:56:43Z",
   "launch_version": "notion_public_signals_sync_v1",
   "launched": [
     {
@@ -218,6 +218,190 @@
         "matched_core_topics": [
           "ai agent",
           "ai agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/a-reliability-assessment-of-lalm-audio-judges-for-full-duplex-voice-agents/index.html",
+      "public_url_path": "/signals/a-reliability-assessment-of-lalm-audio-judges-for-full-duplex-voice-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39995c29-2b0e-8131-9a2d-daf7b1c3cea6",
+      "slug": "a-reliability-assessment-of-lalm-audio-judges-for-full-duplex-voice-agents",
+      "source_name": "arXiv cs.CL RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07985",
+      "summary": "arXiv:2607.07985v1 Announce Type: new Abstract: We report the empirical reliability of Gemini models as audio judges that score full-duplex agent conversations directly from the raw stereo waveform, tested across three models in the Gemi...",
+      "title": "A Reliability Assessment of LALM Audio Judges for Full-Duplex Voice Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/a-transdiagnostic-space-of-disorder-like-phenotypes-in-reinforcement-learning-agents/index.html",
+      "public_url_path": "/signals/a-transdiagnostic-space-of-disorder-like-phenotypes-in-reinforcement-learning-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39995c29-2b0e-8168-a692-db1b7a92b2fc",
+      "slug": "a-transdiagnostic-space-of-disorder-like-phenotypes-in-reinforcement-learning-agents",
+      "source_name": "arXiv cs.LG RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07753",
+      "summary": "arXiv:2607.07753v1 Announce Type: new Abstract: Modelling psychological disorders in artificial agents offers both a testbed for computational psychiatry and a lens on the failure modes of affective control. Prior work induces one or two...",
+      "title": "A Transdiagnostic Space of Disorder Like Phenotypes in Reinforcement Learning Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/harness-vla-steering-frozen-vlas-into-reliable-manipulation-primitives-via-memory-guided-agents/index.html",
+      "public_url_path": "/signals/harness-vla-steering-frozen-vlas-into-reliable-manipulation-primitives-via-memory-guided-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39995c29-2b0e-815e-8a7a-edc5c75ad323",
+      "slug": "harness-vla-steering-frozen-vlas-into-reliable-manipulation-primitives-via-memory-guided-agents",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.08448",
+      "summary": "arXiv:2607.08448v1 Announce Type: new Abstract: Language-conditioned manipulation requires both precise contact-rich control and robust reasoning over language, scenes, and long horizons. End-to-end Vision-Language-Action (VLA) models pr...",
+      "title": "Harness VLA: Steering Frozen VLAs into Reliable Manipulation Primitives via Memory-Guided Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/jet-long-efficient-long-context-extension-with-dynamic-bifocal-rope/index.html",
+      "public_url_path": "/signals/jet-long-efficient-long-context-extension-with-dynamic-bifocal-rope/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39995c29-2b0e-815d-be98-d2a99e114b41",
+      "slug": "jet-long-efficient-long-context-extension-with-dynamic-bifocal-rope",
+      "source_name": "arXiv cs.LG RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07740",
+      "summary": "arXiv:2607.07740v1 Announce Type: new Abstract: Modern LLMs are increasingly deployed in long-context applications such as retrieval-augmented generation, repository-level coding, and agentic workflows whose accumulated reasoning and too...",
+      "title": "Jet-Long: Efficient Long-Context Extension with Dynamic Bifocal RoPE",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "agentic workflow",
+          "agentic workflows"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/maste-a-multi-agent-pipeline-for-zero-shot-aspect-sentiment-triplet-extraction/index.html",
+      "public_url_path": "/signals/maste-a-multi-agent-pipeline-for-zero-shot-aspect-sentiment-triplet-extraction/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39995c29-2b0e-8116-87a2-e7ea7ea9e149",
+      "slug": "maste-a-multi-agent-pipeline-for-zero-shot-aspect-sentiment-triplet-extraction",
+      "source_name": "arXiv cs.CL RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.08080",
+      "summary": "arXiv:2607.08080v1 Announce Type: new Abstract: Aspect Sentiment Triplet Extraction (ASTE) requires jointly identifying (aspect, opinion, sentiment) triples from a given review sentence. While large language models (LLMs) achieve strong...",
+      "title": "MASTE: A Multi-Agent Pipeline for Zero-Shot Aspect Sentiment Triplet Extraction",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/tool-making-and-self-evolving-llm-agents-in-low-latency-systems/index.html",
+      "public_url_path": "/signals/tool-making-and-self-evolving-llm-agents-in-low-latency-systems/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39995c29-2b0e-8143-b6b2-c461e8b8583d",
+      "slug": "tool-making-and-self-evolving-llm-agents-in-low-latency-systems",
+      "source_name": "arXiv cs.CL RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.08010",
+      "summary": "arXiv:2607.08010v1 Announce Type: new Abstract: Production LLM agents often waste latency and reliability by regenerating code for the same procedural steps on every request. We replace this inference-time coding loop with an agentic too...",
+      "title": "Tool-Making and Self-Evolving LLM Agents in Low-Latency Systems",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "llm agent",
+          "llm agents"
         ],
         "matched_domain_risk_framing": [],
         "matched_domain_risks": {},
@@ -750,196 +934,14 @@
         "off_topic_public_signal": false,
         "reasons": []
       }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/beyond-static-evaluation-building-simulation-environments-for-scalable-agentic-reinforcement-learning/index.html",
-      "public_url_path": "/signals/beyond-static-evaluation-building-simulation-environments-for-scalable-agentic-reinforcement-learning/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39795c29-2b0e-81c1-928a-e3981187d8a7",
-      "slug": "beyond-static-evaluation-building-simulation-environments-for-scalable-agentic-reinforcement-learning",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.05773",
-      "summary": "arXiv:2607.05773v1 Announce Type: new Abstract: As Large Language Models (LLMs) evolve into autonomous agents, traditional static evaluation fails to capture multi-step decision-making. We introduce AgenticAI-Supervisor, an API and UI-dr...",
-      "title": "Beyond Static Evaluation: Building Simulation Environments for Scalable Agentic Reinforcement Learning",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/delay-aware-active-triangulation-with-uncertainty-driven-multi-agent-reinforcement-learning-for-counter-uas/index.html",
-      "public_url_path": "/signals/delay-aware-active-triangulation-with-uncertainty-driven-multi-agent-reinforcement-learning-for-counter-uas/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39795c29-2b0e-8149-96b0-f5be2407d492",
-      "slug": "delay-aware-active-triangulation-with-uncertainty-driven-multi-agent-reinforcement-learning-for-counter-uas",
-      "source_name": "arXiv cs.RO RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.05957",
-      "summary": "arXiv:2607.05957v1 Announce Type: new Abstract: Multi-agent active visual triangulation enables precise 3D localization of aerial targets by coordinating mobile observers with controllable cameras. However, existing methods assume instan...",
-      "title": "Delay-Aware Active Triangulation with Uncertainty-Driven Multi-Agent Reinforcement Learning for Counter-UAS",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context",
-          "multi_agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/firstresearch-auditable-question-formation-for-llm-scientific-discovery-agents/index.html",
-      "public_url_path": "/signals/firstresearch-auditable-question-formation-for-llm-scientific-discovery-agents/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39795c29-2b0e-8159-8131-cbab61f52488",
-      "slug": "firstresearch-auditable-question-formation-for-llm-scientific-discovery-agents",
-      "source_name": "arXiv cs.AI RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.05682",
-      "summary": "arXiv:2607.05682v1 Announce Type: new Abstract: LLM systems for scientific discovery increasingly assist with ideation, literature synthesis, experiment planning, and report generation, but the first research question they propose can re...",
-      "title": "FirstResearch: Auditable Question Formation for LLM Scientific Discovery Agents",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/imr-iterative-mode-world-weighted-regression-for-multi-agent-trajectory-prediction/index.html",
-      "public_url_path": "/signals/imr-iterative-mode-world-weighted-regression-for-multi-agent-trajectory-prediction/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39795c29-2b0e-81f4-9a69-d979093553cb",
-      "slug": "imr-iterative-mode-world-weighted-regression-for-multi-agent-trajectory-prediction",
-      "source_name": "arXiv cs.RO RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.05705",
-      "summary": "arXiv:2607.05705v1 Announce Type: new Abstract: Multi-agent motion prediction is essential for automated vehicles to understand the intentions of surrounding vehicles. However, previous prediction-based and anchor-based methods have limi...",
-      "title": "IMR: Iterative Mode-World Weighted Regression for Multi-Agent Trajectory Prediction",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "multi_agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/intercepting-an-agile-target-with-net-carrying-drones-using-competitive-multi-agent-reinforcement-learning/index.html",
-      "public_url_path": "/signals/intercepting-an-agile-target-with-net-carrying-drones-using-competitive-multi-agent-reinforcement-learning/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39795c29-2b0e-81b1-8c3e-fb6d599c9d98",
-      "slug": "intercepting-an-agile-target-with-net-carrying-drones-using-competitive-multi-agent-reinforcement-learning",
-      "source_name": "arXiv cs.RO RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.05939",
-      "summary": "arXiv:2607.05939v1 Announce Type: new Abstract: This article presents a solution to intercept an agile drone by a team of agile drone carrying catching nets. We formulate the problem as a competitive Multi-Agent Reinforcement Learning (M...",
-      "title": "Intercepting an Agile Target with Net-Carrying Drones using Competitive Multi-Agent Reinforcement Learning",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "multi_agent_context"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
-    },
-    {
-      "agi_relevance": "High",
-      "attribution_status": "Complete",
-      "copyright_status": "Safe Summary Only",
-      "production_publish_performed": true,
-      "public_path": "signals/learning-to-control-llm-agent-harnesses-with-offline-reinforcement-learning/index.html",
-      "public_url_path": "/signals/learning-to-control-llm-agent-harnesses-with-offline-reinforcement-learning/",
-      "published": true,
-      "quality_hint": 88,
-      "ready_for_pipeline": false,
-      "signal_id": "39795c29-2b0e-8153-b052-f9479605ff9b",
-      "slug": "learning-to-control-llm-agent-harnesses-with-offline-reinforcement-learning",
-      "source_name": "arXiv cs.LG RSS",
-      "source_priority": "High",
-      "source_url": "https://arxiv.org/abs/2607.05458",
-      "summary": "arXiv:2607.05458v1 Announce Type: new Abstract: Large language model (LLM) agents are usually improved by changing prompts, models, or hand-written workflows, while the execution harness around the model is treated as fixed infrastructur...",
-      "title": "Learning to Control LLM Agent Harnesses with Offline Reinforcement Learning",
-      "topic_decision": {
-        "allowed_domain_risk": false,
-        "domain_risk_detected": false,
-        "has_core_public_topic": true,
-        "matched_core_topics": [
-          "agent_context",
-          "llm agent"
-        ],
-        "matched_domain_risk_framing": [],
-        "matched_domain_risks": {},
-        "off_topic_public_signal": false,
-        "reasons": []
-      }
     }
   ],
   "manual_external_deployment_performed": false,
-  "material_signature": "32a850f385ab69296699e6e8601802de831d8dc50c72049e8be5bdce196817f4",
+  "material_signature": "ab81b6e82c1bf814e46154acae4ad1eb58172debb5699f3f375abb11c4b0964e",
   "network_source_fetch_performed": false,
   "newsletter_distribution_performed": false,
   "openai_call_performed": false,
-  "pages_blocked": 1016,
+  "pages_blocked": 1106,
   "pages_launched": 30,
   "public_output_root": ".",
   "raw_article_body_copied": false,
