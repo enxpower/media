@@ -10,7 +10,7 @@
         }
       ],
       "content_text": "A June 2026 research paper uses Codex usage data as evidence that agentic AI is moving from developer tooling toward broader organizational workflows.",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2606.26959",
       "id": "https://dysonx.com/signals/agentic-ai-adoption-accelerates-from-codex-usage-evidence/",
       "summary": "A June 2026 research paper uses Codex usage data as evidence that agentic AI is moving from developer tooling toward broader organizational workflows.",
@@ -24,7 +24,7 @@
         }
       ],
       "content_text": "The 2025 AI Agent Index documents technical and safety features across deployed agentic AI systems and flags uneven transparency among developers.",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2602.17753",
       "id": "https://dysonx.com/signals/ai-agent-index-highlights-transparency-gaps-in-deployed-agents/",
       "summary": "The 2025 AI Agent Index documents technical and safety features across deployed agentic AI systems and flags uneven transparency among developers.",
@@ -38,7 +38,7 @@
         }
       ],
       "content_text": "The European AI Office supports AI Act implementation, especially general-purpose AI rules, evaluations, guidance, and enforcement workflows.",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://digital-strategy.ec.europa.eu/en/policies/ai-office",
       "id": "https://dysonx.com/signals/eu-ai-office-becomes-the-gpai-governance-surface-to-watch/",
       "summary": "The European AI Office supports AI Act implementation, especially general-purpose AI rules, evaluations, guidance, and enforcement workflows.",
@@ -52,7 +52,7 @@
         }
       ],
       "content_text": "METR tracks frontier AI progress through task-completion time horizons, measuring the length of tasks AI agents can complete at defined success rates.",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://metr.org/",
       "id": "https://dysonx.com/signals/metr-time-horizon-work-reframes-autonomous-capability-tracking/",
       "summary": "METR tracks frontier AI progress through task-completion time horizons, measuring the length of tasks AI agents can complete at defined success rates.",
@@ -66,7 +66,7 @@
         }
       ],
       "content_text": "NIST frames AI governance around measurement, risk management, standards, guidelines, benchmarks, and evaluations.",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://www.nist.gov/artificial-intelligence",
       "id": "https://dysonx.com/signals/nist-ai-governance-is-anchored-in-standards/",
       "summary": "NIST frames AI governance around measurement, risk management, standards, guidelines, benchmarks, and evaluations.",
@@ -80,7 +80,7 @@
         }
       ],
       "content_text": "A new analysis from OpenAI reveals issues in SWE-Bench Pro, a popular coding benchmark, raising concerns about reliability and accuracy in evaluating AI models.",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://openai.com/index/separating-signal-from-noise-coding-evaluations",
       "id": "https://dysonx.com/signals/separating-signal-from-noise-in-coding-evaluations/",
       "summary": "A new analysis from OpenAI reveals issues in SWE-Bench Pro, a popular coding benchmark, raising concerns about reliability and accuracy in evaluating AI models.",
@@ -94,7 +94,7 @@
         }
       ],
       "content_text": "A new OpenAI research paper shows how AI agents are transforming work, enabling longer, more complex tasks and expanding productivity across roles.",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://openai.com/index/how-agents-are-transforming-work",
       "id": "https://dysonx.com/signals/how-agents-are-transforming-work/",
       "summary": "A new OpenAI research paper shows how AI agents are transforming work, enabling longer, more complex tasks and expanding productivity across roles.",
@@ -108,7 +108,7 @@
         }
       ],
       "content_text": "arXiv:2607.07859v1 Announce Type: new Abstract: Reinforcement learning (RL) research has increasingly shifted focus towards alignment, ensuring agents learn behaviors adhering to human values. While human demonstrations and feedback have...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.07859",
       "id": "https://dysonx.com/signals/feedback-manipulation-regularization-enabling-offline-agent-alignment-for-imitation-learning/",
       "summary": "arXiv:2607.07859v1 Announce Type: new Abstract: Reinforcement learning (RL) research has increasingly shifted focus towards alignment, ensuring agents learn behaviors adhering to human values. While human demonstrations and feedback have...",
@@ -122,7 +122,7 @@
         }
       ],
       "content_text": "arXiv:2607.08028v1 Announce Type: new Abstract: Enterprise large language model (LLM) applications often begin as prototypes whose behavior is carried by prompts and retrieval context. Productization adds requirements for source boundari...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.08028",
       "id": "https://dysonx.com/signals/from-prompts-to-contracts-harness-engineering-for-auditable-enterprise-llm-agents/",
       "summary": "arXiv:2607.08028v1 Announce Type: new Abstract: Enterprise large language model (LLM) applications often begin as prototypes whose behavior is carried by prompts and retrieval context. Productization adds requirements for source boundari...",
@@ -136,7 +136,7 @@
         }
       ],
       "content_text": "arXiv:2607.08066v1 Announce Type: new Abstract: Chain-of-thought (CoT) monitoring is a promising safety mechanism for AI agents, based on the premise that visible reasoning traces can surface misaligned or deceptive behavior. While effec...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.08066",
       "id": "https://dysonx.com/signals/persuasion-attacks-can-decrease-effectiveness-of-cot-monitoring/",
       "summary": "arXiv:2607.08066v1 Announce Type: new Abstract: Chain-of-thought (CoT) monitoring is a promising safety mechanism for AI agents, based on the premise that visible reasoning traces can surface misaligned or deceptive behavior. While effec...",
@@ -150,7 +150,7 @@
         }
       ],
       "content_text": "arXiv:2607.07985v1 Announce Type: new Abstract: We report the empirical reliability of Gemini models as audio judges that score full-duplex agent conversations directly from the raw stereo waveform, tested across three models in the Gemi...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.07985",
       "id": "https://dysonx.com/signals/a-reliability-assessment-of-lalm-audio-judges-for-full-duplex-voice-agents/",
       "summary": "arXiv:2607.07985v1 Announce Type: new Abstract: We report the empirical reliability of Gemini models as audio judges that score full-duplex agent conversations directly from the raw stereo waveform, tested across three models in the Gemi...",
@@ -164,7 +164,7 @@
         }
       ],
       "content_text": "arXiv:2607.07753v1 Announce Type: new Abstract: Modelling psychological disorders in artificial agents offers both a testbed for computational psychiatry and a lens on the failure modes of affective control. Prior work induces one or two...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.07753",
       "id": "https://dysonx.com/signals/a-transdiagnostic-space-of-disorder-like-phenotypes-in-reinforcement-learning-agents/",
       "summary": "arXiv:2607.07753v1 Announce Type: new Abstract: Modelling psychological disorders in artificial agents offers both a testbed for computational psychiatry and a lens on the failure modes of affective control. Prior work induces one or two...",
@@ -178,7 +178,7 @@
         }
       ],
       "content_text": "arXiv:2607.08448v1 Announce Type: new Abstract: Language-conditioned manipulation requires both precise contact-rich control and robust reasoning over language, scenes, and long horizons. End-to-end Vision-Language-Action (VLA) models pr...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.08448",
       "id": "https://dysonx.com/signals/harness-vla-steering-frozen-vlas-into-reliable-manipulation-primitives-via-memory-guided-agents/",
       "summary": "arXiv:2607.08448v1 Announce Type: new Abstract: Language-conditioned manipulation requires both precise contact-rich control and robust reasoning over language, scenes, and long horizons. End-to-end Vision-Language-Action (VLA) models pr...",
@@ -192,7 +192,7 @@
         }
       ],
       "content_text": "arXiv:2607.07740v1 Announce Type: new Abstract: Modern LLMs are increasingly deployed in long-context applications such as retrieval-augmented generation, repository-level coding, and agentic workflows whose accumulated reasoning and too...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.07740",
       "id": "https://dysonx.com/signals/jet-long-efficient-long-context-extension-with-dynamic-bifocal-rope/",
       "summary": "arXiv:2607.07740v1 Announce Type: new Abstract: Modern LLMs are increasingly deployed in long-context applications such as retrieval-augmented generation, repository-level coding, and agentic workflows whose accumulated reasoning and too...",
@@ -206,7 +206,7 @@
         }
       ],
       "content_text": "arXiv:2607.08080v1 Announce Type: new Abstract: Aspect Sentiment Triplet Extraction (ASTE) requires jointly identifying (aspect, opinion, sentiment) triples from a given review sentence. While large language models (LLMs) achieve strong...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.08080",
       "id": "https://dysonx.com/signals/maste-a-multi-agent-pipeline-for-zero-shot-aspect-sentiment-triplet-extraction/",
       "summary": "arXiv:2607.08080v1 Announce Type: new Abstract: Aspect Sentiment Triplet Extraction (ASTE) requires jointly identifying (aspect, opinion, sentiment) triples from a given review sentence. While large language models (LLMs) achieve strong...",
@@ -220,7 +220,7 @@
         }
       ],
       "content_text": "arXiv:2607.08010v1 Announce Type: new Abstract: Production LLM agents often waste latency and reliability by regenerating code for the same procedural steps on every request. We replace this inference-time coding loop with an agentic too...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.08010",
       "id": "https://dysonx.com/signals/tool-making-and-self-evolving-llm-agents-in-low-latency-systems/",
       "summary": "arXiv:2607.08010v1 Announce Type: new Abstract: Production LLM agents often waste latency and reliability by regenerating code for the same procedural steps on every request. We replace this inference-time coding loop with an agentic too...",
@@ -234,7 +234,7 @@
         }
       ],
       "content_text": "arXiv:2607.06990v1 Announce Type: new Abstract: Multi-robot systems provide the parallelism and redundancy necessary for long-horizon tasks, while Large Language Models (LLMs) offer the reasoning capabilities to decompose these objective...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.06990",
       "id": "https://dysonx.com/signals/a-closed-loop-multi-agent-framework-for-robust-multi-robot-manipulation/",
       "summary": "arXiv:2607.06990v1 Announce Type: new Abstract: Multi-robot systems provide the parallelism and redundancy necessary for long-horizon tasks, while Large Language Models (LLMs) offer the reasoning capabilities to decompose these objective...",
@@ -248,7 +248,7 @@
         }
       ],
       "content_text": "arXiv:2607.06624v1 Announce Type: new Abstract: We present AgentLens, a production-assessed benchmark for interactive code agents. Most code-agent benchmarks reduce a run to a single bit -- did the task pass? -- but the people who actual...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.06624",
       "id": "https://dysonx.com/signals/agentlens-production-assessed-trajectory-reviews-for-coding-agent-evaluation/",
       "summary": "arXiv:2607.06624v1 Announce Type: new Abstract: We present AgentLens, a production-assessed benchmark for interactive code agents. Most code-agent benchmarks reduce a run to a single bit -- did the task pass? -- but the people who actual...",
@@ -262,7 +262,7 @@
         }
       ],
       "content_text": "arXiv:2607.06700v1 Announce Type: new Abstract: Multi-agent Simultaneous Localization and Mapping (SLAM) and collaborative SLAM (CSLAM) require robots to continuously exchange global descriptors (GDs) to detect inter-agent loop closures...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.06700",
       "id": "https://dysonx.com/signals/cilc-cryptographically-secure-inter-agent-loop-closure-candidate-detection-for-multi-agent-collaborative-slam/",
       "summary": "arXiv:2607.06700v1 Announce Type: new Abstract: Multi-agent Simultaneous Localization and Mapping (SLAM) and collaborative SLAM (CSLAM) require robots to continuously exchange global descriptors (GDs) to detect inter-agent loop closures...",
@@ -276,7 +276,7 @@
         }
       ],
       "content_text": "arXiv:2607.06764v1 Announce Type: new Abstract: Recent progress on ARC-AGI-1 from disclosed architectures has come broadly from two regimes: heavy test-time compute over frontier models (evolutionary search, exhaustive sampling, extended...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.06764",
       "id": "https://dysonx.com/signals/cost-effective-agent-harnesses-for-abstract-reasoning-and-generalization-on-arc-agi-1/",
       "summary": "arXiv:2607.06764v1 Announce Type: new Abstract: Recent progress on ARC-AGI-1 from disclosed architectures has come broadly from two regimes: heavy test-time compute over frontier models (evolutionary search, exhaustive sampling, extended...",
@@ -290,7 +290,7 @@
         }
       ],
       "content_text": "arXiv:2607.07189v1 Announce Type: new Abstract: Vision-language models (VLMs) and agentic AI have shown strong performance on semantic visual tasks, but it remains unclear whether they can handle the physics and inverse problems that und...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.07189",
       "id": "https://dysonx.com/signals/does-ai-understand-imaging-a-systematic-benchmark-of-agentic-ai-for-computational-imaging-tasks/",
       "summary": "arXiv:2607.07189v1 Announce Type: new Abstract: Vision-language models (VLMs) and agentic AI have shown strong performance on semantic visual tasks, but it remains unclear whether they can handle the physics and inverse problems that und...",
@@ -304,7 +304,7 @@
         }
       ],
       "content_text": "arXiv:2607.06820v1 Announce Type: new Abstract: Recent advances in AI for Mathematics have focused largely on autoformalization and theorem proving, leaving the role of Computer Algebra Systems (CAS) in agentic LLM workflows underexplore...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.06820",
       "id": "https://dysonx.com/signals/evaluating-sagemath-augmented-llm-agents-for-computational-and-experimental-mathematics/",
       "summary": "arXiv:2607.06820v1 Announce Type: new Abstract: Recent advances in AI for Mathematics have focused largely on autoformalization and theorem proving, leaving the role of Computer Algebra Systems (CAS) in agentic LLM workflows underexplore...",
@@ -318,7 +318,7 @@
         }
       ],
       "content_text": "arXiv:2607.06957v1 Announce Type: new Abstract: Realistic and diverse traffic simulation is essential to autonomous driving development. Yet prevailing benchmarks predominantly reward realism, and recent methods have optimized accordingl...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.06957",
       "id": "https://dysonx.com/signals/flow-erd-agent-type-aware-flow-matching-with-entropy-regularized-distillation-for-diverse-traffic-simulation/",
       "summary": "arXiv:2607.06957v1 Announce Type: new Abstract: Realistic and diverse traffic simulation is essential to autonomous driving development. Yet prevailing benchmarks predominantly reward realism, and recent methods have optimized accordingl...",
@@ -332,7 +332,7 @@
         }
       ],
       "content_text": "arXiv:2607.07321v1 Announce Type: new Abstract: Tool utilization enables Large Language Model (LLM) agents to interact with the real world and resolve complex tasks. However, existing agent frameworks predominantly rely on static toolset...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.07321",
       "id": "https://dysonx.com/signals/from-atomic-actions-to-standard-operating-procedures-iterative-tool-optimization-for-self-evolving-llm-agents/",
       "summary": "arXiv:2607.07321v1 Announce Type: new Abstract: Tool utilization enables Large Language Model (LLM) agents to interact with the real world and resolve complex tasks. However, existing agent frameworks predominantly rely on static toolset...",
@@ -346,7 +346,7 @@
         }
       ],
       "content_text": "arXiv:2607.06757v1 Announce Type: new Abstract: Agent-based modeling (ABM) has the capability to model millions of individuals and their interactions, which is useful for policy making. However, ABMs have traditionally relied on static p...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.06757",
       "id": "https://dysonx.com/signals/llm-powered-reasoning-in-agent-based-modeling/",
       "summary": "arXiv:2607.06757v1 Announce Type: new Abstract: Agent-based modeling (ABM) has the capability to model millions of individuals and their interactions, which is useful for policy making. However, ABMs have traditionally relied on static p...",
@@ -360,7 +360,7 @@
         }
       ],
       "content_text": "arXiv:2607.07097v1 Announce Type: new Abstract: Safety evaluations of multi-agent LLM systems often compare a direct prompt with a planner-executor pipeline and report the difference as a single \"pipeline effect.\" We argue that this aggr...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.07097",
       "id": "https://dysonx.com/signals/operational-reframing-and-approval-framed-delegation-in-multi-agent-llm-safety/",
       "summary": "arXiv:2607.07097v1 Announce Type: new Abstract: Safety evaluations of multi-agent LLM systems often compare a direct prompt with a planner-executor pipeline and report the difference as a single \"pipeline effect.\" We argue that this aggr...",
@@ -374,7 +374,7 @@
         }
       ],
       "content_text": "arXiv:2607.07379v1 Announce Type: new Abstract: In agentic scientific machine learning (SciML), large language model (LLM) agents can discover surrogate models and select one by an automated score, typically an error metric. A low error,...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.07379",
       "id": "https://dysonx.com/signals/physics-audited-agentic-discovery-in-scientific-machine-learning/",
       "summary": "arXiv:2607.07379v1 Announce Type: new Abstract: In agentic scientific machine learning (SciML), large language model (LLM) agents can discover surrogate models and select one by an automated score, typically an error metric. A low error,...",
@@ -388,7 +388,7 @@
         }
       ],
       "content_text": "arXiv:2607.07405v1 Announce Type: new Abstract: Tool-using LLM agents can violate the very policies they are deployed to enforce while appearing to complete the task successfully. In policy-permissive environments, a tool may execute any...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.07405",
       "id": "https://dysonx.com/signals/reason-less-verify-more-deterministic-gates-recover-a-silent-policy-violation-failure-mode-in-tool-using-llm-agents/",
       "summary": "arXiv:2607.07405v1 Announce Type: new Abstract: Tool-using LLM agents can violate the very policies they are deployed to enforce while appearing to complete the task successfully. In policy-permissive environments, a tool may execute any...",
@@ -402,7 +402,7 @@
         }
       ],
       "content_text": "arXiv:2607.07229v1 Announce Type: new Abstract: Prior work has shown that chain-of-thought (CoT) reasoning is often unfaithful: a model's stated reasoning does not reliably reflect the process that produced its output. Detecting unfaithf...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.07229",
       "id": "https://dysonx.com/signals/reasoning-consistency-scanning-a-framework-for-auditing-chain-of-thought-validity-in-ai-safety-evaluations/",
       "summary": "arXiv:2607.07229v1 Announce Type: new Abstract: Prior work has shown that chain-of-thought (CoT) reasoning is often unfaithful: a model's stated reasoning does not reliably reflect the process that produced its output. Detecting unfaithf...",
@@ -416,7 +416,7 @@
         }
       ],
       "content_text": "arXiv:2607.06906v1 Announce Type: new Abstract: Agentic AI development today runs on token maxing: buying capability with tokens -- longer reasoning traces, more turns, wider tool payloads, bigger replayed contexts -- so tokens per task...",
-      "date_modified": "2026-07-11T07:29:55Z",
+      "date_modified": "2026-07-12T12:53:45Z",
       "external_url": "https://arxiv.org/abs/2607.06906",
       "id": "https://dysonx.com/signals/the-harness-effect-how-orchestration-design-sets-the-token-economics-of-enterprise-agentic-ai/",
       "summary": "arXiv:2607.06906v1 Announce Type: new Abstract: Agentic AI development today runs on token maxing: buying capability with tokens -- longer reasoning traces, more turns, wider tool payloads, bigger replayed contexts -- so tokens per task...",
