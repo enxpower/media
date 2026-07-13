@@ -805,6 +805,44 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertEqual(manifest["pages_launched"], 36)
         self.assertIn(f"{FIXTURE_BASE_URL}/signals/window-public-signal-35/", sitemap)
 
+    def test_duplicate_slugs_select_deterministic_highest_ranked_record(self):
+        shutil.rmtree(self.root / "signals")
+        lower_ranked = eligible_record(
+            **{
+                "Signal ID": "sig_duplicate_low",
+                "Signal Title": "Duplicate slug lower ranked Signal",
+                "Slug": "duplicate-agent-signal",
+                "Summary": "Lower ranked summary-only Signal about AI agent evaluation.",
+                "Source Priority": "High",
+                "AGI Relevance": "Medium",
+                "Quality Hint": 86,
+                "Published Date": "2026-06-01T00:00:00Z",
+            }
+        )
+        higher_ranked = eligible_record(
+            **{
+                "Signal ID": "sig_duplicate_high",
+                "Signal Title": "Duplicate slug higher ranked Signal",
+                "Slug": "duplicate-agent-signal",
+                "Summary": "Higher ranked summary-only Signal about AI agent evaluation.",
+                "Source Priority": "Critical",
+                "AGI Relevance": "Critical",
+                "Quality Hint": 95,
+                "Published Date": "2026-06-02T00:00:00Z",
+            }
+        )
+
+        first_manifest = sync.sync_records([lower_ranked, higher_ranked], self.root, refreshed_at="2026-06-27T00:00:00Z")
+        first_entry = first_manifest["launched"][0]
+        shutil.rmtree(self.root / "signals")
+        second_manifest = sync.sync_records([higher_ranked, lower_ranked], self.root, refreshed_at="2026-06-27T00:00:00Z")
+        second_entry = second_manifest["launched"][0]
+
+        self.assertEqual(first_manifest["pages_launched"], 1)
+        self.assertEqual(first_entry["signal_id"], "sig_duplicate_high")
+        self.assertEqual(second_entry["signal_id"], "sig_duplicate_high")
+        self.assertEqual(first_manifest["material_signature"], second_manifest["material_signature"])
+
     def test_identical_rerun_with_large_inventory_has_no_material_diff(self):
         shutil.rmtree(self.root / "signals")
         records = [

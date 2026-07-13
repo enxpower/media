@@ -568,6 +568,18 @@ def public_signal_sort_key(record: dict[str, Any]) -> tuple[int, int, float, int
     return (priority, relevance, -quality, published_rank, ready_rank, -timestamp_rank(record.get("timestamp")), str(record.get("title") or "").lower())
 
 
+def deterministic_identity_key(record: dict[str, Any]) -> tuple[str, str]:
+    return (str(record.get("signal_id") or ""), str(record.get("source_url") or ""))
+
+
+def unique_records_by_slug(records: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    ranked = sorted(records, key=lambda record: (public_signal_sort_key(record), deterministic_identity_key(record)))
+    unique: dict[str, dict[str, Any]] = {}
+    for record in ranked:
+        unique.setdefault(record["slug"], record)
+    return unique
+
+
 def public_absolute_url(path: str, seo_base_url: str) -> str:
     return urljoin(f"{seo_base_url}/", path.lstrip("/"))
 
@@ -995,7 +1007,7 @@ def sync_records(
     existing_slugs = [record["slug"] for record in existing]
     eligible = [record_from_notion(record) for record in records if eligible_record(record)]
     blocked_count = len(records) - len(eligible)
-    eligible_by_slug = {record["slug"]: record for record in eligible}
+    eligible_by_slug = unique_records_by_slug(eligible)
     ranked_eligible = sorted(eligible_by_slug.values(), key=public_signal_sort_key)
     eligible_slugs = {record["slug"] for record in ranked_eligible}
     orphan_records = [record for record in existing if not record.get("declared") and record["slug"] not in eligible_slugs]
