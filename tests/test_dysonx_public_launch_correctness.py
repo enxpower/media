@@ -65,7 +65,6 @@ class DysonXPublicLaunchCorrectnessTests(unittest.TestCase):
         data = json.loads(text)
 
         self.assertEqual(data["pages_launched"], len(data["launched"]))
-        self.assertLessEqual(data["pages_launched"], 30)
         self.assertGreaterEqual(data["pages_launched"], 1)
         self.assertGreaterEqual(data["pages_blocked"], 0)
         self.assertNotIn("blocked", data)

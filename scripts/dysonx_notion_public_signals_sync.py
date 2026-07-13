@@ -40,7 +40,9 @@ DATABASE_ID_ENV = "NOTION_SIGNAL_INTAKE_DATABASE_ID"
 NOTION_VERSION = "2022-06-28"
 DEFAULT_OUTPUT_ROOT = pathlib.Path(".")
 PUBLIC_SAFE_SOURCE_NOTE = "Source attribution retained in Notion launch metadata; external source URL omitted for this V1 public sample."
-DEFAULT_MAX_PUBLIC_SIGNALS = 30
+DEFAULT_SIGNALS_INDEX_LIMIT = 30
+DEFAULT_RSS_ITEM_LIMIT = 30
+DEFAULT_JSON_FEED_ITEM_LIMIT = 30
 PUBLIC_OUTPUT_MIN_QUALITY = 80
 PUBLIC_OUTPUT_ALLOWED_PRIORITIES = {"High", "Critical"}
 PUBLIC_OUTPUT_ALLOWED_AGI_RELEVANCE = {"Medium", "High", "Critical"}
@@ -312,7 +314,28 @@ def eligible_record(record: dict[str, Any]) -> bool:
     return not eligibility_blockers(record)
 
 
-def build_sync_report(records: list[dict[str, Any]], existing_slugs: list[str], eligible: list[dict[str, Any]]) -> dict[str, Any]:
+def duplicate_slug_count(records: list[dict[str, Any]]) -> int:
+    counts: dict[str, int] = {}
+    for record in records:
+        slug = normalize_text(record.get("slug"))
+        if slug:
+            counts[slug] = counts.get(slug, 0) + 1
+    return sum(count - 1 for count in counts.values() if count > 1)
+
+
+def build_sync_report(
+    records: list[dict[str, Any]],
+    existing_slugs: list[str],
+    eligible: list[dict[str, Any]],
+    *,
+    published_total: int = 0,
+    index_displayed: int = 0,
+    rss_items: int = 0,
+    feed_items: int = 0,
+    orphan_pages_detected: int = 0,
+    orphan_pages_reconciled: int = 0,
+    orphan_pages_removed: int = 0,
+) -> dict[str, Any]:
     blocked: list[dict[str, Any]] = []
     for record in records:
         reasons = eligibility_blockers(record)
@@ -331,11 +354,22 @@ def build_sync_report(records: list[dict[str, Any]], existing_slugs: list[str], 
             )
     eligible_slugs = sorted({record["slug"] for record in eligible})
     existing_slug_set = set(existing_slugs)
+    blocked_by_policy = len(blocked)
     return {
         "sync_version": SYNC_VERSION,
         "total_notion_rows": len(records),
         "eligible_public_rows": len(eligible),
-        "blocked_rows": len(blocked),
+        "unique_eligible_rows": len(eligible_slugs),
+        "duplicate_slug_count": duplicate_slug_count(eligible),
+        "blocked_rows": blocked_by_policy,
+        "blocked_by_policy": blocked_by_policy,
+        "published_total": published_total,
+        "index_displayed": index_displayed,
+        "rss_items": rss_items,
+        "feed_items": feed_items,
+        "orphan_pages_detected": orphan_pages_detected,
+        "orphan_pages_reconciled": orphan_pages_reconciled,
+        "orphan_pages_removed": orphan_pages_removed,
         "blocked_reasons_by_title": {item["title"]: item["reasons"] for item in blocked},
         "blocked": blocked,
         "new_slugs": [slug for slug in eligible_slugs if slug not in existing_slug_set],
@@ -408,54 +442,62 @@ class ExistingSignalParser(HTMLParser):
             self._after_summary_heading = False
 
 
+def previous_manifest_slugs(signals_root: pathlib.Path) -> set[str] | None:
+    manifest_path = signals_root / "public_launch_manifest.json"
+    if not manifest_path.exists():
+        return None
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    launched = manifest.get("launched")
+    if not isinstance(launched, list):
+        return None
+    return {
+        normalize_text(item.get("slug"))
+        for item in launched
+        if isinstance(item, dict) and normalize_text(item.get("slug"))
+    }
+
+
+def parse_existing_signal_page(page: pathlib.Path, declared: bool) -> dict[str, Any]:
+    slug = page.parent.name
+    html_text = page.read_text(encoding="utf-8", errors="ignore")
+    parser = ExistingSignalParser()
+    parser.feed(html_text)
+    title = parser.title or slug.replace("-", " ").title()
+    return {
+        "signal_id": f"existing_{slug.replace('-', '_')}",
+        "slug": slug,
+        "title": title,
+        "summary": parser.summary or "",
+        "source_label": "existing public Signal",
+        "source_url": "",
+        "source_priority": "",
+        "attribution_status": "",
+        "copyright_status": "",
+        "ready_for_pipeline": True,
+        "published": True,
+        "agi_relevance": "Retained",
+        "quality_hint": "",
+        "timestamp": "",
+        "tags": [],
+        "existing": True,
+        "declared": declared,
+        "page_path": page,
+    }
+
+
 def existing_public_signals(output_root: pathlib.Path) -> list[dict[str, Any]]:
     signals_root = output_root / "signals"
     if not signals_root.exists():
         return []
-    manifest_slugs: set[str] | None = None
-    manifest_path = signals_root / "public_launch_manifest.json"
-    if manifest_path.exists():
-        try:
-            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            launched = manifest.get("launched")
-            if isinstance(launched, list):
-                manifest_slugs = {
-                    normalize_text(item.get("slug"))
-                    for item in launched
-                    if isinstance(item, dict) and normalize_text(item.get("slug"))
-                }
-        except (OSError, json.JSONDecodeError):
-            manifest_slugs = None
+    manifest_slugs = previous_manifest_slugs(signals_root)
     records: list[dict[str, Any]] = []
     for page in sorted(signals_root.glob("*/index.html")):
         slug = page.parent.name
-        if manifest_slugs is not None and slug not in manifest_slugs:
-            continue
-        html_text = page.read_text(encoding="utf-8", errors="ignore")
-        parser = ExistingSignalParser()
-        parser.feed(html_text)
-        title = parser.title or slug.replace("-", " ").title()
-        records.append(
-            {
-                "signal_id": f"existing_{slug.replace('-', '_')}",
-                "slug": slug,
-                "title": title,
-                "summary": parser.summary or "Existing public Signal summary retained.",
-                "source_label": "existing public Signal",
-                "source_url": "",
-                "source_priority": "",
-                "attribution_status": "",
-                "copyright_status": "",
-                "ready_for_pipeline": True,
-                "published": True,
-                "agi_relevance": "Retained",
-                "quality_hint": "",
-                "timestamp": "",
-                "tags": [],
-                "existing": True,
-                "page_path": page,
-            }
-        )
+        declared = manifest_slugs is None or slug in manifest_slugs
+        records.append(parse_existing_signal_page(page, declared))
     return records
 
 
@@ -487,6 +529,20 @@ def record_from_notion(record: dict[str, Any]) -> dict[str, Any]:
 
 def existing_record_safe(record: dict[str, Any]) -> bool:
     return bool(record.get("title")) and bool(record.get("summary"))
+
+
+def remove_existing_signal_page(record: dict[str, Any]) -> bool:
+    page_path = record.get("page_path")
+    if not isinstance(page_path, pathlib.Path) or not page_path.exists():
+        return False
+    try:
+        page_path.unlink()
+        parent = page_path.parent
+        if parent.exists() and not any(parent.iterdir()):
+            parent.rmdir()
+    except OSError:
+        return False
+    return True
 
 
 def timestamp_rank(value: Any) -> float:
@@ -689,7 +745,7 @@ def render_index(records: list[dict[str, Any]], blocked_count: int, refreshed_at
 <div class="notice">
   DysonX public Signals are refreshed from Notion-approved, source-attributed, summary-only records. The public surface remains static, domain-agnostic, and reviewable through pull requests.
 </div>
-<p><strong>Published Signals:</strong> {len(records)}. <strong>Blocked Notion rows:</strong> {blocked_count}. <strong>Source mode:</strong> public-safe summaries with attribution links.</p>
+<p><strong>Displayed Signals:</strong> {len(records)}. <strong>Blocked Notion rows:</strong> {blocked_count}. <strong>Source mode:</strong> public-safe summaries with attribution links.</p>
 <div class="grid">
 {''.join(items)}
 </div>
@@ -841,7 +897,7 @@ def render_sitemap(records: list[dict[str, Any]], refreshed_at: str, seo_base_ur
 
 def render_rss(records: list[dict[str, Any]], refreshed_at: str, seo_base_url: str) -> str:
     items = []
-    for record in records[:DEFAULT_MAX_PUBLIC_SIGNALS]:
+    for record in records:
         public_url = public_absolute_url(f"/signals/{record['slug']}/", seo_base_url)
         source = record.get("source_url") or public_url
         items.append(
@@ -884,7 +940,7 @@ def render_json_feed(records: list[dict[str, Any]], refreshed_at: str, seo_base_
                 "external_url": normalize_text(record.get("source_url", "")),
                 "authors": [{"name": normalize_text(record.get("source_label") or "Source")}],
             }
-            for record in records[:DEFAULT_MAX_PUBLIC_SIGNALS]
+            for record in records
         ],
     }
     return json.dumps(feed, indent=2, sort_keys=True) + "\n"
@@ -922,9 +978,14 @@ def sync_records(
     output_root: pathlib.Path = DEFAULT_OUTPUT_ROOT,
     refreshed_at: str | None = None,
     output_report: pathlib.Path | None = None,
-    max_public_signals: int = DEFAULT_MAX_PUBLIC_SIGNALS,
+    signals_index_limit: int = DEFAULT_SIGNALS_INDEX_LIMIT,
+    rss_item_limit: int = DEFAULT_RSS_ITEM_LIMIT,
+    json_feed_item_limit: int = DEFAULT_JSON_FEED_ITEM_LIMIT,
 ) -> dict[str, Any]:
     refreshed_at = refreshed_at or utc_now()
+    signals_index_limit = max(0, signals_index_limit)
+    rss_item_limit = max(0, rss_item_limit)
+    json_feed_item_limit = max(0, json_feed_item_limit)
     output_root = output_root.resolve()
     seo_base_url = public_seo_base_url(output_root)
     signals_root = output_root / "signals"
@@ -934,21 +995,40 @@ def sync_records(
     existing_slugs = [record["slug"] for record in existing]
     eligible = [record_from_notion(record) for record in records if eligible_record(record)]
     blocked_count = len(records) - len(eligible)
-    report = build_sync_report(records, existing_slugs, eligible)
     eligible_by_slug = {record["slug"]: record for record in eligible}
     ranked_eligible = sorted(eligible_by_slug.values(), key=public_signal_sort_key)
-    selected = ranked_eligible[:max_public_signals]
-    selected_slugs = {record["slug"] for record in selected}
-    remaining_slots = max(0, max_public_signals - len(selected))
-    preserved_existing = [
-        record
-        for record in existing
-        if record["slug"] not in selected_slugs and existing_record_safe(record)
-    ][:remaining_slots]
+    eligible_slugs = {record["slug"] for record in ranked_eligible}
+    orphan_records = [record for record in existing if not record.get("declared") and record["slug"] not in eligible_slugs]
+    orphan_pages_detected = len(orphan_records)
+    orphan_pages_reconciled = sum(1 for record in orphan_records if existing_record_safe(record))
+    orphan_pages_removed = 0
+    preserved_existing = []
+    for record in existing:
+        if record["slug"] in eligible_slugs:
+            continue
+        if existing_record_safe(record):
+            preserved_existing.append(record)
+        elif remove_existing_signal_page(record):
+            orphan_pages_removed += 1
     by_slug = {record["slug"]: record for record in preserved_existing}
-    for record in selected:
+    for record in ranked_eligible:
         by_slug[record["slug"]] = record
     merged = sorted(by_slug.values(), key=public_signal_sort_key)
+    index_records = merged[:signals_index_limit]
+    rss_records = merged[:rss_item_limit]
+    feed_records = merged[:json_feed_item_limit]
+    report = build_sync_report(
+        records,
+        existing_slugs,
+        eligible,
+        published_total=len(merged),
+        index_displayed=len(index_records),
+        rss_items=len(rss_records),
+        feed_items=len(feed_records),
+        orphan_pages_detected=orphan_pages_detected,
+        orphan_pages_reconciled=orphan_pages_reconciled,
+        orphan_pages_removed=orphan_pages_removed,
+    )
     candidate_manifest = build_manifest(merged, blocked_count, refreshed_at)
     refreshed_at = stable_refreshed_at(signals_root, candidate_manifest, refreshed_at)
 
@@ -961,7 +1041,7 @@ def sync_records(
         page_dir.mkdir(parents=True, exist_ok=True)
         (page_dir / "index.html").write_text(page_html, encoding="utf-8")
 
-    index_html = render_index(merged, blocked_count, refreshed_at, seo_base_url)
+    index_html = render_index(index_records, blocked_count, refreshed_at, seo_base_url)
     assert_public_safe(index_html, "Signals index")
     (signals_root / "index.html").write_text(index_html, encoding="utf-8")
 
@@ -976,8 +1056,8 @@ def sync_records(
     seo_outputs = {
         "robots.txt": render_robots(seo_base_url),
         "sitemap.xml": render_sitemap(merged, refreshed_at, seo_base_url),
-        "rss.xml": render_rss(merged, refreshed_at, seo_base_url),
-        "feed.json": render_json_feed(merged, refreshed_at, seo_base_url),
+        "rss.xml": render_rss(rss_records, refreshed_at, seo_base_url),
+        "feed.json": render_json_feed(feed_records, refreshed_at, seo_base_url),
     }
     for relative_path, text in seo_outputs.items():
         assert_public_safe(text, relative_path)
@@ -995,7 +1075,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT), help="Repository/public output root.")
     parser.add_argument("--fixture-json", help="Optional local Notion-shaped fixture JSON for offline validation.")
     parser.add_argument("--output-report", help="Optional JSON diagnostics report path.")
-    parser.add_argument("--max-public-signals", type=int, default=DEFAULT_MAX_PUBLIC_SIGNALS, help="Maximum public Signals to include.")
+    parser.add_argument("--signals-index-limit", type=int, default=DEFAULT_SIGNALS_INDEX_LIMIT, help="Maximum public Signals to display on signals/index.html.")
+    parser.add_argument("--rss-item-limit", type=int, default=DEFAULT_RSS_ITEM_LIMIT, help="Maximum public Signals to include in rss.xml.")
+    parser.add_argument("--json-feed-item-limit", type=int, default=DEFAULT_JSON_FEED_ITEM_LIMIT, help="Maximum public Signals to include in feed.json.")
+    parser.add_argument("--max-public-signals", type=int, help="Deprecated compatibility alias for --signals-index-limit; it no longer caps total public inventory.")
     return parser.parse_args(argv)
 
 
@@ -1021,11 +1104,16 @@ def main(argv: list[str] | None = None) -> int:
                 raise NotionPublicSignalsSyncError(f"Missing required environment variables: {', '.join(missing)}")
             assert token is not None and database_id is not None
             records = query_notion_records(token, database_id)
+        signals_index_limit = args.signals_index_limit
+        if args.max_public_signals is not None:
+            signals_index_limit = args.max_public_signals
         manifest = sync_records(
             records,
             pathlib.Path(args.output_root),
             output_report=pathlib.Path(args.output_report) if args.output_report else None,
-            max_public_signals=args.max_public_signals,
+            signals_index_limit=signals_index_limit,
+            rss_item_limit=args.rss_item_limit,
+            json_feed_item_limit=args.json_feed_item_limit,
         )
     except (OSError, json.JSONDecodeError, NotionPublicSignalsSyncError) as exc:
         print(f"[notion-public-signals-sync] failed: {exc}", file=sys.stderr)
