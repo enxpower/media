@@ -1,5 +1,5 @@
 {
-  "content_refreshed_at": "2026-07-11T07:29:55Z",
+  "content_refreshed_at": "2026-07-13T16:57:53Z",
   "launch_version": "notion_public_signals_sync_v1",
   "launched": [
     {
@@ -218,6 +218,378 @@
         "matched_core_topics": [
           "ai agent",
           "ai agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/arcana-a-reflective-multi-agent-program-synthesis-framework-for-arc-agi-2-reasoning/index.html",
+      "public_url_path": "/signals/arcana-a-reflective-multi-agent-program-synthesis-framework-for-arc-agi-2-reasoning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-8174-8834-ed5c344407e4",
+      "slug": "arcana-a-reflective-multi-agent-program-synthesis-framework-for-arc-agi-2-reasoning",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09059",
+      "summary": "arXiv:2607.09059v1 Announce Type: new Abstract: We present ARCANA, a collaborative multi agent framework for solving ARC AGI 2 tasks under strict test time and hardware constraints. ARCANA decomposes each task into iterative perception,...",
+      "title": "ARCANA: A Reflective Multi-Agent Program Synthesis Framework for ARC-AGI-2 Reasoning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/dec-marvel-decentralized-multi-agent-exploration-without-communication-under-budget-constraints/index.html",
+      "public_url_path": "/signals/dec-marvel-decentralized-multi-agent-exploration-without-communication-under-budget-constraints/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-819f-8437-f2be692fc718",
+      "slug": "dec-marvel-decentralized-multi-agent-exploration-without-communication-under-budget-constraints",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09060",
+      "summary": "arXiv:2607.09060v1 Announce Type: new Abstract: Multi-UAV exploration is often constrained by unreliable communication, limited field-of-view sensing (e.g., lightweight onboard camera), and finite travel budgets that require each robot t...",
+      "title": "Dec-MARVEL: Decentralized Multi-Agent Exploration without Communication under Budget Constraints",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/fictional-worldbuilding-multi-agent-llm-collaboration-with-hierarchical-context-compression-and-iterative-review/index.html",
+      "public_url_path": "/signals/fictional-worldbuilding-multi-agent-llm-collaboration-with-hierarchical-context-compression-and-iterative-review/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-81c7-bfc8-ee446a3736cd",
+      "slug": "fictional-worldbuilding-multi-agent-llm-collaboration-with-hierarchical-context-compression-and-iterative-review",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09403",
+      "summary": "arXiv:2607.09403v1 Announce Type: new Abstract: Worldbuilding, the construction of coherent fictional worlds, is a foundational task in game design and literary creation. Large Language Models (LLMs) offer new possibilities for automated...",
+      "title": "Fictional Worldbuilding: Multi-Agent LLM Collaboration with Hierarchical Context Compression and Iterative Review",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/hero-a-heterogeneity-aware-benchmark-library-for-federated-continual-learning/index.html",
+      "public_url_path": "/signals/hero-a-heterogeneity-aware-benchmark-library-for-federated-continual-learning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-8135-ab6f-eb995448b863",
+      "slug": "hero-a-heterogeneity-aware-benchmark-library-for-federated-continual-learning",
+      "source_name": "arXiv cs.LG RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.08784",
+      "summary": "arXiv:2607.08784v1 Announce Type: new Abstract: Federated continual learning (FCL) evaluates how distributed clients learn from changing data streams while retaining previously learned knowledge. Existing evaluations are difficult to com...",
+      "title": "HERO: A Heterogeneity-Aware Benchmark Library for Federated Continual Learning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/interval-certifications-for-multilayered-perceptrons-via-lattice-traversal/index.html",
+      "public_url_path": "/signals/interval-certifications-for-multilayered-perceptrons-via-lattice-traversal/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-81ae-b4f9-fe0aa5ed7753",
+      "slug": "interval-certifications-for-multilayered-perceptrons-via-lattice-traversal",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.08773",
+      "summary": "arXiv:2607.08773v1 Announce Type: new Abstract: In this work we present a rigorous theoretical framework to a foundational problem of AI safety, namely adversarial robustness. In particular, we show that the adversarial robustness proble...",
+      "title": "Interval Certifications for Multilayered Perceptrons via Lattice Traversal",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai safety"
+        ],
+        "matched_domain_risk_framing": [
+          "ai safety"
+        ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/kv-prm-efficient-process-reward-modeling-via-kv-cache-transfer-for-multi-agent-test-time-scaling/index.html",
+      "public_url_path": "/signals/kv-prm-efficient-process-reward-modeling-via-kv-cache-transfer-for-multi-agent-test-time-scaling/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-81f7-ad11-d611c05e61f0",
+      "slug": "kv-prm-efficient-process-reward-modeling-via-kv-cache-transfer-for-multi-agent-test-time-scaling",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09153",
+      "summary": "arXiv:2607.09153v1 Announce Type: new Abstract: Process Reward Models (PRMs) have been proven to be highly effective in guiding test-time scaling (TTS) methods, which significantly boost the capabilities of LLM-based multi-agent systems....",
+      "title": "KV-PRM: Efficient Process Reward Modeling via KV-Cache Transfer for Multi-Agent Test-Time Scaling",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/long-horizon-terminal-bench-testing-the-limits-of-agents-on-long-horizon-terminal-tasks-with-dense-reward-based-grading/index.html",
+      "public_url_path": "/signals/long-horizon-terminal-bench-testing-the-limits-of-agents-on-long-horizon-terminal-tasks-with-dense-reward-based-grading/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-8140-b900-dfbf78ae1a07",
+      "slug": "long-horizon-terminal-bench-testing-the-limits-of-agents-on-long-horizon-terminal-tasks-with-dense-reward-based-grading",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.08964",
+      "summary": "arXiv:2607.08964v1 Announce Type: new Abstract: AI agents have become capable of autonomously completing short, well-specified tasks. However, existing terminal benchmarks largely focus on simple problems that finish within minutes and a...",
+      "title": "Long-Horizon-Terminal-Bench: Testing the Limits of Agents on Long-Horizon Terminal Tasks with Dense Reward-Based Grading",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent",
+          "ai agents",
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/neuro-agentic-control-a-deep-learning-based-llm-powered-agentic-ai-framework-for-controlling-security-controls/index.html",
+      "public_url_path": "/signals/neuro-agentic-control-a-deep-learning-based-llm-powered-agentic-ai-framework-for-controlling-security-controls/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-8134-b533-c755a850d877",
+      "slug": "neuro-agentic-control-a-deep-learning-based-llm-powered-agentic-ai-framework-for-controlling-security-controls",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09076",
+      "summary": "arXiv:2607.09076v1 Announce Type: new Abstract: Cyberattacks on operational technology are increasingly causing costly downtime and physical damage, exposing the limitations of traditional rule-based monitoring in industrial IoT environm...",
+      "title": "Neuro-Agentic Control: A Deep Learning-based LLM-Powered Agentic AI Framework for Controlling Security Controls",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/openprover-agentic-and-interactive-theorem-proving-with-lean-4/index.html",
+      "public_url_path": "/signals/openprover-agentic-and-interactive-theorem-proving-with-lean-4/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-816e-9ca4-e80a9d431f46",
+      "slug": "openprover-agentic-and-interactive-theorem-proving-with-lean-4",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09217",
+      "summary": "arXiv:2607.09217v1 Announce Type: new Abstract: In this system paper, we present OpenProver, an open-source system for LLM-driven automated theorem proving (ATP) with integrated Lean 4 formal verification. OpenProver integrates a Planner...",
+      "title": "OpenProver: Agentic and Interactive Theorem Proving with Lean 4",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "formal verification"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/proofcouncil-an-llm-agent-for-solving-open-mathematical-problems/index.html",
+      "public_url_path": "/signals/proofcouncil-an-llm-agent-for-solving-open-mathematical-problems/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-81b9-9d01-c0708fcc4d18",
+      "slug": "proofcouncil-an-llm-agent-for-solving-open-mathematical-problems",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09474",
+      "summary": "arXiv:2607.09474v1 Announce Type: new Abstract: Large language models (LLMs) have shown increasing promise in solving open problems in mathematics. However, their performance can be further improved through agentic workflows tailored to...",
+      "title": "ProofCouncil: An LLM Agent for Solving Open Mathematical Problems",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "agentic workflow",
+          "agentic workflows",
+          "llm agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/scoped-verification-for-reliable-long-horizon-agentic-context-evolution-under-distribution-shift/index.html",
+      "public_url_path": "/signals/scoped-verification-for-reliable-long-horizon-agentic-context-evolution-under-distribution-shift/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-8155-b0fa-edf417abe536",
+      "slug": "scoped-verification-for-reliable-long-horizon-agentic-context-evolution-under-distribution-shift",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09175",
+      "summary": "arXiv:2607.09175v1 Announce Type: new Abstract: Deployed LLM agents rely on agentic context, the model-external textual control content assembled by an operational harness. In this work, the mutable component of that context is a persist...",
+      "title": "Scoped Verification for Reliable Long-Horizon Agentic Context Evolution under Distribution Shift",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "llm agent",
+          "llm agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/toward-auditable-ai-scientists-a-hypothesis-evolution-protocol-for-llm-agents/index.html",
+      "public_url_path": "/signals/toward-auditable-ai-scientists-a-hypothesis-evolution-protocol-for-llm-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-81d3-978d-f7e63fb2a2cb",
+      "slug": "toward-auditable-ai-scientists-a-hypothesis-evolution-protocol-for-llm-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09195",
+      "summary": "arXiv:2607.09195v1 Announce Type: new Abstract: Large language model (LLM) agents are increasingly expected to play a central role in AI-driven scientific discovery. Equipped with broad knowledge, flexible reasoning, and tool use, they h...",
+      "title": "Toward Auditable AI Scientists: A Hypothesis Evolution Protocol for LLM Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "llm agent",
+          "llm agents"
         ],
         "matched_domain_risk_framing": [],
         "matched_domain_risks": {},
@@ -937,15 +1309,2874 @@
         "off_topic_public_signal": false,
         "reasons": []
       }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/think-big-search-small-where-capacity-matters-in-hierarchical-search-agents/index.html",
+      "public_url_path": "/signals/think-big-search-small-where-capacity-matters-in-hierarchical-search-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-810a-a58b-d1ed131dc5ec",
+      "slug": "think-big-search-small-where-capacity-matters-in-hierarchical-search-agents",
+      "source_name": "arXiv cs.CL RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07548",
+      "summary": "arXiv:2607.07548v1 Announce Type: new Abstract: Large language model based search agents increasingly adopt multi-agent architectures in which a main agent decomposes a complex question into sub-queries and dispatches them to parallel su...",
+      "title": "Think Big, Search Small: Where Capacity Matters in Hierarchical Search Agents?",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/create-a-langchain-deep-agents-harness-profile-for-nvidia-nemotron-3-ultra-to-improve-performance/index.html",
+      "public_url_path": "/signals/create-a-langchain-deep-agents-harness-profile-for-nvidia-nemotron-3-ultra-to-improve-performance/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-81b9-bc39-f13e92ee90bc",
+      "slug": "create-a-langchain-deep-agents-harness-profile-for-nvidia-nemotron-3-ultra-to-improve-performance",
+      "source_name": "NVIDIA Developer Blog AI",
+      "source_priority": "High",
+      "source_url": "https://developer.nvidia.com/blog/create-a-langchain-deep-agents-harness-profile-for-nvidia-nemotron-3-ultra-to-improve-performance/",
+      "summary": "Agentic systems often face a trade-off between accuracy and cost. The highest-performing proprietary frontier models and harnesses provide top accuracy but are...",
+      "title": "Create a LangChain Deep Agents Harness Profile for NVIDIA Nemotron 3 Ultra to Improve Performance",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "frontier model",
+          "frontier models"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/akashic-a-low-overhead-llm-inference-service-with-memattention/index.html",
+      "public_url_path": "/signals/akashic-a-low-overhead-llm-inference-service-with-memattention/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-81d7-b7fa-c2998e884a37",
+      "slug": "akashic-a-low-overhead-llm-inference-service-with-memattention",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05708",
+      "summary": "arXiv:2607.05708v1 Announce Type: new Abstract: Recent LLM-based agent systems continuously accumulate context across multi-turn interactions, tool invocations, and cross-session workflows. Replaying the full history for every request qu...",
+      "title": "Akashic: A Low-Overhead LLM Inference Service with MemAttention",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/beyond-static-evaluation-building-simulation-environments-for-scalable-agentic-reinforcement-learning/index.html",
+      "public_url_path": "/signals/beyond-static-evaluation-building-simulation-environments-for-scalable-agentic-reinforcement-learning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-81c1-928a-e3981187d8a7",
+      "slug": "beyond-static-evaluation-building-simulation-environments-for-scalable-agentic-reinforcement-learning",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05773",
+      "summary": "arXiv:2607.05773v1 Announce Type: new Abstract: As Large Language Models (LLMs) evolve into autonomous agents, traditional static evaluation fails to capture multi-step decision-making. We introduce AgenticAI-Supervisor, an API and UI-dr...",
+      "title": "Beyond Static Evaluation: Building Simulation Environments for Scalable Agentic Reinforcement Learning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/delay-aware-active-triangulation-with-uncertainty-driven-multi-agent-reinforcement-learning-for-counter-uas/index.html",
+      "public_url_path": "/signals/delay-aware-active-triangulation-with-uncertainty-driven-multi-agent-reinforcement-learning-for-counter-uas/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-8149-96b0-f5be2407d492",
+      "slug": "delay-aware-active-triangulation-with-uncertainty-driven-multi-agent-reinforcement-learning-for-counter-uas",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05957",
+      "summary": "arXiv:2607.05957v1 Announce Type: new Abstract: Multi-agent active visual triangulation enables precise 3D localization of aerial targets by coordinating mobile observers with controllable cameras. However, existing methods assume instan...",
+      "title": "Delay-Aware Active Triangulation with Uncertainty-Driven Multi-Agent Reinforcement Learning for Counter-UAS",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/firstresearch-auditable-question-formation-for-llm-scientific-discovery-agents/index.html",
+      "public_url_path": "/signals/firstresearch-auditable-question-formation-for-llm-scientific-discovery-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-8159-8131-cbab61f52488",
+      "slug": "firstresearch-auditable-question-formation-for-llm-scientific-discovery-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05682",
+      "summary": "arXiv:2607.05682v1 Announce Type: new Abstract: LLM systems for scientific discovery increasingly assist with ideation, literature synthesis, experiment planning, and report generation, but the first research question they propose can re...",
+      "title": "FirstResearch: Auditable Question Formation for LLM Scientific Discovery Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/imr-iterative-mode-world-weighted-regression-for-multi-agent-trajectory-prediction/index.html",
+      "public_url_path": "/signals/imr-iterative-mode-world-weighted-regression-for-multi-agent-trajectory-prediction/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-81f4-9a69-d979093553cb",
+      "slug": "imr-iterative-mode-world-weighted-regression-for-multi-agent-trajectory-prediction",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05705",
+      "summary": "arXiv:2607.05705v1 Announce Type: new Abstract: Multi-agent motion prediction is essential for automated vehicles to understand the intentions of surrounding vehicles. However, previous prediction-based and anchor-based methods have limi...",
+      "title": "IMR: Iterative Mode-World Weighted Regression for Multi-Agent Trajectory Prediction",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/intercepting-an-agile-target-with-net-carrying-drones-using-competitive-multi-agent-reinforcement-learning/index.html",
+      "public_url_path": "/signals/intercepting-an-agile-target-with-net-carrying-drones-using-competitive-multi-agent-reinforcement-learning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-81b1-8c3e-fb6d599c9d98",
+      "slug": "intercepting-an-agile-target-with-net-carrying-drones-using-competitive-multi-agent-reinforcement-learning",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05939",
+      "summary": "arXiv:2607.05939v1 Announce Type: new Abstract: This article presents a solution to intercept an agile drone by a team of agile drone carrying catching nets. We formulate the problem as a competitive Multi-Agent Reinforcement Learning (M...",
+      "title": "Intercepting an Agile Target with Net-Carrying Drones using Competitive Multi-Agent Reinforcement Learning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/learning-to-control-llm-agent-harnesses-with-offline-reinforcement-learning/index.html",
+      "public_url_path": "/signals/learning-to-control-llm-agent-harnesses-with-offline-reinforcement-learning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-8153-b052-f9479605ff9b",
+      "slug": "learning-to-control-llm-agent-harnesses-with-offline-reinforcement-learning",
+      "source_name": "arXiv cs.LG RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05458",
+      "summary": "arXiv:2607.05458v1 Announce Type: new Abstract: Large language model (LLM) agents are usually improved by changing prompts, models, or hand-written workflows, while the execution harness around the model is treated as fixed infrastructur...",
+      "title": "Learning to Control LLM Agent Harnesses with Offline Reinforcement Learning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "llm agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/onnes-a-physics-grounded-multi-agent-llm-simulator-for-cryogenic-fault-diagnosis-in-quantum-computing-infrastructure/index.html",
+      "public_url_path": "/signals/onnes-a-physics-grounded-multi-agent-llm-simulator-for-cryogenic-fault-diagnosis-in-quantum-computing-infrastructure/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-8174-83cf-ea16e6696b97",
+      "slug": "onnes-a-physics-grounded-multi-agent-llm-simulator-for-cryogenic-fault-diagnosis-in-quantum-computing-infrastructure",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05805",
+      "summary": "arXiv:2607.05805v1 Announce Type: new Abstract: Dilution refrigerators are the enabling infrastructure of superconducting quantum computers, yet their fault diagnosis is still dominated by threshold alarms that report that something is w...",
+      "title": "Onnes: A Physics-Grounded Multi-Agent LLM Simulator for Cryogenic Fault Diagnosis in Quantum Computing Infrastructure",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/patchoptic-for-shared-state-llm-workflows-with-projected-views-and-verified-structured-updates/index.html",
+      "public_url_path": "/signals/patchoptic-for-shared-state-llm-workflows-with-projected-views-and-verified-structured-updates/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-8112-924f-d80ed6832c6a",
+      "slug": "patchoptic-for-shared-state-llm-workflows-with-projected-views-and-verified-structured-updates",
+      "source_name": "arXiv cs.LG RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05483",
+      "summary": "arXiv:2607.05483v1 Announce Type: new Abstract: Agentic workflows often operate over shared, structured state. Because LLM context windows are limited, each model invocation is typically shown only the state fragment needed for the curre...",
+      "title": "PatchOptic for Shared-State LLM Workflows with Projected Views and Verified Structured Updates",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "agentic workflow",
+          "agentic workflows"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/statefuse-deterministic-conflict-preserving-memory-for-multi-agent-systems/index.html",
+      "public_url_path": "/signals/statefuse-deterministic-conflict-preserving-memory-for-multi-agent-systems/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-818a-bff1-ca2a68d781aa",
+      "slug": "statefuse-deterministic-conflict-preserving-memory-for-multi-agent-systems",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05844",
+      "summary": "arXiv:2607.05844v1 Announce Type: new Abstract: Agent systems accumulate conflicting observations across branches, retries, and replicas, yet many practical memory layers still collapse disagreement behind overwrite rules that are diffic...",
+      "title": "StateFuse: Deterministic Conflict-Preserving Memory for Multi-Agent Systems",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron/index.html",
+      "public_url_path": "/signals/building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-8146-940f-e85abb9fe33d",
+      "slug": "building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron",
+      "source_name": "NVIDIA Developer Blog AI",
+      "source_priority": "High",
+      "source_url": "https://developer.nvidia.com/blog/building-an-analysis-ai-agent-for-industrial-alarm-management-with-nvidia-nemotron/",
+      "summary": "Industrial machinery generates more alarms than technicians can triage. For each important alarm requiring follow-up, the technician pulls historical context,...",
+      "title": "Building an Analysis AI Agent for Industrial Alarm Management with NVIDIA Nemotron",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads/index.html",
+      "public_url_path": "/signals/nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-8188-8767-f9734651a994",
+      "slug": "nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads",
+      "source_name": "NVIDIA Developer Blog AI",
+      "source_priority": "High",
+      "source_url": "https://developer.nvidia.com/blog/nvidia-vera-cpu-boosts-ai-factory-throughput-to-accelerate-agentic-workloads/",
+      "summary": "Agentic systems turn model reasoning into action through multi-step workflows that combine inference, tool use, code execution, retrieval, orchestration, and...",
+      "title": "NVIDIA Vera CPU Boosts AI Factory Throughput to Accelerate Agentic Workloads",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/apeb-benchmarking-personalization-ability-of-large-language-model-agents/index.html",
+      "public_url_path": "/signals/apeb-benchmarking-personalization-ability-of-large-language-model-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-8166-83f8-f869c9aeb0b3",
+      "slug": "apeb-benchmarking-personalization-ability-of-large-language-model-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.03162",
+      "summary": "arXiv:2607.03162v1 Announce Type: new Abstract: LLM-powered agents struggle with personalization when users issue raw, underspecified queries. In this setting, agents must infer latent intent, extract preferences from noisy interaction h...",
+      "title": "APeB: Benchmarking Personalization Ability of Large Language Model Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/auditing-the-audit-five-failure-modes-in-benchmark-validity-audits/index.html",
+      "public_url_path": "/signals/auditing-the-audit-five-failure-modes-in-benchmark-validity-audits/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-81d6-ab0c-f04668f33964",
+      "slug": "auditing-the-audit-five-failure-modes-in-benchmark-validity-audits",
+      "source_name": "arXiv cs.LG RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.02586",
+      "summary": "arXiv:2607.02586v1 Announce Type: new Abstract: Governance frameworks ask AI providers and auditors for documented evaluation evidence, and perturbation-based construct-validity audits are a common form of that evidence. We argue the aud...",
+      "title": "Auditing the Audit: Five Failure Modes in Benchmark-Validity Audits",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/beyond-forecasting-the-belief-to-trade-layer-in-prediction-market-agents/index.html",
+      "public_url_path": "/signals/beyond-forecasting-the-belief-to-trade-layer-in-prediction-market-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-81b4-9b81-d735e6aaaf24",
+      "slug": "beyond-forecasting-the-belief-to-trade-layer-in-prediction-market-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.03015",
+      "summary": "arXiv:2607.03015v1 Announce Type: new Abstract: Forecasting future events has attracted growing attention as a testbed for general-purpose AI. A natural way to ground this evaluation is let the models trade in the prediction markets. Tra...",
+      "title": "Beyond Forecasting: The Belief-to-Trade Layer in Prediction-Market Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/embodied-operators-and-benchmarking-toward-reusable-and-deployable-embodied-intelligence-systems/index.html",
+      "public_url_path": "/signals/embodied-operators-and-benchmarking-toward-reusable-and-deployable-embodied-intelligence-systems/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-81be-a107-d59897a30d1d",
+      "slug": "embodied-operators-and-benchmarking-toward-reusable-and-deployable-embodied-intelligence-systems",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.03283",
+      "summary": "arXiv:2607.03283v1 Announce Type: new Abstract: Embodied intelligence systems require not only end-to-end policy models, but also reusable functional modules that transform multimodal observations, robot states, human demonstrations, and...",
+      "title": "Embodied Operators and Benchmarking: Toward Reusable and Deployable Embodied Intelligence Systems",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/evaluating-generative-agents-with-actions-grounded-in-socially-distributed-task-environments-using-incognita/index.html",
+      "public_url_path": "/signals/evaluating-generative-agents-with-actions-grounded-in-socially-distributed-task-environments-using-incognita/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-81ad-8db6-d0b755f91460",
+      "slug": "evaluating-generative-agents-with-actions-grounded-in-socially-distributed-task-environments-using-incognita",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.02975",
+      "summary": "arXiv:2607.02975v1 Announce Type: new Abstract: Effective agency in social environments depends on when an agent seeks knowledge, when it acts, and whether its actions are justified by acquired information. Existing grounded benchmarks p...",
+      "title": "Evaluating Generative Agents with Actions Grounded in Socially Distributed Task Environments using Incognita",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/gigaworld-1-a-roadmap-to-build-world-models-for-robot-policy-evaluation/index.html",
+      "public_url_path": "/signals/gigaworld-1-a-roadmap-to-build-world-models-for-robot-policy-evaluation/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-8174-b846-d8e3134a82a7",
+      "slug": "gigaworld-1-a-roadmap-to-build-world-models-for-robot-policy-evaluation",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.02642",
+      "summary": "arXiv:2607.02642v1 Announce Type: new Abstract: Evaluating embodied robot foundation models remains a critical bottleneck; unlike large language models efficiently assessed via digital benchmarks, robotic policies require slow, costly re...",
+      "title": "GigaWorld-1: A Roadmap to Build World Models for Robot Policy Evaluation",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [
+          "foundation model"
+        ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/iflytek-embodied-omni-technical-report/index.html",
+      "public_url_path": "/signals/iflytek-embodied-omni-technical-report/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-8102-a758-e88e6d80ca00",
+      "slug": "iflytek-embodied-omni-technical-report",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.02542",
+      "summary": "arXiv:2607.02542v1 Announce Type: new Abstract: General-purpose embodied agents must understand multimodal instructions, anticipate how their environment will evolve, and produce precise control actions over extended horizons. Existing a...",
+      "title": "iFLYTEK-Embodied-Omni Technical Report",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/swarmresearch-orchestrating-coding-agents-for-open-ended-discovery/index.html",
+      "public_url_path": "/signals/swarmresearch-orchestrating-coding-agents-for-open-ended-discovery/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-8111-a01a-cb59704b7c1c",
+      "slug": "swarmresearch-orchestrating-coding-agents-for-open-ended-discovery",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.02807",
+      "summary": "arXiv:2607.02807v1 Announce Type: new Abstract: Long-running coding agents such as autoresearch can persistently discover optimizations for open-ended problems. However, they tend to converge onto a single high-level approach, then proce...",
+      "title": "SwarmResearch: Orchestrating Coding Agents for Open-Ended Discovery",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "coding agent",
+          "coding agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/when-aggregate-alignment-misleads-auditing-policy-repair-without-per-state-expert-actions/index.html",
+      "public_url_path": "/signals/when-aggregate-alignment-misleads-auditing-policy-repair-without-per-state-expert-actions/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-8192-a958-e7362b605ec3",
+      "slug": "when-aggregate-alignment-misleads-auditing-policy-repair-without-per-state-expert-actions",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.03386",
+      "summary": "arXiv:2607.03386v1 Announce Type: new Abstract: Agentic AI systems are increasingly used to edit, refine, and repair decision policies, but evaluating these edits is difficult when per-state expert action labels are unavailable. We study...",
+      "title": "When Aggregate Alignment Misleads: Auditing Policy Repair Without Per-State Expert Actions",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases/index.html",
+      "public_url_path": "/signals/agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39295c29-2b0e-8122-9ea8-cd2567f4f1bc",
+      "slug": "agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.01425",
+      "summary": "arXiv:2607.01425v1 Announce Type: new Abstract: Understanding large, complex codebases, especially those with obfuscated structures and incomplete documentation, remains a significant challenge. Existing code summarization solutions ofte...",
+      "title": "Agent4cs: A Multi-agent System for Code Summarization in Large Hierarchical Codebases",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows/index.html",
+      "public_url_path": "/signals/beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39295c29-2b0e-8156-8a47-fe82a359ae0a",
+      "slug": "beyond-next-token-prediction-an-rlvr-proof-of-concept-for-tool-use-agents-on-atlassian-workflows",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.01465",
+      "summary": "arXiv:2607.01465v1 Announce Type: new Abstract: Large language models are trained to predict the next token, not to act inside a specific API. In niche enterprise SaaS workflows -- where success means hitting the right endpoint with the...",
+      "title": "Beyond Next-Token Prediction: An RLVR Proof of Concept for Tool-Use Agents on Atlassian Workflows",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/janus-a-playground-for-user-involved-agentic-permission-management/index.html",
+      "public_url_path": "/signals/janus-a-playground-for-user-involved-agentic-permission-management/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39295c29-2b0e-81f1-89de-cdac711f75de",
+      "slug": "janus-a-playground-for-user-involved-agentic-permission-management",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.01510",
+      "summary": "arXiv:2607.01510v1 Announce Type: new Abstract: AI agents that autonomously execute tool calls on a user's behalf raise pressing questions about permission management: what role could users play, and what role should they play? Despite m...",
+      "title": "Janus: a Playground for User-Involved Agentic Permission Management",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent",
+          "ai agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/vla-corrector-lightweight-detect-and-correct-inference-for-adaptive-action-horizon/index.html",
+      "public_url_path": "/signals/vla-corrector-lightweight-detect-and-correct-inference-for-adaptive-action-horizon/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39295c29-2b0e-8100-812b-f738b3a1034b",
+      "slug": "vla-corrector-lightweight-detect-and-correct-inference-for-adaptive-action-horizon",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.01804",
+      "summary": "arXiv:2607.01804v1 Announce Type: new Abstract: Vision-Language-Action (VLA) foundation models have recently achieved strong progress in embodied intelligence. To reduce policy-call frequency while preserving temporal coherence, most gen...",
+      "title": "VLA-Corrector: Lightweight Detect-and-Correct Inference for Adaptive Action Horizon",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "vla_context"
+        ],
+        "matched_domain_risk_framing": [
+          "foundation model"
+        ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/when-should-service-agents-reconsider-difficulty-routed-control-in-customer-service-operations/index.html",
+      "public_url_path": "/signals/when-should-service-agents-reconsider-difficulty-routed-control-in-customer-service-operations/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39295c29-2b0e-8115-9651-f847b6c6b9a8",
+      "slug": "when-should-service-agents-reconsider-difficulty-routed-control-in-customer-service-operations",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.01426",
+      "summary": "arXiv:2607.01426v1 Announce Type: new Abstract: Autonomous customer-service agents are shifting from conversational interfaces toward operational execution roles: they retrieve firm records, apply service policies, and execute backend wr...",
+      "title": "When Should Service Agents Reconsider? Difficulty-Routed Control in Customer-Service Operations",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/a-contextual-bandit-oversight-game-with-two-sided-informational-asymmetry/index.html",
+      "public_url_path": "/signals/a-contextual-bandit-oversight-game-with-two-sided-informational-asymmetry/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-814e-894a-d67d5cd60387",
+      "slug": "a-contextual-bandit-oversight-game-with-two-sided-informational-asymmetry",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00155",
+      "summary": "arXiv:2607.00155v1 Announce Type: new Abstract: We study runtime human oversight of an AI agent when private information runs in both directions: the human privately knows her reward function, while the AI privately knows the quality of...",
+      "title": "A Contextual-Bandit Oversight Game with Two-Sided Informational Asymmetry",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/agi-maze-as-a-benchmark-framework-for-world-modeling-agents/index.html",
+      "public_url_path": "/signals/agi-maze-as-a-benchmark-framework-for-world-modeling-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-81fc-884d-d17cd5a1307d",
+      "slug": "agi-maze-as-a-benchmark-framework-for-world-modeling-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00627",
+      "summary": "arXiv:2607.00627v1 Announce Type: new Abstract: Large language models (LLMs) are powerful pattern-completion systems, but their default operating mode - predicting the next token from a static context - does not reliably produce persiste...",
+      "title": "AGI Maze as a Benchmark Framework for World-Modeling Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/dual-informed-vertical-expansion-for-multi-objective-node-selection-in-anytime-conflict-based-search/index.html",
+      "public_url_path": "/signals/dual-informed-vertical-expansion-for-multi-objective-node-selection-in-anytime-conflict-based-search/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-8181-952c-da6e0110efa2",
+      "slug": "dual-informed-vertical-expansion-for-multi-objective-node-selection-in-anytime-conflict-based-search",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00156",
+      "summary": "arXiv:2607.00156v1 Announce Type: new Abstract: Conflict-Based Search (CBS) is a leading exact algorithm for Multi-Agent Path Finding (MAPF), but its high-level node-selection rule is usually treated as a fixed implementation detail. Sta...",
+      "title": "Dual-Informed Vertical Expansion for Multi-Objective Node Selection in Anytime Conflict-Based Search",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/egosafetybench-a-diagnostic-egocentric-video-benchmark-for-evaluating-embodied-vlms-as-runtime-safety-guards/index.html",
+      "public_url_path": "/signals/egosafetybench-a-diagnostic-egocentric-video-benchmark-for-evaluating-embodied-vlms-as-runtime-safety-guards/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-81b0-856d-c0270d4aa87f",
+      "slug": "egosafetybench-a-diagnostic-egocentric-video-benchmark-for-evaluating-embodied-vlms-as-runtime-safety-guards",
+      "source_name": "arXiv cs.CV RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00218",
+      "summary": "arXiv:2607.00218v1 Announce Type: new Abstract: Vision-language models (VLMs) are now proposed as runtime safety guards for embodied agents in homes and factories. A deployable guard must catch genuinely unsafe situations while avoiding...",
+      "title": "EgoSafetyBench: A Diagnostic Egocentric Video Benchmark for Evaluating Embodied VLMs as Runtime Safety Guards",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/from-signals-to-structure-how-memory-architecture-drives-language-emergence-in-llm-agents/index.html",
+      "public_url_path": "/signals/from-signals-to-structure-how-memory-architecture-drives-language-emergence-in-llm-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-81bf-90d9-ed78cd08b9d3",
+      "slug": "from-signals-to-structure-how-memory-architecture-drives-language-emergence-in-llm-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00233",
+      "summary": "arXiv:2607.00233v1 Announce Type: new Abstract: How do two agents invent a shared language from scratch? In a Lewis signaling game, a sender and receiver must coordinate on a code using only their interaction history. We study five memor...",
+      "title": "From Signals to Structure: How Memory Architecture Drives Language Emergence in LLM Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "llm agent",
+          "llm agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/managed-autonomy-at-runtime-gear-based-safety-and-governance-for-single-and-multi-agent-cyber-physical-systems/index.html",
+      "public_url_path": "/signals/managed-autonomy-at-runtime-gear-based-safety-and-governance-for-single-and-multi-agent-cyber-physical-systems/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-81be-b05e-da9af03a3dcb",
+      "slug": "managed-autonomy-at-runtime-gear-based-safety-and-governance-for-single-and-multi-agent-cyber-physical-systems",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00334",
+      "summary": "arXiv:2607.00334v1 Announce Type: new Abstract: Autonomous agents, whether LLM-driven software agents or robotic physical agents, face a common class of failure modes when operating without continuous human oversight: safety violations f...",
+      "title": "Managed Autonomy at Runtime: Gear-Based Safety and Governance for Single- and Multi-Agent Cyber-Physical Systems",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "autonomy_context",
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/mnemosyne-agentic-transaction-processing-for-validating-and-repairing-ai-generated-workflows/index.html",
+      "public_url_path": "/signals/mnemosyne-agentic-transaction-processing-for-validating-and-repairing-ai-generated-workflows/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-81e5-bf07-c99ce5e99274",
+      "slug": "mnemosyne-agentic-transaction-processing-for-validating-and-repairing-ai-generated-workflows",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00269",
+      "summary": "arXiv:2607.00269v1 Announce Type: new Abstract: LLMs, solvers, and agent teams increasingly generate workflow actions, repairs, and plans, but a generated action may be syntactically valid yet stale, infeasible, conflicting, or destructi...",
+      "title": "Mnemosyne: Agentic Transaction Processing for Validating and Repairing AI-generated Workflows",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/personalization-as-inverse-planning-learning-latent-design-intents-for-agentic-slide-generation-via-structural-denoising/index.html",
+      "public_url_path": "/signals/personalization-as-inverse-planning-learning-latent-design-intents-for-agentic-slide-generation-via-structural-denoising/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-8152-99f0-cdbf602735da",
+      "slug": "personalization-as-inverse-planning-learning-latent-design-intents-for-agentic-slide-generation-via-structural-denoising",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00407",
+      "summary": "arXiv:2607.00407v1 Announce Type: new Abstract: Slide design requires personalizing both deck themes and page layouts. Yet, current AI agent-based methods struggle with fine-grained, page-level design. Solely relying on prespecified temp...",
+      "title": "Personalization as Inverse Planning: Learning Latent Design Intents for Agentic Slide Generation via Structural Denoising",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/phreeqc-mcq-200-a-diagnostic-benchmark-for-tool-augmented-scientific-simulator-agents/index.html",
+      "public_url_path": "/signals/phreeqc-mcq-200-a-diagnostic-benchmark-for-tool-augmented-scientific-simulator-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-8151-b2a7-e6e69855ff10",
+      "slug": "phreeqc-mcq-200-a-diagnostic-benchmark-for-tool-augmented-scientific-simulator-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00436",
+      "summary": "arXiv:2607.00436v1 Announce Type: new Abstract: Large language model agents are increasingly connected to scientific software, yet it remains unclear when tool access makes scientific computation more reliable rather than merely more com...",
+      "title": "PHREEQC-MCQ-200: A Diagnostic Benchmark for Tool-Augmented Scientific Simulator Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/urban-deceleration-behavior-modes-under-scene-context-an-early-kinematic-classifier-from-argoverse-2-multi-agent-trajectories/index.html",
+      "public_url_path": "/signals/urban-deceleration-behavior-modes-under-scene-context-an-early-kinematic-classifier-from-argoverse-2-multi-agent-trajectories/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-81ae-bcdf-ddec81f0ee94",
+      "slug": "urban-deceleration-behavior-modes-under-scene-context-an-early-kinematic-classifier-from-argoverse-2-multi-agent-trajectories",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00027",
+      "summary": "arXiv:2607.00027v1 Announce Type: new Abstract: Urban deceleration is one of the most empirically studied yet least taxonomically organized behaviors in car-following research. Recent perception-equipped autonomous-vehicle datasets enabl...",
+      "title": "Urban Deceleration Behavior Modes Under Scene Context: An Early-Kinematic Classifier from Argoverse 2 Multi-Agent Trajectories",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/mastering-agentic-techniques-ai-agent-reinforcement-learning/index.html",
+      "public_url_path": "/signals/mastering-agentic-techniques-ai-agent-reinforcement-learning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-819c-af06-ff673b5d9e15",
+      "slug": "mastering-agentic-techniques-ai-agent-reinforcement-learning",
+      "source_name": "NVIDIA Developer Blog AI",
+      "source_priority": "High",
+      "source_url": "https://developer.nvidia.com/blog/mastering-agentic-techniques-ai-agent-reinforcement-learning/",
+      "summary": "Reinforcement learning (RL) is central to aligning language models, from reinforcement learning with human feedback (RLHF) within AI assistants to newer...",
+      "title": "Mastering Agentic Techniques: AI Agent Reinforcement Learning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/agentbound-verifiable-behavioral-governance-for-autonomous-ai-agents/index.html",
+      "public_url_path": "/signals/agentbound-verifiable-behavioral-governance-for-autonomous-ai-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-812b-82c5-de962e61cea4",
+      "slug": "agentbound-verifiable-behavioral-governance-for-autonomous-ai-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.30970",
+      "summary": "arXiv:2606.30970v1 Announce Type: new Abstract: Autonomous AI agents increasingly perform consequential actions on behalf of human principals, including financial transactions, external communications, and enterprise workflows. Existing...",
+      "title": "AgentBound: Verifiable Behavioral Governance for Autonomous AI Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "ai agent",
+          "ai agents",
+          "autonomous ai agent",
+          "autonomous ai agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/agrefactor-self-evolving-agentic-workflow-for-hls-compatibility-and-performance/index.html",
+      "public_url_path": "/signals/agrefactor-self-evolving-agentic-workflow-for-hls-compatibility-and-performance/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-81e7-aa33-e467585698ad",
+      "slug": "agrefactor-self-evolving-agentic-workflow-for-hls-compatibility-and-performance",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.30949",
+      "summary": "arXiv:2606.30949v1 Announce Type: new Abstract: High-Level Synthesis (HLS) provides a fast path from concepts to silicon, but converting real-world software into synthesizable HLS code remains challenging due to restrictive language supp...",
+      "title": "AgRefactor: Self-Evolving Agentic Workflow for HLS Compatibility and Performance",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "agentic workflow"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/auditing-generalization-in-ai-generated-video-detection-a-six-control-protocol-and-the-vidaudit-toolkit/index.html",
+      "public_url_path": "/signals/auditing-generalization-in-ai-generated-video-detection-a-six-control-protocol-and-the-vidaudit-toolkit/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-81eb-95ad-f598145283b7",
+      "slug": "auditing-generalization-in-ai-generated-video-detection-a-six-control-protocol-and-the-vidaudit-toolkit",
+      "source_name": "arXiv cs.CV RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.31004",
+      "summary": "arXiv:2606.31004v1 Announce Type: new Abstract: AI-generated video detection benchmarks such as GenVidBench and AIGVDBench are the de facto leaderboards, yet most evaluation protocols leave uncontrolled confounds that can inflate reporte...",
+      "title": "Auditing Generalization in AI-Generated Video Detection: A Six-Control Protocol and the VidAudit Toolkit",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/contrastive-reflection-for-iterative-prompt-optimization/index.html",
+      "public_url_path": "/signals/contrastive-reflection-for-iterative-prompt-optimization/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-8142-bd7c-ca63a27df5db",
+      "slug": "contrastive-reflection-for-iterative-prompt-optimization",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.30840",
+      "summary": "arXiv:2606.30840v1 Announce Type: new Abstract: LLM agents are becoming central to information retrieval: they issue retrieval queries, synthesize answers, and increasingly serve as judges for IR evaluation. Improving the prompts that co...",
+      "title": "Contrastive Reflection for Iterative Prompt Optimization",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "llm agent",
+          "llm agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/dsip-a-dynamic-coordination-planner-for-signal-free-intersections-using-diffusion-model-based-multi-agent-motion-planning/index.html",
+      "public_url_path": "/signals/dsip-a-dynamic-coordination-planner-for-signal-free-intersections-using-diffusion-model-based-multi-agent-motion-planning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-8127-a72c-c3c8fa47e498",
+      "slug": "dsip-a-dynamic-coordination-planner-for-signal-free-intersections-using-diffusion-model-based-multi-agent-motion-planning",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.30694",
+      "summary": "arXiv:2606.30694v1 Announce Type: new Abstract: Traffic signal control at urban intersections inherently introduces stop-and-go behavior, resulting in increased delays and reduced traffic efficiency, especially under high traffic demand....",
+      "title": "DSIP: A Dynamic Coordination Planner for Signal-Free Intersections using Diffusion-Model-Based Multi-Agent Motion Planning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/hypole-hyperproperty-guided-multi-agent-reinforcement-learning-under-partial-observation/index.html",
+      "public_url_path": "/signals/hypole-hyperproperty-guided-multi-agent-reinforcement-learning-under-partial-observation/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-8174-97c1-f2b7ff7d832c",
+      "slug": "hypole-hyperproperty-guided-multi-agent-reinforcement-learning-under-partial-observation",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.30966",
+      "summary": "arXiv:2606.30966v1 Announce Type: new Abstract: Formal specification is a powerful tool to guide the learning process and provides significant advantages over reward shaping: (1) mathematical rigor; (2) expressiveness to specify objectiv...",
+      "title": "HyPOLE: Hyperproperty-Guided Multi-Agent Reinforcement Learning under Partial Observation",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/openlife-toward-open-world-artificial-life-with-autonomous-llm-agents/index.html",
+      "public_url_path": "/signals/openlife-toward-open-world-artificial-life-with-autonomous-llm-agents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-818c-9b65-eedc23367cc7",
+      "slug": "openlife-toward-open-world-artificial-life-with-autonomous-llm-agents",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.31046",
+      "summary": "arXiv:2606.31046v1 Announce Type: new Abstract: Artificial life has explored life-like behavior on many computational substrates, but mostly in researcher-designed closed worlds. We argue that large language model (LLM) agents, with pers...",
+      "title": "OpenLife: Toward Open-World Artificial Life with Autonomous LLM Agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "llm agent",
+          "llm agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/ropoll-robust-panel-of-llm-judges/index.html",
+      "public_url_path": "/signals/ropoll-robust-panel-of-llm-judges/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-81d7-90da-c058268aa298",
+      "slug": "ropoll-robust-panel-of-llm-judges",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.30931",
+      "summary": "arXiv:2606.30931v1 Announce Type: new Abstract: The LLM Jury, a Panel of LLM Evaluators (PoLL) reporting consensus scores, has become a practical alternative to single-judge LLM evaluation, yet its statistical behavior remains poorly und...",
+      "title": "RoPoLL: Robust Panel of LLM Judges",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "llm judge",
+          "llm judges"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/sampling-based-coordination-informed-multi-objective-multi-robot-reinforcement-learning/index.html",
+      "public_url_path": "/signals/sampling-based-coordination-informed-multi-objective-multi-robot-reinforcement-learning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-8174-ad48-f7d44d3fb822",
+      "slug": "sampling-based-coordination-informed-multi-objective-multi-robot-reinforcement-learning",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.30893",
+      "summary": "arXiv:2606.30893v1 Announce Type: new Abstract: Multi-robot systems must simultaneously optimize competing objectives while maintaining coordinated behavior. Existing multi-agent reinforcement learning approaches often rely on fixed or c...",
+      "title": "Sampling-Based Coordination-Informed Multi-Objective Multi-Robot Reinforcement Learning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/when-regulation-has-memory-hysteresis-and-control-burden-in-artificial-agency/index.html",
+      "public_url_path": "/signals/when-regulation-has-memory-hysteresis-and-control-burden-in-artificial-agency/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-812b-8267-c2d1f235108e",
+      "slug": "when-regulation-has-memory-hysteresis-and-control-burden-in-artificial-agency",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.30975",
+      "summary": "arXiv:2606.30975v1 Announce Type: new Abstract: Adaptive agents are usually judged by what they do, but an agent can appear stable while the internal effort required to keep it stable is increasing. This hidden regulatory burden matters...",
+      "title": "When Regulation Has Memory: Hysteresis and Control Burden in Artificial Agency",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/why-solve-it-twice-hierarchical-accumulation-of-skills-for-transfer-efficient-ml-engineering/index.html",
+      "public_url_path": "/signals/why-solve-it-twice-hierarchical-accumulation-of-skills-for-transfer-efficient-ml-engineering/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-81a3-a133-c46c6bdad93a",
+      "slug": "why-solve-it-twice-hierarchical-accumulation-of-skills-for-transfer-efficient-ml-engineering",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.30911",
+      "summary": "arXiv:2606.30911v1 Announce Type: new Abstract: ML engineering agents waste compute rediscovering known techniques because every competition is a cold start. We present HASTE, a hierarchical multi-agent system that organizes cross-compet...",
+      "title": "Why Solve It Twice? Hierarchical Accumulation of Skills for Transfer-Efficient ML Engineering",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/how-to-govern-autonomous-agents-in-enterprise-ai-factories/index.html",
+      "public_url_path": "/signals/how-to-govern-autonomous-agents-in-enterprise-ai-factories/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-8168-945c-dbac8f4101df",
+      "slug": "how-to-govern-autonomous-agents-in-enterprise-ai-factories",
+      "source_name": "NVIDIA Developer Blog AI",
+      "source_priority": "High",
+      "source_url": "https://developer.nvidia.com/blog/how-to-govern-autonomous-agents-in-enterprise-ai-factories/",
+      "summary": "AI agents are quickly moving beyond chat. They inspect code, run tests, read documents, search knowledge bases, query internal systems, and operate for hours on...",
+      "title": "How to Govern Autonomous Agents in Enterprise AI Factories",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent",
+          "ai agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/boost-inference-performance-up-to-15x-on-nvidia-blackwell-using-dflash-speculative-decoding/index.html",
+      "public_url_path": "/signals/boost-inference-performance-up-to-15x-on-nvidia-blackwell-using-dflash-speculative-decoding/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-817d-bd1c-ff111d8f460a",
+      "slug": "boost-inference-performance-up-to-15x-on-nvidia-blackwell-using-dflash-speculative-decoding",
+      "source_name": "NVIDIA Developer Blog AI",
+      "source_priority": "High",
+      "source_url": "https://developer.nvidia.com/blog/boost-inference-performance-up-to-15x-on-nvidia-blackwell-using-dflash-speculative-decoding/",
+      "summary": "As AI systems move from single-turn interactions to coordinated multiagent workflows, low-latency inference becomes increasingly important. Autoregressive LLMs...",
+      "title": "Boost Inference Performance up to 15x on NVIDIA Blackwell Using DFlash Speculative Decoding",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/deploy-a-production-ready-nvidia-ai-q-blueprint-on-oracle-cloud-infrastructure/index.html",
+      "public_url_path": "/signals/deploy-a-production-ready-nvidia-ai-q-blueprint-on-oracle-cloud-infrastructure/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-810a-9552-c97529c26bd5",
+      "slug": "deploy-a-production-ready-nvidia-ai-q-blueprint-on-oracle-cloud-infrastructure",
+      "source_name": "NVIDIA Developer Blog AI",
+      "source_priority": "High",
+      "source_url": "https://developer.nvidia.com/blog/deploy-a-production-ready-nvidia-ai-q-blueprint-on-oracle-cloud-infrastructure/",
+      "summary": "AI agents have changed a lot in the last two years. The first could only answer one question at a time. Then came multi-turn chat, where the model could keep...",
+      "title": "Deploy a Production-Ready NVIDIA AI-Q Blueprint on Oracle Cloud Infrastructure",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent",
+          "ai agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/building-ai-agents-for-ar-glasses-and-xr-devices-with-nvidia-xr-ai/index.html",
+      "public_url_path": "/signals/building-ai-agents-for-ar-glasses-and-xr-devices-with-nvidia-xr-ai/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-818d-9018-c66e96ef55bb",
+      "slug": "building-ai-agents-for-ar-glasses-and-xr-devices-with-nvidia-xr-ai",
+      "source_name": "NVIDIA Developer Blog AI",
+      "source_priority": "High",
+      "source_url": "https://developer.nvidia.com/blog/building-ai-agents-for-ar-glasses-and-xr-devices-with-nvidia-xr-ai/",
+      "summary": "Developers building for AR glasses and wearable devices face an infrastructure gap. The hardware is ready, but creating AI experiences requires integrating live...",
+      "title": "Building AI Agents for AR Glasses and XR Devices with NVIDIA XR AI",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent",
+          "ai agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/how-telcos-build-autonomous-networks-with-agentic-ai/index.html",
+      "public_url_path": "/signals/how-telcos-build-autonomous-networks-with-agentic-ai/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-81f5-81df-ffebcbb549a1",
+      "slug": "how-telcos-build-autonomous-networks-with-agentic-ai",
+      "source_name": "NVIDIA Developer Blog AI",
+      "source_priority": "High",
+      "source_url": "https://developer.nvidia.com/blog/how-telcos-build-autonomous-networks-with-agentic-ai/",
+      "summary": "Telecom operators are adopting AI across network operations, customer care, and back-office workflows, but most are still early in the journey to autonomy. In...",
+      "title": "How Telcos Build Autonomous Networks with Agentic AI",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "autonomy_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/cais-blog-center-for-ai-safety/index.html",
+      "public_url_path": "/signals/cais-blog-center-for-ai-safety/",
+      "published": true,
+      "quality_hint": 86,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-816d-8105-cfcb7a249a4e",
+      "slug": "cais-blog-center-for-ai-safety",
+      "source_name": "Center for AI Safety",
+      "source_priority": "High",
+      "source_url": "https://safe.ai/blog",
+      "summary": "CAIS is working to reducing societal-scale risks from AI through field-building and research.",
+      "title": "CAIS Blog | Center for AI Safety",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai safety"
+        ],
+        "matched_domain_risk_framing": [
+          "ai safety"
+        ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/langchain-blog/index.html",
+      "public_url_path": "/signals/langchain-blog/",
+      "published": true,
+      "quality_hint": 84,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-81c6-bdc5-d4cb03c9cdd1",
+      "slug": "langchain-blog",
+      "source_name": "LangChain Blog",
+      "source_priority": "High",
+      "source_url": "https://www.langchain.com/blog",
+      "summary": "Explore tutorials, case studies, and technical insights on building AI agents with LangSmith, Deep Agents, LangGraph, and LangChain. Learn from experts.",
+      "title": "LangChain Blog",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent",
+          "ai agents"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/v0-31-1/index.html",
+      "public_url_path": "/signals/v0-31-1/",
+      "published": true,
+      "quality_hint": 82,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-81c5-84e1-e2278b997c61",
+      "slug": "v0-31-1",
+      "source_name": "Ollama GitHub Releases",
+      "source_priority": "High",
+      "source_url": "https://github.com/ollama/ollama/releases/tag/v0.31.1",
+      "summary": "Faster Gemma 4 on Apple Silicon Gemma 4 is now significantly faster in Ollama on Apple Silicon, generating tokens nearly 90% faster on average across a coding-agent benchmark by leveraging multi-token prediction (MTP). Ollama auto-tunes...",
+      "title": "v0.31.1",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/v0-30-9/index.html",
+      "public_url_path": "/signals/v0-30-9/",
+      "published": true,
+      "quality_hint": 82,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-81ca-bb31-db2f0a995ff6",
+      "slug": "v0-30-9",
+      "source_name": "Ollama GitHub Releases",
+      "source_priority": "High",
+      "source_url": "https://github.com/ollama/ollama/releases/tag/v0.30.9",
+      "summary": "What's Changed Support for Cohere2Moe architecture Fixed LFM2 parser/render for cases where thinking was not emitted Fixed issue where ollama launch claude and other coding agent or assistant use cases would only output one token Ollama...",
+      "title": "v0.30.9",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "coding agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "High",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/python-v0-7-1/index.html",
+      "public_url_path": "/signals/python-v0-7-1/",
+      "published": true,
+      "quality_hint": 82,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-81dd-b901-f490d7d03c47",
+      "slug": "python-v0-7-1",
+      "source_name": "AutoGen GitHub Releases",
+      "source_priority": "High",
+      "source_url": "https://github.com/microsoft/autogen/releases/tag/python-v0.7.1",
+      "summary": "What's New OpenAIAgent supports all built-in tools Feat/OpenAI agent builtin tools 6657 by @tejas-dharani in #6671 Support nested Team as a participant in a Team Supporting Teams as Participants in a GroupChat by @ekzhu in #5863 Introduc...",
+      "title": "python-v0.7.1",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/multiview-bench-a-diagnostic-benchmark-for-world-centric-multi-view-integration-in-vlms/index.html",
+      "public_url_path": "/signals/multiview-bench-a-diagnostic-benchmark-for-world-centric-multi-view-integration-in-vlms/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-812f-8480-e8f49d8a740c",
+      "slug": "multiview-bench-a-diagnostic-benchmark-for-world-centric-multi-view-integration-in-vlms",
+      "source_name": "arXiv cs.CV RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.08970",
+      "summary": "arXiv:2607.08970v1 Announce Type: new Abstract: Recent benchmarks for VLMs largely assess single- or limited-view perception, leaving untested the core cognitive ability to integrate observations across viewpoints into a coherent, world-...",
+      "title": "MultiView-Bench: A Diagnostic Benchmark for World-Centric Multi-View Integration in VLMs",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/omnimapbench-benchmarking-visual-centric-reasoning-on-diverse-map-documents/index.html",
+      "public_url_path": "/signals/omnimapbench-benchmarking-visual-centric-reasoning-on-diverse-map-documents/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-8189-a41b-d218849a1999",
+      "slug": "omnimapbench-benchmarking-visual-centric-reasoning-on-diverse-map-documents",
+      "source_name": "arXiv cs.CV RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09068",
+      "summary": "arXiv:2607.09068v1 Announce Type: new Abstract: Recent advancements in LVLMs necessitate robust benchmarks for complex, visually grounded reasoning. A critical limitation is identified in many document understanding benchmarks: visual co...",
+      "title": "OmniMapBench: Benchmarking Visual-Centric Reasoning on Diverse Map Documents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/tactidex-a-real-world-tactile-guided-benchmark-for-human-like-dexterous-manipulation/index.html",
+      "public_url_path": "/signals/tactidex-a-real-world-tactile-guided-benchmark-for-human-like-dexterous-manipulation/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-8114-aa6c-c58acf10515f",
+      "slug": "tactidex-a-real-world-tactile-guided-benchmark-for-human-like-dexterous-manipulation",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09190",
+      "summary": "arXiv:2607.09190v1 Announce Type: new Abstract: Tactile feedback is fundamental to Hand-Object Interaction (HOI), governing contact formation, force regulation, and stable manipulation, making it essential for achieving true human-like d...",
+      "title": "TactiDex: A Real-World Tactile-Guided Benchmark for Human-Like Dexterous Manipulation",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/toward-active-object-detection-for-uavs-in-the-wild-a-large-scale-dataset-benchmark-and-method/index.html",
+      "public_url_path": "/signals/toward-active-object-detection-for-uavs-in-the-wild-a-large-scale-dataset-benchmark-and-method/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-81d2-bf23-f395136e9dfa",
+      "slug": "toward-active-object-detection-for-uavs-in-the-wild-a-large-scale-dataset-benchmark-and-method",
+      "source_name": "arXiv cs.CV RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09078",
+      "summary": "arXiv:2607.09078v1 Announce Type: new Abstract: Object detection is a fundamental component in numerous Unmanned Aerial Vehicle (UAV) applications, yet it has long been plagued by hindrances like occlusion or target pixel scarcity. Activ...",
+      "title": "Toward Active Object Detection for UAVs in the Wild: A Large-Scale Dataset, Benchmark and Method",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/wildtrace-benchmarking-natural-evidence-trails-in-long-context-reasoning/index.html",
+      "public_url_path": "/signals/wildtrace-benchmarking-natural-evidence-trails-in-long-context-reasoning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39c95c29-2b0e-816a-8d3a-c460f37e0cd4",
+      "slug": "wildtrace-benchmarking-natural-evidence-trails-in-long-context-reasoning",
+      "source_name": "arXiv cs.CL RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.09328",
+      "summary": "arXiv:2607.09328v1 Announce Type: new Abstract: Answering complex questions over long documents frequently requires integrating evidence that the source itself disperses naturally across distant passages. In an incident report, the opera...",
+      "title": "WILDTRACE: Benchmarking Natural Evidence Trails in Long-Context Reasoning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/mixture-of-enhanced-view-experts-for-multi-query-vehicle-reid-and-a-large-scale-benchmark/index.html",
+      "public_url_path": "/signals/mixture-of-enhanced-view-experts-for-multi-query-vehicle-reid-and-a-large-scale-benchmark/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39995c29-2b0e-810c-8da8-f0ae7c74d8fa",
+      "slug": "mixture-of-enhanced-view-experts-for-multi-query-vehicle-reid-and-a-large-scale-benchmark",
+      "source_name": "arXiv cs.CV RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.08085",
+      "summary": "arXiv:2607.08085v1 Announce Type: new Abstract: Multi-query vehicle ReID aims to leverage complementary information from diverse views for robust feature learning. However, current methods suffer from simplistic feature fusion and thus e...",
+      "title": "Mixture of Enhanced-View Experts for Multi-Query Vehicle ReID and A Large-Scale Benchmark",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/shift-drift-a-zero-shot-benchmark-for-generalizable-and-robust-autonomous-driving-motion-planning/index.html",
+      "public_url_path": "/signals/shift-drift-a-zero-shot-benchmark-for-generalizable-and-robust-autonomous-driving-motion-planning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39995c29-2b0e-81a2-a807-fe2d01bc4ef7",
+      "slug": "shift-drift-a-zero-shot-benchmark-for-generalizable-and-robust-autonomous-driving-motion-planning",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07844",
+      "summary": "arXiv:2607.07844v1 Announce Type: new Abstract: While closed-loop motion planners trained on large-scale, object-level datasets, e.g., nuPlan, demonstrate strong in-distribution (ID) performance, their generalization to novel urban topol...",
+      "title": "Shift & Drift: A Zero-Shot Benchmark for Generalizable and Robust Autonomous Driving Motion Planning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/ace-motion-planning-of-professional-level-table-tennis-serves-with-a-robot-arm/index.html",
+      "public_url_path": "/signals/ace-motion-planning-of-professional-level-table-tennis-serves-with-a-robot-arm/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-815c-9617-d42b8aa3df53",
+      "slug": "ace-motion-planning-of-professional-level-table-tennis-serves-with-a-robot-arm",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06989",
+      "summary": "arXiv:2607.06989v1 Announce Type: new Abstract: Table tennis, a dynamic, compact, and popular sport, has received significant attention as a robotics benchmark over the last decades. Most of the research has focused on the rally aspect -...",
+      "title": "Ace! Motion Planning of Professional-Level Table Tennis Serves with a Robot Arm",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/measuring-intelligence-beyond-human-scale/index.html",
+      "public_url_path": "/signals/measuring-intelligence-beyond-human-scale/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8102-8488-e3efb432ac79",
+      "slug": "measuring-intelligence-beyond-human-scale",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07040",
+      "summary": "arXiv:2607.07040v1 Announce Type: new Abstract: How can we measure intelligence beyond human capability? Human-authored benchmarks saturate, and above human capability, examiners may not know which tasks are both hard and verifiable. We...",
+      "title": "Measuring Intelligence Beyond Human Scale",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/mira-math-a-benchmark-for-minimal-information-requesting-and-mathematical-reasoning/index.html",
+      "public_url_path": "/signals/mira-math-a-benchmark-for-minimal-information-requesting-and-mathematical-reasoning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8134-82da-e2475c008718",
+      "slug": "mira-math-a-benchmark-for-minimal-information-requesting-and-mathematical-reasoning",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.07391",
+      "summary": "arXiv:2607.07391v1 Announce Type: new Abstract: Mathematical reasoning benchmarks typically provide all facts needed to solve each problem, while interactive benchmarks often mix reasoning with tools, retrieval, and long-horizon dialogue...",
+      "title": "MIRA-Math: A Benchmark for Minimal Information Requesting and Mathematical Reasoning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/urs-stereo-uncertainty-guided-residual-search-for-real-time-stereo-matching/index.html",
+      "public_url_path": "/signals/urs-stereo-uncertainty-guided-residual-search-for-real-time-stereo-matching/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-8188-8476-de439bce80e7",
+      "slug": "urs-stereo-uncertainty-guided-residual-search-for-real-time-stereo-matching",
+      "source_name": "arXiv cs.CV RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06779",
+      "summary": "arXiv:2607.06779v1 Announce Type: new Abstract: Real-time stereo matching is crucial for robotics, autonomous systems, and embedded vision applications, where both computational efficiency and disparity accuracy are required. Recent coar...",
+      "title": "URS-Stereo: Uncertainty-Guided Residual Search for Real-Time Stereo Matching",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "autonomy_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/vision-language-action-vla-models-for-unmanned-aerial-robotics-and-bimanual-manipulation-a-review/index.html",
+      "public_url_path": "/signals/vision-language-action-vla-models-for-unmanned-aerial-robotics-and-bimanual-manipulation-a-review/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39895c29-2b0e-812a-bcec-c980735d2e65",
+      "slug": "vision-language-action-vla-models-for-unmanned-aerial-robotics-and-bimanual-manipulation-a-review",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06706",
+      "summary": "arXiv:2607.06706v1 Announce Type: new Abstract: Vision Language Action (VLA) models unify visual perception, natural-language understanding, and action generation within a single foundation model, allowing a robot to follow instructions...",
+      "title": "Vision Language Action (VLA) Models for Unmanned Aerial Robotics and Bimanual Manipulation: A Review",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "vla_context"
+        ],
+        "matched_domain_risk_framing": [
+          "foundation model"
+        ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/bafco-a-document-understanding-benchmark-for-complex-bangla-form-comprehension/index.html",
+      "public_url_path": "/signals/bafco-a-document-understanding-benchmark-for-complex-bangla-form-comprehension/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-8197-afee-df5efaf16872",
+      "slug": "bafco-a-document-understanding-benchmark-for-complex-bangla-form-comprehension",
+      "source_name": "arXiv cs.CL RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05614",
+      "summary": "arXiv:2607.05614v1 Announce Type: new Abstract: Document comprehension is a challenging yet impactful task for Multimodal Large Language Models, especially as these systems see growing adoption in real-world, human-centric applications....",
+      "title": "BaFCo: A Document Understanding Benchmark for Complex Bangla Form Comprehension",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/benchmarking-kv-cache-optimizations-across-task-quality-and-system-performance-for-long-context-serving/index.html",
+      "public_url_path": "/signals/benchmarking-kv-cache-optimizations-across-task-quality-and-system-performance-for-long-context-serving/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-812a-a8b8-e983f2f85b16",
+      "slug": "benchmarking-kv-cache-optimizations-across-task-quality-and-system-performance-for-long-context-serving",
+      "source_name": "arXiv cs.CL RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05399",
+      "summary": "arXiv:2607.05399v1 Announce Type: new Abstract: Large language model serving is increasingly limited by KV-cache growth under long-context workloads, yet existing KV-cache compression techniques are difficult to compare because they were...",
+      "title": "Benchmarking KV-Cache Optimizations across Task Quality and System Performance for Long-Context Serving",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/cstutorbench-benchmarking-small-language-models-as-tutors-for-block-based-programming/index.html",
+      "public_url_path": "/signals/cstutorbench-benchmarking-small-language-models-as-tutors-for-block-based-programming/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-810e-aa0f-e02bb7e27ac7",
+      "slug": "cstutorbench-benchmarking-small-language-models-as-tutors-for-block-based-programming",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05571",
+      "summary": "arXiv:2607.05571v1 Announce Type: new Abstract: Large language models are increasingly explored as AI tutors, yet deploying them in K-12 settings raises concerns around privacy, cost, and reliance on proprietary models. Small language mo...",
+      "title": "CSTutorBench: Benchmarking Small Language Models as Tutors for Block-Based Programming",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/most-llm-conformity-needs-no-speaker-measuring-the-speaker-free-floor-in-peer-pressure-benchmarks/index.html",
+      "public_url_path": "/signals/most-llm-conformity-needs-no-speaker-measuring-the-speaker-free-floor-in-peer-pressure-benchmarks/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-8107-a3d7-de7c704ee17a",
+      "slug": "most-llm-conformity-needs-no-speaker-measuring-the-speaker-free-floor-in-peer-pressure-benchmarks",
+      "source_name": "arXiv cs.CL RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05545",
+      "summary": "arXiv:2607.05545v1 Announce Type: new Abstract: LLM conformity is often used to describe cases where a model changes a correct answer toward a peer or group response. We show that most of this apparent conformity survives even after the...",
+      "title": "Most LLM Conformity Needs No Speaker: Measuring the Speaker-Free Floor in Peer-Pressure Benchmarks",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/pcbworld-a-benchmark-environment-for-engine-grounded-pcb-design-automation/index.html",
+      "public_url_path": "/signals/pcbworld-a-benchmark-environment-for-engine-grounded-pcb-design-automation/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-81a0-9264-e4c65e63459b",
+      "slug": "pcbworld-a-benchmark-environment-for-engine-grounded-pcb-design-automation",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.05915",
+      "summary": "arXiv:2607.05915v1 Announce Type: new Abstract: PCB routing is the task of connecting the nets of a board with copper traces under strict design rules, yet learning-based methods still lag behind rule-based routers. We introduce PCBWorld...",
+      "title": "PCBWorld: A Benchmark Environment for Engine-Grounded PCB Design Automation",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/thorarena-benchmarking-humanoid-physical-interaction-with-human-motion-force-demonstrations/index.html",
+      "public_url_path": "/signals/thorarena-benchmarking-humanoid-physical-interaction-with-human-motion-force-demonstrations/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39795c29-2b0e-81af-bcae-e3aee2bd6960",
+      "slug": "thorarena-benchmarking-humanoid-physical-interaction-with-human-motion-force-demonstrations",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.06052",
+      "summary": "arXiv:2607.06052v1 Announce Type: new Abstract: Humanoid robots are increasingly expected to perform contact-rich tasks that require not only accurate whole-body motion but also robust physical interaction with surrounding objects and hu...",
+      "title": "ThorArena: Benchmarking Humanoid Physical Interaction with Human Motion-Force Demonstrations",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/do-diabetic-foot-ulcer-segmentation-models-generalize-a-cross-dataset-benchmark-of-cnn-and-transformer-architectures/index.html",
+      "public_url_path": "/signals/do-diabetic-foot-ulcer-segmentation-models-generalize-a-cross-dataset-benchmark-of-cnn-and-transformer-architectures/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39695c29-2b0e-813e-a738-f850250b3030",
+      "slug": "do-diabetic-foot-ulcer-segmentation-models-generalize-a-cross-dataset-benchmark-of-cnn-and-transformer-architectures",
+      "source_name": "arXiv cs.CV RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.02555",
+      "summary": "arXiv:2607.02555v1 Announce Type: new Abstract: Deep learning models for diabetic foot ulcer (DFU) segmentation routinely report high accuracy, but they are almost always trained and tested on the same dataset, leaving their behaviour on...",
+      "title": "Do Diabetic Foot Ulcer Segmentation Models Generalize? A Cross-Dataset Benchmark of CNN and Transformer Architectures",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/embodimentsemantic-a-spatial-scene-graph-dataset-and-benchmark-for-vision-language-models-on-embodied-manipulation-trajectories/index.html",
+      "public_url_path": "/signals/embodimentsemantic-a-spatial-scene-graph-dataset-and-benchmark-for-vision-language-models-on-embodied-manipulation-trajectories/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39195c29-2b0e-8110-8178-f2a224b294ee",
+      "slug": "embodimentsemantic-a-spatial-scene-graph-dataset-and-benchmark-for-vision-language-models-on-embodied-manipulation-trajectories",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2607.00020",
+      "summary": "arXiv:2607.00020v1 Announce Type: new Abstract: Spatial grounding remains a key limitation of vision-language-action (VLA) systems for robotic manipulation. While current models can recognize objects and follow language instructions, the...",
+      "title": "EmbodimentSemantic: A Spatial Scene-Graph Dataset and Benchmark for Vision-Language Models on Embodied Manipulation Trajectories",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/beyond-compilation-evaluating-faithful-natural-language-to-lean-statement-formalization/index.html",
+      "public_url_path": "/signals/beyond-compilation-evaluating-faithful-natural-language-to-lean-statement-formalization/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-81dc-bca3-edc12eadca0e",
+      "slug": "beyond-compilation-evaluating-faithful-natural-language-to-lean-statement-formalization",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.31002",
+      "summary": "arXiv:2606.31002v1 Announce Type: new Abstract: Theorem-proving benchmarks evaluate proof search against fixed formal statements, but natural-language-to-Lean formalization must generate the formal statement itself. In this setting, comp...",
+      "title": "Beyond Compilation: Evaluating Faithful Natural-Language-to-Lean Statement Formalization",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/labimus-a-simulation-and-benchmark-for-humanoid-dexterous-manipulation-in-chemical-laboratory/index.html",
+      "public_url_path": "/signals/labimus-a-simulation-and-benchmark-for-humanoid-dexterous-manipulation-in-chemical-laboratory/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-811f-950e-cebadb13e445",
+      "slug": "labimus-a-simulation-and-benchmark-for-humanoid-dexterous-manipulation-in-chemical-laboratory",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.31037",
+      "summary": "arXiv:2606.31037v1 Announce Type: new Abstract: Laboratory automation has made remarkable progress through robotic platforms and AI-driven scientific reasoning. However, many laboratory operations (e.g., solid--solid transfer) remain inh...",
+      "title": "Labimus: A Simulation and Benchmark for Humanoid Dexterous Manipulation in Chemical Laboratory",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/multiuav-plat-an-llm-oriented-platform-benchmark-and-framework-for-multi-uav-collaborative-task-planning/index.html",
+      "public_url_path": "/signals/multiuav-plat-an-llm-oriented-platform-benchmark-and-framework-for-multi-uav-collaborative-task-planning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-81cb-aa47-ed5900a11b14",
+      "slug": "multiuav-plat-an-llm-oriented-platform-benchmark-and-framework-for-multi-uav-collaborative-task-planning",
+      "source_name": "arXiv cs.AI RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.31073",
+      "summary": "arXiv:2606.31073v1 Announce Type: new Abstract: Large language models (LLMs) provide a promising interface for high-level robotic task planning, but their use in multi-UAV collaboration remains difficult to evaluate systematically. Exist...",
+      "title": "MultiUAV-Plat: An LLM-Oriented Platform, Benchmark and Framework for Multi-UAV Collaborative Task Planning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/position-vision-language-action-models-cannot-be-verified-to-perform-physical-reasoning/index.html",
+      "public_url_path": "/signals/position-vision-language-action-models-cannot-be-verified-to-perform-physical-reasoning/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39095c29-2b0e-816a-98dd-f5bfe64cbceb",
+      "slug": "position-vision-language-action-models-cannot-be-verified-to-perform-physical-reasoning",
+      "source_name": "arXiv cs.RO RSS",
+      "source_priority": "High",
+      "source_url": "https://arxiv.org/abs/2606.30686",
+      "summary": "arXiv:2606.30686v1 Announce Type: new Abstract: Vision-Language-Action (VLA) systems, built on pretrained vision-language models (VLMs), have shown rapidly improving performance on robot manipulation benchmarks. These gains are commonly...",
+      "title": "Position: Vision-Language-Action Models Cannot Be Verified to Perform Physical Reasoning",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Medium",
+      "attribution_status": "Complete",
+      "copyright_status": "Safe Summary Only",
+      "production_publish_performed": true,
+      "public_path": "signals/updates-frontier-model-forum/index.html",
+      "public_url_path": "/signals/updates-frontier-model-forum/",
+      "published": true,
+      "quality_hint": 88,
+      "ready_for_pipeline": false,
+      "signal_id": "39595c29-2b0e-81d9-ad08-ce1ed205c36a",
+      "slug": "updates-frontier-model-forum",
+      "source_name": "Frontier Model Forum",
+      "source_priority": "High",
+      "source_url": "https://www.frontiermodelforum.org/updates/",
+      "summary": "Updates - Frontier Model Forum",
+      "title": "Updates - Frontier Model Forum",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "frontier model"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Retained",
+      "attribution_status": "",
+      "copyright_status": "",
+      "production_publish_performed": true,
+      "public_path": "signals/a-unified-benchmark-for-rcm-constrained-visual-servoing-modeling-controller-interaction-and-robustness-analysis-in-laparoscopic-robots/index.html",
+      "public_url_path": "/signals/a-unified-benchmark-for-rcm-constrained-visual-servoing-modeling-controller-interaction-and-robustness-analysis-in-laparoscopic-robots/",
+      "published": true,
+      "quality_hint": "",
+      "ready_for_pipeline": true,
+      "signal_id": "existing_a_unified_benchmark_for_rcm_constrained_visual_servoing_modeling_controller_interaction_and_robustness_analysis_in_laparoscopic_robots",
+      "slug": "a-unified-benchmark-for-rcm-constrained-visual-servoing-modeling-controller-interaction-and-robustness-analysis-in-laparoscopic-robots",
+      "source_name": "existing public Signal",
+      "source_priority": "",
+      "source_url": "",
+      "summary": "arXiv:2607.00030v1 Announce Type: new Abstract: In robot-assisted laparoscopic minimally invasive surgery (MIS), accurate enforcement of the remote center of motion (RCM) constraint is critical for safe and stable automatic field-of-view...",
+      "title": "A Unified Benchmark for RCM-Constrained Visual Servoing: Modeling-Controller Interaction and Robustness Analysis in Laparoscopic Robots",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": true,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {
+          "medical": [
+            "laparoscopic"
+          ]
+        },
+        "off_topic_public_signal": true,
+        "reasons": [
+          "off_topic_public_signal"
+        ]
+      }
+    },
+    {
+      "agi_relevance": "Retained",
+      "attribution_status": "",
+      "copyright_status": "",
+      "production_publish_performed": true,
+      "public_path": "signals/agent-evaluation-recovery-metric/index.html",
+      "public_url_path": "/signals/agent-evaluation-recovery-metric/",
+      "published": true,
+      "quality_hint": "",
+      "ready_for_pipeline": true,
+      "signal_id": "existing_agent_evaluation_recovery_metric",
+      "slug": "agent-evaluation-recovery-metric",
+      "source_name": "existing public Signal",
+      "source_priority": "",
+      "source_url": "",
+      "summary": "A synthetic benchmark note adds a recovery metric for agent evaluation.",
+      "title": "Agent evaluation benchmark adds recovery metric",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "benchmark"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Retained",
+      "attribution_status": "",
+      "copyright_status": "",
+      "production_publish_performed": true,
+      "public_path": "signals/codex-agentic-ai-usage/index.html",
+      "public_url_path": "/signals/codex-agentic-ai-usage/",
+      "published": true,
+      "quality_hint": "",
+      "ready_for_pipeline": true,
+      "signal_id": "existing_codex_agentic_ai_usage",
+      "slug": "codex-agentic-ai-usage",
+      "source_name": "existing public Signal",
+      "source_priority": "",
+      "source_url": "",
+      "summary": "A June 2026 research paper uses Codex usage data as evidence that agentic AI is moving from developer tooling toward broader organizational workflows.",
+      "title": "Agentic AI adoption accelerates from Codex usage evidence",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "developer tool"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Retained",
+      "attribution_status": "",
+      "copyright_status": "",
+      "production_publish_performed": true,
+      "public_path": "signals/agri-sage-simulation-grounded-multi-agent-llm-for-context-aware-agricultural-advisory-generation/index.html",
+      "public_url_path": "/signals/agri-sage-simulation-grounded-multi-agent-llm-for-context-aware-agricultural-advisory-generation/",
+      "published": true,
+      "quality_hint": "",
+      "ready_for_pipeline": true,
+      "signal_id": "existing_agri_sage_simulation_grounded_multi_agent_llm_for_context_aware_agricultural_advisory_generation",
+      "slug": "agri-sage-simulation-grounded-multi-agent-llm-for-context-aware-agricultural-advisory-generation",
+      "source_name": "existing public Signal",
+      "source_priority": "",
+      "source_url": "",
+      "summary": "arXiv:2607.00454v1 Announce Type: new Abstract: Agricultural advisory systems face a fundamental tension: static agronomic guidelines offer consistent, evidence-based recommendations, yet remain blind to in-season variability and dynamic...",
+      "title": "Agri-SAGE: Simulation-Grounded Multi-Agent LLM for Context-Aware Agricultural Advisory Generation",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": true,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "multi_agent_context"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {
+          "agriculture": [
+            "agricultural"
+          ]
+        },
+        "off_topic_public_signal": true,
+        "reasons": [
+          "off_topic_public_signal"
+        ]
+      }
+    },
+    {
+      "agi_relevance": "Retained",
+      "attribution_status": "",
+      "copyright_status": "",
+      "production_publish_performed": true,
+      "public_path": "signals/ai-agent-index-transparency-gap/index.html",
+      "public_url_path": "/signals/ai-agent-index-transparency-gap/",
+      "published": true,
+      "quality_hint": "",
+      "ready_for_pipeline": true,
+      "signal_id": "existing_ai_agent_index_transparency_gap",
+      "slug": "ai-agent-index-transparency-gap",
+      "source_name": "existing public Signal",
+      "source_priority": "",
+      "source_url": "",
+      "summary": "The 2025 AI Agent Index documents technical and safety features across deployed agentic AI systems and flags uneven transparency among developers.",
+      "title": "AI Agent Index highlights transparency gaps in deployed agents",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "ai agent"
+        ],
+        "matched_domain_risk_framing": [],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Retained",
+      "attribution_status": "",
+      "copyright_status": "",
+      "production_publish_performed": true,
+      "public_path": "signals/eu-ai-office-gpai-governance/index.html",
+      "public_url_path": "/signals/eu-ai-office-gpai-governance/",
+      "published": true,
+      "quality_hint": "",
+      "ready_for_pipeline": true,
+      "signal_id": "existing_eu_ai_office_gpai_governance",
+      "slug": "eu-ai-office-gpai-governance",
+      "source_name": "existing public Signal",
+      "source_priority": "",
+      "source_url": "",
+      "summary": "The European AI Office supports AI Act implementation, especially general-purpose AI rules, evaluations, guidance, and enforcement workflows.",
+      "title": "EU AI Office becomes the GPAI governance surface to watch",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai governance"
+        ],
+        "matched_domain_risk_framing": [
+          "ai governance"
+        ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Retained",
+      "attribution_status": "",
+      "copyright_status": "",
+      "production_publish_performed": true,
+      "public_path": "signals/metr-time-horizon-autonomy/index.html",
+      "public_url_path": "/signals/metr-time-horizon-autonomy/",
+      "published": true,
+      "quality_hint": "",
+      "ready_for_pipeline": true,
+      "signal_id": "existing_metr_time_horizon_autonomy",
+      "slug": "metr-time-horizon-autonomy",
+      "source_name": "existing public Signal",
+      "source_priority": "",
+      "source_url": "",
+      "summary": "METR tracks frontier AI progress through task-completion time horizons, measuring the length of tasks AI agents can complete at defined success rates.",
+      "title": "METR time-horizon work reframes autonomous capability tracking",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "agent_context",
+          "ai agent",
+          "ai agents"
+        ],
+        "matched_domain_risk_framing": [
+          "autonomous capability tracking"
+        ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
+    },
+    {
+      "agi_relevance": "Retained",
+      "attribution_status": "",
+      "copyright_status": "",
+      "production_publish_performed": true,
+      "public_path": "signals/nist-ai-risk-framework-standards/index.html",
+      "public_url_path": "/signals/nist-ai-risk-framework-standards/",
+      "published": true,
+      "quality_hint": "",
+      "ready_for_pipeline": true,
+      "signal_id": "existing_nist_ai_risk_framework_standards",
+      "slug": "nist-ai-risk-framework-standards",
+      "source_name": "existing public Signal",
+      "source_priority": "",
+      "source_url": "",
+      "summary": "NIST frames AI governance around measurement science, risk management, standards, guidelines, benchmarks, and evaluations.",
+      "title": "NIST keeps AI governance anchored in measurement and standards",
+      "topic_decision": {
+        "allowed_domain_risk": false,
+        "domain_risk_detected": false,
+        "has_core_public_topic": true,
+        "matched_core_topics": [
+          "ai governance",
+          "benchmark",
+          "benchmarks"
+        ],
+        "matched_domain_risk_framing": [
+          "ai governance"
+        ],
+        "matched_domain_risks": {},
+        "off_topic_public_signal": false,
+        "reasons": []
+      }
     }
   ],
   "manual_external_deployment_performed": false,
-  "material_signature": "dfb4c846f5176f6d86b809d94eecf0ba352e21cecb50b93b69154cb7928a101c",
+  "material_signature": "e7a545a93e8693b8d4600b80f8ac6e5eab414b03acff632ac733b989788bfe5d",
   "network_source_fetch_performed": false,
   "newsletter_distribution_performed": false,
   "openai_call_performed": false,
-  "pages_blocked": 1139,
-  "pages_launched": 30,
+  "pages_blocked": 1257,
+  "pages_launched": 135,
   "public_output_root": ".",
   "raw_article_body_copied": false,
   "social_distribution_performed": false,
