@@ -204,9 +204,9 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertIn(f"{FIXTURE_BASE_URL}/signals/", sitemap)
         for url in launched_urls:
             self.assertIn(url, sitemap)
-            self.assertIn(url, rss)
+        self.assertIn(f"{FIXTURE_BASE_URL}/signals/notion-agent-reliability/", rss)
         self.assertEqual(feed["feed_url"], f"{FIXTURE_BASE_URL}/feed.json")
-        self.assertLessEqual(len(feed["items"]), 30)
+        self.assertLessEqual(len(feed["items"]), sync.DEFAULT_JSON_FEED_ITEM_LIMIT)
 
     def test_generates_public_artifact_manifest_for_every_public_artifact(self):
         sync.sync_records([eligible_record()], self.root, refreshed_at="2026-06-27T00:00:00Z")
@@ -438,7 +438,6 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         manifest = sync.sync_records([], self.root)
 
         self.assertEqual(manifest["pages_launched"], len(manifest["launched"]))
-        self.assertLessEqual(manifest["pages_launched"], sync.DEFAULT_MAX_PUBLIC_SIGNALS)
         self.assertGreaterEqual(manifest["pages_launched"], 1)
         manifest = sync.sync_records(records, self.root)
         launched_slugs = {item["slug"] for item in manifest["launched"]}
@@ -599,8 +598,74 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         manifest = sync.sync_records([], self.root)
 
         self.assertEqual(manifest["pages_launched"], len(manifest["launched"]))
-        self.assertLessEqual(manifest["pages_launched"], sync.DEFAULT_MAX_PUBLIC_SIGNALS)
         self.assertGreaterEqual(manifest["pages_launched"], 1)
+
+    def test_valid_undeclared_existing_page_is_reconciled(self):
+        shutil.rmtree(self.root / "signals")
+        signals_root = self.root / "signals"
+        orphan_dir = signals_root / "valid-orphan-signal"
+        orphan_dir.mkdir(parents=True)
+        (signals_root / "public_launch_manifest.json").write_text(
+            json.dumps({"launched": []}),
+            encoding="utf-8",
+        )
+        (orphan_dir / "index.html").write_text(
+            "<h1>Valid orphan Signal</h1><h2>Summary</h2><p>Existing summary-only public Signal retained.</p>",
+            encoding="utf-8",
+        )
+        report_path = self.root / "tmp" / "dysonx_public_signals_sync_report.json"
+
+        manifest = sync.sync_records([], self.root, output_report=report_path)
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+
+        self.assertIn("valid-orphan-signal", launched_slugs)
+        self.assertTrue((orphan_dir / "index.html").exists())
+        self.assertEqual(report["orphan_pages_detected"], 1)
+        self.assertEqual(report["orphan_pages_reconciled"], 1)
+        self.assertEqual(report["orphan_pages_removed"], 0)
+
+    def test_invalid_stale_orphan_page_is_removed(self):
+        shutil.rmtree(self.root / "signals")
+        signals_root = self.root / "signals"
+        orphan_dir = signals_root / "invalid-stale-orphan"
+        orphan_dir.mkdir(parents=True)
+        (signals_root / "public_launch_manifest.json").write_text(
+            json.dumps({"launched": []}),
+            encoding="utf-8",
+        )
+        (orphan_dir / "index.html").write_text("<h1>Invalid stale orphan</h1>", encoding="utf-8")
+        report_path = self.root / "tmp" / "dysonx_public_signals_sync_report.json"
+
+        manifest = sync.sync_records([], self.root, output_report=report_path)
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+
+        self.assertNotIn("invalid-stale-orphan", launched_slugs)
+        self.assertFalse((orphan_dir / "index.html").exists())
+        self.assertEqual(report["orphan_pages_detected"], 1)
+        self.assertEqual(report["orphan_pages_reconciled"], 0)
+        self.assertEqual(report["orphan_pages_removed"], 1)
+
+    def test_invalid_declared_existing_page_is_not_left_orphaned(self):
+        shutil.rmtree(self.root / "signals")
+        signals_root = self.root / "signals"
+        stale_dir = signals_root / "invalid-declared-signal"
+        stale_dir.mkdir(parents=True)
+        (signals_root / "public_launch_manifest.json").write_text(
+            json.dumps({"launched": [{"slug": "invalid-declared-signal"}]}),
+            encoding="utf-8",
+        )
+        (stale_dir / "index.html").write_text("<h1>Invalid declared Signal</h1>", encoding="utf-8")
+        report_path = self.root / "tmp" / "dysonx_public_signals_sync_report.json"
+
+        manifest = sync.sync_records([], self.root, output_report=report_path)
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        launched_slugs = {item["slug"] for item in manifest["launched"]}
+
+        self.assertNotIn("invalid-declared-signal", launched_slugs)
+        self.assertFalse((stale_dir / "index.html").exists())
+        self.assertEqual(report["orphan_pages_removed"], 1)
 
     def test_source_name_is_used_when_source_label_is_missing(self):
         record = eligible_record(**{"Source Name": "arXiv cs.CV RSS", "Quality Hint": 94})
@@ -632,7 +697,17 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
 
         self.assertEqual(report["total_notion_rows"], 2)
         self.assertEqual(report["eligible_public_rows"], 1)
+        self.assertEqual(report["unique_eligible_rows"], 1)
+        self.assertEqual(report["duplicate_slug_count"], 0)
         self.assertEqual(report["blocked_rows"], 1)
+        self.assertEqual(report["blocked_by_policy"], 1)
+        self.assertGreaterEqual(report["published_total"], 1)
+        self.assertLessEqual(report["index_displayed"], sync.DEFAULT_SIGNALS_INDEX_LIMIT)
+        self.assertLessEqual(report["rss_items"], sync.DEFAULT_RSS_ITEM_LIMIT)
+        self.assertLessEqual(report["feed_items"], sync.DEFAULT_JSON_FEED_ITEM_LIMIT)
+        self.assertIn("orphan_pages_detected", report)
+        self.assertIn("orphan_pages_reconciled", report)
+        self.assertIn("orphan_pages_removed", report)
         self.assertIn("Blocked missing attribution Signal", report["blocked_reasons_by_title"])
         self.assertIn("attribution_incomplete", report["blocked_reasons_by_title"]["Blocked missing attribution Signal"])
         self.assertIn("notion-agent-reliability", report["new_slugs"])
@@ -663,61 +738,133 @@ class DysonXNotionPublicSignalsSyncTests(unittest.TestCase):
         self.assertIn("quality_hint_below_80", reasons)
         self.assertIn("agi_relevance_below_medium", reasons)
 
-    def test_ranking_caps_output_to_30_and_sorts_critical_high_quality_first(self):
+    def test_persistent_inventory_exceeds_surface_windows(self):
+        shutil.rmtree(self.root / "signals")
         records = []
         for index in range(35):
             records.append(
                 eligible_record(
                     **{
-                        "Signal ID": f"sig_rank_{index}",
-                        "Signal Title": f"Ranked public Signal {index:02d}",
-                        "Slug": f"ranked-public-signal-{index:02d}",
+                        "Signal ID": f"sig_inventory_{index:02d}",
+                        "Signal Title": f"Window public Signal {index:02d}",
+                        "Slug": f"window-public-signal-{index:02d}",
+                        "Summary": f"Summary-only public Signal {index:02d} about AI agent evaluation.",
                         "Source Priority": "High",
                         "AGI Relevance": "Medium",
-                        "Quality Hint": 80 + (index % 10),
+                        "Quality Hint": 90,
                         "Published": False,
                         "Ready for Pipeline": False,
-                        "Published Date": f"2026-06-{(index % 28) + 1:02d}T00:00:00Z",
+                        "Published Date": "2026-06-01T00:00:00Z",
                     }
                 )
             )
-        records.extend(
-            [
-                eligible_record(
-                    **{
-                        "Signal ID": "sig_top_critical",
-                        "Signal Title": "Top Critical Infrastructure Signal",
-                        "Slug": "top-critical-infrastructure-signal",
-                        "Source Priority": "Critical",
-                        "AGI Relevance": "Critical",
-                        "Quality Hint": 95,
-                        "Published": True,
-                        "Ready for Pipeline": True,
-                        "Published Date": "2026-07-01T00:00:00Z",
-                    }
-                ),
-                eligible_record(
-                    **{
-                        "Signal ID": "sig_second_critical",
-                        "Signal Title": "Second Critical Evaluation Signal",
-                        "Slug": "second-critical-evaluation-signal",
-                        "Source Priority": "Critical",
-                        "AGI Relevance": "High",
-                        "Quality Hint": 92,
-                        "Published": True,
-                        "Ready for Pipeline": True,
-                        "Published Date": "2026-06-30T00:00:00Z",
-                    }
-                ),
-            ]
+
+        manifest = sync.sync_records(records, self.root, refreshed_at="2026-06-27T00:00:00Z")
+        launched_slugs = [item["slug"] for item in manifest["launched"]]
+        artifact_manifest = json.loads((self.root / "signals" / "public_artifact_manifest.json").read_text(encoding="utf-8"))
+        artifact_paths = {item["path"] for item in artifact_manifest["artifacts"]}
+        sitemap = (self.root / "sitemap.xml").read_text(encoding="utf-8")
+        index_html = (self.root / "signals" / "index.html").read_text(encoding="utf-8")
+        rss = (self.root / "rss.xml").read_text(encoding="utf-8")
+        feed = json.loads((self.root / "feed.json").read_text(encoding="utf-8"))
+        thirty_first_slug = "window-public-signal-30"
+
+        self.assertEqual(manifest["pages_launched"], 35)
+        self.assertEqual(len(manifest["launched"]), 35)
+        self.assertEqual(launched_slugs[30], thirty_first_slug)
+        self.assertTrue((self.root / "signals" / thirty_first_slug / "index.html").exists())
+        self.assertIn(thirty_first_slug, launched_slugs)
+        self.assertIn(f"signals/{thirty_first_slug}/index.html", artifact_paths)
+        self.assertIn(f"{FIXTURE_BASE_URL}/signals/{thirty_first_slug}/", sitemap)
+        self.assertEqual(index_html.count("<article>"), sync.DEFAULT_SIGNALS_INDEX_LIMIT)
+        self.assertEqual(rss.count("<item>"), sync.DEFAULT_RSS_ITEM_LIMIT)
+        self.assertEqual(len(feed["items"]), sync.DEFAULT_JSON_FEED_ITEM_LIMIT)
+        self.assertNotIn(f"/signals/{thirty_first_slug}/", index_html)
+        self.assertNotIn(f"/signals/{thirty_first_slug}/", rss)
+        self.assertNotIn(f"/signals/{thirty_first_slug}/", json.dumps(feed))
+
+        records.append(
+            eligible_record(
+                **{
+                    "Signal ID": "sig_inventory_35",
+                    "Signal Title": "Window public Signal 35",
+                    "Slug": "window-public-signal-35",
+                    "Summary": "Summary-only public Signal 35 about AI agent evaluation.",
+                    "Source Priority": "High",
+                    "AGI Relevance": "Medium",
+                    "Quality Hint": 90,
+                    "Published": False,
+                    "Ready for Pipeline": False,
+                    "Published Date": "2026-06-01T00:00:00Z",
+                }
+            )
+        )
+        manifest = sync.sync_records(records, self.root, refreshed_at="2026-06-28T00:00:00Z")
+        sitemap = (self.root / "sitemap.xml").read_text(encoding="utf-8")
+
+        self.assertEqual(manifest["pages_launched"], 36)
+        self.assertIn(f"{FIXTURE_BASE_URL}/signals/window-public-signal-35/", sitemap)
+
+    def test_duplicate_slugs_select_deterministic_highest_ranked_record(self):
+        shutil.rmtree(self.root / "signals")
+        lower_ranked = eligible_record(
+            **{
+                "Signal ID": "sig_duplicate_low",
+                "Signal Title": "Duplicate slug lower ranked Signal",
+                "Slug": "duplicate-agent-signal",
+                "Summary": "Lower ranked summary-only Signal about AI agent evaluation.",
+                "Source Priority": "High",
+                "AGI Relevance": "Medium",
+                "Quality Hint": 86,
+                "Published Date": "2026-06-01T00:00:00Z",
+            }
+        )
+        higher_ranked = eligible_record(
+            **{
+                "Signal ID": "sig_duplicate_high",
+                "Signal Title": "Duplicate slug higher ranked Signal",
+                "Slug": "duplicate-agent-signal",
+                "Summary": "Higher ranked summary-only Signal about AI agent evaluation.",
+                "Source Priority": "Critical",
+                "AGI Relevance": "Critical",
+                "Quality Hint": 95,
+                "Published Date": "2026-06-02T00:00:00Z",
+            }
         )
 
-        manifest = sync.sync_records(records, self.root)
-        launched_slugs = [item["slug"] for item in manifest["launched"]]
+        first_manifest = sync.sync_records([lower_ranked, higher_ranked], self.root, refreshed_at="2026-06-27T00:00:00Z")
+        first_entry = first_manifest["launched"][0]
+        shutil.rmtree(self.root / "signals")
+        second_manifest = sync.sync_records([higher_ranked, lower_ranked], self.root, refreshed_at="2026-06-27T00:00:00Z")
+        second_entry = second_manifest["launched"][0]
 
-        self.assertEqual(manifest["pages_launched"], 30)
-        self.assertEqual(launched_slugs[:2], ["top-critical-infrastructure-signal", "second-critical-evaluation-signal"])
-        self.assertLessEqual(len(launched_slugs), 30)
+        self.assertEqual(first_manifest["pages_launched"], 1)
+        self.assertEqual(first_entry["signal_id"], "sig_duplicate_high")
+        self.assertEqual(second_entry["signal_id"], "sig_duplicate_high")
+        self.assertEqual(first_manifest["material_signature"], second_manifest["material_signature"])
+
+    def test_identical_rerun_with_large_inventory_has_no_material_diff(self):
+        shutil.rmtree(self.root / "signals")
+        records = [
+            eligible_record(
+                **{
+                    "Signal ID": f"sig_stable_{index:02d}",
+                    "Signal Title": f"Stable public Signal {index:02d}",
+                    "Slug": f"stable-public-signal-{index:02d}",
+                    "Summary": f"Summary-only public Signal {index:02d} about AI agent evaluation.",
+                    "Quality Hint": 90,
+                    "Published Date": "2026-06-01T00:00:00Z",
+                }
+            )
+            for index in range(35)
+        ]
+
+        sync.sync_records(records, self.root, refreshed_at="2026-06-27T00:00:00Z")
+        first_snapshot = self.output_snapshot()
+        sync.sync_records(records, self.root, refreshed_at="2026-06-28T00:00:00Z")
+        second_snapshot = self.output_snapshot()
+
+        self.assertEqual(second_snapshot, first_snapshot)
 
     def test_auto_merge_marker_absent_for_changed_below_relaxed_public_policy(self):
         manifest = sync.sync_records(
